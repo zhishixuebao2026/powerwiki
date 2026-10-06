@@ -275,8 +275,6 @@ console.log('\n[9] 角色收录、图片与主题对比度');
     const wrong_names = [];
     const charFiles = fs.existsSync(charsDir)
         ? fs.readdirSync(charsDir).filter(f => f.endsWith('.html')) : [];
-    ok('角色详情页数量符合当前数据', charFiles.length === 1, '实际 ' + charFiles.length);
-    ok('叶凡角色页已移除', !charFiles.includes('ye-fan.html'));
     ok('古尘沙角色页存在', charFiles.includes('gu-chensha.html'));
 
     // 角色必须并进所属档位：档位页要出现该角色，首页卡片计数要大于 0。
@@ -298,8 +296,13 @@ console.log('\n[9] 角色收录、图片与主题对比度');
             else if (catM) wrong_names.push(nameM ? nameM[1] : '(无名)');
         }
     }
-    ok('解析到保留角色—档位映射', Object.keys(expectCat).length === 1,
+    ok('解析到当前角色—档位映射', Object.keys(expectCat).length === 1,
        JSON.stringify(expectCat));
+    const generatedSlugs = charFiles.map(f => f.replace(/\.html$/, ''));
+    const dataSlugs = Object.keys(expectCat);
+    ok('角色详情页与角色数据一致',
+       generatedSlugs.length === dataSlugs.length &&
+       generatedSlugs.every(slug => dataSlugs.includes(slug)));
 
     const wrong = [];
     for (const [slug, cat] of Object.entries(expectCat)) {
@@ -326,9 +329,20 @@ console.log('\n[9] 角色收录、图片与主题对比度');
     ok('首页角色统计已更新（非 0）', !/<b>0<\/b><span>角色<\/span>/.test(idxHtml3));
     const charsPage = read('characters.html') || '';
     ok('角色图鉴列出古尘沙', charsPage.includes('/character/gu-chensha.html'));
-    ok('角色图鉴不含已移除的叶凡', !charsPage.includes('ye-fan') && !charsPage.includes('叶凡'));
-    ok('首页/搜索/档位页已移除叶凡卡片',
-       !/ye-fan|叶凡/.test((read('index.html') || '') + (read('search.html') || '') + (read('category/incomputable-expansion.html') || '')));
+    const guPage = read('character/gu-chensha.html') || '';
+    ok('角色页前置显示定级摘要',
+       guPage.includes('class="rating-summary"') &&
+       guPage.indexOf('class="rating-summary"') < guPage.indexOf('角色介绍 / 战绩') &&
+       guPage.includes('不可计算扩张率'));
+    ok('定级详情链接到规则原文',
+       guPage.includes('../page/rules.html#3102-广义无限区的两个类型') &&
+       guPage.includes('../page/rules.html#3103-分档判定方法'));
+    const surfaces = charsPage + (read('index.html') || '') + (read('search.html') || '') +
+        (read('category/incomputable-expansion.html') || '');
+    const surfaceSlugs = Array.from(
+        surfaces.matchAll(/href="[/]powerwiki[/]character[/]([^/" ]+)[.]html"/g), match => match[1]);
+    const unexpected = surfaceSlugs.filter(slug => !dataSlugs.includes(slug));
+    ok('站点各入口不含未收录角色', unexpected.length === 0, unexpected.join(', '));
     ok('角色图鉴不再显示「暂无角色」', !charsPage.includes('角色图鉴正在整理中'));
 
     // 角色数据挂在真实存在的档位上（构建期校验已拦，这里兜个底）
@@ -347,7 +361,7 @@ console.log('\n[9] 角色收录、图片与主题对比度');
             .filter(([, cat]) => !valid.has(cat)).map(([s2, c]) => s2 + '→' + c);
         ok('角色档位均存在于档位体系', badCat.length === 0, badCat.join(', '));
     }
-    ok('角色数据标注了最终形态口径', /最终形态|祭道之上|无不朽/.test(cy));
+    ok('角色数据标注了最终形态口径', /最终形态|无不朽/.test(cy));
 
     // 明暗主题：避免硬编码白底/浅字、斜纹重叠与低对比文字
     const visualCss = cssNoComments();
