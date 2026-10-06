@@ -795,6 +795,28 @@ a.tier-nav-item:hover {
 
 .detail-body { padding: 28px 32px 36px; }
 
+.rating-summary {
+    margin: 0 0 24px;
+    padding: 14px 18px;
+    background: var(--primary-soft);
+    border: 1px solid rgba(var(--primary-rgb), .22);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius-sm);
+}
+.rating-summary h2 {
+    margin: 0 0 6px;
+    font-size: 15px;
+    color: var(--primary-dark);
+}
+.rating-summary .markdown-content {
+    max-width: none;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.75;
+}
+.rating-summary .markdown-content p { margin: .35em 0; }
+.rating-summary .markdown-content p:last-child { margin-bottom: 0; }
+
 .detail-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 
 /* 详情页头部：配图与标题区并排，窄屏改为上下堆叠 */

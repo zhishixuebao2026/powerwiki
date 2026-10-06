@@ -968,6 +968,7 @@ def build_character_detail(characters, categories, realms):
                       if char.get('series') else '')
         name_esc = html_escape(char['name'])
 
+        summary_html = render_markdown(char.get('rating_summary'))
         desc_html = render_markdown(char.get('description'))
         power_html = render_markdown(char.get('power_description'))
 
@@ -999,6 +1000,12 @@ def build_character_detail(characters, categories, realms):
 
             <div class="detail-body">
 '''
+        if summary_html:
+            body += '''                <aside class="rating-summary" aria-label="定级结论">
+                    <h2>定级结论</h2>
+                    <div class="markdown-content">{summary_html}</div>
+                </aside>
+'''.replace('{summary_html}', summary_html)
         if desc_html:
             body += '''                <section class="detail-section">
                     <h2>角色介绍 / 战绩</h2>
