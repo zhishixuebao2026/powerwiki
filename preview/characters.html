@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>角色图鉴 - 全作品战力评鉴所</title>
+    <link rel="stylesheet" href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/static/css/style.css">
+    <script>document.documentElement.className += ' js';try{var t=localStorage.getItem('pw-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/index.html" class="logo">全作品战力评鉴所</a>
+            <nav class="main-nav">
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/index.html">首页</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/characters.html">角色图鉴</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/realm/index.html">境界体系</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/tiers.html">量级体系表</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/rules.html">战力评级规则</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/cosmology.html">材质与破坏能量数据库</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/search.html">搜索</a>
+            </nav>
+            <button type="button" class="theme-toggle" id="theme-toggle"
+                    aria-label="切换深浅色主题" title="切换深浅色主题">
+                <span class="icon-sun" aria-hidden="true">☀</span>
+                <span class="icon-moon" aria-hidden="true">☾</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content" id="main">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/index.html">首页</a>
+            <span>/</span>
+            <span>角色图鉴</span>
+        </div>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h1>角色图鉴</h1>
+                <span class="badge">2 位角色</span>
+            </div>
+            <div class="char-toolbar">
+                <input type="text" id="name-filter" placeholder="按名称或作品快速过滤..." class="filter-input">
+            </div>
+            <div class="character-grid" id="char-grid">
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/character/gu-chensha.html" class="character-card" data-name="古尘沙" data-series="龙符（梦入神机）">
+                    <div class="char-image"><img src="https://img.mp.sohu.com/upload/20170214/83b1334c3a5d42b595e2a36db4138324_th.jpeg" alt="古尘沙" loading="lazy"></div>
+                    <div class="char-info">
+                        <h3>古尘沙</h3>
+                        <p class="char-series">龙符（梦入神机）</p>
+                        <div class="char-tags"><span class="tag tag-power">不可计算扩张率</span><span class="tag tag-realm">不朽第十层·非有无不朽</span></div>
+                    </div>
+                </a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/character/sun-wukong-xiyouji.html" class="character-card" data-name="孙悟空" data-series="西游记（百回本原著）">
+                    <div class="char-image"><div class="no-image">暂无图片</div></div>
+                    <div class="char-info">
+                        <h3>孙悟空</h3>
+                        <p class="char-series">西游记（百回本原著）</p>
+                        <div class="char-tags"><span class="tag tag-power">超爆屋</span><span class="tag tag-realm">齐天大圣（天庭官衔）→ 斗战胜佛（第 100 回封号）</span></div>
+                    </div>
+                </a>
+            </div>
+            <p class="empty" id="no-result" style="display:none">没有匹配的角色</p>
+        </section>
+    </div>
+
+    <script>
+        (function() {
+            var input = document.getElementById('name-filter');
+            var cards = document.querySelectorAll('#char-grid .character-card');
+            var noResult = document.getElementById('no-result');
+            if (!input) return;
+            input.addEventListener('input', function() {
+                var q = this.value.trim().toLowerCase();
+                var shown = 0;
+                cards.forEach(function(c) {
+                    var hay = (c.dataset.name + ' ' + c.dataset.series).toLowerCase();
+                    var ok = !q || hay.indexOf(q) !== -1;
+                    c.style.display = ok ? '' : 'none';
+                    if (ok) shown++;
+                });
+                noResult.style.display = shown === 0 ? '' : 'none';
+            });
+        })();
+    </script>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div>
+                <p class="footer-brand">全作品战力评鉴所</p>
+                <p class="footer-note">跨作品角色战力量级评鉴 · 静态资料站</p>
+            </div>
+            <nav class="footer-nav">
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/index.html">首页</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/characters.html">角色图鉴</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/realm/index.html">境界体系</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/tiers.html">量级体系表</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/rules.html">战力评级规则</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/cosmology.html">材质与破坏能量数据库</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/search.html">搜索</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script src="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/static/js/main.js"></script>
+</body>
+</html>

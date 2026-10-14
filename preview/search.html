@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>搜索 - 全作品战力评鉴所</title>
+    <link rel="stylesheet" href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/static/css/style.css">
+    <script>document.documentElement.className += ' js';try{var t=localStorage.getItem('pw-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/index.html" class="logo">全作品战力评鉴所</a>
+            <nav class="main-nav">
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/index.html">首页</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/characters.html">角色图鉴</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/realm/index.html">境界体系</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/tiers.html">量级体系表</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/rules.html">战力评级规则</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/cosmology.html">材质与破坏能量数据库</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/search.html">搜索</a>
+            </nav>
+            <button type="button" class="theme-toggle" id="theme-toggle"
+                    aria-label="切换深浅色主题" title="切换深浅色主题">
+                <span class="icon-sun" aria-hidden="true">☀</span>
+                <span class="icon-moon" aria-hidden="true">☾</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content" id="main">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/index.html">首页</a>
+            <span>/</span>
+            <span>搜索</span>
+        </div>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h1>搜索</h1>
+            </div>
+            <form class="search-form inline" id="search-form">
+                <input type="text" id="search-input" placeholder="角色名 / 别名 / 作品 / 境界 / 量级 / 简介关键词">
+                <button type="submit">搜索</button>
+            </form>
+
+            <div class="filter-bar">
+                <label>作品<select id="f-series"></select></label>
+                <label>量级<select id="f-category"></select></label>
+                <label>境界体系<select id="f-rseries"></select></label>
+                <label>境界<select id="f-realm"></select></label>
+                <label>排序
+                    <select id="f-sort">
+                        <option value="name">按名称</option>
+                        <option value="cat">按量级高低</option>
+                        <option value="realm">按境界阶序</option>
+                    </select>
+                </label>
+                <button type="button" id="f-reset" class="btn btn-sm">重置</button>
+            </div>
+
+            <div id="active-filters" class="active-filters"></div>
+            <p class="search-tip" id="search-tip"></p>
+            <div id="search-results" class="character-grid"></div>
+            <p class="empty" id="no-result" style="display:none">没有匹配的角色，试试放宽条件</p>
+        </section>
+    </div>
+
+    <script>
+        var indexData = [{"slug": "gu-chensha", "name": "古尘沙", "alias": "无龙内阁阁主、永界之主、多元宇宙缔造者", "series": "龙符（梦入神机）", "category": "不可计算扩张率", "catOrder": 830, "realm": "不朽第十层·非有无不朽", "realmSeries": "", "realmOrder": 0, "desc": "梦入神机《龙符》的主角，大永王朝十九皇子，无龙内阁阁主，永界之主。\n\n**起点即锚点**：第二章获得祭天符诏，献祭一只大公鸡起步——此时他被公鸡爪抓伤「皮肉抓下大块」，需持匕首才能反杀，文中直言只有「缚鸡之力」。这完全落在现实生理伤害范围内，是全书最干净的一个结论：**《龙符》的基础世界强度 = 现实世界 × 1.0**，凡人层不偏离现实，可直接套用《材质与破坏能量数据库》，不需要先做换算。\n\n反证同样成立：道境三十六变里「刀枪不入」要到**第三变**才达成。把「免疫常规兵刃」设为需要修炼两个阶段才能获得的能力，恰恰反证了这个世界的常人和常规兵器遵循现实物理规律。\n\n**资质与功法**：凭祭天符诏起步（唯一可用者为「天命之子」及以上资质）。核心功法**天子封神术**分三境——日月同辉、天地同寿、众生同心；全书他仅修得第一境「日月炼」的皮毛（不足十分之一），凭此已破入凡境四重宗师，原文称「比", "power": "**终局评级：广义无限区级 · 不可计算扩张率；未触及论外级（真 ℵ₀），且状态本身存在文本自证的不稳定性。**\n\n这条结论的分量不亚于前面任何一批的证伪工作——**如果这里对主角本人网开一面，前面逐条打掉「无龙心法产生无限能量」「无限盒子表」这些宣称就失去了统一标准。**\n\n### 第一步：排除坐实为静态「不可计算数」或论外级\n\n- 「超脱万物、超脱大道、超脱命运」系列描述是**纯定性堆叠**，没有明确递进和证据（不过 0.2 门槛）。\n- 「一千零一尊主角」是叙事者给出的**具体计数**，不是无限个（信号 2，邻近量化悖论）。\n- 按 0.15，古尘沙的力量来自**体系内部**（人心祭祀、无龙心法吸收），而体系内部已确认天界、时空乱流有限；唯一未被证伪的真无限候选**混沌**，本身都还没能坐实为完成态无限——古尘沙没有被证实接入了这个结构之外的资源，理论上限仍受这个资源池约束。\n\n##", "image": "https://img.mp.sohu.com/upload/20170214/83b1334c3a5d42b595e2a36db4138324_th.jpeg"}, {"slug": "sun-wukong-xiyouji", "name": "孙悟空", "alias": "齐天大圣、美猴王、孙行者、斗战胜佛", "series": "西游记（百回本原著）", "category": "超爆屋", "catOrder": 170, "realm": "齐天大圣（天庭官衔）→ 斗战胜佛（第 100 回封号）", "realmSeries": "", "realmOrder": 0, "desc": "**【综合战力卡】孙悟空（《西游记》百回本 · 行者期，取全书最高表现）**\n\n- **攻击能量档（站内量级）**：爆屋级 · 超爆屋（中位 ≈4×10⁸ J；区间强爆屋～弱爆楼）【已确认】。潜在上限：有留力叙述（第 4、56、62 回），上限未实测。\n- **力量／举力**：负重奔跑 ≥3×10¹⁴ kg，失能阈值 ≥8.5×10¹⁴ kg（第 33 回担山；一座泰山 ≈5.4×10¹⁴ kg，约合 9 万座胡夫金字塔）【合理推测】\n- **耐久／防御**：能量耐受 ≥ 雷部神雷（沉积口径 ≥10⁶ J，总能量口径 ≥10⁹ J）；承压 ≥8.5×10¹⁴ kg（静载，不换算）。免疫：兵刃、神火、神雷、五千斤钉钯。弱点：烟、毒刺、法宝之火、重压、犬咬、法术屏障；凡刀可砍头剖腹但即时再生 → 法术型耐久。不死：生死簿勾销 + 蟠桃仙丹；例外：第 41 回临床死亡。\n- **速度**：位移硬", "power": "**定级：爆屋级 · 超爆屋（中位 ≈4×10⁸ J，区间强爆屋～弱爆楼 2×10⁸–1×10⁹ J）。【已确认：按叙述可观测破坏；全力上限从未展示——第 4、56、62 回有「轻轻」「却休当真」「未曾著力」的留力叙述，但全力值无实测，列为存疑而非加分】**\n\n### 标签（通则 0.12：不参与定档）\n\n- **举力**：第 33 回肩挑须弥山、峨嵋山「飞星来赶师父」；按现实峨眉山估 2.6–3.7×10¹⁴ kg（须弥山原文无尺寸，另计），负重奔跑 ≥3×10¹⁴ kg；加泰山（≈5.4×10¹⁴ kg）后合计 ≥8.5×10¹⁴ kg 时失能未死。若按 10 m/s 奔跑，动能已达 10¹⁶ J 量级，但这是做功能力不是破坏，不折算。\n- **防御**：天兵兵刃、明火、雷击（自然雷击约 10⁹ J／次）零损伤；砍头剖腹可再生（第 46 回）。弱点：烟（第 41 回）、毒刺（第 55 ", "image": ""}];
+        var BASE = "https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview";
+
+        var el = function(id){ return document.getElementById(id); };
+        var qEl = el('search-input'), fSeries = el('f-series'), fCat = el('f-category'),
+            fRS = el('f-rseries'), fRealm = el('f-realm'), fSort = el('f-sort'),
+            resultsEl = el('search-results'), tipEl = el('search-tip'),
+            noRes = el('no-result'), activeBox = el('active-filters');
+
+        var uniq = function(arr){ return Array.from(new Set(arr.filter(Boolean))).sort(function(a,b){return String(a).localeCompare(String(b),'zh');}); };
+
+        function fillOptions(sel, values, keep) {
+            sel.innerHTML = '<option value="">全部</option>' + values.map(function(v){
+                return '<option value="'+v+'"'+(v===keep?' selected':'')+'>'+v+'</option>';
+            }).join('');
+        }
+
+        function refreshOptions() {
+            var sub = indexData.filter(function(c){
+                return (!fSeries.value || c.series === fSeries.value) &&
+                       (!fRS.value || c.realmSeries === fRS.value);
+            });
+            fillOptions(fSeries, uniq(indexData.map(function(c){return c.series;})), fSeries.value);
+            fillOptions(fRS, uniq(indexData.map(function(c){return c.realmSeries;})), fRS.value);
+            fillOptions(fCat, uniq(sub.map(function(c){return c.category;})), fCat.value);
+            fillOptions(fRealm, uniq(sub.map(function(c){return c.realm;})), fRealm.value);
+        }
+
+        function match(c) {
+            var kw = qEl.value.trim().toLowerCase();
+            if (kw) {
+                var hay = [c.name, c.alias, c.series, c.category, c.realm, c.realmSeries, c.desc, c.power].join(' ').toLowerCase();
+                if (hay.indexOf(kw) === -1) return false;
+            }
+            if (fSeries.value && c.series !== fSeries.value) return false;
+            if (fCat.value && c.category !== fCat.value) return false;
+            if (fRS.value && c.realmSeries !== fRS.value) return false;
+            if (fRealm.value && c.realm !== fRealm.value) return false;
+            return true;
+        }
+
+        function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+        function render() {
+            var list = indexData.filter(match);
+            var s = fSort.value;
+            if (s === 'cat') list.sort(function(a,b){return b.catOrder-a.catOrder;});
+            else if (s === 'realm') list.sort(function(a,b){return b.realmOrder-a.realmOrder;});
+            else list.sort(function(a,b){return String(a.name).localeCompare(String(b.name),'zh');});
+
+            resultsEl.innerHTML = list.map(function(c){
+                var img = c.image ? '<img src="'+esc(c.image)+'" alt="'+esc(c.name)+'" loading="lazy">' : '<div class="no-image">暂无图片</div>';
+                return '<a href="'+BASE+'/character/'+c.slug+'.html" class="character-card">'+
+                    '<div class="char-image">'+img+'</div>'+
+                    '<div class="char-info"><h3>'+esc(c.name)+'</h3>'+
+                    (c.series?'<p class="char-series">'+esc(c.series)+'</p>':'')+
+                    '<div class="char-tags">'+
+                    (c.category?'<span class="tag tag-power">'+esc(c.category)+'</span>':'')+
+                    (c.realm?'<span class="tag tag-realm">'+esc(c.realm)+'</span>':'')+
+                    '</div></div></a>';
+            }).join('');
+
+            noRes.style.display = list.length ? 'none' : '';
+            tipEl.textContent = '匹配 ' + list.length + ' / ' + indexData.length + ' 位角色';
+            renderActive();
+            syncURL();
+        }
+
+        function renderActive() {
+            var chips = [];
+            var add = function(label, value, key){
+                chips.push('<span class="chip">'+label+'：'+esc(value)+'<button type="button" data-clear="'+key+'">&times;</button></span>');
+            };
+            if (qEl.value.trim()) add('关键词', qEl.value.trim(), 'q');
+            if (fSeries.value) add('作品', fSeries.value, 'series');
+            if (fCat.value) add('量级', fCat.value, 'category');
+            if (fRS.value) add('体系', fRS.value, 'rseries');
+            if (fRealm.value) add('境界', fRealm.value, 'realm');
+            activeBox.innerHTML = chips.join('');
+            activeBox.querySelectorAll('button[data-clear]').forEach(function(btn){
+                btn.addEventListener('click', function(){
+                    var t = btn.dataset.clear;
+                    if (t==='q') qEl.value='';
+                    else if (t==='series') fSeries.value='';
+                    else if (t==='category') fCat.value='';
+                    else if (t==='rseries') fRS.value='';
+                    else if (t==='realm') fRealm.value='';
+                    refreshOptions(); render();
+                });
+            });
+        }
+
+        function syncURL() {
+            var p = new URLSearchParams();
+            if (qEl.value.trim()) p.set('q', qEl.value.trim());
+            if (fSeries.value) p.set('series', fSeries.value);
+            if (fCat.value) p.set('category', fCat.value);
+            if (fRS.value) p.set('rseries', fRS.value);
+            if (fRealm.value) p.set('realm', fRealm.value);
+            var qs = p.toString();
+            history.replaceState(null, '', qs ? ('?'+qs) : location.pathname);
+        }
+
+        function readURL() {
+            var p = new URLSearchParams(location.search);
+            qEl.value = p.get('q') || '';
+            fSeries.value = p.get('series') || '';
+            fRS.value = p.get('rseries') || '';
+            fCat.value = p.get('category') || '';
+            fRealm.value = p.get('realm') || '';
+        }
+
+        el('search-form').addEventListener('submit', function(e){ e.preventDefault(); render(); });
+        qEl.addEventListener('input', render);
+        [fSeries, fCat, fRS, fRealm, fSort].forEach(function(sel){
+            sel.addEventListener('change', function(){ refreshOptions(); render(); });
+        });
+        el('f-reset').addEventListener('click', function(){
+            qEl.value=''; fSeries.value=''; fCat.value=''; fRS.value=''; fRealm.value=''; fSort.value='name';
+            refreshOptions(); render();
+        });
+
+        readURL();
+        refreshOptions();
+        render();
+    </script>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div>
+                <p class="footer-brand">全作品战力评鉴所</p>
+                <p class="footer-note">跨作品角色战力量级评鉴 · 静态资料站</p>
+            </div>
+            <nav class="footer-nav">
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/index.html">首页</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/characters.html">角色图鉴</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/realm/index.html">境界体系</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/tiers.html">量级体系表</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/rules.html">战力评级规则</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/page/cosmology.html">材质与破坏能量数据库</a>
+                <a href="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/search.html">搜索</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script src="https://raw.githack.com/zhishixuebao2026/powerwiki/arena/b75cff88-powerwiki/preview/static/js/main.js"></script>
+</body>
+</html>
