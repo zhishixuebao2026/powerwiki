@@ -25,109 +25,177 @@
       <a class="brand" href="./index.html">
         <span class="brand-mark mono" aria-hidden="true">⊙</span>
         <span class="brand-text">
-          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">第三版</span></span>
-          <span class="brand-sub">角色 · 量级 · 标准与规则全文</span>
+          <span class="brand-title">衡天 PowerWiki</span>
+          <span class="brand-badge mono">v3.0</span>
         </span>
       </a>
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
         <a class="nav-link active" href="./index.html">首页</a>
-        <a class="nav-link" href="./characters.html">角色分类 <span class="nav-count mono">示例</span></a>
-        <a class="nav-link" href="./tiers.html">量级分类 <span class="nav-count mono">97</span></a>
-        <span class="nav-divider" aria-hidden="true"></span>
-        <a class="nav-link" href="./rules.html">标准·衡天体系(第三版)</a>
-        <a class="nav-link" href="./materials.html">标准·材质能量库</a>
+        <a class="nav-link" href="./characters.html">角色 <span class="nav-count mono">6</span></a>
+        <a class="nav-link" href="./tiers.html">量级 <span class="nav-count mono">97</span></a>
+        <a class="nav-link" href="./rules.html">衡天体系</a>
+        <a class="nav-link" href="./materials.html">材质数据库</a>
       </nav>
 
       <div class="header-actions">
         <button type="button" class="search-trigger" id="global-search-trigger" aria-label="打开全站搜索">
           <span class="search-trigger-left">
-            <span>🔍</span>
-            <span class="search-trigger-placeholder">搜索角色 / 量级 / 标准…</span>
+            <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <span class="search-trigger-placeholder">搜索全站…</span>
           </span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
-        <button type="button" class="icon-btn" id="history-open-btn" title="已保存的浏览进度与足迹">
-          <span>📖</span>
+        <button type="button" class="icon-btn" id="history-open-btn" title="浏览进度与最近足迹">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
           <span class="dot-indicator"></span>
         </button>
-        <button type="button" class="icon-btn" id="theme-toggle-btn" title="切换深浅色主题">☀️</button>
-        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">☰</button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" title="切换深浅色主题">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
       </div>
     </div>
   </header>
+
+  <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
 
   
 
   <main style="flex:1">
     
     <section class="hero-section">
-      <div class="hero-bg" style="background-image:url('./static/img/hero-hengtian.jpg')"></div>
-      <div class="hero-mask"></div>
-      <div class="container hero-content">
-        <div class="hero-eyebrow mono">⊙ HENGTIAN MULTIDIMENSIONAL SCALE · THIRD EDITION (LATEST)</div>
-        <h1 class="hero-title">衡天<span class="sun-mark">⊙</span> 多维战力量级与破坏能量百科</h1>
-        <p class="hero-desc">
-          围绕<strong>角色</strong>（支持<strong>首字母 A–Z</strong> 与<strong>量级从小到大</strong>双排序）与<strong>量级</strong>（按<strong>从小到大</strong>完整排布）两大分类构建；一字不漏全文展示最新<strong>《衡天⊙ 多维战力量级体系（第三版）》</strong>与<strong>《材质与破坏能量数据库（第二版）》</strong>，内置全站搜索、浏览进度自动记忆与智能返回。
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="./characters.html">进入角色分类 ›</a>
-          <a class="btn btn-primary" href="./tiers.html">浏览 97 档量级天梯 ›</a>
-          <a class="btn btn-ghost" href="./rules.html">《衡天⊙ 第三版》全文</a>
-          <a class="btn btn-ghost" href="./materials.html">《材质能量库》全文</a>
+      <div class="container hero-grid">
+        <div>
+          <div class="hero-eyebrow mono">
+            <span class="hero-eyebrow-dot"></span>
+            <span>HENGTIAN CODEX · EDITION III · 2026.10.23</span>
+          </div>
+          <h1 class="hero-title">衡天<span class="sun-mark serif-display">⊙</span> 多维战力量级与材质能量百科</h1>
+          <p class="hero-desc">
+            围绕<strong>角色档案</strong>（支持<strong>首字母 A–Z</strong> 与<strong>量级从小到大</strong>双排序）与<strong>量级标尺</strong>（严格按<strong>从小到大</strong>递增排布）构建；全文无删减收录最新<strong>《衡天⊙ 多维战力量级体系（第三版）》</strong>与<strong>《材质与破坏能量数据库（第二版）》</strong>。
+          </p>
+
+          <button type="button" class="hero-command-bar js-open-search" aria-label="打开全站快速检索">
+            <span style="display:inline-flex;align-items:center;gap:10px">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <span>检索角色、量级代字（宇◆、恒○）、第三版通则或材质参数…</span>
+            </span>
+            <kbd class="kbd-hint">Ctrl K</kbd>
+          </button>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="./tiers.html">浏览 97 档量级标尺 <svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+            <a class="btn btn-gold" href="./characters.html">进入角色分类 <svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+            <a class="btn btn-ghost" href="./rules.html">《衡天⊙ 第三版》全文</a>
+            <a class="btn btn-ghost" href="./materials.html">《材质能量库》全文</a>
+          </div>
         </div>
-        <div class="hero-metrics">
-          <div class="metric-chip">
-            <div class="metric-val mono">角色分类</div>
-            <div class="metric-label">首字母 A–Z &amp; 量级从小到大</div>
-          </div>
-          <div class="metric-chip">
-            <div class="metric-val mono">量级分类</div>
-            <div class="metric-label">97+1 档按从小到大排列</div>
-          </div>
-          <div class="metric-chip">
-            <div class="metric-val mono">第三版·最新</div>
-            <div class="metric-label">新增完整书写与归因审查等通则</div>
-          </div>
-          <div class="metric-chip">
-            <div class="metric-val mono">100% 全文</div>
-            <div class="metric-label">两部核心标准无删减直出</div>
+
+        <div class="astrolabe-stage">
+          <div class="astrolabe-card">
+            <span class="astrolabe-corner tl mono">F* = 3.04×10²⁰ J/m²</span>
+            <span class="astrolabe-corner tr mono">⊙ SCALE 01 → 97</span>
+            
+    <svg class="astrolabe-svg" viewBox="0 0 400 400" aria-hidden="true" style="color:var(--accent-gold)">
+      <defs>
+        <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="var(--accent-gold)" stop-opacity="0.24"/>
+          <stop offset="65%" stop-color="var(--accent-gold)" stop-opacity="0.04"/>
+          <stop offset="100%" stop-color="var(--accent-gold)" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="200" cy="200" r="145" fill="url(#coreGlow)"/>
+      <line x1="20" y1="200" x2="380" y2="200" stroke="currentColor" stroke-opacity="0.11" stroke-width="1"/>
+      <line x1="200" y1="20" x2="200" y2="380" stroke="currentColor" stroke-opacity="0.11" stroke-width="1"/>
+
+      <g class="orbit-slow">
+        <circle cx="200" cy="200" r="166" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/>
+        <circle cx="200" cy="200" r="148" fill="none" stroke="currentColor" stroke-opacity="0.14" stroke-dasharray="3 5" stroke-width="1"/>
+        <line x1="356.0" y1="200.0" x2="366.0" y2="200.0" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="362.1" y1="217.0" x2="365.1" y2="217.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="359.4" y1="233.9" x2="362.4" y2="234.5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="355.0" y1="250.4" x2="357.9" y2="251.3" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="348.9" y1="266.3" x2="351.6" y2="267.5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="335.1" y1="278.0" x2="343.8" y2="283.0" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="331.9" y1="295.8" x2="334.3" y2="297.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="321.1" y1="309.1" x2="323.4" y2="311.1" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="309.1" y1="321.1" x2="311.1" y2="323.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="295.8" y1="331.9" x2="297.6" y2="334.3" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="278.0" y1="335.1" x2="283.0" y2="343.8" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="266.3" y1="348.9" x2="267.5" y2="351.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="250.4" y1="355.0" x2="251.3" y2="357.9" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="233.9" y1="359.4" x2="234.5" y2="362.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="217.0" y1="362.1" x2="217.4" y2="365.1" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="200.0" y1="356.0" x2="200.0" y2="366.0" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="183.0" y1="362.1" x2="182.6" y2="365.1" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="166.1" y1="359.4" x2="165.5" y2="362.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="149.6" y1="355.0" x2="148.7" y2="357.9" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="133.7" y1="348.9" x2="132.5" y2="351.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="122.0" y1="335.1" x2="117.0" y2="343.8" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="104.2" y1="331.9" x2="102.4" y2="334.3" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="90.9" y1="321.1" x2="88.9" y2="323.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="78.9" y1="309.1" x2="76.6" y2="311.1" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="68.1" y1="295.8" x2="65.7" y2="297.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="64.9" y1="278.0" x2="56.2" y2="283.0" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="51.1" y1="266.3" x2="48.4" y2="267.5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="45.0" y1="250.4" x2="42.1" y2="251.3" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="40.6" y1="233.9" x2="37.6" y2="234.5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="37.9" y1="217.0" x2="34.9" y2="217.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="44.0" y1="200.0" x2="34.0" y2="200.0" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="37.9" y1="183.0" x2="34.9" y2="182.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="40.6" y1="166.1" x2="37.6" y2="165.5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="45.0" y1="149.6" x2="42.1" y2="148.7" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="51.1" y1="133.7" x2="48.4" y2="132.5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="64.9" y1="122.0" x2="56.2" y2="117.0" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="68.1" y1="104.2" x2="65.7" y2="102.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="78.9" y1="90.9" x2="76.6" y2="88.9" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="90.9" y1="78.9" x2="88.9" y2="76.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="104.2" y1="68.1" x2="102.4" y2="65.7" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="122.0" y1="64.9" x2="117.0" y2="56.2" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="133.7" y1="51.1" x2="132.5" y2="48.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="149.6" y1="45.0" x2="148.7" y2="42.1" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="166.1" y1="40.6" x2="165.5" y2="37.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="183.0" y1="37.9" x2="182.6" y2="34.9" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="200.0" y1="44.0" x2="200.0" y2="34.0" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="217.0" y1="37.9" x2="217.4" y2="34.9" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="233.9" y1="40.6" x2="234.5" y2="37.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="250.4" y1="45.0" x2="251.3" y2="42.1" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="266.3" y1="51.1" x2="267.5" y2="48.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="278.0" y1="64.9" x2="283.0" y2="56.2" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="295.8" y1="68.1" x2="297.6" y2="65.7" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="309.1" y1="78.9" x2="311.1" y2="76.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="321.1" y1="90.9" x2="323.4" y2="88.9" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="331.9" y1="104.2" x2="334.3" y2="102.4" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="335.1" y1="122.0" x2="343.8" y2="117.0" stroke="currentColor" stroke-opacity="0.42" stroke-width="1"/><line x1="348.9" y1="133.7" x2="351.6" y2="132.5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="355.0" y1="149.6" x2="357.9" y2="148.7" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="359.4" y1="166.1" x2="362.4" y2="165.5" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/><line x1="362.1" y1="183.0" x2="365.1" y2="182.6" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/>
+      </g>
+
+      <g class="orbit-reverse">
+        <ellipse cx="200" cy="200" rx="134" ry="52" transform="rotate(-24 200 200)" fill="none" stroke="var(--accent-blue)" stroke-opacity="0.22" stroke-width="1"/>
+        <ellipse cx="200" cy="200" rx="134" ry="52" transform="rotate(36 200 200)" fill="none" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/>
+      </g>
+
+      <polygon points="200.0,104.0 275.1,140.1 293.6,221.4 241.7,286.5 158.3,286.5 106.4,221.4 124.9,140.1" fill="var(--accent-gold-soft)" stroke="currentColor" stroke-opacity="0.38" stroke-width="1.2"/>
+      <polyline points="200.0,104.0 293.6,221.4 158.3,286.5 124.9,140.1 275.1,140.1 241.7,286.5 106.4,221.4 200.0,104.0" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/>
+      <line x1="200" y1="200" x2="200.0" y2="104.0" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/><circle cx="200.0" cy="104.0" r="3.2" fill="var(--accent-gold)"/><text x="200.0" y="86.0" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="600">破</text><line x1="200" y1="200" x2="275.1" y2="140.1" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/><circle cx="275.1" cy="140.1" r="3.2" fill="var(--accent-gold)"/><text x="292.3" y="130.4" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="600">控</text><line x1="200" y1="200" x2="293.6" y2="221.4" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/><circle cx="293.6" cy="221.4" r="3.2" fill="var(--accent-gold)"/><text x="315.0" y="230.3" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="600">域</text><line x1="200" y1="200" x2="241.7" y2="286.5" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/><circle cx="241.7" cy="286.5" r="3.2" fill="var(--accent-gold)"/><text x="251.2" y="310.3" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="600">御</text><line x1="200" y1="200" x2="158.3" y2="286.5" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/><circle cx="158.3" cy="286.5" r="3.2" fill="var(--accent-gold)"/><text x="148.8" y="310.3" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="600">速</text><line x1="200" y1="200" x2="106.4" y2="221.4" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/><circle cx="106.4" cy="221.4" r="3.2" fill="var(--accent-gold)"/><text x="85.0" y="230.3" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="600">算</text><line x1="200" y1="200" x2="124.9" y2="140.1" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/><circle cx="124.9" cy="140.1" r="3.2" fill="var(--accent-gold)"/><text x="107.7" y="130.4" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="600">性</text>
+
+      <circle cx="200" cy="200" r="26" fill="var(--bg-surface-1)" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.4"/>
+      <circle cx="200" cy="200" r="4.5" fill="var(--accent-gold)"/>
+    </svg>
+            <span class="astrolabe-corner bl mono">5×10⁻⁵ J → 8×10¹⁰¹ J</span>
+            <span class="astrolabe-corner br mono">f_ω · ℶ_κ = κ</span>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="container" style="padding-bottom:42px">
-      <section class="portal-section">
+    <div class="container home-main">
+      <div id="home-footprints-mount"></div>
+
+      <section>
         <div class="section-head">
-          <h2 class="section-title"><span class="dot"></span>两大核心分类（角色 · 量级）</h2>
-          <span class="section-sub">角色支持「首字母 A–Z + 量级从小到大」双排序 ｜ 量级按「从小到大」递增排布</span>
+          <div>
+            <span class="section-kicker mono">CORE ARCHIVES</span>
+            <h2 class="section-title">核心分类目录</h2>
+          </div>
+          <span class="section-sub">角色支持「首字母 A–Z &amp; 量级从小到大」 ｜ 量级严格按「从小到大」递增</span>
         </div>
-        <div class="portal-grid">
-          <a class="portal-card" href="./characters.html">
-            <div class="portal-banner" style="background-image:url('./static/img/banner-characters.jpg')">
-              <span class="portal-tag mono">CATEGORY 01 · 角色分类</span>
+
+        <div class="bento-grid">
+          <a class="bento-card" href="./characters.html">
+            <div>
+              <div class="bento-top" style="margin-bottom:14px">
+                <span class="bento-index mono">01 / CHARACTER ARCHIVE</span>
+                <span class="bento-arrow"><svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+              </div>
+              <h3 class="bento-title">角色档案分类</h3>
+              <p class="bento-desc">依据第三版<strong>完整书写规范</strong>与<strong>破·控·域·御·速·算·性</strong>七维战力浑仪呈现角色定级，支持按主档<strong>量级从小到大</strong>与<strong>拼音首字母 A–Z</strong>自由切换。</p>
+              <div class="bento-heptad-strip" aria-hidden="true">
+                <span class="bento-heptad-pill">破</span>
+                <span class="bento-heptad-pill">控</span>
+                <span class="bento-heptad-pill">域</span>
+                <span class="bento-heptad-pill">御</span>
+                <span class="bento-heptad-pill">速</span>
+                <span class="bento-heptad-pill">算</span>
+                <span class="bento-heptad-pill">性</span>
+              </div>
             </div>
-            <div class="portal-body">
-              <h3 class="portal-title"><span>角色档案分类</span><span style="color:var(--accent-gold)">→</span></h3>
-              <p class="portal-desc">采用第三版<strong>完整书写规范</strong>、<strong>七维战力面板（破·控·域·御·速·算·性）</strong>与浑仪星盘图呈现角色实力。支持<strong>按量级从小到大</strong>与<strong>按拼音首字母 A–Z</strong>自由切换。</p>
-              <div class="portal-features">
+            <div class="bento-meta-strip">
+              <div class="tag-row">
                 <span class="mini-chip">↑ 按量级从小到大</span>
                 <span class="mini-chip">A–Z 按首字母排序</span>
-                <span class="mini-chip">七维星盘与完整书写</span>
+                <span class="mini-chip">七维浑仪与证据标签</span>
               </div>
             </div>
           </a>
 
-          <a class="portal-card" href="./tiers.html">
-            <div class="portal-banner" style="background-image:url('./static/img/banner-tiers.jpg')">
-              <span class="portal-tag mono">CATEGORY 02 · 量级分类</span>
+          <a class="bento-card" href="./tiers.html">
+            <div>
+              <div class="bento-top" style="margin-bottom:14px">
+                <span class="bento-index mono">02 / 97-TIER SCALE</span>
+                <span class="bento-arrow"><svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+              </div>
+              <h3 class="bento-title">量级标尺分类（97 档）</h3>
+              <p class="bento-desc">严格按<strong>量级从小到大（#01 昆虫级 → #97 论天最上）</strong>递增排布，完整覆盖常规破坏、天体束缚能、通量覆盖、FGH 函数层级与大基数公理。</p>
+              <div class="bento-spectrum" aria-hidden="true">
+                <span style="background:var(--dom-terrestrial)"></span>
+                <span style="background:var(--dom-stellar)"></span>
+                <span style="background:var(--dom-cosmic)"></span>
+                <span style="background:var(--accent-gold)"></span>
+                <span style="background:var(--dom-fgh)"></span>
+                <span style="background:var(--dom-beyond)"></span>
+              </div>
             </div>
-            <div class="portal-body">
-              <h3 class="portal-title"><span>量级标尺分类（97 档）</span><span style="color:var(--accent-gold)">→</span></h3>
-              <p class="portal-desc">严格按<strong>量级从小到大</strong>递增排列，完整涵盖昆虫级（5×10⁻⁵ J）至论天最上（莱茵哈特—伯克利基数）。支持分区卡片、连续天梯与紧凑总表三种视图，一键直达对应规则章节。</p>
-              <div class="portal-features">
-                <span class="mini-chip">↑ 从小到大递增（#01→#97）</span>
+            <div class="bento-meta-strip">
+              <div class="tag-row">
+                <span class="mini-chip">↑ 严格从小到大排列</span>
                 <span class="mini-chip">分区 / 连续天梯 / 总表</span>
                 <span class="mini-chip">直链第三版条文</span>
               </div>
@@ -136,55 +204,61 @@
         </div>
       </section>
 
-      <section class="portal-section" style="padding-top:14px">
+      <section>
         <div class="section-head">
-          <h2 class="section-title"><span class="dot"></span>网站标准与规则（全文无删减展示）</h2>
-          <span class="section-sub">左侧章节导航同步高亮 · 支持文内查找定位、字号缩放、宽屏表格与自动断点续读</span>
+          <div>
+            <span class="section-kicker mono">CANONICAL MONOGRAPHS · UNABRIDGED</span>
+            <h2 class="section-title">标准与规则典籍（100% 全文展示）</h2>
+          </div>
+          <span class="section-sub">自动保存阅读进度与章节位置 · 点击卡片可断点续读</span>
         </div>
-        <div class="portal-grid">
-          <a class="portal-card" href="./rules.html">
-            <div class="portal-banner" style="background-image:url('./static/img/hero-hengtian.jpg')">
-              <span class="portal-tag mono">STANDARD 01 · 最新第三版全文</span>
-            </div>
-            <div class="portal-body">
-              <h3 class="portal-title"><span>《衡天⊙ 多维战力量级体系（第三版）》</span><span style="color:var(--accent-gold)">→</span></h3>
-              <p class="portal-desc">1,445 行最新原文无删减展示：涵盖第三版新增<strong>完整书写原则</strong>、<strong>0.14.2 归因与知情度审查</strong>、<strong>超长篇自行通读流程</strong>、<strong>7.9 层级轴必检</strong>及全部十一部分量级与大基数标准。</p>
-              <div class="portal-features">
-                <span class="mini-chip">第三版·最新全文</span>
-                <span class="mini-chip">126 个章节锚点</span>
-                <span class="mini-chip">阅读进度自动保存</span>
+
+        <div class="bento-grid">
+          <a class="bento-card" href="./rules.html">
+            <div>
+              <div class="bento-top" style="margin-bottom:14px">
+                <span class="bento-index mono">STANDARD I · 1,445 LINES · 126 SECTIONS</span>
+                <span class="bento-arrow"><svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
               </div>
+              <h3 class="bento-title">《衡天⊙ 多维战力量级体系（第三版）》</h3>
+              <p class="bento-desc">2026-10-23 最新第三版原文无删减直出：含新增<strong>完整书写原则</strong>、<strong>0.14.2 归因与知情度审查</strong>、<strong>超长篇自行通读流程</strong>、<strong>7.9 层级轴必检</strong>及全部十一部分标准。</p>
+            </div>
+            <div class="bento-progress-box" data-bento-progress="rules.html">
+              <div class="bento-progress-head">
+                <span data-prog-label>点击阅读完整无删减原文</span>
+                <span class="mono" style="color:var(--accent-gold)" data-prog-pct>0%</span>
+              </div>
+              <div class="resume-bar-wrap"><div class="resume-bar-fill" data-prog-fill style="width:0%"></div></div>
             </div>
           </a>
 
-          <a class="portal-card" href="./materials.html">
-            <div class="portal-banner" style="background-image:url('./static/img/banner-materials.jpg')">
-              <span class="portal-tag mono">STANDARD 02 · 物理数据库全文</span>
-            </div>
-            <div class="portal-body">
-              <h3 class="portal-title"><span>《材质与破坏能量数据库（第二版）》</span><span style="color:var(--accent-gold)">→</span></h3>
-              <p class="portal-desc">416 行原文无删减展示：破坏动词双轴定性、斩陨规则、常规物质粉碎能量密度、抗压/剪切/断裂韧性、相变潜热、行星/白矮星/中子星引力束缚能、撞击成坑与云层推算。</p>
-              <div class="portal-features">
-                <span class="mini-chip">416 行原文无删减</span>
-                <span class="mini-chip">宽屏/横向滚表适配</span>
-                <span class="mini-chip">与主体系双向互链</span>
+          <a class="bento-card" href="./materials.html">
+            <div>
+              <div class="bento-top" style="margin-bottom:14px">
+                <span class="bento-index mono">STANDARD II · 416 LINES · 34 SECTIONS</span>
+                <span class="bento-arrow"><svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
               </div>
+              <h3 class="bento-title">《材质与破坏能量数据库（第二版）》</h3>
+              <p class="bento-desc">配套工程物理参数全文：破坏动词双轴定性、斩陨规则、物质粉碎能量密度、抗压/剪切/断裂韧性、相变潜热、白矮星/中子星引力束缚能与撞击成坑推算。</p>
+            </div>
+            <div class="bento-progress-box" data-bento-progress="materials.html">
+              <div class="bento-progress-head">
+                <span data-prog-label>点击阅读完整无删减原文</span>
+                <span class="mono" style="color:var(--accent-gold)" data-prog-pct>0%</span>
+              </div>
+              <div class="resume-bar-wrap"><div class="resume-bar-fill" data-prog-fill style="width:0%"></div></div>
             </div>
           </a>
         </div>
       </section>
 
-      <section class="resume-hub" id="home-resume-hub" aria-label="浏览进度保存与断点续读">
-        <div class="section-head" style="margin-bottom:8px">
-          <h2 class="section-title"><span class="dot"></span>浏览进度保存与断点续读</h2>
-          <span class="section-sub">正在读取本地进度…</span>
-        </div>
-      </section>
-
-      <section class="scale-ribbon-section">
+      <section>
         <div class="section-head">
-          <h2 class="section-title"><span class="dot"></span>衡天⊙ 全域刻度速览带（由小到大）</h2>
-          <a href="./tiers.html" style="font-size:13.5px">查看完整 97 档递增天梯 →</a>
+          <div>
+            <span class="section-kicker mono">LOGARITHMIC SPECTRUM</span>
+            <h2 class="section-title">全域量级谱系速览（从小到大）</h2>
+          </div>
+          <a href="./tiers.html" style="font-size:13px;color:var(--accent-gold);display:inline-flex;align-items:center;gap:4px">查看全部 97 档标尺 <svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
         </div>
         <div class="scale-track">
           <a class="scale-node" style="--node-color:var(--dom-terrestrial)" href="./tier/insect.html">
@@ -199,22 +273,22 @@
           </a>
           <a class="scale-node" style="--node-color:var(--dom-cosmic)" href="./tier/system-std.html">
             <span class="scale-node-range mono">#57 · ⊙系▽ → ⊙构☆</span>
-            <span class="scale-node-title">球面/盘面通量覆盖区</span>
+            <span class="scale-node-title">球面/盘面通量覆盖</span>
             <span class="scale-node-energy mono">3.7×10⁴⁹ J ～ 3.7×10⁷⁶ J</span>
           </a>
           <a class="scale-node" style="--node-color:var(--accent-gold)" href="./tier/universe-extreme.html">
             <span class="scale-node-range mono">#79 · ⊙宇▽ → ⊙宇☆</span>
-            <span class="scale-node-title">宇宙五档（含极宇宙◆）</span>
+            <span class="scale-node-title">宇宙五档（含宇◆）</span>
             <span class="scale-node-energy mono">3.7×10⁷⁶ J ～ 10↑↑3 倍宇○</span>
           </a>
           <a class="scale-node" style="--node-color:var(--dom-fgh)" href="./tier/fgh-tower.html">
             <span class="scale-node-range mono">#84 · ⊙广·塔 → ⊙广·顶</span>
-            <span class="scale-node-title">广义无限区（FGH 7段）</span>
+            <span class="scale-node-title">广义无限区（FGH）</span>
             <span class="scale-node-energy mono">f₃ 幂塔 → f_ω → 不可计算</span>
           </a>
           <a class="scale-node" style="--node-color:var(--dom-beyond)" href="./tier/beyond-sky-top.html">
             <span class="scale-node-range mono">#90 · ⊙外·门 → ⊙天·最</span>
-            <span class="scale-node-title">论外与论天大基数区</span>
+            <span class="scale-node-title">论外与论天大基数</span>
             <span class="scale-node-energy mono">ℵ₀ → ℶ 不动点 → 莱茵哈特</span>
           </a>
         </div>
@@ -226,28 +300,28 @@
   <div class="resume-toast" id="resume-toast" role="status" aria-live="polite">
     <span class="resume-toast-text" id="resume-toast-text">上次浏览位置</span>
     <button type="button" class="resume-toast-btn" id="resume-toast-btn">继续浏览</button>
-    <button type="button" class="resume-toast-close" id="resume-toast-close" aria-label="关闭提示">×</button>
+    <button type="button" class="resume-toast-close" id="resume-toast-close" aria-label="关闭提示"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
   </div>
 
   <div class="floating-dock">
     
-    <button type="button" class="dock-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页" title="返回上一页">‹</button>
+    <button type="button" class="dock-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页" title="返回上一页"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
     <button type="button" class="dock-btn" id="dock-top-btn" title="回到顶部">
-      <svg class="progress-ring-svg" viewBox="0 0 44 44" aria-hidden="true">
-        <circle class="progress-ring-circle" id="dock-progress-circle" cx="22" cy="22" r="20"></circle>
+      <svg class="progress-ring-svg" viewBox="0 0 40 40" aria-hidden="true">
+        <circle class="progress-ring-circle" id="dock-progress-circle" cx="20" cy="20" r="18"></circle>
       </svg>
-      <span>↑</span>
+      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
     </button>
   </div>
 
-  <!-- Global Search Modal -->
+  <!-- Global Search Command Palette -->
   <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站即时检索">
     <div class="modal-dialog">
       <div class="search-modal-head">
-        <span style="font-size:18px">🔍</span>
+        <span style="color:var(--text-muted);display:inline-flex"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
         <input type="search" class="search-modal-input" id="search-modal-input" placeholder="搜索角色、量级代字（宇◆、恒○）、第三版规则或材质（归因、白矮星、花岗岩）…" autocomplete="off">
-        <a href="./search.html" class="chip-btn" style="white-space:nowrap">独立搜索页 ↗</a>
-        <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭">✕</button>
+        <a href="./search.html" class="chip-btn">检索页 <svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+        <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
@@ -264,10 +338,10 @@
   <div class="modal-backdrop" id="history-modal" role="dialog" aria-modal="true" aria-label="浏览进度与足迹">
     <div class="modal-dialog">
       <div class="search-modal-head" style="justify-content:space-between">
-        <strong style="font-size:16px">📖 浏览进度保存与最近足迹</strong>
+        <strong style="font-size:14.5px;display:inline-flex;align-items:center;gap:8px"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg><span>浏览进度与最近足迹</span></strong>
         <div style="display:flex;align-items:center;gap:8px">
-          <button type="button" class="chip-btn" id="history-clear-btn">清空全部记录</button>
-          <button type="button" class="resume-toast-close" id="history-close-btn" aria-label="关闭">✕</button>
+          <button type="button" class="chip-btn" id="history-clear-btn">清空记录</button>
+          <button type="button" class="resume-toast-close" id="history-close-btn" aria-label="关闭"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
         </div>
       </div>
       <div class="search-modal-body" id="history-modal-body"></div>
@@ -277,15 +351,17 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div>
-        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 依据《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》构建
+        <strong style="color:var(--text-primary);font-weight:600">衡天⊙ PowerWiki</strong>
+        <span style="margin:0 6px;opacity:0.4">·</span>
+        <span>《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》</span>
       </div>
       <div class="footer-links">
         <a href="./index.html">首页</a>
         <a href="./characters.html">角色分类</a>
         <a href="./tiers.html">量级分类</a>
-        <a href="./rules.html">衡天体系(第三版)全文</a>
+        <a href="./rules.html">衡天体系全文</a>
         <a href="./materials.html">材质数据库全文</a>
-        <a href="./search.html">全站搜索</a>
+        <a href="./search.html">全站检索</a>
       </div>
     </div>
   </footer>

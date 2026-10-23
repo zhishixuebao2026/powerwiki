@@ -1,7 +1,9 @@
 /* ==========================================================================
-   衡天⊙ PowerWiki — Client Interactive Engine v3.0 (Zero External Dependencies)
-   - 量级分类：从小到大递增排布（支持分区卡片 / 连续天梯 / 紧凑总表 + 区间筛选）
-   - 角色分类：支持「首字母 A–Z」与「量级从小到大」双排序 + 七维浑仪星盘
+   衡天⊙ PowerWiki — Client Interactive Engine v4.0
+   - 120fps rAF Scroll Engine (Cached Offsets + GPU scaleX Progress Bar)
+   - Full Scroll-Lock & Overscroll Containment for Modals & Mobile Drawers
+   - Tiers: Strictly 从小到大 (#01 -> #97) across Card / Timeline / Sheet views
+   - Characters: Dual Sort (量级从小到大 & 首字母 A–Z) + 7D Astrolabe Modal
    ========================================================================== */
 (function () {
   "use strict";
@@ -15,6 +17,15 @@
     tierPrefs: "pw_tier_prefs_v3",
     charPrefs: "pw_char_prefs_v3",
     readerPrefs: "pw_reader_prefs_v3"
+  };
+
+  const ICONS = {
+    sun: '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+    moon: '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
+    arrowUpRight: '<svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
+    search: '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+    check: '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    bookmark: '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>'
   };
 
   const ROOT_PREFIX = document.documentElement.getAttribute("data-root") || "./";
@@ -71,12 +82,53 @@
     return Math.floor(sec / 86400) + " 天前";
   }
 
-  /* Build SVG 7-Dimension Observatory Radar Chart */
+  /* --------------------------------------------------------------------------
+     Centralized Scroll Lock & Drawer Backdrop Manager (Eliminates Scroll Bleed)
+     -------------------------------------------------------------------------- */
+  function syncScrollLock() {
+    const anyModalOpen = Boolean(document.querySelector(".modal-backdrop.open"));
+    const nav = document.getElementById("main-nav");
+    const sidebar = document.getElementById("doc-sidebar");
+    const drawerBackdrop = document.getElementById("drawer-backdrop");
+
+    const navOpen = Boolean(nav && nav.classList.contains("open"));
+    const tocOpen = Boolean(sidebar && sidebar.classList.contains("drawer-open"));
+
+    if (drawerBackdrop) {
+      drawerBackdrop.classList.toggle("open", navOpen || tocOpen);
+    }
+    document.body.classList.toggle(
+      "is-scroll-locked",
+      anyModalOpen || navOpen || tocOpen
+    );
+  }
+
+  function closeAllDrawersAndModals() {
+    document.querySelectorAll(".modal-backdrop.open").forEach((m) => m.classList.remove("open"));
+    const nav = document.getElementById("main-nav");
+    if (nav) nav.classList.remove("open");
+    const sidebar = document.getElementById("doc-sidebar");
+    if (sidebar) sidebar.classList.remove("drawer-open");
+    syncScrollLock();
+  }
+
+  function scrollToElementWithOffset(el, smooth) {
+    if (!el) return;
+    const header = document.querySelector(".site-header");
+    const alphaBar = document.querySelector(".alpha-bar.visible");
+    const headerH = header ? header.getBoundingClientRect().height : 60;
+    const alphaH = alphaBar ? alphaBar.getBoundingClientRect().height + 12 : 0;
+    const offset = headerH + alphaH + 18;
+    const targetY = Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset);
+    window.scrollTo({ top: targetY, behavior: smooth ? "smooth" : "auto" });
+  }
+
+  /* Build SVG 7-Dimension Astrolabe Chart */
   function buildHeptadRadarSVG(dims, tierOrder) {
     const axes = ["破", "控", "域", "御", "速", "算", "性"];
-    const cx = 105;
-    const cy = 105;
-    const maxR = 72;
+    const cx = 100;
+    const cy = 100;
+    const maxR = 68;
     const baseRatio = Math.min(0.95, Math.max(0.28, (tierOrder || 30) / 97));
 
     function scoreAxis(key) {
@@ -113,7 +165,7 @@
             return `${(cx + maxR * r * Math.cos(ang)).toFixed(1)},${(cy + maxR * r * Math.sin(ang)).toFixed(1)}`;
           })
           .join(" ");
-        return `<polygon points="${pts}" fill="none" stroke="rgba(148,174,228,0.2)" stroke-width="1"/>`;
+        return `<polygon points="${pts}" fill="none" stroke="var(--border-medium)" stroke-width="1"/>`;
       })
       .join("");
 
@@ -122,11 +174,11 @@
         const ang = -Math.PI / 2 + (i * 2 * Math.PI) / 7;
         const x2 = (cx + maxR * Math.cos(ang)).toFixed(1);
         const y2 = (cy + maxR * Math.sin(ang)).toFixed(1);
-        const lx = (cx + (maxR + 18) * Math.cos(ang)).toFixed(1);
-        const ly = (cy + (maxR + 18) * Math.sin(ang) + 4).toFixed(1);
+        const lx = (cx + (maxR + 17) * Math.cos(ang)).toFixed(1);
+        const ly = (cy + (maxR + 17) * Math.sin(ang) + 4).toFixed(1);
         return `
-          <line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="rgba(148,174,228,0.18)" stroke-width="1"/>
-          <text x="${lx}" y="${ly}" text-anchor="middle" fill="var(--accent-gold)" font-size="12" font-weight="700">${label}</text>`;
+          <line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="var(--border-subtle)" stroke-width="1"/>
+          <text x="${lx}" y="${ly}" text-anchor="middle" fill="var(--accent-gold)" font-size="11.5" font-weight="600">${label}</text>`;
       })
       .join("");
 
@@ -141,14 +193,14 @@
 
     const polyPts = dataPts.map((p) => `${p.x},${p.y}`).join(" ");
     const dots = dataPts
-      .map((p) => `<circle cx="${p.x}" cy="${p.y}" r="3.2" fill="var(--accent-gold)"/>`)
+      .map((p) => `<circle cx="${p.x}" cy="${p.y}" r="3" fill="var(--accent-gold)"/>`)
       .join("");
 
     return `
-      <svg width="210" height="210" viewBox="0 0 210 210" aria-label="七维战力星盘">
+      <svg width="200" height="200" viewBox="0 0 200 200" aria-label="七维战力浑仪">
         ${rings}
         ${spokes}
-        <polygon points="${polyPts}" fill="rgba(236,185,86,0.24)" stroke="var(--accent-gold)" stroke-width="2"/>
+        <polygon points="${polyPts}" fill="var(--accent-gold-soft)" stroke="var(--accent-gold)" stroke-width="1.75"/>
         ${dots}
       </svg>`;
   }
@@ -161,8 +213,8 @@
     const updateIcon = () => {
       if (!btn) return;
       const cur = document.documentElement.getAttribute("data-theme") || "dark";
-      btn.innerHTML = cur === "dark" ? "☀️" : "🌙";
-      btn.setAttribute("title", cur === "dark" ? "切换至浅色星历模式" : "切换至深空观测模式");
+      btn.innerHTML = cur === "dark" ? ICONS.sun : ICONS.moon;
+      btn.setAttribute("title", cur === "dark" ? "切换至浅色纸本主题" : "切换至深空黑曜主题");
     };
     updateIcon();
     if (btn) {
@@ -179,18 +231,42 @@
   }
 
   /* --------------------------------------------------------------------------
-     2. Mobile Navigation Menu
+     2. Mobile Navigation & Drawer Backdrop
      -------------------------------------------------------------------------- */
   function initMobileNav() {
     const btn = document.getElementById("mobile-menu-btn");
     const nav = document.getElementById("main-nav");
+    const drawerBackdrop = document.getElementById("drawer-backdrop");
+
+    if (drawerBackdrop) {
+      drawerBackdrop.addEventListener("click", () => {
+        closeAllDrawersAndModals();
+      });
+    }
+
     if (!btn || !nav) return;
     btn.addEventListener("click", () => {
+      const sidebar = document.getElementById("doc-sidebar");
+      if (sidebar) sidebar.classList.remove("drawer-open");
       nav.classList.toggle("open");
+      syncScrollLock();
     });
-    document.addEventListener("click", (e) => {
-      if (!nav.contains(e.target) && !btn.contains(e.target)) {
+
+    nav.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
         nav.classList.remove("open");
+        syncScrollLock();
+      });
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 1080) {
+        if (nav.classList.contains("open")) nav.classList.remove("open");
+        const sidebar = document.getElementById("doc-sidebar");
+        if (sidebar && sidebar.classList.contains("drawer-open")) {
+          sidebar.classList.remove("drawer-open");
+        }
+        syncScrollLock();
       }
     });
   }
@@ -206,9 +282,7 @@
     if (restoreTarget && restoreTarget.url === currentUrl) {
       sessionStorage.removeItem(STORAGE_KEYS.restoreScroll);
       requestAnimationFrame(() => {
-        setTimeout(() => {
-          window.scrollTo({ top: restoreTarget.scrollY || 0, behavior: "instant" });
-        }, 45);
+        window.scrollTo({ top: restoreTarget.scrollY || 0, behavior: "auto" });
       });
     }
 
@@ -233,10 +307,10 @@
           scrollTimer = null;
           const st = safeGetJSON(sessionStorage, STORAGE_KEYS.navStack, []);
           if (st.length > 0 && st[st.length - 1].url === currentUrl) {
-            st[st.length - 1].scrollY = window.scrollY || 0;
+            st[st.length - 1].scrollY = Math.round(window.scrollY || 0);
             safeSetJSON(sessionStorage, STORAGE_KEYS.navStack, st);
           }
-        }, 180);
+        }, 220);
       },
       { passive: true }
     );
@@ -278,8 +352,45 @@
   }
 
   /* --------------------------------------------------------------------------
-     4. Reading & Browsing Progress Saving, Bookmarking & Resume Toast
+     4. 120fps rAF Scroll Progress, Cached Heading Offsets & Resume Toast
      -------------------------------------------------------------------------- */
+  let cachedHeadingPositions = [];
+
+  function rebuildHeadingCache() {
+    const nodes = Array.from(
+      document.querySelectorAll(
+        ".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id], .tier-group-block[id]"
+      )
+    );
+    const sy = window.scrollY || 0;
+    cachedHeadingPositions = nodes.map((el) => {
+      const titleEl = el.matches(".tier-group-block")
+        ? el.querySelector(".tier-group-title")
+        : el;
+      const txt = titleEl ? titleEl.textContent.replace(/#$/, "").trim() : PAGE_TITLE;
+      return {
+        id: el.id || "",
+        text: txt,
+        top: el.getBoundingClientRect().top + sy
+      };
+    });
+  }
+
+  function getActiveHeadingFromCache() {
+    if (!cachedHeadingPositions.length) rebuildHeadingCache();
+    if (!cachedHeadingPositions.length) return { id: "", text: PAGE_TITLE };
+    const threshold = (window.scrollY || 0) + 130;
+    let active = cachedHeadingPositions[0];
+    for (let i = 0; i < cachedHeadingPositions.length; i++) {
+      if (cachedHeadingPositions[i].top <= threshold) {
+        active = cachedHeadingPositions[i];
+      } else {
+        break;
+      }
+    }
+    return active;
+  }
+
   function recordFootprint() {
     if (PAGE_ID === "index.html") return;
     let list = safeGetJSON(localStorage, STORAGE_KEYS.footprints, []);
@@ -310,15 +421,18 @@
       PAGE_TYPE === "tier-detail" ||
       PAGE_TYPE === "char-detail";
 
+    rebuildHeadingCache();
+    window.addEventListener("load", rebuildHeadingCache);
+    window.addEventListener("resize", rebuildHeadingCache);
+
     const updateHistoryDot = () => {
       if (!historyBtn) return;
       const prog = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
       const fp = safeGetJSON(localStorage, STORAGE_KEYS.footprints, []);
-      if (Object.keys(prog).length > 0 || fp.length > 0) {
-        historyBtn.classList.add("has-progress");
-      } else {
-        historyBtn.classList.remove("has-progress");
-      }
+      historyBtn.classList.toggle(
+        "has-progress",
+        Object.keys(prog).length > 0 || fp.length > 0
+      );
     };
     updateHistoryDot();
 
@@ -328,46 +442,26 @@
       });
     }
 
-    function getCurrentHeading() {
-      const headings = Array.from(
-        document.querySelectorAll(
-          ".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id], .tier-group-block[id]"
-        )
-      );
-      const threshold = window.scrollY + 140;
-      let active = headings[0] || null;
-      for (const h of headings) {
-        if (h.offsetTop <= threshold) {
-          active = h;
-        } else {
-          break;
-        }
-      }
-      if (!active) return { id: "", text: PAGE_TITLE };
-      const titleEl = active.matches(".tier-group-block")
-        ? active.querySelector(".tier-group-title")
-        : active;
-      const txt = titleEl ? titleEl.textContent.replace(/#$/, "").trim() : PAGE_TITLE;
-      return { id: active.id || "", text: txt };
-    }
-
-    function calcScrollPct() {
+    function getScrollMetrics() {
       const docEl = document.documentElement;
       const maxScroll = Math.max(1, docEl.scrollHeight - window.innerHeight);
-      if (docEl.scrollHeight <= window.innerHeight + 40) return 100;
-      return Math.min(100, Math.max(0, Math.round((window.scrollY / maxScroll) * 100)));
+      if (docEl.scrollHeight <= window.innerHeight + 40) {
+        return { ratio: 1, pct: 100 };
+      }
+      const ratio = Math.min(1, Math.max(0, (window.scrollY || 0) / maxScroll));
+      return { ratio, pct: Math.round(ratio * 100) };
     }
 
     function saveNow(manualBookmark) {
       if (!isTrackable) return;
-      const pct = calcScrollPct();
+      const { pct } = getScrollMetrics();
       const allProg = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
-      const curH = getCurrentHeading();
+      const curH = getActiveHeadingFromCache();
       allProg[PAGE_ID] = {
         pageId: PAGE_ID,
         title: PAGE_TITLE,
         pct: pct,
-        scrollY: Math.round(window.scrollY),
+        scrollY: Math.round(window.scrollY || 0),
         headingId: curH.id,
         headingText: curH.text,
         bookmarked: Boolean(manualBookmark || (allProg[PAGE_ID] && allProg[PAGE_ID].bookmarked)),
@@ -376,7 +470,7 @@
       safeSetJSON(localStorage, STORAGE_KEYS.progress, allProg);
       updateHistoryDot();
       if (liveStatus) {
-        liveStatus.textContent = `浏览进度 ${pct}% · 已自动保存`;
+        liveStatus.textContent = `进度 ${pct}% · 已保存`;
       }
     }
 
@@ -384,45 +478,58 @@
       bookmarkBtn.addEventListener("click", () => {
         saveNow(true);
         const orig = bookmarkBtn.innerHTML;
-        bookmarkBtn.innerHTML = "✓ 已保存位置";
+        bookmarkBtn.innerHTML = `${ICONS.check}<span>已保存</span>`;
         bookmarkBtn.classList.add("active");
         setTimeout(() => {
           bookmarkBtn.innerHTML = orig;
+          bookmarkBtn.classList.remove("active");
         }, 1600);
       });
     }
 
     let saveTimer = null;
-    function updateVisualProgress() {
-      const pct = calcScrollPct();
-      if (topBar) topBar.style.width = pct + "%";
+    let rafPending = false;
+
+    function applyFrame() {
+      rafPending = false;
+      const { ratio, pct } = getScrollMetrics();
+      if (topBar) topBar.style.transform = `scaleX(${ratio.toFixed(4)})`;
       if (tocPct) tocPct.textContent = pct + "%";
       if (liveStatus) liveStatus.textContent = `进度 ${pct}%`;
       if (ringCircle) {
-        const circumference = 126;
-        ringCircle.style.strokeDashoffset = String(circumference - (circumference * pct) / 100);
+        const circumference = 114;
+        ringCircle.style.strokeDashoffset = String(circumference - circumference * ratio);
       }
 
       if (isTrackable) {
         if (saveTimer) clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => saveNow(false), 200);
+        saveTimer = setTimeout(() => saveNow(false), 260);
       }
     }
 
-    window.addEventListener("scroll", updateVisualProgress, { passive: true });
-    updateVisualProgress();
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!rafPending) {
+          rafPending = true;
+          requestAnimationFrame(applyFrame);
+        }
+      },
+      { passive: true }
+    );
+    applyFrame();
 
     if (isTrackable && !location.hash) {
       const allProg = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
       const saved = allProg[PAGE_ID];
       const toast = document.getElementById("resume-toast");
-      if (saved && saved.scrollY > 300 && saved.pct >= 2 && saved.pct <= 98 && toast) {
+      if (saved && saved.scrollY > 320 && saved.pct >= 2 && saved.pct <= 98 && toast) {
         const txtEl = document.getElementById("resume-toast-text");
         const goBtn = document.getElementById("resume-toast-btn");
         const closeBtn = document.getElementById("resume-toast-close");
         const secLabel = saved.headingText ? `「${saved.headingText}」` : "";
         if (txtEl) {
-          txtEl.textContent = `上次浏览到 ${secLabel}（${saved.pct}%）`;
+          txtEl.textContent = `上次浏览至 ${secLabel}（${saved.pct}%）`;
         }
         toast.classList.add("show");
         if (goBtn) {
@@ -433,7 +540,7 @@
               const hEl = document.getElementById(saved.headingId);
               if (hEl) {
                 hEl.classList.add("flash-highlight");
-                setTimeout(() => hEl.classList.remove("flash-highlight"), 2200);
+                setTimeout(() => hEl.classList.remove("flash-highlight"), 2000);
               }
             }
           });
@@ -448,92 +555,64 @@
   }
 
   /* --------------------------------------------------------------------------
-     5. Home Page Resume Hub & Global History Modal
+     5. Home Bento Live Progress Integration & History Modal
      -------------------------------------------------------------------------- */
   function renderHomeResumeHub() {
-    const hub = document.getElementById("home-resume-hub");
-    if (!hub) return;
-
     const allProg = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
     const footprints = safeGetJSON(localStorage, STORAGE_KEYS.footprints, []);
 
-    const docEntries = [
-      {
-        key: "rules.html",
-        defaultTitle: "《衡天⊙ 多维战力量级体系（第三版）》全文",
-        subtitle: "最新第三版判定通则、使用流程与 97 档标尺"
-      },
-      {
-        key: "materials.html",
-        defaultTitle: "《材质与破坏能量数据库（第二版）》全文",
-        subtitle: "工程材料强度、相变与天体引力束缚能"
+    // Hydrate embedded reading progress boxes inside the two Standard Bento cards
+    ["rules.html", "materials.html"].forEach((docKey) => {
+      const mount = document.querySelector(`[data-bento-progress="${docKey}"]`);
+      if (!mount) return;
+      const p = allProg[docKey];
+      const pct = p ? p.pct : 0;
+      const labelEl = mount.querySelector("[data-prog-label]");
+      const pctEl = mount.querySelector("[data-prog-pct]");
+      const fillEl = mount.querySelector("[data-prog-fill]");
+      if (pctEl) pctEl.textContent = pct + "%";
+      if (fillEl) fillEl.style.width = pct + "%";
+      if (labelEl) {
+        labelEl.textContent =
+          p && p.scrollY > 120
+            ? `断点续读：${p.headingText || "上次位置"} · ${timeAgo(p.ts)}`
+            : "点击阅读完整无删减原文";
       }
-    ];
+      const parentCard = mount.closest("a.bento-card");
+      if (parentCard && p && p.scrollY > 120) {
+        parentCard.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetUrl = new URL(resolveUrl(docKey), location.href).href.split("#")[0];
+          safeSetJSON(sessionStorage, STORAGE_KEYS.restoreScroll, {
+            url: targetUrl,
+            scrollY: p.scrollY
+          });
+          location.href = targetUrl;
+        });
+      }
+    });
 
-    const cardsHtml = docEntries
-      .map((doc) => {
-        const p = allProg[doc.key];
-        const pct = p ? p.pct : 0;
-        const statusText = p
-          ? `上次位置：${escapeHTML(p.headingText || "文档开头")} · ${timeAgo(p.ts)}`
-          : `${doc.subtitle} · 尚未开始阅读`;
-        const actionLabel = p && p.scrollY > 120 ? "断点续读 →" : "阅读全文 →";
-        const href = resolveUrl(doc.key) + (p && p.headingId ? "#" + p.headingId : "");
-        return `
-        <a class="resume-card" href="${href}" data-resume-key="${doc.key}" data-resume-y="${p ? p.scrollY : 0}">
-          <div class="resume-card-top">
-            <div class="resume-doc-title">${doc.defaultTitle}</div>
-            <span class="resume-pct-badge mono">${pct}%</span>
-          </div>
-          <div class="resume-bar-wrap">
-            <div class="resume-bar-fill" style="width:${pct}%"></div>
-          </div>
-          <div class="resume-meta">
-            <span>${statusText}</span>
-            <strong style="color:var(--accent-gold)">${actionLabel}</strong>
-          </div>
-        </a>`;
-      })
-      .join("");
-
-    let fpHtml = "";
-    if (footprints.length > 0) {
-      const pills = footprints
-        .slice(0, 8)
-        .map(
-          (f) =>
-            `<a class="footprint-pill" href="${resolveUrl(f.pageId)}"><span>${escapeHTML(f.title)}</span><span style="opacity:0.6;font-size:11px">${timeAgo(f.ts)}</span></a>`
-        )
-        .join("");
-      fpHtml = `
-        <div class="recent-footprints">
-          <span class="footprint-label">最近浏览足迹：</span>
-          ${pills}
-          <button type="button" class="chip-btn" id="home-clear-history" style="margin-left:auto;font-size:11.5px;padding:3px 10px">清空记录</button>
-        </div>`;
+    const fpMount = document.getElementById("home-footprints-mount");
+    if (!fpMount) return;
+    if (footprints.length === 0) {
+      fpMount.innerHTML = "";
+      return;
     }
 
-    hub.innerHTML = `
-      <div class="section-head" style="margin-bottom:14px">
-        <h2 class="section-title"><span class="dot"></span>浏览进度保存与断点续读</h2>
-        <span class="section-sub">自动记忆阅读位置、分类浏览偏好与最近访问足迹</span>
-      </div>
-      <div class="resume-grid">${cardsHtml}</div>
-      ${fpHtml}
-    `;
+    const pills = footprints
+      .slice(0, 8)
+      .map(
+        (f) =>
+          `<a class="footprint-pill" href="${resolveUrl(f.pageId)}"><span>${escapeHTML(f.title)}</span><span class="mono" style="opacity:0.55;font-size:10.5px">${timeAgo(f.ts)}</span></a>`
+      )
+      .join("");
 
-    hub.querySelectorAll("[data-resume-y]").forEach((link) => {
-      link.addEventListener("click", (e) => {
-        const y = Number(link.getAttribute("data-resume-y") || 0);
-        const key = link.getAttribute("data-resume-key");
-        if (y > 120 && key) {
-          e.preventDefault();
-          const targetUrl = new URL(resolveUrl(key), location.href).href.split("#")[0];
-          safeSetJSON(sessionStorage, STORAGE_KEYS.restoreScroll, { url: targetUrl, scrollY: y });
-          location.href = targetUrl;
-        }
-      });
-    });
+    fpMount.innerHTML = `
+      <div class="footprints-strip">
+        <span style="font-size:12px;color:var(--text-muted);white-space:nowrap;flex-shrink:0">最近足迹</span>
+        ${pills}
+        <button type="button" class="chip-btn" id="home-clear-history" style="margin-left:auto">清空记录</button>
+      </div>`;
 
     const clearBtn = document.getElementById("home-clear-history");
     if (clearBtn) {
@@ -553,21 +632,26 @@
     const clearAllBtn = document.getElementById("history-clear-btn");
     if (!openBtn || !backdrop || !body) return;
 
+    function closeModal() {
+      backdrop.classList.remove("open");
+      syncScrollLock();
+    }
+
     function renderModalContent() {
       const allProg = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
       const footprints = safeGetJSON(localStorage, STORAGE_KEYS.footprints, []);
       const progList = Object.values(allProg).sort((a, b) => (b.ts || 0) - (a.ts || 0));
 
-      let html = `<div style="margin-bottom:18px"><div style="font-weight:700;margin-bottom:10px;color:var(--accent-gold)">📖 已保存的浏览与阅读进度</div>`;
+      let html = `<div style="margin-bottom:18px"><div style="font-size:12px;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;color:var(--accent-gold)">已保存的浏览与阅读进度</div>`;
       if (progList.length === 0) {
-        html += `<div style="color:var(--text-muted);font-size:13.5px;padding:10px 0">暂无已保存进度。阅读标准全文或浏览量级/角色列表时会自动记录滚动位置。</div>`;
+        html += `<div style="color:var(--text-muted);font-size:13px;padding:10px 4px">暂无已保存进度。阅读标准全文或浏览量级/角色列表时会自动记录滚动位置。</div>`;
       } else {
         html += progList
           .map(
             (p) => `
           <a class="search-hit js-resume-jump" href="${resolveUrl(p.pageId)}" data-jump-page="${p.pageId}" data-jump-y="${p.scrollY || 0}">
             <div class="search-hit-top">
-              <span class="search-hit-title">${p.bookmarked ? "🔖 " : ""}${escapeHTML(p.title)}</span>
+              <span class="search-hit-title">${escapeHTML(p.title)}</span>
               <span class="search-hit-type mono">${p.pct}% · ${timeAgo(p.ts)}</span>
             </div>
             <div class="search-hit-snippet">上次位置：${escapeHTML(p.headingText || "页面顶部")}</div>
@@ -575,9 +659,9 @@
           )
           .join("");
       }
-      html += `</div><div><div style="font-weight:700;margin-bottom:10px;color:var(--accent-blue)">🧭 最近访问足迹</div>`;
+      html += `</div><div><div style="font-size:12px;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;color:var(--text-secondary)">最近访问足迹</div>`;
       if (footprints.length === 0) {
-        html += `<div style="color:var(--text-muted);font-size:13.5px;padding:8px 0">暂无最近访问记录。</div>`;
+        html += `<div style="color:var(--text-muted);font-size:13px;padding:8px 4px">暂无最近访问记录。</div>`;
       } else {
         html += footprints
           .map(
@@ -600,7 +684,7 @@
           const y = Number(el.getAttribute("data-jump-y") || 0);
           if (page === PAGE_ID) {
             e.preventDefault();
-            backdrop.classList.remove("open");
+            closeModal();
             window.scrollTo({ top: y, behavior: "smooth" });
           } else if (y > 80) {
             e.preventDefault();
@@ -615,11 +699,12 @@
     openBtn.addEventListener("click", () => {
       renderModalContent();
       backdrop.classList.add("open");
+      syncScrollLock();
     });
 
-    if (closeBtn) closeBtn.addEventListener("click", () => backdrop.classList.remove("open"));
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
     backdrop.addEventListener("click", (e) => {
-      if (e.target === backdrop) backdrop.classList.remove("open");
+      if (e.target === backdrop) closeModal();
     });
     if (clearAllBtn) {
       clearAllBtn.addEventListener("click", () => {
@@ -633,7 +718,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     6. Document Reader (ScrollSpy TOC, Font Size, Wide Mode & In-Doc Finder)
+     6. Document Reader (120fps rAF ScrollSpy + Auto-Sync TOC + In-Doc Finder)
      -------------------------------------------------------------------------- */
   function initDocumentReader() {
     const sidebar = document.getElementById("doc-sidebar");
@@ -642,7 +727,7 @@
     const dockTocBtn = document.getElementById("dock-toc-btn");
     const mdBody = document.querySelector(".markdown-body");
 
-    const prefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, { fontSize: 15.8, wide: false });
+    const prefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, { fontSize: 15.5, wide: false });
     if (mdBody && prefs.fontSize) {
       mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
     }
@@ -655,11 +740,15 @@
     const wideBtn = document.getElementById("doc-wide-toggle");
     if (wideBtn) wideBtn.classList.toggle("active", Boolean(prefs.wide));
 
+    let rebuildTocOffsets = () => {};
+
     if (fontDecBtn && mdBody) {
       fontDecBtn.addEventListener("click", () => {
         prefs.fontSize = Math.max(13.5, Number((prefs.fontSize - 1).toFixed(1)));
         mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
         safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+        rebuildHeadingCache();
+        rebuildTocOffsets();
       });
     }
     if (fontIncBtn && mdBody) {
@@ -667,6 +756,8 @@
         prefs.fontSize = Math.min(20.5, Number((prefs.fontSize + 1).toFixed(1)));
         mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
         safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+        rebuildHeadingCache();
+        rebuildTocOffsets();
       });
     }
     if (wideBtn) {
@@ -675,6 +766,8 @@
         document.body.classList.toggle("wide-doc-mode", prefs.wide);
         wideBtn.classList.toggle("active", prefs.wide);
         safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+        rebuildHeadingCache();
+        rebuildTocOffsets();
       });
     }
 
@@ -702,14 +795,14 @@
       if (jump) {
         findIdx = (findIdx + 1) % findMatches.length;
         const target = findMatches[findIdx];
-        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        scrollToElementWithOffset(target, true);
         target.classList.remove("flash-highlight");
         void target.offsetWidth;
         target.classList.add("flash-highlight");
         if (findCountEl) findCountEl.textContent = `${findIdx + 1}/${findMatches.length}`;
       } else {
         findIdx = -1;
-        if (findCountEl) findCountEl.textContent = `共 ${findMatches.length} 处`;
+        if (findCountEl) findCountEl.textContent = `${findMatches.length} 处`;
       }
     }
 
@@ -736,44 +829,106 @@
           navigator.clipboard.writeText(url).catch(() => {});
         }
         const orig = anchor.textContent;
-        anchor.textContent = "✓ 已复制";
+        anchor.textContent = "已复制";
         anchor.style.opacity = "1";
         setTimeout(() => {
           anchor.textContent = orig;
           anchor.style.opacity = "";
-        }, 1400);
+        }, 1200);
       });
     });
 
     if (!sidebar || !tocNav) return;
 
     const tocLinks = Array.from(tocNav.querySelectorAll(".toc-item"));
-    const headingMap = tocLinks
-      .map((link) => {
-        const id = link.getAttribute("href").replace(/^#/, "");
-        const el = document.getElementById(id);
-        return el ? { link, el, id } : null;
-      })
-      .filter(Boolean);
+    let spyItems = [];
+    let activeLink = null;
+    let pointerInsideToc = false;
 
-    function onScrollSpy() {
-      const scrollPos = window.scrollY + 140;
-      let current = headingMap[0] || null;
-      for (const item of headingMap) {
-        if (item.el.offsetTop <= scrollPos) {
-          current = item;
+    tocNav.addEventListener("pointerenter", () => (pointerInsideToc = true));
+    tocNav.addEventListener("pointerleave", () => (pointerInsideToc = false));
+
+    rebuildTocOffsets = () => {
+      const sy = window.scrollY || 0;
+      spyItems = tocLinks
+        .map((link) => {
+          const id = link.getAttribute("href").replace(/^#/, "");
+          const el = document.getElementById(id);
+          return el ? { link, el, id, top: el.getBoundingClientRect().top + sy } : null;
+        })
+        .filter(Boolean);
+    };
+    rebuildTocOffsets();
+    window.addEventListener("load", rebuildTocOffsets);
+    window.addEventListener("resize", rebuildTocOffsets);
+    if (typeof ResizeObserver !== "undefined" && mdBody) {
+      let roTimer = null;
+      const ro = new ResizeObserver(() => {
+        if (roTimer) clearTimeout(roTimer);
+        roTimer = setTimeout(() => {
+          rebuildHeadingCache();
+          rebuildTocOffsets();
+        }, 120);
+      });
+      ro.observe(mdBody);
+    }
+
+    // Smoothly scroll to section with exact sticky offset when clicking TOC
+    tocLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        const id = link.getAttribute("href").replace(/^#/, "");
+        const targetEl = document.getElementById(id);
+        if (targetEl) {
+          e.preventDefault();
+          sidebar.classList.remove("drawer-open");
+          syncScrollLock();
+          history.replaceState(null, "", "#" + id);
+          scrollToElementWithOffset(targetEl, true);
+        }
+      });
+    });
+
+    let spyTicking = false;
+    function runScrollSpy() {
+      spyTicking = false;
+      if (!spyItems.length) return;
+      const scrollPos = (window.scrollY || 0) + 125;
+      let current = spyItems[0];
+      for (let i = 0; i < spyItems.length; i++) {
+        if (spyItems[i].top <= scrollPos) {
+          current = spyItems[i];
         } else {
           break;
         }
       }
-      tocLinks.forEach((l) => l.classList.remove("active"));
-      if (current) {
-        current.link.classList.add("active");
+      if (current && current.link !== activeLink) {
+        if (activeLink) activeLink.classList.remove("active");
+        activeLink = current.link;
+        activeLink.classList.add("active");
+
+        // Keep active TOC item comfortably inside visible area of sidebar without jerking page
+        if (!pointerInsideToc && activeLink.offsetParent !== null) {
+          const navRect = tocNav.getBoundingClientRect();
+          const linkRect = activeLink.getBoundingClientRect();
+          if (linkRect.top < navRect.top + 36 || linkRect.bottom > navRect.bottom - 36) {
+            const delta = linkRect.top - navRect.top - navRect.height * 0.38;
+            tocNav.scrollTop += delta;
+          }
+        }
       }
     }
 
-    window.addEventListener("scroll", onScrollSpy, { passive: true });
-    onScrollSpy();
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!spyTicking) {
+          spyTicking = true;
+          requestAnimationFrame(runScrollSpy);
+        }
+      },
+      { passive: true }
+    );
+    runScrollSpy();
 
     if (tocFilter) {
       tocFilter.addEventListener("input", () => {
@@ -787,18 +942,16 @@
 
     if (dockTocBtn) {
       dockTocBtn.addEventListener("click", () => {
+        const nav = document.getElementById("main-nav");
+        if (nav) nav.classList.remove("open");
         sidebar.classList.toggle("drawer-open");
-      });
-      tocLinks.forEach((link) => {
-        link.addEventListener("click", () => {
-          sidebar.classList.remove("drawer-open");
-        });
+        syncScrollLock();
       });
     }
   }
 
   /* --------------------------------------------------------------------------
-     7. Interactive Tiers Explorer (tiers.html) — 量级从小到大排列
+     7. Interactive Tiers Explorer (tiers.html) — Strictly 从小到大 (#01 -> #97)
      -------------------------------------------------------------------------- */
   function initTiersExplorer() {
     const mount = document.getElementById("tiers-explorer-mount");
@@ -856,8 +1009,7 @@
     }
 
     function renderCard(t) {
-      const orderText = t.unranked ? "兜底暂存" : `#${String(t.order).padStart(2, "0")} / 97`;
-      const barPct = t.unranked ? 0 : Math.max(3, Math.round((t.order / 97) * 100));
+      const orderText = t.unranked ? "待定" : `#${String(t.order).padStart(2, "0")}`;
       return `
         <a class="tier-card" data-domain="${t.domain}" href="${resolveUrl("tier/" + t.slug + ".html")}">
           <div class="tier-card-top">
@@ -866,16 +1018,41 @@
           </div>
           <div class="tier-card-name">
             <span>${escapeHTML(t.name)}</span>
-            <span style="font-size:12px;font-weight:500;color:var(--text-muted)">${escapeHTML(t.family)}</span>
+            <span class="tier-family-tag">${escapeHTML(t.family)}</span>
           </div>
           <div class="tier-energy-line mono">${escapeHTML(t.energy)}</div>
           <div class="tier-scale-line">${escapeHTML(t.scale)}</div>
-          <div class="tier-scale-meter" title="从小到大序位：${orderText}"><span style="width:${barPct}%"></span></div>
           <div class="tier-card-foot">
             <span>${escapeHTML(t.model)}</span>
-            <span style="color:var(--accent-blue)">详情 ›</span>
+            ${ICONS.arrowUpRight}
           </div>
         </a>`;
+    }
+
+    function renderLadderStream(list) {
+      const rows = list
+        .map((t) => {
+          const orderText = t.unranked ? "—" : `#${String(t.order).padStart(2, "0")}`;
+          return `
+          <a class="ladder-row" data-domain="${t.domain}" href="${resolveUrl("tier/" + t.slug + ".html")}">
+            <span class="mono" style="font-size:12px;color:var(--text-muted)">${orderText}</span>
+            <span class="tier-code-badge mono" style="justify-self:start;--dom-color:var(--dom-${t.domain},var(--accent-gold))">⊙ ${escapeHTML(t.code)}</span>
+            <span style="font-weight:650;color:var(--text-primary);font-size:14px">${escapeHTML(t.name)}</span>
+            <span class="mono" style="font-size:12.5px;color:var(--accent-gold);overflow-wrap:anywhere">${escapeHTML(t.energy)}</span>
+            <span class="ladder-col-scale" style="font-size:12.5px;color:var(--text-secondary)">${escapeHTML(t.scale)}</span>
+            <span class="ladder-col-arrow" style="color:var(--text-muted);justify-self:end">${ICONS.arrowUpRight}</span>
+          </a>`;
+        })
+        .join("");
+
+      return `
+        <section class="tier-group-block" id="group-flat">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">连续标尺序列（#01 昆虫级 → #97 论天最上）</h2>
+            <span class="tier-group-sub">严格按量级从小到大排列 · 共 ${list.length} 档</span>
+          </div>
+          <div class="ladder-stream">${rows}</div>
+        </section>`;
     }
 
     function renderTable(list) {
@@ -885,10 +1062,10 @@
           return `
           <tr>
             <td class="mono" style="color:var(--text-muted)">${orderText}</td>
-            <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" class="tier-code-badge mono" style="display:inline-flex">⊙ ${escapeHTML(t.code)}</a></td>
-            <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" style="font-weight:700;color:var(--text-primary)">${escapeHTML(t.name)}</a></td>
+            <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" class="tier-code-badge mono" style="--dom-color:var(--dom-${t.domain},var(--accent-gold))">⊙ ${escapeHTML(t.code)}</a></td>
+            <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" style="font-weight:650;color:var(--text-primary)">${escapeHTML(t.name)}</a></td>
             <td class="mono" style="color:var(--accent-gold)">${escapeHTML(t.energy)}</td>
-            <td>${escapeHTML(t.scale)}</td>
+            <td style="color:var(--text-secondary)">${escapeHTML(t.scale)}</td>
             <td style="color:var(--text-muted)">${escapeHTML(t.model)}</td>
           </tr>`;
         })
@@ -898,7 +1075,7 @@
           <table class="compact-table">
             <thead>
               <tr>
-                <th>从小到大序位</th>
+                <th>序位</th>
                 <th>衡天代字</th>
                 <th>量级名称</th>
                 <th>能量 / 数学刻度</th>
@@ -917,15 +1094,15 @@
       if (clearBtn) clearBtn.style.display = state.query ? "block" : "none";
 
       const filtered = tiers.filter(matchesTier);
-      if (countBadge) countBadge.textContent = `按量级从小到大显示 ${filtered.length} 个档位`;
+      if (countBadge) countBadge.textContent = `${filtered.length} / ${tiers.length} 档`;
 
       if (filtered.length === 0) {
         mount.innerHTML = `
           <div class="empty-state-box">
-            <div class="empty-icon">🔍</div>
-            <h3 style="margin:0 0 8px">未找到匹配的量级档位</h3>
-            <p style="color:var(--text-muted);margin:0 0 16px">请尝试更换搜索词或切换上方区间筛选条件。</p>
-            <button type="button" class="btn btn-surface" id="reset-tier-filters">重置全部筛选</button>
+            <div class="empty-icon">${ICONS.search}</div>
+            <h3 style="margin:0 0 8px;font-size:17px">未找到匹配的量级档位</h3>
+            <p style="color:var(--text-muted);margin:0 0 18px;font-size:13.5px">请尝试更换搜索词或切换上方区间筛选条件。</p>
+            <button type="button" class="btn btn-surface" id="reset-tier-filters">重置筛选条件</button>
           </div>`;
         const resetBtn = document.getElementById("reset-tier-filters");
         if (resetBtn) {
@@ -936,28 +1113,23 @@
             render();
           });
         }
+        rebuildHeadingCache();
         return;
       }
 
-      // Strictly ascending (从小到大)
       const ranked = filtered.filter((t) => !t.unranked).sort((a, b) => a.order - b.order);
       const unranked = filtered.filter((t) => t.unranked);
       const allOrdered = ranked.concat(unranked);
 
       if (state.view === "table") {
         mount.innerHTML = renderTable(allOrdered);
+        rebuildHeadingCache();
         return;
       }
 
       if (state.view === "flat") {
-        mount.innerHTML = `
-          <section class="tier-group-block" id="group-flat">
-            <div class="tier-group-header">
-              <h2 class="tier-group-title">连续天梯模式：#01 昆虫级 → #97 论天最上（按量级从小到大连续直排）</h2>
-              <span class="tier-group-sub">共 ${allOrdered.length} 档</span>
-            </div>
-            <div class="tier-grid">${allOrdered.map(renderCard).join("")}</div>
-          </section>`;
+        mount.innerHTML = renderLadderStream(allOrdered);
+        rebuildHeadingCache();
         return;
       }
 
@@ -974,12 +1146,14 @@
             <section class="tier-group-block" id="group-${gid}">
               <div class="tier-group-header">
                 <h2 class="tier-group-title">${escapeHTML(g ? g.title : gid)}</h2>
-                <span class="tier-group-sub">${escapeHTML(g ? g.subtitle : "")} · 显示 ${gItems.length} 档</span>
+                <span class="tier-group-sub">${escapeHTML(g ? g.subtitle : "")} · ${gItems.length} 档</span>
               </div>
               <div class="tier-grid">${gItems.map(renderCard).join("")}</div>
             </section>`;
         })
         .join("");
+
+      rebuildHeadingCache();
     }
 
     segBtns.forEach((btn) => {
@@ -1016,7 +1190,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     8. Interactive Characters Explorer (characters.html) — 首字母 & 量级从小到大
+     8. Interactive Characters Explorer (characters.html) — 首字母 & 从小到大
      -------------------------------------------------------------------------- */
   function initCharactersExplorer() {
     const mount = document.getElementById("chars-explorer-mount");
@@ -1038,7 +1212,7 @@
 
     const initSort = params.get("sort") || savedPrefs.sort || "asc";
     const state = {
-      sort: initSort === "alpha" ? "alpha" : "asc", // asc (量级从小到大) | alpha (首字母 A-Z)
+      sort: initSort === "alpha" ? "alpha" : "asc",
       series: "all",
       domain: "all",
       query: params.get("q") || "",
@@ -1121,15 +1295,15 @@
             <span class="char-rating-pill mono">⊙ ${escapeHTML(t ? t.code : "待定")}</span>
           </div>
           <div class="char-modifiers">
-            <span class="mod-chip" style="color:var(--accent-blue)">主档：${escapeHTML(t ? t.name : "待定")}（#${t ? String(t.order).padStart(2, "0") : "—"}）</span>
-            <span class="mod-chip mono">首字母：${escapeHTML(c.initial || "#")}</span>
+            <span class="mod-chip" style="color:var(--accent-blue)">${escapeHTML(t ? t.name : "待定")} · #${t ? String(t.order).padStart(2, "0") : "—"}</span>
+            <span class="mod-chip mono">首字母 ${escapeHTML(c.initial || "#")}</span>
             ${modHtml}
-            ${c._isDemo ? '<span class="mod-chip" style="color:var(--accent-gold);border-color:var(--border-gold)">第三版标准示例</span>' : ""}
+            ${c._isDemo ? '<span class="mod-chip" style="color:var(--accent-gold);border-color:var(--border-gold)">第三版示例</span>' : ""}
           </div>
           <div class="dims-mini-grid">${dimsHtml}</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--text-secondary)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--text-secondary)">
             <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(c.summary || "")}</span>
-            <span style="color:var(--accent-gold);white-space:nowrap;font-weight:600">七维面板 ›</span>
+            <span style="color:var(--accent-gold);white-space:nowrap;font-weight:500">七维档案 ${ICONS.arrowUpRight}</span>
           </div>
         </a>`;
     }
@@ -1144,48 +1318,46 @@
         .map(
           (k) => `
           <tr>
-            <th style="width:92px">维度「${k}」</th>
+            <th style="width:88px">维度「${k}」</th>
             <td>${formatEvidenceBadges((c.dims && c.dims[k]) || "〔缺〕")}</td>
           </tr>`
         )
         .join("");
 
       const fullWritingHtml = c.full_writing
-        ? `<blockquote style="margin:0 0 14px;padding:11px 14px;background:var(--bg-surface-2);border-left:3.5px solid var(--accent-gold);border-radius:0 9px 9px 0;font-size:13.5px;color:var(--text-primary)"><strong>第三版「完整书写」展开：</strong>${formatEvidenceBadges(c.full_writing)}</blockquote>`
+        ? `<blockquote style="margin:0 0 16px;padding:12px 15px;background:var(--bg-subtle);border:1px solid var(--border-hairline);border-left:2.5px solid var(--accent-gold);border-radius:0 9px 9px 0;font-size:13px;color:var(--text-primary);line-height:1.7"><strong>第三版「完整书写」展开：</strong>${formatEvidenceBadges(c.full_writing)}</blockquote>`
         : "";
 
       body.innerHTML = `
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px">
           <div>
             <div class="detail-code-pill mono" style="margin-bottom:8px">⊙ ${escapeHTML(t.code)} · ${escapeHTML(t.name)}（#${String(t.order).padStart(2, "0")}）</div>
-            <h2 style="margin:0;font-size:22px">${escapeHTML(c.name)}</h2>
-            <div style="color:var(--text-muted);font-size:13px;margin-top:4px">${escapeHTML(c.alias || "")} ｜ ${escapeHTML(c.series || "")}</div>
+            <h2 style="margin:0;font-size:21px;letter-spacing:-0.015em">${escapeHTML(c.name)}</h2>
+            <div style="color:var(--text-muted);font-size:12.5px;margin-top:4px">${escapeHTML(c.alias || "")} ｜ ${escapeHTML(c.series || "")}</div>
           </div>
-          <a class="btn btn-surface" href="${resolveUrl("tier/" + t.slug + ".html")}">查看所属量级（⊙${escapeHTML(t.code)}）›</a>
+          <a class="btn btn-surface" href="${resolveUrl("tier/" + t.slug + ".html")}">所属量级（⊙${escapeHTML(t.code)}）${ICONS.arrowUpRight}</a>
         </div>
         ${fullWritingHtml}
         <div class="heptad-modal-grid">
           <div class="heptad-radar-box">
             ${radarSvg}
-            <span style="font-size:11.5px;color:var(--text-muted)">衡天⊙ 七维浑仪示意</span>
+            <span style="font-size:11px;color:var(--text-muted)">衡天⊙ 七维浑仪示意</span>
           </div>
           <div>
-            <p style="color:var(--text-secondary);margin:0 0 12px;line-height:1.7">${escapeHTML(c.summary || "")}</p>
-            <div style="font-size:13px;color:var(--accent-gold);margin-bottom:10px">可信度依据：${formatEvidenceBadges(c.credibility || "—")}</div>
+            <p style="color:var(--text-secondary);margin:0 0 12px;line-height:1.7;font-size:13.8px">${escapeHTML(c.summary || "")}</p>
+            <div style="font-size:12.5px;color:var(--accent-gold);margin-bottom:10px">可信度依据：${formatEvidenceBadges(c.credibility || "—")}</div>
             <div class="char-modifiers">
               <span class="mod-chip mono">拼音首字母：${escapeHTML(c.initial)} (${escapeHTML(c.pinyin)})</span>
               ${(c.modifiers || []).map((m) => `<span class="mod-chip">${escapeHTML(m)}</span>`).join("")}
             </div>
           </div>
         </div>
-        <div class="table-scroll" style="margin:0">
-          <table class="compact-table"><tbody>${dimRows}</tbody></table>
-        </div>
-        <div style="margin-top:14px;font-size:12.5px;color:var(--text-muted)">
-          注：本条目为依据《衡天⊙ 多维战力量级体系（第三版）》1.5 节「完整书写」与 8.3 节规范制作的七维示例卡。
+        <div class="compact-table-wrap">
+          <table class="compact-table" style="min-width:0"><tbody>${dimRows}</tbody></table>
         </div>
       `;
       modal.classList.add("open");
+      syncScrollLock();
     }
 
     function render() {
@@ -1194,16 +1366,14 @@
       if (demoToggleBtn) {
         demoToggleBtn.style.display = characters.length === 0 ? "inline-flex" : "none";
         demoToggleBtn.classList.toggle("active", state.showDemo);
-        demoToggleBtn.innerHTML = state.showDemo
-          ? "✦ 隐藏示例卡（查看纯空库状态）"
-          : "✦ 展示 6 组第三版标准示例卡";
+        demoToggleBtn.textContent = state.showDemo ? "隐藏示例卡" : "显示 6 组第三版示例卡";
       }
 
       if (demoBannerSlot) {
         if (characters.length === 0 && state.showDemo) {
           demoBannerSlot.innerHTML = `
             <div class="notice-banner">
-              <span>📌 <strong>说明：</strong>正式角色库当前待录入（0 条）。下方已载入 <strong>6 组《衡天⊙ 第三版》标准示例角色卡</strong>（涵盖首字母 A / C / L / S / X / Y，跨超爆墙至论外门槛），可直接点击上方按钮体验<strong>「↑ 按量级从小到大」</strong>与<strong>「A–Z 按首字母排序」</strong>及七维完整书写面板。</span>
+              <strong>第三版标准示例模式：</strong>正式角色库当前待录入（0 条）。下方展示 6 组《衡天⊙ 第三版》完整书写与七维评定演示卡，可直接在上方切换<strong>「按量级从小到大」</strong>与<strong>「按首字母 A–Z 排序」</strong>。
             </div>`;
         } else {
           demoBannerSlot.innerHTML = "";
@@ -1215,18 +1385,18 @@
 
       if (pool.length === 0) {
         if (alphaBar) alphaBar.classList.remove("visible");
-        if (countBadge) countBadge.textContent = "正式收录 0 位角色";
+        if (countBadge) countBadge.textContent = "正式收录 0 位";
         mount.innerHTML = `
           <div class="empty-state-box">
-            <div class="empty-icon">⊙</div>
-            <h3 style="margin:0 0 10px;font-size:20px">正式角色档案库 · 待录入</h3>
-            <p style="color:var(--text-secondary);margin:0 auto 18px;max-width:540px;line-height:1.75">
-              本站已全面采用<strong>《衡天⊙ 多维战力量级体系（第三版）》</strong>，旧版单维角色数据已清空。
-              在 <code>data/characters.json</code> 填入角色数据并运行 <code>python3 build_site.py</code> 即可自动生成独立档案页。
+            <div class="empty-icon mono">⊙</div>
+            <h3 style="margin:0 0 10px;font-size:18px">正式角色档案库 · 待录入</h3>
+            <p style="color:var(--text-secondary);margin:0 auto 20px;max-width:520px;line-height:1.75;font-size:13.8px">
+              本站已采用<strong>《衡天⊙ 多维战力量级体系（第三版）》</strong>，旧版单维角色数据已清空。
+              在 <code>data/characters.json</code> 录入角色数据并运行 <code>python3 build_site.py</code> 即可生成正式档案。
             </p>
-            <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
-              <button type="button" class="btn btn-primary" id="empty-open-demo">✦ 开启 6 组示例角色卡（体验首字母 / 从小到大排序）</button>
-              <a class="btn btn-surface" href="${resolveUrl("rules.html")}">查阅《衡天⊙ 第三版》标准全文</a>
+            <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+              <button type="button" class="btn btn-primary" id="empty-open-demo">开启 6 组第三版示例角色卡</button>
+              <a class="btn btn-surface" href="${resolveUrl("rules.html")}">查阅《衡天⊙ 第三版》全文</a>
             </div>
           </div>`;
         const btn = document.getElementById("empty-open-demo");
@@ -1240,6 +1410,7 @@
             render();
           });
         }
+        rebuildHeadingCache();
         return;
       }
 
@@ -1268,18 +1439,19 @@
 
       if (countBadge) {
         countBadge.textContent = state.showDemo
-          ? `示例预览：显示 ${filtered.length} / ${pool.length} 组`
-          : `正式收录：显示 ${filtered.length} / ${pool.length} 位角色`;
+          ? `示例 ${filtered.length} / ${pool.length}`
+          : `收录 ${filtered.length} / ${pool.length}`;
       }
 
       if (filtered.length === 0) {
         if (alphaBar) alphaBar.classList.remove("visible");
         mount.innerHTML = `
           <div class="empty-state-box">
-            <div class="empty-icon">🔍</div>
-            <h3 style="margin:0 0 8px">没有符合筛选条件的角色</h3>
-            <p style="color:var(--text-muted);margin:0">请调整搜索关键词、作品或量级区间。</p>
+            <div class="empty-icon">${ICONS.search}</div>
+            <h3 style="margin:0 0 8px;font-size:17px">没有符合筛选条件的角色</h3>
+            <p style="color:var(--text-muted);margin:0;font-size:13.5px">请调整搜索关键词、作品或量级区间。</p>
           </div>`;
+        rebuildHeadingCache();
         return;
       }
 
@@ -1304,7 +1476,7 @@
           alphaLettersEl.querySelectorAll("[data-char-letter]").forEach((btn) => {
             btn.addEventListener("click", () => {
               const el = document.getElementById("char-letter-" + btn.dataset.charLetter);
-              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+              if (el) scrollToElementWithOffset(el, true);
             });
           });
         }
@@ -1318,8 +1490,8 @@
             return `
               <section class="tier-group-block" id="char-letter-${L}">
                 <div class="tier-group-header">
-                  <h2 class="tier-group-title"><span class="letter-badge mono">${L}</span> 角色首字母 ${L}</h2>
-                  <span class="tier-group-sub">共 ${list.length} 位角色</span>
+                  <h2 class="tier-group-title"><span class="letter-badge mono">${L}</span> 首字母 ${L}</h2>
+                  <span class="tier-group-sub">${list.length} 位角色</span>
                 </div>
                 <div class="char-grid">${list.map(renderCharCard).join("")}</div>
               </section>`;
@@ -1335,7 +1507,7 @@
           <section class="tier-group-block" id="char-scale-list">
             <div class="tier-group-header">
               <h2 class="tier-group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
-              <span class="tier-group-sub">共 ${sorted.length} 位角色</span>
+              <span class="tier-group-sub">${sorted.length} 位角色</span>
             </div>
             <div class="char-grid">${sorted.map(renderCharCard).join("")}</div>
           </section>`;
@@ -1355,6 +1527,8 @@
         const found = pool.find((x) => x.slug === targetSlug);
         if (found) openDemoModal(found);
       }
+
+      rebuildHeadingCache();
     }
 
     sortBtns.forEach((btn) => {
@@ -1403,9 +1577,13 @@
     const demoModal = document.getElementById("demo-char-modal");
     const demoClose = document.getElementById("demo-char-close");
     if (demoModal && demoClose) {
-      demoClose.addEventListener("click", () => demoModal.classList.remove("open"));
+      const closeDemo = () => {
+        demoModal.classList.remove("open");
+        syncScrollLock();
+      };
+      demoClose.addEventListener("click", closeDemo);
       demoModal.addEventListener("click", (e) => {
-        if (e.target === demoModal) demoModal.classList.remove("open");
+        if (e.target === demoModal) closeDemo();
       });
     }
 
@@ -1413,7 +1591,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     9. Global Search Engine (Ctrl+K Modal & search.html Page)
+     9. Global Search Command Palette (Ctrl+K / Hero Bar) & Dedicated Search
      -------------------------------------------------------------------------- */
   function runSearchQuery(rawQuery, typeFilter) {
     const index = window.__POWERWIKI_INDEX__ || [];
@@ -1490,12 +1668,12 @@
   const TYPE_LABELS = {
     tier: "量级分类",
     char: "角色分类",
-    rules: "标准·衡天第三版",
-    materials: "标准·材质能量库"
+    rules: "衡天第三版",
+    materials: "材质能量库"
   };
 
   function initGlobalSearchModal() {
-    const trigger = document.getElementById("global-search-trigger");
+    const triggers = document.querySelectorAll("#global-search-trigger, .js-open-search");
     const backdrop = document.getElementById("search-modal");
     const input = document.getElementById("search-modal-input");
     const closeBtn = document.getElementById("search-modal-close");
@@ -1506,12 +1684,17 @@
     let activeTab = "all";
     let focusedIdx = 0;
 
+    function closeModal() {
+      backdrop.classList.remove("open");
+      syncScrollLock();
+    }
+
     function renderHits() {
       const q = input.value;
       const hits = runSearchQuery(q, activeTab).slice(0, 30);
       focusedIdx = 0;
       if (hits.length === 0) {
-        body.innerHTML = `<div style="padding:32px 16px;text-align:center;color:var(--text-muted)">未找到与「${escapeHTML(q)}」相关的条目，试试搜索「宇◆」「归因」「白矮星」「0#」「多击不认」「花岗岩」。</div>`;
+        body.innerHTML = `<div style="padding:32px 16px;text-align:center;color:var(--text-muted);font-size:13px">未找到与「${escapeHTML(q)}」相关的条目，可尝试搜索「宇◆」「归因」「完整书写」「白矮星」「0#」「花岗岩」。</div>`;
         return;
       }
       body.innerHTML = hits
@@ -1529,21 +1712,26 @@
 
       body.querySelectorAll(".search-hit").forEach((el) => {
         el.addEventListener("click", () => {
-          backdrop.classList.remove("open");
+          closeModal();
         });
       });
     }
 
     function openModal() {
+      const nav = document.getElementById("main-nav");
+      if (nav) nav.classList.remove("open");
+      const sidebar = document.getElementById("doc-sidebar");
+      if (sidebar) sidebar.classList.remove("drawer-open");
       backdrop.classList.add("open");
+      syncScrollLock();
       renderHits();
-      setTimeout(() => input.focus(), 30);
+      setTimeout(() => input.focus(), 25);
     }
 
-    if (trigger) trigger.addEventListener("click", openModal);
-    if (closeBtn) closeBtn.addEventListener("click", () => backdrop.classList.remove("open"));
+    triggers.forEach((t) => t.addEventListener("click", openModal));
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
     backdrop.addEventListener("click", (e) => {
-      if (e.target === backdrop) backdrop.classList.remove("open");
+      if (e.target === backdrop) closeModal();
     });
 
     tabBtns.forEach((btn) => {
@@ -1585,11 +1773,7 @@
         e.preventDefault();
         openModal();
       } else if (e.key === "Escape") {
-        backdrop.classList.remove("open");
-        const histModal = document.getElementById("history-modal");
-        if (histModal) histModal.classList.remove("open");
-        const demoModal = document.getElementById("demo-char-modal");
-        if (demoModal) demoModal.classList.remove("open");
+        closeAllDrawersAndModals();
       }
     });
   }
@@ -1609,22 +1793,22 @@
       const q = input.value;
       const hits = runSearchQuery(q, curType);
       const countEl = document.getElementById("dedicated-search-count");
-      if (countEl) countEl.textContent = `匹配结果：${hits.length} 条`;
+      if (countEl) countEl.textContent = `${hits.length} 条结果`;
 
       if (hits.length === 0) {
-        mount.innerHTML = `<div class="empty-state-box"><div class="empty-icon">🔍</div><h3>没有找到匹配内容</h3><p style="color:var(--text-muted)">试试搜索代字（如 恒○、宇◆、外·门）、第三版新规则（如 归因与知情度审查、完整书写、超长篇）或材质名称（如 中子星、花岗岩）。</p></div>`;
+        mount.innerHTML = `<div class="empty-state-box"><div class="empty-icon">${ICONS.search}</div><h3 style="font-size:17px">没有找到匹配内容</h3><p style="color:var(--text-muted);font-size:13.5px">试试搜索代字（如 恒○、宇◆、外·门）、第三版新规则（如 归因与知情度审查、完整书写、超长篇）或材质名称（如 中子星、花岗岩）。</p></div>`;
         return;
       }
 
       mount.innerHTML = hits
         .map(
           (h) => `
-          <a class="search-hit" style="background:var(--bg-surface-1);border-color:var(--border-subtle);padding:15px 18px;margin-bottom:10px" href="${resolveUrl(h.url)}">
+          <a class="search-hit" style="background:var(--bg-surface-1);border-color:var(--border-hairline);padding:14px 18px;margin-bottom:8px" href="${resolveUrl(h.url)}">
             <div class="search-hit-top">
-              <span class="search-hit-title" style="font-size:16px">${highlightSnippet(h.title, q)}</span>
+              <span class="search-hit-title" style="font-size:15px">${highlightSnippet(h.title, q)}</span>
               <span class="search-hit-type">${escapeHTML(h.badge || TYPE_LABELS[h.type] || h.type)}</span>
             </div>
-            <div class="search-hit-snippet" style="font-size:13.8px">${highlightSnippet(h.text, q)}</div>
+            <div class="search-hit-snippet" style="font-size:13.2px">${highlightSnippet(h.text, q)}</div>
           </a>`
         )
         .join("");
@@ -1648,6 +1832,24 @@
     render();
   }
 
+  /* Horizontal Wheel Helper for Single-Row Pill Rails */
+  function initHorizontalRails() {
+    document
+      .querySelectorAll(".filter-Chips, .alpha-letters, .footprints-strip")
+      .forEach((rail) => {
+        rail.addEventListener(
+          "wheel",
+          (e) => {
+            if (rail.scrollWidth > rail.clientWidth && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+              e.preventDefault();
+              rail.scrollLeft += e.deltaY;
+            }
+          },
+          { passive: false }
+        );
+      });
+  }
+
   /* --------------------------------------------------------------------------
      Boot
      -------------------------------------------------------------------------- */
@@ -1664,5 +1866,6 @@
     initCharactersExplorer();
     initGlobalSearchModal();
     initDedicatedSearchPage();
+    initHorizontalRails();
   });
 })();

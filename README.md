@@ -31,10 +31,9 @@ powerwiki/
 │   ├── tiers.json             # 98 个量级结构化定义与全链条顺序
 │   └── characters.json        # 正式角色库与第三版完整书写演示样例
 ├── static/
-│   ├── css/style.css          # 深空浑仪 / 浅色星历双主题样式表
-│   ├── js/app.js              # 排序、搜索、阅读进度与智能返回交互引擎
-│   ├── js/search-index.js     # 自动生成的全站检索数据包
-│   └── img/                   # 站点主题横幅插画
+│   ├── css/style.css          # 黑曜浑仪 / 浅色纸本双主题极简样式系统 (v4.0)
+│   ├── js/app.js              # 120fps 滚动架构、排序、搜索、进度与智能返回引擎
+│   └── js/search-index.js     # 自动生成的全站检索数据包
 ├── index.html                 # 首页
 ├── tiers.html                 # 量级分类页（从小到大排列）
 ├── tier/*.html                # 各量级独立详情页（98 页）

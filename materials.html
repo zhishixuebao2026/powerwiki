@@ -25,44 +25,49 @@
       <a class="brand" href="./index.html">
         <span class="brand-mark mono" aria-hidden="true">⊙</span>
         <span class="brand-text">
-          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">第三版</span></span>
-          <span class="brand-sub">角色 · 量级 · 标准与规则全文</span>
+          <span class="brand-title">衡天 PowerWiki</span>
+          <span class="brand-badge mono">v3.0</span>
         </span>
       </a>
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
         <a class="nav-link" href="./index.html">首页</a>
-        <a class="nav-link" href="./characters.html">角色分类 <span class="nav-count mono">示例</span></a>
-        <a class="nav-link" href="./tiers.html">量级分类 <span class="nav-count mono">97</span></a>
-        <span class="nav-divider" aria-hidden="true"></span>
-        <a class="nav-link" href="./rules.html">标准·衡天体系(第三版)</a>
-        <a class="nav-link active" href="./materials.html">标准·材质能量库</a>
+        <a class="nav-link" href="./characters.html">角色 <span class="nav-count mono">6</span></a>
+        <a class="nav-link" href="./tiers.html">量级 <span class="nav-count mono">97</span></a>
+        <a class="nav-link" href="./rules.html">衡天体系</a>
+        <a class="nav-link active" href="./materials.html">材质数据库</a>
       </nav>
 
       <div class="header-actions">
         <button type="button" class="search-trigger" id="global-search-trigger" aria-label="打开全站搜索">
           <span class="search-trigger-left">
-            <span>🔍</span>
-            <span class="search-trigger-placeholder">搜索角色 / 量级 / 标准…</span>
+            <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <span class="search-trigger-placeholder">搜索全站…</span>
           </span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
-        <button type="button" class="icon-btn" id="history-open-btn" title="已保存的浏览进度与足迹">
-          <span>📖</span>
+        <button type="button" class="icon-btn" id="history-open-btn" title="浏览进度与最近足迹">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
           <span class="dot-indicator"></span>
         </button>
-        <button type="button" class="icon-btn" id="theme-toggle-btn" title="切换深浅色主题">☀️</button>
-        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">☰</button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" title="切换深浅色主题">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
       </div>
     </div>
   </header>
+
+  <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
 
   
   <div class="context-bar">
     <div class="container context-inner">
       <div class="context-left">
         <button type="button" class="back-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页">
-          <span>‹</span>
+          <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
           <span class="js-back-label">返回首页</span>
         </button>
         <nav class="breadcrumbs" aria-label="面包屑导航">
@@ -70,8 +75,8 @@
         </nav>
       </div>
       <div class="context-right">
-        <span class="save-status-pill mono" id="live-save-status">进度 0%</span><button type="button" class="chip-btn" id="save-bookmark-btn" style="padding:3px 10px;font-size:12px" title="手动保存当前浏览位置书签">🔖 保存位置</button>
-        <a href="./rules.html">切换：《衡天⊙ 多维战力量级体系（第三版）》 ↗</a>
+        <span class="save-status-pill mono" id="live-save-status">进度 0%</span><button type="button" class="chip-btn" id="save-bookmark-btn" title="保存当前阅读位置"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg><span>记录位置</span></button>
+        <a href="./rules.html">切换：《衡天⊙ 多维战力量级体系（第三版）》 <svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
       </div>
     </div>
   </div>
@@ -80,14 +85,13 @@
   <main style="flex:1">
     
         <section class="page-hero">
-          <div class="page-hero-bg" style="background-image:url('./static/img/banner-materials.jpg')"></div>
-          <div class="page-hero-mask"></div>
           <div class="container page-hero-inner">
-            <h1 class="page-hero-title"><span>《材质与破坏能量数据库（第二版）》</span><span class="brand-badge">网站标准与规则 · 全文展示</span></h1>
-            <p class="page-hero-desc">《衡天⊙》官方配套工程物理参数库：破坏动词双轴定性、物质粉碎能量密度、材料强度与断裂韧性、相变潜热、天体引力束缚能、撞击成坑与云层推算。</p>
+            <span class="page-kicker mono">STANDARD MONOGRAPH II · PHYSICS &amp; MATERIALS DB</span>
+            <h1 class="page-hero-title"><span>《材质与破坏能量数据库（第二版）》</span><span class="brand-badge">全文无删减</span></h1>
+            <p class="page-hero-desc">《衡天⊙》配套工程物理参数库全文：破坏动词双轴定性、物质粉碎能量密度、材料强度与断裂韧性、相变潜热、天体引力束缚能、撞击成坑与云层推算。</p>
             <div class="doc-switcher-bar" role="tablist" aria-label="标准与规则文档切换">
-              <a class="doc-switch-tab" href="./rules.html">📜 《衡天⊙ 多维战力量级体系（第三版·最新）》全文</a>
-              <a class="doc-switch-tab active" href="./materials.html">⚗️ 《材质与破坏能量数据库（第二版）》全文</a>
+              <a class="doc-switch-tab" href="./rules.html"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg><span>《衡天⊙ 多维战力量级体系（第三版）》全文</span></a>
+              <a class="doc-switch-tab active" href="./materials.html"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg><span>《材质与破坏能量数据库（第二版）》全文</span></a>
             </div>
           </div>
         </section>
@@ -96,7 +100,7 @@
           <aside class="doc-sidebar" id="doc-sidebar" aria-label="文档章节目录">
             <div class="toc-header">
               <div class="toc-title-row">
-                <span>📑 章节目录（34 节）</span>
+                <span style="display:inline-flex;align-items:center;gap:6px"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg><span>章节目录（34）</span></span>
                 <span class="toc-pct mono" id="toc-progress-pct">0%</span>
               </div>
               <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节标题…">
@@ -108,17 +112,17 @@
 
           <article class="doc-article-card">
             <div class="doc-reader-toolbar">
-              <span>📌 原文 100% 无删减直出（<strong>14,494</strong> 字符 · <strong>34</strong> 个小节锚点 · 自动保存阅读位置）</span>
+              <span>原文完整直出 · <strong style="color:var(--text-primary)">14,494</strong> 字符 · <strong style="color:var(--text-primary)">34</strong> 节锚点 · 自动记录进度</span>
               <div class="doc-reader-tools">
                 <div class="doc-find-wrap" title="在当前全文内查找并跳转段落/表格行">
-                  <span>🔎</span>
-                  <input type="search" class="doc-find-input" id="doc-find-input" placeholder="本文内查找并定位…">
-                  <span class="mono" id="doc-find-count" style="font-size:11.5px;color:var(--accent-gold)"></span>
-                  <button type="button" class="chip-btn" id="doc-find-next" style="padding:2px 8px;font-size:11.5px">下一处 ↓</button>
+                  <span style="color:var(--text-muted);display:inline-flex"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+                  <input type="search" class="doc-find-input" id="doc-find-input" placeholder="文内查找定位…">
+                  <span class="mono" id="doc-find-count" style="font-size:11px;color:var(--accent-gold)"></span>
+                  <button type="button" class="chip-btn" id="doc-find-next" style="height:22px;padding:0 7px;font-size:11px">下一处</button>
                 </div>
-                <button type="button" class="chip-btn" id="doc-font-dec" style="padding:3px 9px" title="缩小正文字号">A-</button>
-                <button type="button" class="chip-btn" id="doc-font-inc" style="padding:3px 9px" title="放大正文字号">A+</button>
-                <button type="button" class="chip-btn" id="doc-wide-toggle" style="padding:3px 10px" title="展开宽屏表格阅读模式">↔ 宽屏表格</button>
+                <button type="button" class="chip-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+                <button type="button" class="chip-btn" id="doc-font-inc" title="放大正文字号">A+</button>
+                <button type="button" class="chip-btn" id="doc-wide-toggle" title="切换宽屏阅读模式">宽屏</button>
               </div>
             </div>
             <div class="markdown-body">
@@ -278,28 +282,28 @@
   <div class="resume-toast" id="resume-toast" role="status" aria-live="polite">
     <span class="resume-toast-text" id="resume-toast-text">上次浏览位置</span>
     <button type="button" class="resume-toast-btn" id="resume-toast-btn">继续浏览</button>
-    <button type="button" class="resume-toast-close" id="resume-toast-close" aria-label="关闭提示">×</button>
+    <button type="button" class="resume-toast-close" id="resume-toast-close" aria-label="关闭提示"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
   </div>
 
   <div class="floating-dock">
-    <button type="button" class="dock-btn dock-toc-btn" id="dock-toc-btn" title="展开/收起章节目录">📑</button>
-    <button type="button" class="dock-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页" title="返回上一页">‹</button>
+    <button type="button" class="dock-btn dock-toc-btn" id="dock-toc-btn" title="展开/收起章节目录"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg></button>
+    <button type="button" class="dock-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页" title="返回上一页"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
     <button type="button" class="dock-btn" id="dock-top-btn" title="回到顶部">
-      <svg class="progress-ring-svg" viewBox="0 0 44 44" aria-hidden="true">
-        <circle class="progress-ring-circle" id="dock-progress-circle" cx="22" cy="22" r="20"></circle>
+      <svg class="progress-ring-svg" viewBox="0 0 40 40" aria-hidden="true">
+        <circle class="progress-ring-circle" id="dock-progress-circle" cx="20" cy="20" r="18"></circle>
       </svg>
-      <span>↑</span>
+      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
     </button>
   </div>
 
-  <!-- Global Search Modal -->
+  <!-- Global Search Command Palette -->
   <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站即时检索">
     <div class="modal-dialog">
       <div class="search-modal-head">
-        <span style="font-size:18px">🔍</span>
+        <span style="color:var(--text-muted);display:inline-flex"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
         <input type="search" class="search-modal-input" id="search-modal-input" placeholder="搜索角色、量级代字（宇◆、恒○）、第三版规则或材质（归因、白矮星、花岗岩）…" autocomplete="off">
-        <a href="./search.html" class="chip-btn" style="white-space:nowrap">独立搜索页 ↗</a>
-        <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭">✕</button>
+        <a href="./search.html" class="chip-btn">检索页 <svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+        <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
@@ -316,10 +320,10 @@
   <div class="modal-backdrop" id="history-modal" role="dialog" aria-modal="true" aria-label="浏览进度与足迹">
     <div class="modal-dialog">
       <div class="search-modal-head" style="justify-content:space-between">
-        <strong style="font-size:16px">📖 浏览进度保存与最近足迹</strong>
+        <strong style="font-size:14.5px;display:inline-flex;align-items:center;gap:8px"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg><span>浏览进度与最近足迹</span></strong>
         <div style="display:flex;align-items:center;gap:8px">
-          <button type="button" class="chip-btn" id="history-clear-btn">清空全部记录</button>
-          <button type="button" class="resume-toast-close" id="history-close-btn" aria-label="关闭">✕</button>
+          <button type="button" class="chip-btn" id="history-clear-btn">清空记录</button>
+          <button type="button" class="resume-toast-close" id="history-close-btn" aria-label="关闭"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
         </div>
       </div>
       <div class="search-modal-body" id="history-modal-body"></div>
@@ -329,15 +333,17 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div>
-        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 依据《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》构建
+        <strong style="color:var(--text-primary);font-weight:600">衡天⊙ PowerWiki</strong>
+        <span style="margin:0 6px;opacity:0.4">·</span>
+        <span>《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》</span>
       </div>
       <div class="footer-links">
         <a href="./index.html">首页</a>
         <a href="./characters.html">角色分类</a>
         <a href="./tiers.html">量级分类</a>
-        <a href="./rules.html">衡天体系(第三版)全文</a>
+        <a href="./rules.html">衡天体系全文</a>
         <a href="./materials.html">材质数据库全文</a>
-        <a href="./search.html">全站搜索</a>
+        <a href="./search.html">全站检索</a>
       </div>
     </div>
   </footer>
