@@ -15,22 +15,19 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="header-inner">
-      <div class="brand-cluster">
+    <div class="container header-inner">
+      <div class="header-left">
         <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
         </button>
-        <a class="brand-logo" href="../index.html">
-          <span class="brand-emblem">⊙</span>
-          <span class="brand-text">
-            <span class="brand-title">衡天 PowerWiki</span>
-            <span class="brand-sub">Celestial Scale Archive · V3</span>
-          </span>
+        <a class="brand-link" href="../index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-name">衡天 PowerWiki</span>
         </a>
       </div>
 
@@ -38,15 +35,15 @@
         <a class="nav-link" href="../index.html">首页</a>
         <a class="nav-link active" href="../tiers.html">量级</a>
         <a class="nav-link" href="../characters.html">角色</a>
-        <a class="nav-link" href="../rules.html">衡天体系全文</a>
-        <a class="nav-link" href="../materials.html">材质能量库</a>
+        <a class="nav-link" href="../rules.html">体系全文</a>
+        <a class="nav-link" href="../materials.html">材质库</a>
         <a class="nav-link" href="../search.html">搜索</a>
       </nav>
 
-      <div class="header-actions">
-        <button type="button" class="search-trigger-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <span>检索角色、量级、规则…</span>
+          <span class="search-btn-label">检索…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
         <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
@@ -60,10 +57,10 @@
 
   <main>
     
-        <div class="container" style="padding-bottom:32px">
-          <div style="padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <button type="button" class="back-pill js-smart-back" data-fallback="tiers.html" data-fallback-name="量级总览">
-              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回量级总览</span>
+        <div class="container detail-stack">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="tiers.html" data-fallback-name="量级分类">
+              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回量级分类</span>
             </button>
             <nav class="breadcrumbs" aria-label="面包屑">
               <a href="../index.html">首页</a>
@@ -74,118 +71,119 @@
             </nav>
           </div>
 
-          <article class="detail-hero" data-domain="stellar" style="margin-top:16px">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                <span class="tier-code-badge mono" style="font-size:20px;padding:6px 16px;--dom-color:var(--dom-stellar,var(--accent-gold))">⊙ 星○</span>
-                <span class="count-pill mono">天梯序位 #45 / 97</span>
-                <span class="count-pill">第二部分 · 有限能量轴 · 继承区</span>
-              </div>
-              <a class="btn btn-surface" href="../rules.html#sec-2-3-量级表-昆虫-爆恒星" style="padding:7px 14px;font-size:12.5px">
-                查阅《衡天第三版》对应章节 <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-              </a>
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img" src="../static/img/monolith-scale.jpg" alt="">
             </div>
-
-            <h1 style="margin:18px 0 8px;font-family:var(--font-serif);font-size:clamp(26px,3.6vw,36px);font-weight:700;letter-spacing:-0.015em">
-              标准爆行星 <span style="font-family:var(--font-sans);font-size:16px;color:var(--text-muted);font-weight:500">· 爆行星（星）系</span>
-            </h1>
-            <p style="margin:0;color:var(--text-secondary);font-size:14.5px;line-height:1.75;max-width:820px">
-              引力结合能对应零耗散缓慢解体下限；真实爆炸伴随光热与高速抛射，实际输出必高于此下限（0.13）。
-            </p>
-
-            <div class="detail-grid">
-              <div class="detail-meta-card">
-                <div class="meta-kicker">能量阈值 / 数学定义</div>
-                <div class="meta-val mono" style="color:var(--accent-gold);font-size:16.5px">2.24×10³² J</div>
-              </div>
-              <div class="detail-meta-card">
-                <div class="meta-kicker">覆盖尺度与典型参照物</div>
-                <div class="meta-val">打爆地球（均匀球 2.241×10³² J；PREM 真实密度剖面 2.49×10³² J）</div>
-              </div>
-              <div class="detail-meta-card">
-                <div class="meta-kicker">物理 / 数学计算模型</div>
-                <div class="meta-val">目标式 · 引力结合能下限（0.13）</div>
-              </div>
-              <div class="detail-meta-card">
-                <div class="meta-kicker">检索拼音索引</div>
-                <div class="meta-val mono" style="font-size:13px;color:var(--text-secondary)">
-                  首字母 # · xing-2-biaozhunbaoxingxing / biaozhunbaoxingxing
+            <div class="dossier-body">
+              <div class="dossier-top">
+                <div>
+                  <div class="char-tags">
+                    <span class="tier-badge gold mono">⊙ 星○</span>
+                    <span class="count-badge mono">序位 #45 / 97</span>
+                    <span class="tag-pill">第二部分 · 有限能量轴 · 继承区</span>
+                  </div>
+                  <h1 class="page-title">标准爆行星 · 爆行星（星）系</h1>
+                  <p class="page-desc">引力结合能对应零耗散缓慢解体下限；真实爆炸伴随光热与高速抛射，实际输出必高于此下限（0.13）。</p>
                 </div>
+                <a class="btn btn-secondary btn-sm" href="../rules.html#sec-2-3-量级表-昆虫-爆恒星">
+                  查阅《衡天第三版》对应章节 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                </a>
+              </div>
+
+              <div class="full-writing-box">
+                <div class="box-kicker">《衡天⊙ 第三版》1.5 完整书写推荐格式（首次出现须写全称与标准）</div>
+                <div>综合量级：<span class="mono">⊙星○</span>——标准爆行星（打爆地球（均匀球 2.241×10³² J；PREM 真实密度剖面 2.49×10³² J），能量/结构基准 <span class="mono">2.24×10³² J</span>）</div>
               </div>
             </div>
+          </section>
 
-            <div class="detail-meta-card" style="margin-top:16px;background:var(--bg-surface-1)">
-              <div class="meta-kicker">《衡天⊙ 第三版》1.5 完整书写示范格式（首次出现须写全称与标准）</div>
-              <div class="meta-val" style="font-size:13.5px;line-height:1.75;color:var(--text-secondary)">
-                综合量级：<span class="mono" style="color:var(--accent-gold)">⊙星○</span>——标准爆行星（打爆地球（均匀球 2.241×10³² J；PREM 真实密度剖面 2.49×10³² J），能量/结构基准 <span class="mono">2.24×10³² J</span>）
+          <section class="spec-grid">
+            <div class="spec-card">
+              <div class="spec-label">能量阈值 / 数学定义</div>
+              <div class="spec-val accent mono">2.24×10³² J</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-label">覆盖尺度与典型参照物</div>
+              <div class="spec-val">打爆地球（均匀球 2.241×10³² J；PREM 真实密度剖面 2.49×10³² J）</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-label">物理 / 数学计算模型</div>
+              <div class="spec-val">目标式 · 引力结合能下限（0.13）</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-label">检索拼音索引</div>
+              <div class="spec-val mono">首字母 # · xing-2-biaozhunbaoxingxing / biaozhunbaoxingxing</div>
+            </div>
+          </section>
+
+          
+            <section class="section-block">
+              <div class="section-header">
+                <h2 class="section-title">相邻天梯刻度（从小到大连续上下文）</h2>
               </div>
-            </div>
-
-            
-            <div class="detail-meta-card" style="margin-top:18px">
-              <div class="meta-kicker">相邻天梯序列（从小到大连续上下文）</div>
-              <div style="display:grid;gap:8px;margin-top:10px"><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;" href="surface-super.html"><span class="mono" style="font-weight:700">#43 · ⊙ 表☆</span><span style="font-size:12.5px">超爆地表</span><span class="mono" style="font-size:12px;color:var(--text-muted)">1.63×10³⁰ J</span></a><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;" href="planet-weak.html"><span class="mono" style="font-weight:700">#44 · ⊙ 星▽</span><span style="font-size:12.5px">弱爆行星</span><span class="mono" style="font-size:12px;color:var(--text-muted)">4.865×10³⁰ J</span></a><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;border-color:var(--accent-gold);background:var(--accent-gold-soft);color:var(--accent-gold)" href="planet-std.html"><span class="mono" style="font-weight:700">#45 · ⊙ 星○</span><span style="font-size:12.5px">标准爆行星</span><span class="mono" style="font-size:12px;color:var(--text-muted)">2.24×10³² J</span></a><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;" href="planet-strong.html"><span class="mono" style="font-weight:700">#46 · ⊙ 星△</span><span style="font-size:12.5px">强爆行星</span><span class="mono" style="font-size:12px;color:var(--text-muted)">4.48×10³² ～ 2.062×10³⁶ J</span></a><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;" href="planet-super.html"><span class="mono" style="font-weight:700">#47 · ⊙ 星☆</span><span style="font-size:12.5px">超爆行星</span><span class="mono" style="font-size:12px;color:var(--text-muted)">2.06×10³⁶ – 3.49×10³⁸ J</span></a></div>
-            </div>
+              <div class="neighbor-stack"><a class="neighbor-row " href="surface-super.html"><span class="mono">#43 · ⊙ 表☆</span><span>超爆地表</span><span class="mono">1.63×10³⁰ J</span></a><a class="neighbor-row " href="planet-weak.html"><span class="mono">#44 · ⊙ 星▽</span><span>弱爆行星</span><span class="mono">4.865×10³⁰ J</span></a><a class="neighbor-row current" href="planet-std.html"><span class="mono">#45 · ⊙ 星○</span><span>标准爆行星</span><span class="mono">2.24×10³² J</span></a><a class="neighbor-row " href="planet-strong.html"><span class="mono">#46 · ⊙ 星△</span><span>强爆行星</span><span class="mono">4.48×10³² ～ 2.062×10³⁶ J</span></a><a class="neighbor-row " href="planet-super.html"><span class="mono">#47 · ⊙ 星☆</span><span>超爆行星</span><span class="mono">2.06×10³⁶ – 3.49×10³⁸ J</span></a></div>
+            </section>
             
 
-            <div style="margin-top:26px">
-              <h2 style="margin:0;font-family:var(--font-serif);font-size:19px;font-weight:700">本档位已收录角色（1）</h2>
-              <div class="char-grid" style="margin-top:14px">
-                    <a class="char-card" href="../character/demo-suixing.html">
-                      <span class="char-watermark-letter" aria-hidden="true">S</span>
-                      <div class="char-card-head">
-                        <div style="display:flex;align-items:center;gap:12px">
-                          <div class="char-avatar">碎</div>
-                          <div>
-                            <div class="char-name">碎星铁卫（示例）</div>
-                            <div class="char-series">衡天⊙ 第三版书写示例</div>
-                          </div>
-                        </div>
-                        <span class="char-rating-pill mono">⊙ 星○</span>
-                      </div>
-                      <div style="font-size:13px;color:var(--text-secondary)">演示《材质与破坏能量数据库》2.2「中子星外壳材质锚点」与第三版 0.6「体量与组成不等于破坏」规则。</div>
-                      <div class="char-card-foot">
-                        <span class="mono" style="font-size:11.5px">破〔实〕、御〔实〕</span>
-                        <span class="char-enter-link" style="display:inline-flex;align-items:center;gap:4px">进入独立角色页 <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-                      </div>
-                    </a></div>
+          <section class="section-block">
+            <div class="section-header">
+              <h2 class="section-title">本档位已收录角色（1）</h2>
             </div>
+            <div class="char-grid">
+    <a class="char-card" href="../character/demo-suixing.html">
+      <div class="char-head">
+        <div class="char-identity">
+          <div class="char-monogram">碎</div>
+          <div class="char-meta">
+            <h3 class="char-name">碎星铁卫（示例）</h3>
+            <div class="char-origin">衡天⊙ 第三版书写示例 · 简并态战躯</div>
+          </div>
+        </div>
+        <span class="tier-badge gold mono">⊙ 星○</span>
+      </div>
+      <div class="char-tags">
+        <span class="tag-pill accent">标准爆行星 · #45</span>
+        <span class="tag-pill mono">首字母 S</span>
+        
+      </div>
+      <p class="char-summary">演示《材质与破坏能量数据库》2.2「中子星外壳材质锚点」与第三版 0.6「体量与组成不等于破坏」规则。</p>
+      <div class="char-foot">
+        <span class="char-cred">破<span class="ev-badge ev-confirmed">〔实〕</span>、御<span class="ev-badge ev-confirmed">〔实〕</span></span>
+        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+      </div>
+    </a></div>
+          </section>
 
-            <div class="adjacent-nav">
-              <a class="adj-nav-card" href="planet-weak.html">
-                  <span class="adj-dir">← 上一档（更低量级）</span>
-                  <span class="adj-name">#44 · ⊙ 星▽ 弱爆行星</span>
-                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">4.865×10³⁰ J</span>
+          <div class="pager-grid">
+            <a class="pager-card" href="planet-weak.html">
+                  <span class="pager-dir">← 上一档（更低量级）</span>
+                  <span class="pager-title">#44 · ⊙ 星▽ 弱爆行星</span>
+                  <span class="pager-sub mono">4.865×10³⁰ J</span>
                 </a>
-              <a class="adj-nav-card next" href="planet-strong.html">
-                  <span class="adj-dir">下一档（更高量级） →</span>
-                  <span class="adj-name">#46 · ⊙ 星△ 强爆行星</span>
-                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">4.48×10³² ～ 2.062×10³⁶ J</span>
+            <a class="pager-card next" href="planet-strong.html">
+                  <span class="pager-dir">下一档（更高量级） →</span>
+                  <span class="pager-title">#46 · ⊙ 星△ 强爆行星</span>
+                  <span class="pager-sub mono">4.48×10³² ～ 2.062×10³⁶ J</span>
                 </a>
-            </div>
-          </article>
+          </div>
         </div>
         
   </main>
 
-  <!-- Floating Navigation Dock (Smart Back + Back to Top) -->
-  <div class="floating-dock" aria-label="快捷返回工具栏">
+  <div class="floating-dock" aria-label="快捷工具">
     
-    <button type="button" class="dock-btn js-smart-back" data-fallback="tiers.html" data-fallback-name="量级总览" title="返回上一页并恢复浏览位置">
-      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回</span>
-    </button>
-    <button type="button" class="dock-btn" id="dock-top-btn" title="回到页面顶部">
-      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> <span>顶部</span>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </button>
   </div>
 
-  <!-- Global Search Command Palette Modal -->
   <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
     <div class="modal-panel">
       <div class="search-modal-head">
-        <span style="color:var(--accent-gold);display:flex"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
         <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、角色名、材质或规则关键词…" autocomplete="off">
-        <button type="button" class="btn btn-surface" id="search-modal-close" style="padding:5px 11px;font-size:12px">ESC</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
@@ -196,39 +194,24 @@
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
       <div class="search-modal-foot">
-        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择条目 · <kbd class="kbd-hint">Enter</kbd> 进入页面</span>
-        <a href="../search.html" style="font-weight:500">进入独立搜索页 →</a>
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="../search.html">进入独立搜索页 →</a>
       </div>
     </div>
   </div>
 
   <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="brand-logo" style="margin-bottom:10px">
-            <span class="brand-emblem" style="width:28px;height:28px;font-size:14px">⊙</span>
-            <span class="brand-title" style="font-size:15px">衡天 PowerWiki</span>
-          </div>
-          <p class="footer-desc">
-            以《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》为唯一基准锚点，提供从昆虫级（5×10⁻⁵ J）至论天最上（莱因哈特 / 贝克莱基数）的全尺度量级检索与独立角色战力档案。
-          </p>
-        </div>
-        <div class="footer-col">
-          <h4>核心导览</h4>
-          <a href="../tiers.html">量级分类（从小到大）</a>
-          <a href="../characters.html">角色档案（首字母 / 从小到大）</a>
-          <a href="../search.html">全站检索引擎</a>
-        </div>
-        <div class="footer-col">
-          <h4>基准典籍全文</h4>
-          <a href="../rules.html">衡天量级体系（第三版·全文）</a>
-          <a href="../materials.html">材质与破坏能量数据库（第二版·全文）</a>
-        </div>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第三版基准）</span>
       </div>
-      <div class="footer-bottom">
-        <span>衡天⊙ PowerWiki · Obsidian Celestial Edition</span>
-        <span>全部角色与量级均采用独立静态档案页 · 自动记忆浏览状态与滚动位置</span>
+      <div class="footer-links">
+        <a href="../tiers.html">量级天梯</a>
+        <a href="../characters.html">角色档案</a>
+        <a href="../rules.html">衡天体系全文</a>
+        <a href="../materials.html">材质能量库</a>
+        <a href="../search.html">全站检索</a>
       </div>
     </div>
   </footer>

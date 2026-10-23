@@ -15,22 +15,19 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/style.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="header-inner">
-      <div class="brand-cluster">
+    <div class="container header-inner">
+      <div class="header-left">
         <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
         </button>
-        <a class="brand-logo" href="./index.html">
-          <span class="brand-emblem">⊙</span>
-          <span class="brand-text">
-            <span class="brand-title">衡天 PowerWiki</span>
-            <span class="brand-sub">Celestial Scale Archive · V3</span>
-          </span>
+        <a class="brand-link" href="./index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-name">衡天 PowerWiki</span>
         </a>
       </div>
 
@@ -38,15 +35,15 @@
         <a class="nav-link active" href="./index.html">首页</a>
         <a class="nav-link" href="./tiers.html">量级</a>
         <a class="nav-link" href="./characters.html">角色</a>
-        <a class="nav-link" href="./rules.html">衡天体系全文</a>
-        <a class="nav-link" href="./materials.html">材质能量库</a>
+        <a class="nav-link" href="./rules.html">体系全文</a>
+        <a class="nav-link" href="./materials.html">材质库</a>
         <a class="nav-link" href="./search.html">搜索</a>
       </nav>
 
-      <div class="header-actions">
-        <button type="button" class="search-trigger-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <span>检索角色、量级、规则…</span>
+          <span class="search-btn-label">检索…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
         <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
@@ -60,318 +57,280 @@
 
   <main>
     
-    <div class="container">
-      <!-- Obsidian Celestial Hero Stage -->
-      <section class="hero-stage">
-        <div class="hero-art-layer" aria-hidden="true">
-          <img src="static/img/cosmos-eclipse.jpg" alt="" style="--art-pos: 76% 48%;">
+    <div class="container home-stack">
+      <section>
+        <div class="hero-banner">
+          <div class="hero-backdrop" aria-hidden="true">
+            <img class="hero-backdrop-img" src="static/img/cosmos-eclipse.jpg" alt="">
+          </div>
+          <div class="hero-body">
+            <div class="eyebrow">
+              <span class="eyebrow-dot"></span>
+              <span>衡天⊙ 多维战力量级体系 · 第三版基准</span>
+            </div>
+            <h1 class="hero-heading">多维战力刻度与实证角色百科</h1>
+            <p class="hero-desc">
+              以《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》为唯一标尺。每一量级锚定明确物理焦耳或集合论基数，每一位角色配有独立七维实证档案页。
+            </p>
+            <div class="hero-cta-row">
+              <a class="btn btn-primary" href="tiers.html">浏览量级天梯（从小到大）</a>
+              <a class="btn btn-secondary" href="characters.html">查阅角色档案库</a>
+              <button type="button" class="btn btn-ghost js-open-search"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg> 全站检索</button>
+            </div>
+          </div>
         </div>
-        <div class="hero-content">
-          <div class="hero-eyebrow">
-            <span class="hero-eyebrow-line"></span>
-            <span>OBSIDIAN CELESTIAL ARCHIVE · 衡天⊙ 第三版</span>
-          </div>
-          <h1 class="hero-title">
-            多维战力刻度与<span class="gold-accent">实证角色典藏</span>
-          </h1>
-          <p class="hero-lead">
-            以《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》为唯一标尺。拒绝脱离物理与集合论的空洞标签——每一档位锚定明确焦耳阈值或超限基数，每一位角色拥有独立实证档案。
-          </p>
 
-          <div class="hero-actions">
-            <a class="btn btn-gold" href="tiers.html">浏览量级天梯（从小到大） <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
-            <a class="btn btn-surface" href="characters.html">查阅角色档案库</a>
-            <button type="button" class="btn btn-surface js-open-search"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg> 全站检索</button>
+        <div class="stats-strip">
+          <div class="stat-cell">
+            <span class="stat-value mono">97 + 1</span>
+            <span class="stat-label">连续量级档位（#01 虫 → #97 天·最）</span>
           </div>
-
-          <div class="hero-metrics">
-            <div>
-              <div class="metric-val mono">97<span style="font-size:14px;color:var(--text-muted);font-weight:400"> +1</span></div>
-              <div class="metric-label">连续量级刻度（#01 虫 → #97 天·最）</div>
-            </div>
-            <div>
-              <div class="metric-val mono">7 <span style="font-size:14px;color:var(--accent-gold)">维</span> × 5 <span style="font-size:14px;color:var(--accent-blue)">态</span></div>
-              <div class="metric-label">破控域御速算性 · 实证状态分离</div>
-            </div>
-            <div>
-              <div class="metric-val mono">6 <span style="font-size:14px;color:var(--text-muted);font-weight:400">份</span></div>
-              <div class="metric-label">独立角色档案页（首字母 / 量级双排序）</div>
-            </div>
-            <div>
-              <div class="metric-val mono">1,861 <span style="font-size:14px;color:var(--text-muted);font-weight:400">行</span></div>
-              <div class="metric-label">双基准典籍一字不漏全文收录</div>
-            </div>
+          <div class="stat-cell">
+            <span class="stat-value mono">7 维 × 5 态</span>
+            <span class="stat-label">破控域御速算性 · 证据等级分离</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-value mono">6 份</span>
+            <span class="stat-label">独立角色档案页（首字母 / 量级双排序）</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-value mono">1,861 行</span>
+            <span class="stat-label">两部基准典籍 100% 完整原文收录</span>
           </div>
         </div>
       </section>
 
-      <!-- Four Art-Backed Editorial Portals -->
       <section class="section-block">
-        <div class="section-head">
+        <div class="section-header">
           <div>
             <span class="section-kicker">Core Archives</span>
-            <h2 class="section-title">四大核心典藏入口</h2>
+            <h2 class="section-title">四大核心板块</h2>
           </div>
         </div>
 
         <div class="portal-grid">
           <a class="portal-card" href="tiers.html">
-            <div class="portal-art" aria-hidden="true">
-              <img src="static/img/monolith-scale.jpg" alt="" loading="lazy" style="--art-pos: 50% 48%;">
-            </div>
-            <div class="portal-body">
+            <div>
               <div class="portal-top">
-                <span class="portal-index">01 / TIER TAXONOMY</span>
-                <span class="portal-arrow"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+                <span class="portal-num mono">01 / TIER TAXONOMY</span>
+                <span class="portal-icon"><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
               </div>
-              <div>
-                <h3 class="portal-title">量级分类天梯</h3>
-                <p class="portal-desc">严格按能量与数学结构「从小到大」单向递增排列：由昆虫级（5×10⁻⁵ J）经行星、恒星、宇宙网，直至莱因哈特与贝克莱基数。全 98 档均设独立规格页。</p>
-                <div class="portal-meta">
-                  <span class="portal-tag">↑ 严格从小到大</span>
-                  <span class="portal-tag">98 独立规格页</span>
-                  <span class="portal-tag">三视图切换</span>
-                </div>
-              </div>
+              <h3 class="portal-title">量级分类天梯</h3>
+              <p class="portal-text">严格按能量与数学结构「从小到大」单向递增排列：由昆虫级（5×10⁻⁵ J）经行星、恒星、星系，直至莱因哈特与贝克莱基数。全 98 档均设独立规格页。</p>
+            </div>
+            <div class="portal-footer">
+              <span class="tag-pill accent">↑ 严格从小到大</span>
+              <span class="tag-pill">98 独立规格页</span>
+              <span class="tag-pill">卡片 / 天梯 / 总表三视图</span>
             </div>
           </a>
 
           <a class="portal-card" href="characters.html">
-            <div class="portal-art" aria-hidden="true">
-              <img src="static/img/character-chronicle.jpg" alt="" loading="lazy" style="--art-pos: 78% 45%;">
-            </div>
-            <div class="portal-body">
+            <div>
               <div class="portal-top">
-                <span class="portal-index">02 / CHARACTER ARCHIVES</span>
-                <span class="portal-arrow"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+                <span class="portal-num mono">02 / CHARACTER ARCHIVES</span>
+                <span class="portal-icon"><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
               </div>
-              <div>
-                <h3 class="portal-title">角色战力档案</h3>
-                <p class="portal-desc">支持「按首字母 A–Z」与「按量级从小到大」双模式切换；点击任意角色直接进入专属独立档案界面，呈现第三版完整书写与七维证据链。</p>
-                <div class="portal-meta">
-                  <span class="portal-tag">A–Z 首字母索引</span>
-                  <span class="portal-tag">↑ 量级从小到大</span>
-                  <span class="portal-tag">独立角色页面</span>
-                </div>
-              </div>
+              <h3 class="portal-title">角色战力档案</h3>
+              <p class="portal-text">支持「按量级从小到大」与「按首字母 A–Z」双模式排序；点击任意角色直接进入专属独立档案页面，展示第三版完整书写结论与七维证据链。</p>
+            </div>
+            <div class="portal-footer">
+              <span class="tag-pill accent">A–Z 首字母 / ↑ 从小到大</span>
+              <span class="tag-pill">独立角色页面</span>
+              <span class="tag-pill">自动记忆排序与位置</span>
             </div>
           </a>
 
           <a class="portal-card" href="rules.html">
-            <div class="portal-art" aria-hidden="true">
-              <img src="static/img/cosmos-eclipse.jpg" alt="" loading="lazy" style="--art-pos: 82% 46%;">
-            </div>
-            <div class="portal-body">
+            <div>
               <div class="portal-top">
-                <span class="portal-index">03 / CANONICAL STANDARD V3</span>
-                <span class="portal-arrow"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+                <span class="portal-num mono">03 / CANONICAL STANDARD V3</span>
+                <span class="portal-icon"><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
               </div>
-              <div>
-                <h3 class="portal-title">衡天多维战力量级体系（第三版）</h3>
-                <p class="portal-desc">100% 完整原文呈现：涵盖总则与常见违规审查、归因与知情度六问表、1.5 完整书写规范、七维并列记录、论外序数与基数双轴及超长篇通读流程。</p>
-                <div class="portal-meta">
-                  <span class="portal-tag">1,445 行全文展示</span>
-                  <span class="portal-tag">126 节目录联动</span>
-                </div>
-              </div>
+              <h3 class="portal-title">衡天多维战力量级体系（第三版）</h3>
+              <p class="portal-text">无删减全文展示：涵盖总则与常见违规审查、0.14.2 归因与知情度审查、1.5 完整书写规范、全量级定义、论外基数序数双轴及超长篇通读流程。</p>
+            </div>
+            <div class="portal-footer">
+              <span class="tag-pill accent">1,445 行完整原文</span>
+              <span class="tag-pill">127 节目录实时联动</span>
             </div>
           </a>
 
           <a class="portal-card" href="materials.html">
-            <div class="portal-art" aria-hidden="true">
-              <img src="static/img/physics-lattice.jpg" alt="" loading="lazy" style="--art-pos: 84% 50%;">
-            </div>
-            <div class="portal-body">
+            <div>
               <div class="portal-top">
-                <span class="portal-index">04 / PHYSICS &amp; MATERIALS DB</span>
-                <span class="portal-arrow"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+                <span class="portal-num mono">04 / PHYSICS &amp; MATERIALS DB</span>
+                <span class="portal-icon"><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
               </div>
-              <div>
-                <h3 class="portal-title">材质与破坏能量数据库（第二版）</h3>
-                <p class="portal-desc">完整收录常规岩石金属抗压抗拉参数、碎裂/粉碎/熔化/汽化至核子完全解离的全破坏方式比能（J/cm³），以及白矮星与中子星外壳极端物理锚点。</p>
-                <div class="portal-meta">
-                  <span class="portal-tag">416 行全文展示</span>
-                  <span class="portal-tag">物理比能速查表</span>
-                </div>
-              </div>
+              <h3 class="portal-title">材质与破坏能量数据库（第二版）</h3>
+              <p class="portal-text">完整收录常规岩石与金属力学强度、碎裂/粉碎/熔化/汽化至核子完全解离的全破坏方式比能（J/cm³），以及白矮星与中子星外壳极端物理锚点。</p>
+            </div>
+            <div class="portal-footer">
+              <span class="tag-pill accent">416 行完整原文</span>
+              <span class="tag-pill">破坏比能速查表</span>
             </div>
           </a>
         </div>
       </section>
 
-      <!-- Scale Spectrum -->
       <section class="section-block">
-        <div class="spectrum-box">
-          <div class="section-head" style="margin-bottom:4px">
-            <div>
-              <span class="section-kicker">Continuous Scale Spectrum</span>
-              <h2 class="section-title" style="font-size:20px">八大量级跨度速览（点击直达对应区间）</h2>
-            </div>
-            <a class="btn btn-surface" href="tiers.html" style="padding:7px 14px;font-size:12.5px">展开全部 98 档 →</a>
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">Scale Spectrum</span>
+            <h2 class="section-title">六大量级跨度速览</h2>
           </div>
-          <div class="spectrum-track">
-            
-        <a class="spectrum-seg" href="tiers.html?seg=human" style="--seg-color:var(--dom-human)">
-          <div class="spectrum-seg-range mono">虫 → 城☆</div>
-          <div class="spectrum-seg-label">个体与战术阶</div>
-          <div class="spectrum-seg-energy mono">5×10⁻⁵ J ～ 4.2×10¹⁷ J</div>
+          <a class="btn btn-secondary btn-sm" href="tiers.html">查看全部 98 档 →</a>
+        </div>
+        <div class="horizon-grid">
+          
+        <a class="horizon-item" href="tiers.html?seg=terrestrial" style="--seg-color:var(--dom-terrestrial)">
+          <span class="horizon-code mono">虫 → 星☆</span>
+          <span class="horizon-name">个体与行星阶</span>
+          <span class="horizon-range mono">5×10⁻⁵ ～ 10³⁶ J</span>
         </a>
-        <a class="spectrum-seg" href="tiers.html?seg=continent" style="--seg-color:var(--dom-continent)">
-          <div class="spectrum-seg-range mono">国▽ → 陆☆</div>
-          <div class="spectrum-seg-label">地理与大陆阶</div>
-          <div class="spectrum-seg-energy mono">4.2×10¹⁷ ～ 2×10²⁹ J</div>
+        <a class="horizon-item" href="tiers.html?seg=stellar" style="--seg-color:var(--dom-stellar)">
+          <span class="horizon-code mono">巨▽ → 恒☆</span>
+          <span class="horizon-name">巨行星至恒星阶</span>
+          <span class="horizon-range mono">10³⁶ ～ 10⁴⁶ J</span>
         </a>
-        <a class="spectrum-seg" href="tiers.html?seg=planet" style="--seg-color:var(--dom-planet)">
-          <div class="spectrum-seg-range mono">星▽ → 巨☆</div>
-          <div class="spectrum-seg-label">行星与巨行星阶</div>
-          <div class="spectrum-seg-energy mono">2×10²⁹ ～ 2.2×10³⁸ J</div>
+        <a class="horizon-item" href="tiers.html?seg=transition" style="--seg-color:var(--dom-transition)">
+          <span class="horizon-code mono">渡A → 渡B</span>
+          <span class="horizon-name">星际过渡带</span>
+          <span class="horizon-range mono">恒星系至星团衔接</span>
         </a>
-        <a class="spectrum-seg" href="tiers.html?seg=star" style="--seg-color:var(--dom-star)">
-          <div class="spectrum-seg-range mono">矮○ → 系☆</div>
-          <div class="spectrum-seg-label">致密星与恒星系阶</div>
-          <div class="spectrum-seg-energy mono">10³⁹ ～ 10⁴⁹ J</div>
+        <a class="horizon-item" href="tiers.html?seg=cosmic" style="--seg-color:var(--dom-cosmic)">
+          <span class="horizon-code mono">系▽ → 维·∞</span>
+          <span class="horizon-name">恒星系至多元高维</span>
+          <span class="horizon-range mono">10⁴⁵ J ～ ∞-D</span>
         </a>
-        <a class="spectrum-seg" href="tiers.html?seg=galaxy" style="--seg-color:var(--dom-galaxy)">
-          <div class="spectrum-seg-range mono">团▽ → 河☆</div>
-          <div class="spectrum-seg-label">星团与星系阶</div>
-          <div class="spectrum-seg-energy mono">1.3×10⁵² ～ 10⁶⁹ J</div>
+        <a class="horizon-item" href="tiers.html?seg=fgh" style="--seg-color:var(--dom-fgh)">
+          <span class="horizon-code mono">f_ω → 天基</span>
+          <span class="horizon-name">广义无限层级</span>
+          <span class="horizon-range mono">快速增长层级 FGH</span>
         </a>
-        <a class="spectrum-seg" href="tiers.html?seg=universe" style="--seg-color:var(--dom-universe)">
-          <div class="spectrum-seg-range mono">网▽ → 宇★</div>
-          <div class="spectrum-seg-label">宇宙与单体顶点</div>
-          <div class="spectrum-seg-energy mono">10⁶⁹ J ～ 10^(10^100) J</div>
+        <a class="horizon-item" href="tiers.html?seg=beyond" style="--seg-color:var(--dom-beyond)">
+          <span class="horizon-code mono">外·门 → 天·最</span>
+          <span class="horizon-name">论外与论天大基数</span>
+          <span class="horizon-range mono">ℵ₀ ～ 莱因哈特/贝克莱</span>
         </a>
-        <a class="spectrum-seg" href="tiers.html?seg=multiverse" style="--seg-color:var(--dom-multiverse)">
-          <div class="spectrum-seg-range mono">多 → 维·∞</div>
-          <div class="spectrum-seg-label">多元与无限高维</div>
-          <div class="spectrum-seg-energy mono">N×8×10⁷⁷ J ～ ∞-D</div>
-        </a>
-        <a class="spectrum-seg" href="tiers.html?seg=outer" style="--seg-color:var(--dom-heaven)">
-          <div class="spectrum-seg-range mono">外·门 → 天·最</div>
-          <div class="spectrum-seg-label">论外与论天大基数</div>
-          <div class="spectrum-seg-energy mono">ℵ₀ ～ 莱因哈特/贝克莱</div>
-        </a>
-          </div>
         </div>
       </section>
 
-      <!-- Featured Standalone Character Dossiers -->
       <section class="section-block">
-        <div class="section-head">
+        <div class="section-header">
           <div>
-            <span class="section-kicker">Standalone Character Dossiers</span>
-            <h2 class="section-title">代表性角色独立档案预览</h2>
+            <span class="section-kicker">Featured Dossiers</span>
+            <h2 class="section-title">代表性角色独立档案</h2>
           </div>
-          <a class="btn btn-surface" href="characters.html" style="padding:7px 14px;font-size:12.5px">全部 6 位角色档案 →</a>
+          <a class="btn btn-secondary btn-sm" href="characters.html">全部 6 位角色 →</a>
         </div>
         <div class="char-grid">
           
-            <a class="char-card" href="character/demo-alpha.html">
-              <span class="char-watermark-letter" aria-hidden="true">A</span>
-              <div class="char-card-head">
-                <div style="display:flex;align-items:center;gap:13px;min-width:0">
-                  <div class="char-avatar">阿</div>
-                  <div class="char-title-group">
-                    <h3 class="char-name">阿尔法战术体（示例）</h3>
-                    <div class="char-series">重装破障原型 · 1.5节格式示例</div>
-                  </div>
-                </div>
-                <span class="char-rating-pill mono">⊙ 墙☆</span>
-              </div>
-              <div class="char-modifiers">
-                <span class="mod-chip" style="color:var(--accent-blue)">超爆墙 · #13</span>
-                <span class="mod-chip mono">首字母 A</span>
-              </div>
-              <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">演示继承区低段「目标式·碎块标定」与第三版 1.5 节「完整书写 + 攻防双满」标注格式的示例角色卡。</div>
-              <div class="char-card-foot">
-                <span class="mono" style="font-size:11.5px">破〔实〕（已确认）、御〔实〕（已确认）</span>
-                <span class="char-enter-link" style="white-space:nowrap;font-weight:500;display:inline-flex;align-items:center;gap:4px">独立档案页 <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-              </div>
-            </a>
-            <a class="char-card" href="character/demo-cangqiong.html">
-              <span class="char-watermark-letter" aria-hidden="true">C</span>
-              <div class="char-card-head">
-                <div style="display:flex;align-items:center;gap:13px;min-width:0">
-                  <div class="char-avatar">苍</div>
-                  <div class="char-title-group">
-                    <h3 class="char-name">苍穹司辰（示例）</h3>
-                    <div class="char-series">恒星熔炉执掌者 · 衡天 1.5 示例二</div>
-                  </div>
-                </div>
-                <span class="char-rating-pill mono">⊙ 恒○</span>
-              </div>
-              <div class="char-modifiers">
-                <span class="mod-chip" style="color:var(--accent-blue)">标准爆恒星 · #53</span>
-                <span class="mod-chip mono">首字母 C</span>
-              </div>
-              <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">对应《衡天⊙ 第三版》1.5 节「示例二：数据缺失」——展示缺项不反推原则（破达恒○不自动推出御或控）。</div>
-              <div class="char-card-foot">
-                <span class="mono" style="font-size:11.5px">破〔实〕（单一已确认战绩）</span>
-                <span class="char-enter-link" style="white-space:nowrap;font-weight:500;display:inline-flex;align-items:center;gap:4px">独立档案页 <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-              </div>
-            </a>
-            <a class="char-card" href="character/demo-yuanxu.html">
-              <span class="char-watermark-letter" aria-hidden="true">Y</span>
-              <div class="char-card-head">
-                <div style="display:flex;align-items:center;gap:13px;min-width:0">
-                  <div class="char-avatar">渊</div>
-                  <div class="char-title-group">
-                    <h3 class="char-name">渊序构筑者（示例）</h3>
-                    <div class="char-series">超限递归塔主 · 8.3 双标注示例</div>
-                  </div>
-                </div>
-                <span class="char-rating-pill mono">⊙ 外·门</span>
-              </div>
-              <div class="char-modifiers">
-                <span class="mod-chip" style="color:var(--accent-blue)">论外门槛 · #90</span>
-                <span class="mod-chip mono">首字母 Y</span>
-              </div>
-              <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">演示第八部分 8.3「序数比结构、基数比规模」双标注规范：ε₀ 层超脱区分结构复杂度，计数基数仍为 ℵ₀。</div>
-              <div class="char-card-foot">
-                <span class="mono" style="font-size:11.5px">破〔实〕（完成态结构性证明）</span>
-                <span class="char-enter-link" style="white-space:nowrap;font-weight:500;display:inline-flex;align-items:center;gap:4px">独立档案页 <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-              </div>
-            </a>
+    <a class="char-card" href="character/demo-alpha.html">
+      <div class="char-head">
+        <div class="char-identity">
+          <div class="char-monogram">阿</div>
+          <div class="char-meta">
+            <h3 class="char-name">阿尔法战术体（示例）</h3>
+            <div class="char-origin">衡天⊙ 第三版书写示例 · 战术义体 · 第四代</div>
+          </div>
+        </div>
+        <span class="tier-badge gold mono">⊙ 墙☆</span>
+      </div>
+      <div class="char-tags">
+        <span class="tag-pill accent">超爆墙 · #13</span>
+        <span class="tag-pill mono">首字母 A</span>
+        <span class="tag-pill">攻防双满</span>
+      </div>
+      <p class="char-summary">演示继承区低段「目标式·碎块标定」与第三版 1.5 节「完整书写 + 攻防双满」标注格式的示例角色卡。</p>
+      <div class="char-foot">
+        <span class="char-cred">破<span class="ev-badge ev-confirmed">〔实〕</span>（已确认）、御<span class="ev-badge ev-confirmed">〔实〕</span>（已确认）</span>
+        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+      </div>
+    </a>
+    <a class="char-card" href="character/demo-cangqiong.html">
+      <div class="char-head">
+        <div class="char-identity">
+          <div class="char-monogram">苍</div>
+          <div class="char-meta">
+            <h3 class="char-name">苍穹司辰（示例）</h3>
+            <div class="char-origin">衡天⊙ 第三版书写示例 · 司辰阶</div>
+          </div>
+        </div>
+        <span class="tier-badge gold mono">⊙ 恒○</span>
+      </div>
+      <div class="char-tags">
+        <span class="tag-pill accent">标准爆恒星 · #53</span>
+        <span class="tag-pill mono">首字母 C</span>
+        
+      </div>
+      <p class="char-summary">对应《衡天⊙ 第三版》1.5 节「示例二：数据缺失」——展示缺项不反推原则（破达恒○不自动推出御或控）。</p>
+      <div class="char-foot">
+        <span class="char-cred">破<span class="ev-badge ev-confirmed">〔实〕</span>（单一已确认战绩）</span>
+        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+      </div>
+    </a>
+    <a class="char-card" href="character/demo-yuanxu.html">
+      <div class="char-head">
+        <div class="char-identity">
+          <div class="char-monogram">渊</div>
+          <div class="char-meta">
+            <h3 class="char-name">渊序构筑者（示例）</h3>
+            <div class="char-origin">衡天⊙ 第三版书写示例 · 论外门槛</div>
+          </div>
+        </div>
+        <span class="tier-badge gold mono">⊙ 外·门</span>
+      </div>
+      <div class="char-tags">
+        <span class="tag-pill accent">论外门槛 · #90</span>
+        <span class="tag-pill mono">首字母 Y</span>
+        <span class="tag-pill">计数 ℵ₀ · 结构 ε₀ 层超脱</span>
+      </div>
+      <p class="char-summary">演示第八部分 8.3「序数比结构、基数比规模」双标注规范：ε₀ 层超脱区分结构复杂度，计数基数仍为 ℵ₀。</p>
+      <div class="char-foot">
+        <span class="char-cred">破<span class="ev-badge ev-confirmed">〔实〕</span>（完成态结构性证明）</span>
+        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+      </div>
+    </a>
         </div>
       </section>
 
-      <!-- Seven Dimensions & Five Evidence Badges -->
       <section class="section-block">
-        <div class="section-head">
+        <div class="section-header">
           <div>
             <span class="section-kicker">Methodology</span>
-            <h2 class="section-title">七维并列评定与五态证据规范</h2>
+            <h2 class="section-title">七维并列与五态证据规范</h2>
           </div>
-          <a class="btn btn-surface" href="rules.html" style="padding:7px 14px;font-size:12.5px">查阅第三版总则 →</a>
+          <a class="btn btn-secondary btn-sm" href="rules.html">阅读第三版总则 →</a>
         </div>
-        <div class="arch-grid">
-          <div class="arch-card">
-            <h3 style="margin:0 0 8px;font-family:var(--font-serif);font-size:17px">七维不互推原则</h3>
-            <p style="margin:0;color:var(--text-secondary);font-size:13.3px;line-height:1.7">
-              除 0.11 条「整体掌控物质与结构可单向推出破坏」外，破坏、防御、速度、算力、场域与特性严格独立计分，缺项记为〔缺〕而不脑补补齐。
+        <div class="principles-grid">
+          <div class="principle-card">
+            <h3 class="principle-title">七维独立计分（缺项不反推）</h3>
+            <p class="principle-desc">
+              除 0.11 条「整体掌控物质与结构可单向推出破坏」外，破坏、防御、速度、算力、场域与特性严格独立记录，原文未涉及之维度一律记为〔缺〕。
             </p>
-            <div class="arch-pills">
-              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">破</strong> 破坏能量</span>
-              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">控</strong> 整体掌控</span>
-              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">域</strong> 作用范围</span>
-              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">御</strong> 防御承受</span>
-              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">速</strong> 机动速度</span>
-              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">算</strong> 图灵演算</span>
-              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">性</strong> 机制特性</span>
+            <div class="pill-cluster">
+              <span class="tag-pill"><strong class="mono">破</strong> 破坏能量</span>
+              <span class="tag-pill"><strong class="mono">控</strong> 整体掌控</span>
+              <span class="tag-pill"><strong class="mono">域</strong> 作用范围</span>
+              <span class="tag-pill"><strong class="mono">御</strong> 防御承受</span>
+              <span class="tag-pill"><strong class="mono">速</strong> 机动速度</span>
+              <span class="tag-pill"><strong class="mono">算</strong> 图灵演算</span>
+              <span class="tag-pill"><strong class="mono">性</strong> 机制特性</span>
             </div>
           </div>
 
-          <div class="arch-card">
-            <h3 style="margin:0 0 8px;font-family:var(--font-serif);font-size:17px">五级证据可信度标识</h3>
-            <p style="margin:0;color:var(--text-secondary);font-size:13.3px;line-height:1.7">
-              所有定级必须通过 0.14.2「归因与知情度审查」（在场、知情、记忆可靠、表现一致、无后文推翻、归因准确），并显式标注证据等级。
+          <div class="principle-card">
+            <h3 class="principle-title">五级证据状态标识</h3>
+            <p class="principle-desc">
+              所有定级须经 0.14.2「归因与知情度审查」（在场、知情、记忆可靠、表现一致、无后文推翻、归因准确），并在数值后显式标注证据可信度。
             </p>
-            <div class="arch-pills">
-              <span class="arch-pill"><span class="ev-badge ev-confirmed">〔实〕</span> 已确认表现</span>
-              <span class="arch-pill"><span class="ev-badge ev-lower">〔下〕</span> 保守下限</span>
-              <span class="arch-pill"><span class="ev-badge ev-inferred">〔推〕</span> 规则单向推定</span>
-              <span class="arch-pill"><span class="ev-badge ev-hidden">〔隐〕</span> 隐含结构锚点</span>
-              <span class="arch-pill"><span class="ev-badge ev-missing">〔缺〕</span> 原文未涉及</span>
+            <div class="pill-cluster">
+              <span class="tag-pill"><span class="ev-badge ev-confirmed">〔实〕</span> 已确认表现</span>
+              <span class="tag-pill"><span class="ev-badge ev-lower">〔下〕</span> 保守下限</span>
+              <span class="tag-pill"><span class="ev-badge ev-inferred">〔推〕</span> 规则单向推定</span>
+              <span class="tag-pill"><span class="ev-badge ev-hidden">〔隐〕</span> 隐含结构锚点</span>
+              <span class="tag-pill"><span class="ev-badge ev-missing">〔缺〕</span> 原文未涉及</span>
             </div>
           </div>
         </div>
@@ -380,24 +339,19 @@
     
   </main>
 
-  <!-- Floating Navigation Dock (Smart Back + Back to Top) -->
-  <div class="floating-dock" aria-label="快捷返回工具栏">
+  <div class="floating-dock" aria-label="快捷工具">
     
-    <button type="button" class="dock-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页" title="返回上一页并恢复浏览位置">
-      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回</span>
-    </button>
-    <button type="button" class="dock-btn" id="dock-top-btn" title="回到页面顶部">
-      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> <span>顶部</span>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </button>
   </div>
 
-  <!-- Global Search Command Palette Modal -->
   <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
     <div class="modal-panel">
       <div class="search-modal-head">
-        <span style="color:var(--accent-gold);display:flex"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
         <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、角色名、材质或规则关键词…" autocomplete="off">
-        <button type="button" class="btn btn-surface" id="search-modal-close" style="padding:5px 11px;font-size:12px">ESC</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
@@ -408,39 +362,24 @@
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
       <div class="search-modal-foot">
-        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择条目 · <kbd class="kbd-hint">Enter</kbd> 进入页面</span>
-        <a href="./search.html" style="font-weight:500">进入独立搜索页 →</a>
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="./search.html">进入独立搜索页 →</a>
       </div>
     </div>
   </div>
 
   <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="brand-logo" style="margin-bottom:10px">
-            <span class="brand-emblem" style="width:28px;height:28px;font-size:14px">⊙</span>
-            <span class="brand-title" style="font-size:15px">衡天 PowerWiki</span>
-          </div>
-          <p class="footer-desc">
-            以《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》为唯一基准锚点，提供从昆虫级（5×10⁻⁵ J）至论天最上（莱因哈特 / 贝克莱基数）的全尺度量级检索与独立角色战力档案。
-          </p>
-        </div>
-        <div class="footer-col">
-          <h4>核心导览</h4>
-          <a href="./tiers.html">量级分类（从小到大）</a>
-          <a href="./characters.html">角色档案（首字母 / 从小到大）</a>
-          <a href="./search.html">全站检索引擎</a>
-        </div>
-        <div class="footer-col">
-          <h4>基准典籍全文</h4>
-          <a href="./rules.html">衡天量级体系（第三版·全文）</a>
-          <a href="./materials.html">材质与破坏能量数据库（第二版·全文）</a>
-        </div>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第三版基准）</span>
       </div>
-      <div class="footer-bottom">
-        <span>衡天⊙ PowerWiki · Obsidian Celestial Edition</span>
-        <span>全部角色与量级均采用独立静态档案页 · 自动记忆浏览状态与滚动位置</span>
+      <div class="footer-links">
+        <a href="./tiers.html">量级天梯</a>
+        <a href="./characters.html">角色档案</a>
+        <a href="./rules.html">衡天体系全文</a>
+        <a href="./materials.html">材质能量库</a>
+        <a href="./search.html">全站检索</a>
       </div>
     </div>
   </footer>

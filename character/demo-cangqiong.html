@@ -15,22 +15,19 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="header-inner">
-      <div class="brand-cluster">
+    <div class="container header-inner">
+      <div class="header-left">
         <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
         </button>
-        <a class="brand-logo" href="../index.html">
-          <span class="brand-emblem">⊙</span>
-          <span class="brand-text">
-            <span class="brand-title">衡天 PowerWiki</span>
-            <span class="brand-sub">Celestial Scale Archive · V3</span>
-          </span>
+        <a class="brand-link" href="../index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-name">衡天 PowerWiki</span>
         </a>
       </div>
 
@@ -38,15 +35,15 @@
         <a class="nav-link" href="../index.html">首页</a>
         <a class="nav-link" href="../tiers.html">量级</a>
         <a class="nav-link active" href="../characters.html">角色</a>
-        <a class="nav-link" href="../rules.html">衡天体系全文</a>
-        <a class="nav-link" href="../materials.html">材质能量库</a>
+        <a class="nav-link" href="../rules.html">体系全文</a>
+        <a class="nav-link" href="../materials.html">材质库</a>
         <a class="nav-link" href="../search.html">搜索</a>
       </nav>
 
-      <div class="header-actions">
-        <button type="button" class="search-trigger-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <span>检索角色、量级、规则…</span>
+          <span class="search-btn-label">检索…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
         <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
@@ -60,9 +57,9 @@
 
   <main>
     
-        <div class="container" style="padding-bottom:36px">
-          <div style="padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <button type="button" class="back-pill js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+        <div class="container detail-stack">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
               <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回角色档案库</span>
             </button>
             <nav class="breadcrumbs" aria-label="面包屑">
@@ -74,207 +71,187 @@
             </nav>
           </div>
 
-          <!-- Standalone Character Dossier Hero -->
-          <section class="dossier-hero">
-            <div class="dossier-art" aria-hidden="true">
-              <img src="../static/img/character-chronicle.jpg" alt="" style="--art-pos: 82% 42%;">
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img" src="../static/img/character-chronicle.jpg" alt="">
             </div>
-            <div class="dossier-inner">
-              <div class="dossier-top-bar">
-                <div class="dossier-identity">
-                  <div class="dossier-monogram">苍</div>
+            <div class="dossier-body">
+              <div class="dossier-top">
+                <div class="dossier-title-block">
+                  <div class="char-monogram lg">苍</div>
                   <div>
-                    <div class="hero-eyebrow" style="margin-bottom:8px">
-                      <span class="hero-eyebrow-line" style="width:18px"></span>
-                      <span>CHARACTER DOSSIER · 首字母 C</span>
-                    </div>
-                    <h1 class="dossier-name">苍穹司辰（示例）</h1>
-                    <div class="dossier-subtitle">
-                      <span>出处：衡天⊙ 第三版书写示例</span>
-                      <span>·</span><span>境界/形态：司辰阶</span>
-                      <span>·</span><span>称号：恒星熔炉执掌者 · 衡天 1.5 示例二</span>
-                    </div>
+                    <h1 class="page-title">苍穹司辰（示例）</h1>
+                    <div class="dossier-submeta"><span>出处：衡天⊙ 第三版书写示例</span><span>·</span><span>拼音首字母：C</span><span>·</span><span>境界/形态：司辰阶</span><span>·</span><span>称号：恒星熔炉执掌者 · 衡天 1.5 示例二</span></div>
                   </div>
                 </div>
 
-                <div class="dossier-seal-box">
-                  <a class="dossier-tier-seal mono" href="../tier/star-std.html" title="点击查看 ⊙恒○ 量级规格页">
+                <div class="dossier-seal-col">
+                  <a class="tier-seal-link mono" href="../tier/star-std.html" title="查看所属主档规格页">
                     <span>⊙ 恒○</span>
-                    <span style="font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--text-primary)">标准爆恒星</span>
-                    <span style="font-size:12px;color:var(--text-muted)">#53</span>
-                    <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                    <span>标准爆恒星</span>
+                    <span>#53</span>
+                    <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
                   </a>
-                  <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-                    <span class="mod-chip" style="padding:4px 10px;font-size:12px;color:var(--accent-blue)">第二部分 · 有限能量轴 · 继承区</span>
+                  <div class="char-tags">
+                    <span class="tag-pill accent">第二部分 · 有限能量轴 · 继承区</span>
                     
                   </div>
                 </div>
               </div>
 
-              <p style="margin:20px 0 0;color:var(--text-secondary);font-size:14.8px;line-height:1.8;max-width:860px">
-                对应《衡天⊙ 第三版》1.5 节「示例二：数据缺失」——展示缺项不反推原则（破达恒○不自动推出御或控）。
-              </p>
+              <p class="page-desc">对应《衡天⊙ 第三版》1.5 节「示例二：数据缺失」——展示缺项不反推原则（破达恒○不自动推出御或控）。</p>
 
-              <div class="dossier-quote-box">
-                <div class="meta-kicker" style="color:var(--accent-gold);margin-bottom:6px">
-                  《衡天⊙ 第三版》1.5 正式完整书写（首次出现展开全称、标准与能量）
-                </div>
+              <div class="full-writing-box">
+                <div class="box-kicker">《衡天⊙ 第三版》1.5 正式完整书写（首次出现展开全称、标准与能量）</div>
                 <div>综合量级：⊙恒○——标准爆恒星级（打爆太阳，克服引力结合能下限 2.28×10⁴¹ J），依据单一直接破坏战绩<span class="ev-badge ev-confirmed">〔实〕</span>定级，其余缺项不反推。</div>
-                <div style="margin-top:8px;font-size:12.5px;color:var(--text-muted)">证据链核验摘要：破<span class="ev-badge ev-confirmed">〔实〕</span>（单一已确认战绩）</div>
+                <div class="box-subnote">证据链核验摘要：破<span class="ev-badge ev-confirmed">〔实〕</span>（单一已确认战绩）</div>
               </div>
             </div>
           </section>
 
-          <!-- Seven Dimensions Breakdown -->
-          <section class="dossier-section">
-            <div class="dossier-section-head">
-              <h2 class="dossier-section-title">七维战力分项评定</h2>
-              <span class="dossier-section-sub">依据《衡天⊙ 第三版》七维并列与缺项不反推规范逐项标定</span>
+          <section class="section-block">
+            <div class="section-header">
+              <div>
+                <span class="section-kicker">Seven-Dimension Assessment</span>
+                <h2 class="section-title">七维战力分项评定</h2>
+              </div>
             </div>
-            <div class="dossier-dims-grid">
+            <div class="dim-matrix-grid">
               
-                <div class="dossier-dim-card ">
-                  <div class="dossier-dim-head">
-                    <span class="dossier-dim-symbol mono">破</span>
+                <div class="dim-detail-card ">
+                  <div class="dim-detail-head">
+                    <span class="dim-symbol mono">破</span>
                     <div>
-                      <div class="dossier-dim-title">破坏能量</div>
-                      <div style="font-size:11.5px;color:var(--text-muted)">单次作用直接瓦解、打爆目标结构的实测或推定能量阈值</div>
+                      <div class="dim-title">破坏能量</div>
+                      <div class="dim-desc">单次作用直接瓦解、打爆目标结构的实测或推定能量阈值</div>
                     </div>
                   </div>
-                  <div class="dossier-dim-body">恒○（标准爆恒星：2.28×10⁴¹ J）<span class="ev-badge ev-confirmed">〔实〕</span>（一击解体太阳级主序星）</div>
+                  <div class="dim-value">恒○（标准爆恒星：2.28×10⁴¹ J）<span class="ev-badge ev-confirmed">〔实〕</span>（一击解体太阳级主序星）</div>
                 </div>
-                <div class="dossier-dim-card ">
-                  <div class="dossier-dim-head">
-                    <span class="dossier-dim-symbol mono">控</span>
+                <div class="dim-detail-card ">
+                  <div class="dim-detail-head">
+                    <span class="dim-symbol mono">控</span>
                     <div>
-                      <div class="dossier-dim-title">能量操控</div>
-                      <div style="font-size:11.5px;color:var(--text-muted)">对物质、能量或时空结构进行整体掌控的尺度与上限</div>
+                      <div class="dim-title">能量操控</div>
+                      <div class="dim-desc">对物质、能量或时空结构进行整体掌控的尺度与上限</div>
                     </div>
                   </div>
-                  <div class="dossier-dim-body"><span class="ev-badge ev-missing">〔缺〕</span></div>
+                  <div class="dim-value"><span class="ev-badge ev-missing">〔缺〕</span></div>
                 </div>
-                <div class="dossier-dim-card ">
-                  <div class="dossier-dim-head">
-                    <span class="dossier-dim-symbol mono">御</span>
+                <div class="dim-detail-card ">
+                  <div class="dim-detail-head">
+                    <span class="dim-symbol mono">御</span>
                     <div>
-                      <div class="dossier-dim-title">防御承受</div>
-                      <div style="font-size:11.5px;color:var(--text-muted)">正面承受对应量级能量冲击而不丧失核心结构的耐久锚点</div>
+                      <div class="dim-title">防御承受</div>
+                      <div class="dim-desc">正面承受对应量级能量冲击而不丧失核心结构的耐久锚点</div>
                     </div>
                   </div>
-                  <div class="dossier-dim-body"><span class="ev-badge ev-missing">〔缺〕</span></div>
+                  <div class="dim-value"><span class="ev-badge ev-missing">〔缺〕</span></div>
                 </div>
-                <div class="dossier-dim-card ">
-                  <div class="dossier-dim-head">
-                    <span class="dossier-dim-symbol mono">速</span>
+                <div class="dim-detail-card ">
+                  <div class="dim-detail-head">
+                    <span class="dim-symbol mono">速</span>
                     <div>
-                      <div class="dossier-dim-title">机动反应</div>
-                      <div style="font-size:11.5px;color:var(--text-muted)">战斗机动、巡航跨越或无延迟响应的物理/超限速度标定</div>
+                      <div class="dim-title">机动反应</div>
+                      <div class="dim-desc">战斗机动、巡航跨越或无延迟响应的物理/超限速度标定</div>
                     </div>
                   </div>
-                  <div class="dossier-dim-body">亚光速·约 0.08c<span class="ev-badge ev-confirmed">〔实〕</span></div>
+                  <div class="dim-value">亚光速·约 0.08c<span class="ev-badge ev-confirmed">〔实〕</span></div>
                 </div>
-                <div class="dossier-dim-card ">
-                  <div class="dossier-dim-head">
-                    <span class="dossier-dim-symbol mono">域</span>
+                <div class="dim-detail-card ">
+                  <div class="dim-detail-head">
+                    <span class="dim-symbol mono">域</span>
                     <div>
-                      <div class="dossier-dim-title">作用范围</div>
-                      <div style="font-size:11.5px;color:var(--text-muted)">规则干涉、精神场域或概念覆写的空间/层级覆盖边界</div>
+                      <div class="dim-title">作用范围</div>
+                      <div class="dim-desc">规则干涉、精神场域或概念覆写的空间/层级覆盖边界</div>
                     </div>
                   </div>
-                  <div class="dossier-dim-body">精神干涉·影响范围一座城·可突破强度上限未知<span class="ev-badge ev-confirmed">〔实〕</span></div>
+                  <div class="dim-value">精神干涉·影响范围一座城·可突破强度上限未知<span class="ev-badge ev-confirmed">〔实〕</span></div>
                 </div>
-                <div class="dossier-dim-card ">
-                  <div class="dossier-dim-head">
-                    <span class="dossier-dim-symbol mono">算</span>
+                <div class="dim-detail-card ">
+                  <div class="dim-detail-head">
+                    <span class="dim-symbol mono">算</span>
                     <div>
-                      <div class="dossier-dim-title">演算感知</div>
-                      <div style="font-size:11.5px;color:var(--text-muted)">有限算力至图灵跃迁（0′ / 0⁽ω⁾）级的信息处理与预判能力</div>
+                      <div class="dim-title">演算感知</div>
+                      <div class="dim-desc">有限算力至图灵跃迁（0′ / 0⁽ω⁾）级的信息处理与预判能力</div>
                     </div>
                   </div>
-                  <div class="dossier-dim-body"><span class="ev-badge ev-missing">〔缺〕</span></div>
+                  <div class="dim-value"><span class="ev-badge ev-missing">〔缺〕</span></div>
                 </div>
-                <div class="dossier-dim-card wide">
-                  <div class="dossier-dim-head">
-                    <span class="dossier-dim-symbol mono">性</span>
+                <div class="dim-detail-card wide">
+                  <div class="dim-detail-head">
+                    <span class="dim-symbol mono">性</span>
                     <div>
-                      <div class="dossier-dim-title">机制特性</div>
-                      <div style="font-size:11.5px;color:var(--text-muted)">独立于纯能量数值之外的存续形态、材质构成与特殊机制</div>
+                      <div class="dim-title">机制特性</div>
+                      <div class="dim-desc">独立于纯能量数值之外的存续形态、材质构成与特殊机制</div>
                     </div>
                   </div>
-                  <div class="dossier-dim-body">真空存续</div>
+                  <div class="dim-value">真空存续</div>
                 </div>
             </div>
           </section>
 
-          
-
-          <!-- Canonical Tier Anchor Comparison -->
-          <section class="dossier-section">
-            <div class="dossier-section-head">
-              <h2 class="dossier-section-title">所属主档物理 / 数学基准锚点</h2>
-              <a class="btn btn-surface" href="../tier/star-std.html" style="padding:6px 13px;font-size:12.5px">
-                进入 ⊙恒○ 量级规格页 <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+          <section class="section-block">
+            <div class="section-header">
+              <div>
+                <span class="section-kicker">Tier Anchor</span>
+                <h2 class="section-title">所属主档物理 / 数学基准对照</h2>
+              </div>
+              <a class="btn btn-secondary btn-sm" href="../tier/star-std.html">
+                进入 ⊙恒○ 量级页 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
               </a>
             </div>
-            <div class="detail-grid" style="margin-top:0">
-              <div class="detail-meta-card">
-                <div class="meta-kicker">主档代字与序位</div>
-                <div class="meta-val mono" style="color:var(--accent-gold)">⊙ 恒○ · 标准爆恒星（#53）</div>
+            <div class="spec-grid">
+              <div class="spec-card">
+                <div class="spec-label">主档代字与序位</div>
+                <div class="spec-val accent mono">⊙ 恒○ · 标准爆恒星（#53）</div>
               </div>
-              <div class="detail-meta-card">
-                <div class="meta-kicker">能量阈值 / 超限基数</div>
-                <div class="meta-val mono">2.28×10⁴¹ J</div>
+              <div class="spec-card">
+                <div class="spec-label">能量阈值 / 超限基数</div>
+                <div class="spec-val mono">2.28×10⁴¹ J</div>
               </div>
-              <div class="detail-meta-card">
-                <div class="meta-kicker">覆盖尺度与典型参照</div>
-                <div class="meta-val">打爆太阳（复算 2.277×10⁴¹ J；银河系平均场星 0.8 M☉ 约 1.7×10⁴¹ J）</div>
+              <div class="spec-card">
+                <div class="spec-label">覆盖尺度与典型参照</div>
+                <div class="spec-val">打爆太阳（复算 2.277×10⁴¹ J；银河系平均场星 0.8 M☉ 约 1.7×10⁴¹ J）</div>
               </div>
-              <div class="detail-meta-card">
-                <div class="meta-kicker">对应《衡天第三版》章节</div>
-                <div class="meta-val">
-                  <a href="../rules.html#sec-2-3-量级表-昆虫-爆恒星" style="display:inline-flex;align-items:center;gap:5px">
-                    2.3 量级表（昆虫～爆恒星） <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-                  </a>
+              <div class="spec-card">
+                <div class="spec-label">对应《衡天第三版》章节</div>
+                <div class="spec-val">
+                  <a class="table-primary-link" href="../rules.html#sec-2-3-量级表-昆虫-爆恒星">2.3 量级表（昆虫～爆恒星） →</a>
                 </div>
               </div>
             </div>
           </section>
 
-          <!-- Prev / Next Character Navigation -->
-          <div class="adjacent-nav" style="margin-top:30px">
-            <a class="adj-nav-card" href="demo-suixing.html">
-                  <span class="adj-dir">← 上一位角色（更低量级）</span>
-                  <span class="adj-name">碎星铁卫（示例）</span>
-                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">⊙ 星○ · 首字母 S</span>
+          <div class="pager-grid">
+            <a class="pager-card" href="demo-suixing.html">
+                  <span class="pager-dir">← 上一位角色（更低量级）</span>
+                  <span class="pager-title">碎星铁卫（示例）</span>
+                  <span class="pager-sub mono">⊙ 星○ · 首字母 S</span>
                 </a>
-            <a class="adj-nav-card next" href="demo-lingxiao.html">
-                  <span class="adj-dir">下一位角色（更高量级） →</span>
-                  <span class="adj-name">凌霄巡星者（示例）</span>
-                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">⊙ 河○ · 首字母 L</span>
+            <a class="pager-card next" href="demo-lingxiao.html">
+                  <span class="pager-dir">下一位角色（更高量级） →</span>
+                  <span class="pager-title">凌霄巡星者（示例）</span>
+                  <span class="pager-sub mono">⊙ 河○ · 首字母 L</span>
                 </a>
           </div>
         </div>
         
   </main>
 
-  <!-- Floating Navigation Dock (Smart Back + Back to Top) -->
-  <div class="floating-dock" aria-label="快捷返回工具栏">
+  <div class="floating-dock" aria-label="快捷工具">
     
-    <button type="button" class="dock-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库" title="返回上一页并恢复浏览位置">
-      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回</span>
-    </button>
-    <button type="button" class="dock-btn" id="dock-top-btn" title="回到页面顶部">
-      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> <span>顶部</span>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </button>
   </div>
 
-  <!-- Global Search Command Palette Modal -->
   <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
     <div class="modal-panel">
       <div class="search-modal-head">
-        <span style="color:var(--accent-gold);display:flex"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
         <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、角色名、材质或规则关键词…" autocomplete="off">
-        <button type="button" class="btn btn-surface" id="search-modal-close" style="padding:5px 11px;font-size:12px">ESC</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
@@ -285,39 +262,24 @@
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
       <div class="search-modal-foot">
-        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择条目 · <kbd class="kbd-hint">Enter</kbd> 进入页面</span>
-        <a href="../search.html" style="font-weight:500">进入独立搜索页 →</a>
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="../search.html">进入独立搜索页 →</a>
       </div>
     </div>
   </div>
 
   <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="brand-logo" style="margin-bottom:10px">
-            <span class="brand-emblem" style="width:28px;height:28px;font-size:14px">⊙</span>
-            <span class="brand-title" style="font-size:15px">衡天 PowerWiki</span>
-          </div>
-          <p class="footer-desc">
-            以《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》为唯一基准锚点，提供从昆虫级（5×10⁻⁵ J）至论天最上（莱因哈特 / 贝克莱基数）的全尺度量级检索与独立角色战力档案。
-          </p>
-        </div>
-        <div class="footer-col">
-          <h4>核心导览</h4>
-          <a href="../tiers.html">量级分类（从小到大）</a>
-          <a href="../characters.html">角色档案（首字母 / 从小到大）</a>
-          <a href="../search.html">全站检索引擎</a>
-        </div>
-        <div class="footer-col">
-          <h4>基准典籍全文</h4>
-          <a href="../rules.html">衡天量级体系（第三版·全文）</a>
-          <a href="../materials.html">材质与破坏能量数据库（第二版·全文）</a>
-        </div>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第三版基准）</span>
       </div>
-      <div class="footer-bottom">
-        <span>衡天⊙ PowerWiki · Obsidian Celestial Edition</span>
-        <span>全部角色与量级均采用独立静态档案页 · 自动记忆浏览状态与滚动位置</span>
+      <div class="footer-links">
+        <a href="../tiers.html">量级天梯</a>
+        <a href="../characters.html">角色档案</a>
+        <a href="../rules.html">衡天体系全文</a>
+        <a href="../materials.html">材质能量库</a>
+        <a href="../search.html">全站检索</a>
       </div>
     </div>
   </footer>

@@ -1,27 +1,26 @@
 /* ==========================================================================
-   衡天⊙ PowerWiki — Client Interactive Engine v5.0
+   衡天⊙ PowerWiki — Client Interactive Engine v6.0
    - Silent Browsing Cache (Scroll Position + Filter/Sort/View State Memory)
    - Smart Back Navigation Stack (Instant State Restoration on Return)
    - Standalone Character Pages (Zero Popup Modals)
-   - 120fps rAF TOC ScrollSpy + Full Scroll-Lock & Overscroll Containment
+   - 120fps rAF TOC ScrollSpy + Clean Scroll Lock Containment
    ========================================================================== */
 (function () {
   "use strict";
 
   const STORAGE_KEYS = {
     theme: "pw_theme_v2",
-    navStack: "pw_nav_stack_v5",
-    pageCache: "pw_page_cache_v5",
-    tierPrefs: "pw_tier_prefs_v5",
-    charPrefs: "pw_char_prefs_v5",
-    readerPrefs: "pw_reader_prefs_v5"
+    navStack: "pw_nav_stack_v6",
+    pageCache: "pw_page_cache_v6",
+    tierPrefs: "pw_tier_prefs_v6",
+    charPrefs: "pw_char_prefs_v6",
+    readerPrefs: "pw_reader_prefs_v6"
   };
 
   const ICONS = {
     sun: '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
     moon: '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
-    arrowUpRight: '<svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
-    search: '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>'
+    arrowUpRight: '<svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>'
   };
 
   const ROOT_PREFIX = document.documentElement.getAttribute("data-root") || "./";
@@ -59,8 +58,7 @@
   }
 
   function formatEvidenceBadges(text) {
-    const escaped = escapeHTML(text);
-    return escaped
+    return escapeHTML(text)
       .replace(/〔实〕/g, '<span class="ev-badge ev-confirmed">〔实〕</span>')
       .replace(/〔下〕/g, '<span class="ev-badge ev-lower">〔下〕</span>')
       .replace(/〔推〕/g, '<span class="ev-badge ev-inferred">〔推〕</span>')
@@ -69,7 +67,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     1. Scroll Lock & Backdrop Management (Modals & Mobile Drawers)
+     1. Scroll Lock & Drawer/Modal Backdrop Sync
      -------------------------------------------------------------------------- */
   function syncScrollLock() {
     const anyModalOpen = Boolean(document.querySelector(".modal-backdrop.open"));
@@ -83,10 +81,7 @@
     if (drawerBackdrop) {
       drawerBackdrop.classList.toggle("open", navOpen || tocOpen);
     }
-    document.body.classList.toggle(
-      "is-scroll-locked",
-      anyModalOpen || navOpen || tocOpen
-    );
+    document.body.classList.toggle("is-scroll-locked", anyModalOpen || navOpen || tocOpen);
   }
 
   function closeAllDrawersAndModals() {
@@ -102,15 +97,14 @@
     if (!el) return;
     const header = document.querySelector(".site-header");
     const alphaBar = document.querySelector(".alpha-bar.visible");
-    const headerH = header ? header.getBoundingClientRect().height : 64;
-    const alphaH = alphaBar ? alphaBar.getBoundingClientRect().height + 12 : 0;
-    const offset = headerH + alphaH + 18;
-    const targetY = Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset);
+    const headerH = header ? header.getBoundingClientRect().height : 60;
+    const alphaH = alphaBar ? alphaBar.getBoundingClientRect().height + 10 : 0;
+    const targetY = Math.max(0, el.getBoundingClientRect().top + window.scrollY - headerH - alphaH - 16);
     window.scrollTo({ top: targetY, behavior: smooth ? "smooth" : "auto" });
   }
 
   /* --------------------------------------------------------------------------
-     2. Theme Toggle & Mobile Navigation
+     2. Theme Toggle & Mobile Menu
      -------------------------------------------------------------------------- */
   function initTheme() {
     const btn = document.getElementById("theme-toggle-btn");
@@ -118,7 +112,7 @@
       if (!btn) return;
       const cur = document.documentElement.getAttribute("data-theme") || "dark";
       btn.innerHTML = cur === "dark" ? ICONS.sun : ICONS.moon;
-      btn.setAttribute("title", cur === "dark" ? "切换至浅色典籍纸主题" : "切换至深色黑曜主题");
+      btn.setAttribute("title", cur === "dark" ? "切换至浅色主题" : "切换至深色主题");
     };
     updateIcon();
     if (btn) {
@@ -159,7 +153,7 @@
     });
 
     window.addEventListener("resize", () => {
-      if (window.innerWidth > 1080) {
+      if (window.innerWidth > 1024) {
         if (nav.classList.contains("open")) nav.classList.remove("open");
         const sidebar = document.getElementById("doc-sidebar");
         if (sidebar && sidebar.classList.contains("drawer-open")) {
@@ -172,14 +166,12 @@
 
   /* --------------------------------------------------------------------------
      3. Silent Browsing State Cache & Smart Back Navigation
-     (Silently caches scroll offset + UI state per page in sessionStorage/localStorage)
      -------------------------------------------------------------------------- */
   function initBrowsingCacheAndBack() {
     const currentUrl = location.href.split("#")[0];
     let stack = safeGetJSON(sessionStorage, STORAGE_KEYS.navStack, []);
     const pageCache = safeGetJSON(sessionStorage, STORAGE_KEYS.pageCache, {});
 
-    // Restore cached scroll position when returning (if no explicit #hash target)
     if (!location.hash && pageCache[PAGE_ID] && typeof pageCache[PAGE_ID].scrollY === "number") {
       const targetY = pageCache[PAGE_ID].scrollY;
       if (targetY > 0) {
@@ -189,18 +181,20 @@
       }
     }
 
-    // Maintain internal session navigation stack for Smart Back button
     if (stack.length === 0 || stack[stack.length - 1].url !== currentUrl) {
-      stack.push({
-        url: currentUrl,
-        pageId: PAGE_ID,
-        title: PAGE_TITLE
-      });
+      stack.push({ url: currentUrl, pageId: PAGE_ID, title: PAGE_TITLE });
       if (stack.length > 35) stack = stack.slice(-35);
       safeSetJSON(sessionStorage, STORAGE_KEYS.navStack, stack);
     }
 
-    // Silently cache current page scrollY (throttled, passive, zero DOM writes)
+    const backTopBtn = document.getElementById("dock-top-btn");
+    const syncTopBtn = () => {
+      if (backTopBtn) {
+        backTopBtn.classList.toggle("is-hidden", (window.scrollY || 0) < 260);
+      }
+    };
+    syncTopBtn();
+
     let cacheTimer = null;
     const persistScroll = () => {
       cacheTimer = null;
@@ -215,8 +209,9 @@
     window.addEventListener(
       "scroll",
       () => {
+        syncTopBtn();
         if (!cacheTimer) {
-          cacheTimer = setTimeout(persistScroll, 160);
+          cacheTimer = setTimeout(persistScroll, 150);
         }
       },
       { passive: true }
@@ -224,15 +219,12 @@
 
     window.addEventListener("pagehide", persistScroll);
 
-    // Back-to-top button
-    const backTopBtn = document.getElementById("dock-top-btn");
     if (backTopBtn) {
       backTopBtn.addEventListener("click", () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
     }
 
-    // Smart Back Buttons
     const backBtns = document.querySelectorAll(".js-smart-back");
     const prevEntry = stack.length >= 2 ? stack[stack.length - 2] : null;
 
@@ -243,7 +235,7 @@
 
       if (prevEntry && labelSpan) {
         const shortPrev =
-          prevEntry.title.length > 12 ? prevEntry.title.slice(0, 12) + "…" : prevEntry.title;
+          prevEntry.title.length > 10 ? prevEntry.title.slice(0, 10) + "…" : prevEntry.title;
         labelSpan.textContent = "返回 · " + shortPrev;
         btn.setAttribute("title", "返回上一页：" + prevEntry.title);
       } else if (labelSpan) {
@@ -267,7 +259,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     4. Document Reader (120fps rAF ScrollSpy + Auto-Sync TOC + In-Doc Finder)
+     4. Full-Text Document Reader (TOC ScrollSpy + Finder + Font/Wide Prefs)
      -------------------------------------------------------------------------- */
   function initDocumentReader() {
     const sidebar = document.getElementById("doc-sidebar");
@@ -276,7 +268,7 @@
     const dockTocBtn = document.getElementById("dock-toc-btn");
     const mdBody = document.querySelector(".markdown-body");
 
-    const prefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, { fontSize: 15.5, wide: false });
+    const prefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, { fontSize: 15, wide: false });
     if (mdBody && prefs.fontSize) {
       mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
     }
@@ -293,7 +285,7 @@
 
     if (fontDecBtn && mdBody) {
       fontDecBtn.addEventListener("click", () => {
-        prefs.fontSize = Math.max(13.5, Number((prefs.fontSize - 1).toFixed(1)));
+        prefs.fontSize = Math.max(13, Number((prefs.fontSize - 1).toFixed(1)));
         mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
         safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
         rebuildTocOffsets();
@@ -301,7 +293,7 @@
     }
     if (fontIncBtn && mdBody) {
       fontIncBtn.addEventListener("click", () => {
-        prefs.fontSize = Math.min(20.5, Number((prefs.fontSize + 1).toFixed(1)));
+        prefs.fontSize = Math.min(20, Number((prefs.fontSize + 1).toFixed(1)));
         mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
         safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
         rebuildTocOffsets();
@@ -435,7 +427,7 @@
     function runScrollSpy() {
       spyTicking = false;
       if (!spyItems.length) return;
-      const scrollPos = (window.scrollY || 0) + 130;
+      const scrollPos = (window.scrollY || 0) + 120;
       let current = spyItems[0];
       for (let i = 0; i < spyItems.length; i++) {
         if (spyItems[i].top <= scrollPos) {
@@ -452,7 +444,7 @@
         if (!pointerInsideToc && activeLink.offsetParent !== null) {
           const navRect = tocNav.getBoundingClientRect();
           const linkRect = activeLink.getBoundingClientRect();
-          if (linkRect.top < navRect.top + 36 || linkRect.bottom > navRect.bottom - 36) {
+          if (linkRect.top < navRect.top + 32 || linkRect.bottom > navRect.bottom - 32) {
             tocNav.scrollTop += linkRect.top - navRect.top - navRect.height * 0.38;
           }
         }
@@ -492,7 +484,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     5. Interactive Tiers Explorer (tiers.html) — Strictly 从小到大 (#01 -> #97)
+     5. Tiers Explorer (tiers.html) — Strictly 从小到大 (#01 -> #97)
      -------------------------------------------------------------------------- */
   function initTiersExplorer() {
     const mount = document.getElementById("tiers-explorer-mount");
@@ -502,13 +494,17 @@
     const groupMap = {};
     groups.forEach((g) => (groupMap[g.id] = g));
 
-    const savedPrefs = safeGetJSON(sessionStorage, STORAGE_KEYS.tierPrefs, null) ||
+    const savedPrefs =
+      safeGetJSON(sessionStorage, STORAGE_KEYS.tierPrefs, null) ||
       safeGetJSON(localStorage, STORAGE_KEYS.tierPrefs, {});
     const params = new URLSearchParams(location.search);
 
+    const validSegs = ["all", "terrestrial", "stellar", "transition", "cosmic", "fgh", "beyond", "unranked"];
+    const initSeg = params.get("seg") || savedPrefs.segment || "all";
+
     const state = {
-      segment: params.get("seg") || savedPrefs.segment || "all",
-      view: savedPrefs.view || "card",
+      segment: validSegs.includes(initSeg) ? initSeg : "all",
+      view: ["card", "flat", "table"].includes(savedPrefs.view) ? savedPrefs.view : "card",
       query: params.get("q") !== null ? params.get("q") : (savedPrefs.query || "")
     };
 
@@ -521,12 +517,11 @@
     if (filterInput && state.query) filterInput.value = state.query;
 
     function persistPrefs() {
-      const payload = {
+      safeSetJSON(sessionStorage, STORAGE_KEYS.tierPrefs, {
         segment: state.segment,
         view: state.view,
         query: state.query
-      };
-      safeSetJSON(sessionStorage, STORAGE_KEYS.tierPrefs, payload);
+      });
       safeSetJSON(localStorage, STORAGE_KEYS.tierPrefs, {
         segment: state.segment,
         view: state.view
@@ -534,9 +529,8 @@
     }
 
     function matchesTier(t) {
-      if (state.segment !== "all") {
-        const g = groupMap[t.group_id];
-        if (!g || g.filter_group !== state.segment) return false;
+      if (state.segment !== "all" && t.domain !== state.segment) {
+        return false;
       }
       if (!state.query) return true;
       const q = state.query.toLowerCase();
@@ -559,18 +553,18 @@
     function renderCard(t) {
       const orderText = t.unranked ? "待定" : `#${String(t.order).padStart(2, "0")}`;
       return `
-        <a class="tier-card" data-domain="${t.domain}" href="${resolveUrl("tier/" + t.slug + ".html")}">
+        <a class="tier-card" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
           <div class="tier-card-top">
-            <span class="tier-code-badge mono">⊙ ${escapeHTML(t.code)}</span>
-            <span class="tier-order-num mono">${orderText}</span>
+            <span class="tier-badge mono">⊙ ${escapeHTML(t.code)}</span>
+            <span class="tier-seq mono">${orderText}</span>
           </div>
-          <div class="tier-card-name">
-            <span>${escapeHTML(t.name)}</span>
-            <span class="tier-family-tag">${escapeHTML(t.family)}</span>
+          <div class="tier-name-row">
+            <h3 class="tier-name">${escapeHTML(t.name)}</h3>
+            <span class="tier-family">${escapeHTML(t.family)}</span>
           </div>
-          <div class="tier-energy-line mono">${escapeHTML(t.energy)}</div>
-          <div class="tier-scale-line">${escapeHTML(t.scale)}</div>
-          <div class="tier-card-foot">
+          <div class="tier-energy mono">${escapeHTML(t.energy)}</div>
+          <p class="tier-scale">${escapeHTML(t.scale)}</p>
+          <div class="tier-foot">
             <span>${escapeHTML(t.model)}</span>
             ${ICONS.arrowUpRight}
           </div>
@@ -582,24 +576,24 @@
         .map((t) => {
           const orderText = t.unranked ? "—" : `#${String(t.order).padStart(2, "0")}`;
           return `
-          <a class="ladder-row" data-domain="${t.domain}" href="${resolveUrl("tier/" + t.slug + ".html")}">
-            <span class="mono" style="font-size:12px;color:var(--text-muted)">${orderText}</span>
-            <span class="tier-code-badge mono" style="justify-self:start;--dom-color:var(--dom-${t.domain},var(--accent-gold))">⊙ ${escapeHTML(t.code)}</span>
-            <span class="serif-display" style="font-weight:600;color:var(--text-primary);font-size:15.5px">${escapeHTML(t.name)}</span>
-            <span class="mono" style="font-size:12.5px;color:var(--accent-gold);overflow-wrap:anywhere">${escapeHTML(t.energy)}</span>
-            <span class="ladder-col-scale" style="font-size:12.8px;color:var(--text-secondary)">${escapeHTML(t.scale)}</span>
-            <span class="ladder-col-arrow" style="color:var(--text-muted);justify-self:end">${ICONS.arrowUpRight}</span>
+          <a class="ladder-row" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
+            <span class="tier-seq mono">${orderText}</span>
+            <span><span class="tier-badge mono">⊙ ${escapeHTML(t.code)}</span></span>
+            <span class="ladder-title">${escapeHTML(t.name)}</span>
+            <span class="tier-energy mono">${escapeHTML(t.energy)}</span>
+            <span class="ladder-scale">${escapeHTML(t.scale)}</span>
+            <span class="ladder-arrow">${ICONS.arrowUpRight}</span>
           </a>`;
         })
         .join("");
 
       return `
-        <section class="tier-group-block" id="group-flat">
-          <div class="tier-group-header">
-            <h2 class="tier-group-title">连续天梯序列（#01 昆虫级 → #97 论天最上）</h2>
-            <span class="tier-group-sub">严格按量级从小到大排列 · 共 ${list.length} 档</span>
+        <section class="group-section" id="group-flat">
+          <div class="group-header">
+            <h2 class="group-title">连续天梯序列（#01 昆虫级 → #97 论天最上）</h2>
+            <span class="group-sub">严格按量级从小到大排列 · 共 ${list.length} 档</span>
           </div>
-          <div class="ladder-stream">${rows}</div>
+          <div class="ladder-list">${rows}</div>
         </section>`;
     }
 
@@ -609,18 +603,18 @@
           const orderText = t.unranked ? "—" : `#${String(t.order).padStart(2, "0")}`;
           return `
           <tr>
-            <td class="mono" style="color:var(--text-muted)">${orderText}</td>
-            <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" class="tier-code-badge mono" style="--dom-color:var(--dom-${t.domain},var(--accent-gold))">⊙ ${escapeHTML(t.code)}</a></td>
-            <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" class="serif-display" style="font-weight:600;color:var(--text-primary);font-size:14.5px">${escapeHTML(t.name)}</a></td>
-            <td class="mono" style="color:var(--accent-gold)">${escapeHTML(t.energy)}</td>
-            <td style="color:var(--text-secondary)">${escapeHTML(t.scale)}</td>
-            <td style="color:var(--text-muted)">${escapeHTML(t.model)}</td>
+            <td class="mono">${orderText}</td>
+            <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" class="tier-badge mono">⊙ ${escapeHTML(t.code)}</a></td>
+            <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" class="table-primary-link">${escapeHTML(t.name)}</a></td>
+            <td class="tier-energy mono">${escapeHTML(t.energy)}</td>
+            <td>${escapeHTML(t.scale)}</td>
+            <td>${escapeHTML(t.model)}</td>
           </tr>`;
         })
         .join("");
       return `
-        <div class="compact-table-wrap">
-          <table class="compact-table">
+        <div class="data-table-wrap">
+          <table class="data-table">
             <thead>
               <tr>
                 <th>序位</th>
@@ -647,10 +641,9 @@
       if (filtered.length === 0) {
         mount.innerHTML = `
           <div class="empty-state-box">
-            <div class="empty-icon">${ICONS.search}</div>
-            <h3 class="serif-display" style="margin:0 0 8px;font-size:19px">未找到匹配的量级档位</h3>
-            <p style="color:var(--text-muted);margin:0 0 18px;font-size:13.5px">请尝试更换检索词或切换上方区间筛选条件。</p>
-            <button type="button" class="btn btn-surface" id="reset-tier-filters">重置筛选条件</button>
+            <h3 class="empty-state-title">未找到匹配的量级档位</h3>
+            <p class="empty-state-sub">请尝试更换检索词或切换上方区间筛选条件。</p>
+            <button type="button" class="btn btn-secondary btn-sm" id="reset-tier-filters">重置筛选条件</button>
           </div>`;
         const resetBtn = document.getElementById("reset-tier-filters");
         if (resetBtn) {
@@ -689,10 +682,10 @@
           const g = groupMap[gid];
           const gItems = allOrdered.filter((t) => t.group_id === gid);
           return `
-            <section class="tier-group-block" id="group-${gid}">
-              <div class="tier-group-header">
-                <h2 class="tier-group-title">${escapeHTML(g ? g.title : gid)}</h2>
-                <span class="tier-group-sub">${escapeHTML(g ? g.subtitle : "")} · ${gItems.length} 档</span>
+            <section class="group-section" id="group-${escapeHTML(gid)}">
+              <div class="group-header">
+                <h2 class="group-title">${escapeHTML(g ? g.title : gid)}</h2>
+                <span class="group-sub">${escapeHTML(g ? g.subtitle : "")} · ${gItems.length} 档</span>
               </div>
               <div class="tier-grid">${gItems.map(renderCard).join("")}</div>
             </section>`;
@@ -736,9 +729,9 @@
   }
 
   /* --------------------------------------------------------------------------
-     6. Interactive Characters Explorer (characters.html)
+     6. Characters Explorer (characters.html)
      - Dual Sort: ↑ 按量级从小到大 & A–Z 按首字母排序
-     - Every Card Navigates to Standalone Page character/<slug>.html (NO MODALS!)
+     - Clean Cards Navigating to Standalone character/<slug>.html
      -------------------------------------------------------------------------- */
   function initCharactersExplorer() {
     const mount = document.getElementById("chars-explorer-mount");
@@ -748,15 +741,19 @@
     const tierBySlug = {};
     tiers.forEach((t) => (tierBySlug[t.slug] = t));
 
-    const cached = safeGetJSON(sessionStorage, STORAGE_KEYS.charPrefs, null) ||
+    const cached =
+      safeGetJSON(sessionStorage, STORAGE_KEYS.charPrefs, null) ||
       safeGetJSON(localStorage, STORAGE_KEYS.charPrefs, {});
     const params = new URLSearchParams(location.search);
 
     const initSort = params.get("sort") || cached.sort || "asc";
+    const validDomains = ["all", "terrestrial", "stellar", "transition", "cosmic", "fgh", "beyond"];
+    const initDomain = cached.domain || "all";
+
     const state = {
       sort: initSort === "alpha" ? "alpha" : "asc",
       series: cached.series || "all",
-      domain: cached.domain || "all",
+      domain: validDomains.includes(initDomain) ? initDomain : "all",
       query: params.get("q") !== null ? params.get("q") : (cached.query || "")
     };
 
@@ -771,16 +768,13 @@
     if (filterInput && state.query) filterInput.value = state.query;
 
     function persistPrefs() {
-      const payload = {
+      safeSetJSON(sessionStorage, STORAGE_KEYS.charPrefs, {
         sort: state.sort,
         series: state.series,
         domain: state.domain,
         query: state.query
-      };
-      safeSetJSON(sessionStorage, STORAGE_KEYS.charPrefs, payload);
-      safeSetJSON(localStorage, STORAGE_KEYS.charPrefs, {
-        sort: state.sort
       });
+      safeSetJSON(localStorage, STORAGE_KEYS.charPrefs, { sort: state.sort });
     }
 
     const pool = (allCharacters || []).map((c) => {
@@ -806,49 +800,39 @@
 
     function renderCharCard(c) {
       const t = c._tier;
-      const modHtml = (c.modifiers || [])
-        .map((m) => `<span class="mod-chip">${escapeHTML(m)}</span>`)
-        .join("");
-      const dims = c.dims || {};
-      const dimOrder = ["破", "控", "御", "速", "域", "算", "性"];
-      const dimsHtml = dimOrder
-        .map((k) => {
-          const val = dims[k] || "〔缺〕";
-          const fullRow = k === "域" || k === "性" ? "full-row" : "";
-          return `<div class="dim-cell ${fullRow}"><span class="dim-key">${k}</span><span class="dim-val">${formatEvidenceBadges(val)}</span></div>`;
-        })
-        .join("");
-
       const initialLetter = escapeHTML((c.initial || "#").toUpperCase());
+      const orderLabel = t && !t.unranked ? `#${String(t.order).padStart(2, "0")}` : "待定";
+      const modHtml = (c.modifiers || [])
+        .map((m) => `<span class="tag-pill">${escapeHTML(m)}</span>`)
+        .join("");
 
       return `
         <a class="char-card" href="${resolveUrl("character/" + c.slug + ".html")}">
-          <span class="char-watermark-letter" aria-hidden="true">${initialLetter}</span>
-          <div class="char-card-head">
-            <div style="display:flex;align-items:center;gap:13px;min-width:0">
-              <div class="char-avatar">${
+          <div class="char-head">
+            <div class="char-identity">
+              <div class="char-monogram">${
                 c.image_url
                   ? `<img src="${escapeHTML(c.image_url)}" alt="${escapeHTML(c.name)}" loading="lazy">`
                   : escapeHTML(c.name.slice(0, 1))
               }</div>
-              <div class="char-title-group">
+              <div class="char-meta">
                 <h3 class="char-name">${escapeHTML(c.name)}</h3>
-                <div class="char-series">${escapeHTML(c.series || "未知出处")}${
+                <div class="char-origin">${escapeHTML(c.series || "未知出处")}${
         c.realm ? " · " + escapeHTML(c.realm) : ""
       }</div>
               </div>
             </div>
-            <span class="char-rating-pill mono">⊙ ${escapeHTML(t ? t.code : "待定")}</span>
+            <span class="tier-badge gold mono">⊙ ${escapeHTML(t ? t.code : "待定")}</span>
           </div>
-          <div class="char-modifiers">
-            <span class="mod-chip" style="color:var(--accent-blue)">${escapeHTML(t ? t.name : "待定")} · #${t ? String(t.order).padStart(2, "0") : "—"}</span>
-            <span class="mod-chip mono">首字母 ${initialLetter}</span>
+          <div class="char-tags">
+            <span class="tag-pill accent">${escapeHTML(t ? t.name : "待定")} · ${orderLabel}</span>
+            <span class="tag-pill mono">首字母 ${initialLetter}</span>
             ${modHtml}
           </div>
-          <div class="dims-mini-grid">${dimsHtml}</div>
-          <div class="char-card-foot">
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(c.summary || "")}</span>
-            <span class="char-enter-link" style="white-space:nowrap;font-weight:500;display:inline-flex;align-items:center;gap:4px">进入档案 ${ICONS.arrowUpRight}</span>
+          <p class="char-summary">${escapeHTML(c.summary || "")}</p>
+          <div class="char-foot">
+            <span class="char-cred">${formatEvidenceBadges(c.credibility || "点击查阅七维证据链")}</span>
+            <span class="card-link-hint">查看档案 ${ICONS.arrowUpRight}</span>
           </div>
         </a>`;
     }
@@ -881,17 +865,29 @@
       });
 
       if (countBadge) {
-        countBadge.textContent = `显示 ${filtered.length} / ${pool.length} 位`;
+        countBadge.textContent = `${filtered.length} / ${pool.length} 位`;
       }
 
       if (filtered.length === 0) {
         if (alphaBar) alphaBar.classList.remove("visible");
         mount.innerHTML = `
           <div class="empty-state-box">
-            <div class="empty-icon">${ICONS.search}</div>
-            <h3 class="serif-display" style="margin:0 0 8px;font-size:19px">没有符合筛选条件的角色</h3>
-            <p style="color:var(--text-muted);margin:0;font-size:13.5px">请调整检索关键词、作品或量级区间。</p>
+            <h3 class="empty-state-title">没有符合筛选条件的角色</h3>
+            <p class="empty-state-sub">当前区间或检索词下暂无收录角色，可重置筛选查看全部角色。</p>
+            <button type="button" class="btn btn-secondary btn-sm" id="reset-char-filters">重置筛选条件</button>
           </div>`;
+        const resetBtn = document.getElementById("reset-char-filters");
+        if (resetBtn) {
+          resetBtn.addEventListener("click", () => {
+            state.domain = "all";
+            state.series = "all";
+            state.query = "";
+            if (filterInput) filterInput.value = "";
+            if (seriesSelect) seriesSelect.value = "all";
+            persistPrefs();
+            render();
+          });
+        }
         return;
       }
 
@@ -924,14 +920,14 @@
         mount.innerHTML = Object.keys(buckets)
           .sort()
           .map((L) => {
-            const list = buckets[L].slice().sort((a, b) =>
-              String(a.pinyin || a.name).localeCompare(String(b.pinyin || b.name))
-            );
+            const list = buckets[L]
+              .slice()
+              .sort((a, b) => String(a.pinyin || a.name).localeCompare(String(b.pinyin || b.name)));
             return `
-              <section class="tier-group-block" id="char-letter-${L}">
-                <div class="tier-group-header">
-                  <h2 class="tier-group-title"><span class="letter-badge">${L}</span> 首字母 ${L}</h2>
-                  <span class="tier-group-sub">${list.length} 位角色</span>
+              <section class="group-section" id="char-letter-${escapeHTML(L)}">
+                <div class="group-header">
+                  <h2 class="group-title"><span class="letter-pill">${escapeHTML(L)}</span> 首字母 ${escapeHTML(L)}</h2>
+                  <span class="group-sub">${list.length} 位角色</span>
                 </div>
                 <div class="char-grid">${list.map(renderCharCard).join("")}</div>
               </section>`;
@@ -944,10 +940,10 @@
           return diff !== 0 ? diff : String(a.pinyin || a.name).localeCompare(String(b.pinyin || b.name));
         });
         mount.innerHTML = `
-          <section class="tier-group-block" id="char-scale-list">
-            <div class="tier-group-header">
-              <h2 class="tier-group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
-              <span class="tier-group-sub">${sorted.length} 位角色</span>
+          <section class="group-section" id="char-scale-list">
+            <div class="group-header">
+              <h2 class="group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
+              <span class="group-sub">${sorted.length} 位角色</span>
             </div>
             <div class="char-grid">${sorted.map(renderCharCard).join("")}</div>
           </section>`;
@@ -990,7 +986,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     7. Global Search Command Palette (Ctrl+K) & Dedicated Search Page
+     7. Global Search Modal (Ctrl+K) & Dedicated Search Page
      -------------------------------------------------------------------------- */
   function runSearchQuery(rawQuery, typeFilter) {
     const index = window.__POWERWIKI_INDEX__ || [];
@@ -1093,7 +1089,7 @@
       const hits = runSearchQuery(q, activeTab).slice(0, 30);
       focusedIdx = 0;
       if (hits.length === 0) {
-        body.innerHTML = `<div style="padding:34px 16px;text-align:center;color:var(--text-muted);font-size:13px">未找到与「${escapeHTML(q)}」相关的条目，可尝试检索「宇◆」「归因」「完整书写」「白矮星」「0#」「花岗岩」。</div>`;
+        body.innerHTML = `<div class="search-modal-empty">未找到与「${escapeHTML(q)}」相关的条目，可尝试检索「宇◆」「归因」「完整书写」「中子星」「花岗岩」。</div>`;
         return;
       }
       body.innerHTML = hits
@@ -1193,19 +1189,23 @@
       if (countEl) countEl.textContent = `${hits.length} 条结果`;
 
       if (hits.length === 0) {
-        mount.innerHTML = `<div class="empty-state-box"><div class="empty-icon">${ICONS.search}</div><h3 class="serif-display" style="font-size:19px">没有找到匹配内容</h3><p style="color:var(--text-muted);font-size:13.5px">试试检索代字（如 恒○、宇◆、外·门）、第三版新规则（如 归因与知情度审查、完整书写、超长篇）或材质名称（如 中子星、花岗岩）。</p></div>`;
+        mount.innerHTML = `
+          <div class="empty-state-box">
+            <h3 class="empty-state-title">没有找到匹配内容</h3>
+            <p class="empty-state-sub">试试检索代字（如 恒○、宇◆、外·门）、第三版新规则（如 归因与知情度审查、完整书写）或材质名称（如 中子星、花岗岩）。</p>
+          </div>`;
         return;
       }
 
       mount.innerHTML = hits
         .map(
           (h) => `
-          <a class="search-hit" style="background:var(--bg-surface-1);border-color:var(--border-hairline);padding:15px 20px;margin-bottom:9px" href="${resolveUrl(h.url)}">
+          <a class="search-hit card-mode" href="${resolveUrl(h.url)}">
             <div class="search-hit-top">
-              <span class="search-hit-title" style="font-size:15px">${highlightSnippet(h.title, q)}</span>
+              <span class="search-hit-title">${highlightSnippet(h.title, q)}</span>
               <span class="search-hit-type">${escapeHTML(h.badge || TYPE_LABELS[h.type] || h.type)}</span>
             </div>
-            <div class="search-hit-snippet" style="font-size:13.2px">${highlightSnippet(h.text, q)}</div>
+            <div class="search-hit-snippet">${highlightSnippet(h.text, q)}</div>
           </a>`
         )
         .join("");
@@ -1229,9 +1229,8 @@
     render();
   }
 
-  /* Horizontal Wheel Helper for Single-Row Pill Rails */
   function initHorizontalRails() {
-    document.querySelectorAll(".filter-Chips, .alpha-letters").forEach((rail) => {
+    document.querySelectorAll(".chip-rail, .alpha-letters").forEach((rail) => {
       rail.addEventListener(
         "wheel",
         (e) => {
@@ -1246,7 +1245,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     Boot — Note order: Render list DOM synchronously FIRST, then restore cached scroll!
+     Boot — Render synchronous DOM lists FIRST, then restore cached scrollY
      -------------------------------------------------------------------------- */
   document.addEventListener("DOMContentLoaded", () => {
     initTheme();
