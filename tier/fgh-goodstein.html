@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>⊙广·古 古德斯坦段 · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ 多维战力量级体系（第二版）与材质破坏能量数据库官方百科站——支持角色与量级按首字母及从小到大排序、全文检索与阅读进度保存。">
+  <meta name="description" content="衡天⊙ 多维战力量级体系（第二版）与材质破坏能量数据库官方百科站——包含角色与量级两大分类（首字母与量级从小到大排序）、全文检索、浏览进度保存与智能返回。">
   <script>
     (function() {
       try {
@@ -25,28 +25,29 @@
       <a class="brand" href="../index.html">
         <span class="brand-mark mono" aria-hidden="true">⊙</span>
         <span class="brand-text">
-          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">v2.0</span></span>
-          <span class="brand-sub">多维战力量级 · 材质破坏能量参考系</span>
+          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">v2</span></span>
+          <span class="brand-sub">角色 · 量级 · 标准与规则全文</span>
         </span>
       </a>
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
         <a class="nav-link" href="../index.html">首页</a>
+        <a class="nav-link" href="../characters.html">角色分类 <span class="nav-count mono">示例</span></a>
         <a class="nav-link active" href="../tiers.html">量级分类 <span class="nav-count mono">97</span></a>
-        <a class="nav-link" href="../characters.html">角色档案 <span class="nav-count mono">0</span></a>
-        <a class="nav-link" href="../rules.html">衡天体系全文</a>
-        <a class="nav-link" href="../materials.html">材质能量全文</a>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <a class="nav-link" href="../rules.html">标准·衡天量级体系</a>
+        <a class="nav-link" href="../materials.html">标准·材质能量库</a>
       </nav>
 
       <div class="header-actions">
         <button type="button" class="search-trigger" id="global-search-trigger" aria-label="打开全站搜索">
           <span class="search-trigger-left">
             <span>🔍</span>
-            <span class="search-trigger-placeholder">搜索量级 / 角色 / 材质…</span>
+            <span class="search-trigger-placeholder">搜索角色 / 量级 / 标准…</span>
           </span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
-        <button type="button" class="icon-btn" id="history-open-btn" title="阅读进度与浏览足迹">
+        <button type="button" class="icon-btn" id="history-open-btn" title="已保存的浏览进度与足迹">
           <span>📖</span>
           <span class="dot-indicator"></span>
         </button>
@@ -68,7 +69,10 @@
           <a href="../index.html">首页</a><span class="sep">/</span><a href="../tiers.html">量级分类总览</a><span class="sep">/</span><span class="current">⊙ 广·古 · 古德斯坦段</span>
         </nav>
       </div>
-      <div class="context-right"><span class="mono">序位 #87</span></div>
+      <div class="context-right">
+        <span class="save-status-pill mono" id="live-save-status">进度 0%</span><button type="button" class="chip-btn" id="save-bookmark-btn" style="padding:3px 10px;font-size:12px" title="手动保存当前浏览位置书签">🔖 保存位置</button>
+        <span class="mono">序位 #87</span>
+      </div>
     </div>
   </div>
 
@@ -83,8 +87,8 @@
                 <h1 class="detail-title">古德斯坦段 <span style="font-size:18px;font-weight:500;color:var(--text-muted)">· 广义无限区（广 · FGH 七段）</span></h1>
               </div>
               <div style="display:flex;gap:10px;flex-wrap:wrap">
-                <a class="btn btn-primary" href="../rules.html#sec-5-4" title="跳转至：5.4 区内分段：快速增长层级">📖 查阅原文章节：5.4 区内分段：快速增长层级 ↗</a>
-                <a class="btn btn-surface" href="../tiers.html">返回全部量级</a>
+                <a class="btn btn-primary" href="../rules.html#sec-5-4" title="跳转至：5.4 区内分段：快速增长层级">📖 查阅标准原文：5.4 区内分段：快速增长层级 ↗</a>
+                <a class="btn btn-surface" href="../tiers.html">返回量级分类</a>
               </div>
             </div>
 
@@ -128,7 +132,7 @@
               
             <div style="background:var(--bg-surface-2);border:1px dashed var(--border-subtle);border-radius:12px;padding:18px;color:var(--text-muted);font-size:13.5px;margin-top:10px">
               当前正式角色库暂无定级于 <strong>⊙ 广·古（古德斯坦段）</strong> 的角色档案。
-              可前往 <a href="../characters.html">角色档案库</a> 了解录入规范。
+              可前往 <a href="../characters.html">角色分类页</a> 浏览体系示例或录入新角色。
             </div>
             </section>
           </article>
@@ -142,8 +146,8 @@
   </main>
 
   <div class="resume-toast" id="resume-toast" role="status" aria-live="polite">
-    <span class="resume-toast-text" id="resume-toast-text">上次阅读进度</span>
-    <button type="button" class="resume-toast-btn" id="resume-toast-btn">继续阅读</button>
+    <span class="resume-toast-text" id="resume-toast-text">上次浏览位置</span>
+    <button type="button" class="resume-toast-btn" id="resume-toast-btn">继续浏览</button>
     <button type="button" class="resume-toast-close" id="resume-toast-close" aria-label="关闭提示">×</button>
   </div>
 
@@ -163,28 +167,28 @@
     <div class="modal-dialog">
       <div class="search-modal-head">
         <span style="font-size:18px">🔍</span>
-        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入代字（宇◆、恒○）、角色、规则或材质（白矮星、花岗岩、0#）…" autocomplete="off">
-        <a href="../search.html" class="chip-btn" style="white-space:nowrap">高级搜索页 ↗</a>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="搜索角色、量级代字（宇◆、恒○）、规则术语或材质（白矮星、花岗岩、0#）…" autocomplete="off">
+        <a href="../search.html" class="chip-btn" style="white-space:nowrap">独立搜索页 ↗</a>
         <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭">✕</button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
-        <button type="button" class="chip-btn" data-search-tab="tier">量级档位</button>
-        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天体系标准</button>
-        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色分类</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天量级体系</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质破坏能量库</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
     </div>
   </div>
 
   <!-- Reading Progress & Footprints Modal -->
-  <div class="modal-backdrop" id="history-modal" role="dialog" aria-modal="true" aria-label="阅读进度与足迹">
+  <div class="modal-backdrop" id="history-modal" role="dialog" aria-modal="true" aria-label="浏览进度与足迹">
     <div class="modal-dialog">
       <div class="search-modal-head" style="justify-content:space-between">
-        <strong style="font-size:16px">📖 阅读进度与最近浏览记录</strong>
+        <strong style="font-size:16px">📖 浏览进度保存与最近足迹</strong>
         <div style="display:flex;align-items:center;gap:8px">
-          <button type="button" class="chip-btn" id="history-clear-btn">清空全部</button>
+          <button type="button" class="chip-btn" id="history-clear-btn">清空全部记录</button>
           <button type="button" class="resume-toast-close" id="history-close-btn" aria-label="关闭">✕</button>
         </div>
       </div>
@@ -195,15 +199,15 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div>
-        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 基于《衡天⊙ 多维战力量级体系（第二版）》与《材质与破坏能量数据库（第二版）》构建
+        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 依据《衡天⊙ 多维战力量级体系（第二版）》与《材质与破坏能量数据库（第二版）》构建
       </div>
       <div class="footer-links">
         <a href="../index.html">首页</a>
-        <a href="../tiers.html">量级分类</a>
         <a href="../characters.html">角色分类</a>
+        <a href="../tiers.html">量级分类</a>
         <a href="../rules.html">衡天体系全文</a>
         <a href="../materials.html">材质数据库全文</a>
-        <a href="../search.html">全站检索</a>
+        <a href="../search.html">全站搜索</a>
       </div>
     </div>
   </footer>

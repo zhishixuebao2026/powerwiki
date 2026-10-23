@@ -1,5 +1,5 @@
 /* ==========================================================================
-   衡天⊙ PowerWiki — Client Interactive Engine (Zero External Dependencies)
+   衡天⊙ PowerWiki — Client Interactive Engine v2.1 (Zero External Dependencies)
    Supports: raw.githack.com, GitHub Pages, Live Preview, and offline file://
    ========================================================================== */
 (function () {
@@ -12,7 +12,8 @@
     navStack: "pw_nav_stack_v2",
     restoreScroll: "pw_restore_scroll_v2",
     tierPrefs: "pw_tier_prefs_v2",
-    charPrefs: "pw_char_prefs_v2"
+    charPrefs: "pw_char_prefs_v2",
+    readerPrefs: "pw_reader_prefs_v2"
   };
 
   const ROOT_PREFIX = document.documentElement.getAttribute("data-root") || "./";
@@ -69,6 +70,88 @@
     return Math.floor(sec / 86400) + " 天前";
   }
 
+  /* Build SVG 7-Dimension Observatory Radar Chart */
+  function buildHeptadRadarSVG(dims, tierOrder) {
+    const axes = ["破", "控", "域", "御", "速", "算", "性"];
+    const cx = 105;
+    const cy = 105;
+    const maxR = 72;
+    const baseRatio = Math.min(0.95, Math.max(0.28, (tierOrder || 30) / 97));
+
+    function scoreAxis(key) {
+      const val = String((dims && dims[key]) || "").trim();
+      if (!val || val === "—" || val.startsWith("〔缺〕")) return 0.16;
+      if (key === "性") {
+        const count = val.split(/[、，,]/).filter(Boolean).length;
+        return Math.min(0.92, 0.42 + count * 0.18);
+      }
+      if (key === "算") {
+        if (val.includes("超限") || val.includes("0⁽ω⁾")) return 0.94;
+        if (val.includes("0′") || val.includes("0″")) return 0.78;
+        if (val.includes("有限")) return 0.48;
+        return 0.4;
+      }
+      if (key === "速") {
+        if (val.includes("无限") || val.includes("时间外")) return 0.96;
+        if (val.includes("超光速")) return 0.82;
+        if (val.includes("亚光速") || val.includes("马赫")) return 0.58;
+        return 0.38;
+      }
+      if (key === "域") {
+        if (val.includes("可数无限") || val.includes("全域")) return 0.88;
+        return 0.56;
+      }
+      return baseRatio;
+    }
+
+    const rings = [0.33, 0.66, 1.0]
+      .map((r) => {
+        const pts = axes
+          .map((_, i) => {
+            const ang = -Math.PI / 2 + (i * 2 * Math.PI) / 7;
+            return `${(cx + maxR * r * Math.cos(ang)).toFixed(1)},${(cy + maxR * r * Math.sin(ang)).toFixed(1)}`;
+          })
+          .join(" ");
+        return `<polygon points="${pts}" fill="none" stroke="rgba(148,174,228,0.2)" stroke-width="1"/>`;
+      })
+      .join("");
+
+    const spokes = axes
+      .map((label, i) => {
+        const ang = -Math.PI / 2 + (i * 2 * Math.PI) / 7;
+        const x2 = (cx + maxR * Math.cos(ang)).toFixed(1);
+        const y2 = (cy + maxR * Math.sin(ang)).toFixed(1);
+        const lx = (cx + (maxR + 18) * Math.cos(ang)).toFixed(1);
+        const ly = (cy + (maxR + 18) * Math.sin(ang) + 4).toFixed(1);
+        return `
+          <line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="rgba(148,174,228,0.18)" stroke-width="1"/>
+          <text x="${lx}" y="${ly}" text-anchor="middle" fill="var(--accent-gold)" font-size="12" font-weight="700">${label}</text>`;
+      })
+      .join("");
+
+    const dataPts = axes.map((k, i) => {
+      const s = scoreAxis(k);
+      const ang = -Math.PI / 2 + (i * 2 * Math.PI) / 7;
+      return {
+        x: (cx + maxR * s * Math.cos(ang)).toFixed(1),
+        y: (cy + maxR * s * Math.sin(ang)).toFixed(1)
+      };
+    });
+
+    const polyPts = dataPts.map((p) => `${p.x},${p.y}`).join(" ");
+    const dots = dataPts
+      .map((p) => `<circle cx="${p.x}" cy="${p.y}" r="3.2" fill="var(--accent-gold)"/>`)
+      .join("");
+
+    return `
+      <svg width="210" height="210" viewBox="0 0 210 210" aria-label="七维战力星盘">
+        ${rings}
+        ${spokes}
+        <polygon points="${polyPts}" fill="rgba(236,185,86,0.24)" stroke="var(--accent-gold)" stroke-width="2"/>
+        ${dots}
+      </svg>`;
+  }
+
   /* --------------------------------------------------------------------------
      1. Theme Management
      -------------------------------------------------------------------------- */
@@ -118,18 +201,16 @@
     let stack = safeGetJSON(sessionStorage, STORAGE_KEYS.navStack, []);
     const currentUrl = location.href.split("#")[0];
 
-    // Restore scroll if navigated back via Smart Back
     const restoreTarget = safeGetJSON(sessionStorage, STORAGE_KEYS.restoreScroll, null);
     if (restoreTarget && restoreTarget.url === currentUrl) {
       sessionStorage.removeItem(STORAGE_KEYS.restoreScroll);
       requestAnimationFrame(() => {
         setTimeout(() => {
           window.scrollTo({ top: restoreTarget.scrollY || 0, behavior: "instant" });
-        }, 40);
+        }, 45);
       });
     }
 
-    // Push or update current page in stack
     if (stack.length === 0 || stack[stack.length - 1].url !== currentUrl) {
       stack.push({
         url: currentUrl,
@@ -142,7 +223,6 @@
       safeSetJSON(sessionStorage, STORAGE_KEYS.navStack, stack);
     }
 
-    // Keep current entry's scrollY updated
     let scrollTimer = null;
     window.addEventListener(
       "scroll",
@@ -160,7 +240,6 @@
       { passive: true }
     );
 
-    // Bind all Smart Back buttons
     const backBtns = document.querySelectorAll(".js-smart-back");
     const prevEntry = stack.length >= 2 ? stack[stack.length - 2] : null;
 
@@ -182,7 +261,7 @@
         e.preventDefault();
         const curStack = safeGetJSON(sessionStorage, STORAGE_KEYS.navStack, []);
         if (curStack.length >= 2) {
-          curStack.pop(); // remove current
+          curStack.pop();
           const target = curStack[curStack.length - 1];
           safeSetJSON(sessionStorage, STORAGE_KEYS.navStack, curStack);
           safeSetJSON(sessionStorage, STORAGE_KEYS.restoreScroll, {
@@ -198,7 +277,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     4. Reading Progress Saving, Resume Toast & Recent Footprints
+     4. Reading & Browsing Progress Saving, Bookmarking & Resume Toast
      -------------------------------------------------------------------------- */
   function recordFootprint() {
     if (PAGE_ID === "index.html") return;
@@ -210,7 +289,7 @@
       type: PAGE_TYPE,
       ts: Date.now()
     });
-    if (list.length > 16) list = list.slice(0, 16);
+    if (list.length > 18) list = list.slice(0, 18);
     safeSetJSON(localStorage, STORAGE_KEYS.footprints, list);
   }
 
@@ -220,11 +299,16 @@
     const tocPct = document.getElementById("toc-progress-pct");
     const backTopBtn = document.getElementById("dock-top-btn");
     const historyBtn = document.getElementById("history-open-btn");
+    const liveStatus = document.getElementById("live-save-status");
+    const bookmarkBtn = document.getElementById("save-bookmark-btn");
 
-    const isTrackableDoc =
-      PAGE_TYPE === "doc" || PAGE_TYPE === "tier-detail" || PAGE_TYPE === "char-detail";
+    const isTrackable =
+      PAGE_TYPE === "doc" ||
+      PAGE_TYPE === "tiers" ||
+      PAGE_TYPE === "chars" ||
+      PAGE_TYPE === "tier-detail" ||
+      PAGE_TYPE === "char-detail";
 
-    // Mark header history button dot if any saved progress exists
     const updateHistoryDot = () => {
       if (!historyBtn) return;
       const prog = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
@@ -244,11 +328,13 @@
     }
 
     const headings = Array.from(
-      document.querySelectorAll(".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id]")
+      document.querySelectorAll(
+        ".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id], .tier-group-block[id]"
+      )
     );
 
     function getCurrentHeading() {
-      const threshold = window.scrollY + 135;
+      const threshold = window.scrollY + 140;
       let active = headings[0] || null;
       for (const h of headings) {
         if (h.offsetTop <= threshold) {
@@ -257,7 +343,12 @@
           break;
         }
       }
-      return active;
+      if (!active) return { id: "", text: PAGE_TITLE };
+      const titleEl = active.matches(".tier-group-block")
+        ? active.querySelector(".tier-group-title")
+        : active;
+      const txt = titleEl ? titleEl.textContent.replace(/#$/, "").trim() : PAGE_TITLE;
+      return { id: active.id || "", text: txt };
     }
 
     function calcScrollPct() {
@@ -267,54 +358,72 @@
       return Math.min(100, Math.max(0, Math.round((window.scrollY / maxScroll) * 100)));
     }
 
+    function saveNow(manualBookmark) {
+      if (!isTrackable) return;
+      const pct = calcScrollPct();
+      const allProg = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
+      const curH = getCurrentHeading();
+      allProg[PAGE_ID] = {
+        pageId: PAGE_ID,
+        title: PAGE_TITLE,
+        pct: pct,
+        scrollY: Math.round(window.scrollY),
+        headingId: curH.id,
+        headingText: curH.text,
+        bookmarked: Boolean(manualBookmark || (allProg[PAGE_ID] && allProg[PAGE_ID].bookmarked)),
+        ts: Date.now()
+      };
+      safeSetJSON(localStorage, STORAGE_KEYS.progress, allProg);
+      updateHistoryDot();
+      if (liveStatus) {
+        liveStatus.textContent = `浏览进度 ${pct}% · 已自动保存`;
+      }
+    }
+
+    if (bookmarkBtn) {
+      bookmarkBtn.addEventListener("click", () => {
+        saveNow(true);
+        const orig = bookmarkBtn.innerHTML;
+        bookmarkBtn.innerHTML = "✓ 已保存书签";
+        bookmarkBtn.classList.add("active");
+        setTimeout(() => {
+          bookmarkBtn.innerHTML = orig;
+        }, 1600);
+      });
+    }
+
     let saveTimer = null;
     function updateVisualProgress() {
       const pct = calcScrollPct();
       if (topBar) topBar.style.width = pct + "%";
       if (tocPct) tocPct.textContent = pct + "%";
+      if (liveStatus) liveStatus.textContent = `进度 ${pct}%`;
       if (ringCircle) {
         const circumference = 126;
         ringCircle.style.strokeDashoffset = String(circumference - (circumference * pct) / 100);
       }
 
-      if (isTrackableDoc) {
+      if (isTrackable) {
         if (saveTimer) clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => {
-          const allProg = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
-          const activeH = getCurrentHeading();
-          const hText = activeH
-            ? activeH.textContent.replace(/#$/, "").trim()
-            : PAGE_TITLE;
-          allProg[PAGE_ID] = {
-            pageId: PAGE_ID,
-            title: PAGE_TITLE,
-            pct: pct,
-            scrollY: Math.round(window.scrollY),
-            headingId: activeH ? activeH.id : "",
-            headingText: hText,
-            ts: Date.now()
-          };
-          safeSetJSON(localStorage, STORAGE_KEYS.progress, allProg);
-          updateHistoryDot();
-        }, 220);
+        saveTimer = setTimeout(() => saveNow(false), 200);
       }
     }
 
     window.addEventListener("scroll", updateVisualProgress, { passive: true });
     updateVisualProgress();
 
-    // Show Resume Reading Toast if user returns to a doc page with saved progress
-    if (isTrackableDoc && !location.hash) {
+    // Show Resume Toast if returning to a long page with saved scroll position
+    if (isTrackable && !location.hash) {
       const allProg = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
       const saved = allProg[PAGE_ID];
       const toast = document.getElementById("resume-toast");
-      if (saved && saved.scrollY > 260 && saved.pct >= 2 && saved.pct <= 97 && toast) {
+      if (saved && saved.scrollY > 300 && saved.pct >= 2 && saved.pct <= 98 && toast) {
         const txtEl = document.getElementById("resume-toast-text");
         const goBtn = document.getElementById("resume-toast-btn");
         const closeBtn = document.getElementById("resume-toast-close");
         const secLabel = saved.headingText ? `「${saved.headingText}」` : "";
         if (txtEl) {
-          txtEl.textContent = `上次读到 ${secLabel}（${saved.pct}%）`;
+          txtEl.textContent = `上次浏览到 ${secLabel}（${saved.pct}%）`;
         }
         toast.classList.add("show");
         if (goBtn) {
@@ -352,13 +461,13 @@
     const docEntries = [
       {
         key: "rules.html",
-        defaultTitle: "《衡天⊙ 多维战力量级体系（第二版）》",
-        subtitle: "全文 11 部分 + 附则 · 核心判定与量级标准"
+        defaultTitle: "《衡天⊙ 多维战力量级体系（第二版）》全文",
+        subtitle: "核心判定与 97 档量级标准"
       },
       {
         key: "materials.html",
-        defaultTitle: "《材质与破坏能量数据库（第二版）》",
-        subtitle: "全文 8 部分 + 来源考据 · 强度/相变/引力束缚能"
+        defaultTitle: "《材质与破坏能量数据库（第二版）》全文",
+        subtitle: "工程材料强度、相变与天体束缚能"
       }
     ];
 
@@ -367,9 +476,9 @@
         const p = allProg[doc.key];
         const pct = p ? p.pct : 0;
         const statusText = p
-          ? `上次读到：${escapeHTML(p.headingText || "开头")} · ${timeAgo(p.ts)}`
-          : "尚未开始阅读 · 点击浏览全文";
-        const actionLabel = p && p.scrollY > 120 ? "继续阅读 →" : "开始阅读 →";
+          ? `上次位置：${escapeHTML(p.headingText || "文档开头")} · ${timeAgo(p.ts)}`
+          : `${doc.subtitle} · 尚未开始阅读`;
+        const actionLabel = p && p.scrollY > 120 ? "断点续读 →" : "阅读全文 →";
         const href = resolveUrl(doc.key) + (p && p.headingId ? "#" + p.headingId : "");
         return `
         <a class="resume-card" href="${href}" data-resume-key="${doc.key}" data-resume-y="${p ? p.scrollY : 0}">
@@ -407,8 +516,8 @@
 
     hub.innerHTML = `
       <div class="section-head" style="margin-bottom:14px">
-        <h2 class="section-title"><span class="dot"></span>阅读进度与浏览足迹</h2>
-        <span class="section-sub">自动保存在本地浏览器，随时断点续读</span>
+        <h2 class="section-title"><span class="dot"></span>浏览进度保存与断点续读</h2>
+        <span class="section-sub">自动记忆阅读位置、分类排序偏好与最近访问足迹</span>
       </div>
       <div class="resume-grid">${cardsHtml}</div>
       ${fpHtml}
@@ -450,26 +559,26 @@
       const footprints = safeGetJSON(localStorage, STORAGE_KEYS.footprints, []);
       const progList = Object.values(allProg).sort((a, b) => (b.ts || 0) - (a.ts || 0));
 
-      let html = `<div style="margin-bottom:18px"><div style="font-weight:700;margin-bottom:10px;color:var(--accent-gold)">📖 文档阅读进度</div>`;
+      let html = `<div style="margin-bottom:18px"><div style="font-weight:700;margin-bottom:10px;color:var(--accent-gold)">📖 已保存的浏览与阅读进度</div>`;
       if (progList.length === 0) {
-        html += `<div style="color:var(--text-muted);font-size:13.5px;padding:10px 0">暂无已保存的文档阅读进度。打开《衡天体系标准》或《材质数据库》滚动阅读即可自动记录。</div>`;
+        html += `<div style="color:var(--text-muted);font-size:13.5px;padding:10px 0">暂无已保存进度。阅读标准全文或浏览量级/角色列表时会自动记录滚动位置。</div>`;
       } else {
         html += progList
           .map(
             (p) => `
           <a class="search-hit js-resume-jump" href="${resolveUrl(p.pageId)}" data-jump-page="${p.pageId}" data-jump-y="${p.scrollY || 0}">
             <div class="search-hit-top">
-              <span class="search-hit-title">${escapeHTML(p.title)}</span>
+              <span class="search-hit-title">${p.bookmarked ? "🔖 " : ""}${escapeHTML(p.title)}</span>
               <span class="search-hit-type mono">${p.pct}% · ${timeAgo(p.ts)}</span>
             </div>
-            <div class="search-hit-snippet">上次位置：${escapeHTML(p.headingText || "文档起始处")}</div>
+            <div class="search-hit-snippet">上次位置：${escapeHTML(p.headingText || "页面顶部")}</div>
           </a>`
           )
           .join("");
       }
-      html += `</div><div><div style="font-weight:700;margin-bottom:10px;color:var(--accent-blue)">🧭 最近访问页面</div>`;
+      html += `</div><div><div style="font-weight:700;margin-bottom:10px;color:var(--accent-blue)">🧭 最近访问足迹</div>`;
       if (footprints.length === 0) {
-        html += `<div style="color:var(--text-muted);font-size:13.5px;padding:8px 0">暂无最近页面足迹。</div>`;
+        html += `<div style="color:var(--text-muted);font-size:13.5px;padding:8px 0">暂无最近访问记录。</div>`;
       } else {
         html += footprints
           .map(
@@ -509,9 +618,7 @@
       backdrop.classList.add("open");
     });
 
-    if (closeBtn) {
-      closeBtn.addEventListener("click", () => backdrop.classList.remove("open"));
-    }
+    if (closeBtn) closeBtn.addEventListener("click", () => backdrop.classList.remove("open"));
     backdrop.addEventListener("click", (e) => {
       if (e.target === backdrop) backdrop.classList.remove("open");
     });
@@ -527,13 +634,100 @@
   }
 
   /* --------------------------------------------------------------------------
-     6. Document ScrollSpy TOC & Heading Copy Anchor
+     6. Document Reader (ScrollSpy TOC, Font Size, Wide Mode & In-Doc Finder)
      -------------------------------------------------------------------------- */
   function initDocumentReader() {
     const sidebar = document.getElementById("doc-sidebar");
     const tocNav = document.getElementById("toc-nav");
     const tocFilter = document.getElementById("toc-filter-input");
     const dockTocBtn = document.getElementById("dock-toc-btn");
+    const mdBody = document.querySelector(".markdown-body");
+
+    // Reader Comfort Controls (Font Size & Wide Table Mode)
+    const prefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, { fontSize: 15.8, wide: false });
+    if (mdBody && prefs.fontSize) {
+      mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
+    }
+    if (prefs.wide) {
+      document.body.classList.add("wide-doc-mode");
+    }
+
+    const fontDecBtn = document.getElementById("doc-font-dec");
+    const fontIncBtn = document.getElementById("doc-font-inc");
+    const wideBtn = document.getElementById("doc-wide-toggle");
+    if (wideBtn) wideBtn.classList.toggle("active", Boolean(prefs.wide));
+
+    if (fontDecBtn && mdBody) {
+      fontDecBtn.addEventListener("click", () => {
+        prefs.fontSize = Math.max(13.5, Number((prefs.fontSize - 1).toFixed(1)));
+        mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
+        safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+      });
+    }
+    if (fontIncBtn && mdBody) {
+      fontIncBtn.addEventListener("click", () => {
+        prefs.fontSize = Math.min(20.5, Number((prefs.fontSize + 1).toFixed(1)));
+        mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
+        safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+      });
+    }
+    if (wideBtn) {
+      wideBtn.addEventListener("click", () => {
+        prefs.wide = !prefs.wide;
+        document.body.classList.toggle("wide-doc-mode", prefs.wide);
+        wideBtn.classList.toggle("active", prefs.wide);
+        safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+      });
+    }
+
+    // In-Document Paragraph/Row Finder
+    const findInput = document.getElementById("doc-find-input");
+    const findNextBtn = document.getElementById("doc-find-next");
+    const findCountEl = document.getElementById("doc-find-count");
+    let findMatches = [];
+    let findIdx = -1;
+
+    function runDocFind(jump) {
+      if (!findInput || !mdBody) return;
+      const q = findInput.value.trim().toLowerCase();
+      if (!q) {
+        findMatches = [];
+        findIdx = -1;
+        if (findCountEl) findCountEl.textContent = "";
+        return;
+      }
+      const blocks = Array.from(mdBody.querySelectorAll("h1, h2, h3, p, li, tr, blockquote"));
+      findMatches = blocks.filter((el) => el.textContent.toLowerCase().includes(q));
+      if (findMatches.length === 0) {
+        if (findCountEl) findCountEl.textContent = "0 处";
+        return;
+      }
+      if (jump) {
+        findIdx = (findIdx + 1) % findMatches.length;
+        const target = findMatches[findIdx];
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.classList.remove("flash-highlight");
+        void target.offsetWidth;
+        target.classList.add("flash-highlight");
+        if (findCountEl) findCountEl.textContent = `${findIdx + 1}/${findMatches.length}`;
+      } else {
+        findIdx = -1;
+        if (findCountEl) findCountEl.textContent = `共 ${findMatches.length} 处`;
+      }
+    }
+
+    if (findInput) {
+      findInput.addEventListener("input", () => runDocFind(false));
+      findInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          runDocFind(true);
+        }
+      });
+    }
+    if (findNextBtn) {
+      findNextBtn.addEventListener("click", () => runDocFind(true));
+    }
 
     // Copy heading link buttons
     document.querySelectorAll(".heading-anchor").forEach((anchor) => {
@@ -567,7 +761,7 @@
       .filter(Boolean);
 
     function onScrollSpy() {
-      const scrollPos = window.scrollY + 135;
+      const scrollPos = window.scrollY + 140;
       let current = headingMap[0] || null;
       for (const item of headingMap) {
         if (item.el.offsetTop <= scrollPos) {
@@ -625,7 +819,7 @@
       sort: params.get("sort") || savedPrefs.sort || "asc", // asc | desc | alpha
       alphaKey: savedPrefs.alphaKey || "code", // code | full
       segment: params.get("seg") || savedPrefs.segment || "all",
-      view: savedPrefs.view || "card", // card | table
+      view: savedPrefs.view || "card", // card | flat | table
       query: params.get("q") || ""
     };
 
@@ -677,6 +871,7 @@
 
     function renderCard(t) {
       const orderText = t.unranked ? "兜底暂存" : `#${String(t.order).padStart(2, "0")}`;
+      const barPct = t.unranked ? 0 : Math.max(3, Math.round((t.order / 97) * 100));
       return `
         <a class="tier-card" data-domain="${t.domain}" href="${resolveUrl("tier/" + t.slug + ".html")}">
           <div class="tier-card-top">
@@ -689,6 +884,7 @@
           </div>
           <div class="tier-energy-line mono">${escapeHTML(t.energy)}</div>
           <div class="tier-scale-line">${escapeHTML(t.scale)}</div>
+          <div class="tier-scale-meter" title="天梯位置：${orderText}/97"><span style="width:${barPct}%"></span></div>
           <div class="tier-card-foot">
             <span>${escapeHTML(t.model)}</span>
             <span style="color:var(--accent-blue)">详情 ›</span>
@@ -699,12 +895,13 @@
     function renderTable(list) {
       const rows = list
         .map((t) => {
-          const orderText = t.unranked ? "—" : t.order;
+          const orderText = t.unranked ? "—" : `#${String(t.order).padStart(2, "0")}`;
           return `
           <tr>
             <td class="mono" style="color:var(--text-muted)">${orderText}</td>
             <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" class="tier-code-badge mono" style="display:inline-flex">⊙ ${escapeHTML(t.code)}</a></td>
             <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" style="font-weight:700;color:var(--text-primary)">${escapeHTML(t.name)}</a></td>
+            <td class="mono" style="color:var(--text-muted)">${t.code_initial} / ${t.full_initial}</td>
             <td class="mono" style="color:var(--accent-gold)">${escapeHTML(t.energy)}</td>
             <td>${escapeHTML(t.scale)}</td>
             <td style="color:var(--text-muted)">${escapeHTML(t.model)}</td>
@@ -719,6 +916,7 @@
                 <th>序位</th>
                 <th>衡天代字</th>
                 <th>量级名称</th>
+                <th>首字母</th>
                 <th>能量 / 数学刻度</th>
                 <th>覆盖尺度与典型参照</th>
                 <th>计算模型</th>
@@ -821,22 +1019,38 @@
       const ranked = filtered.filter((t) => !t.unranked);
       const unranked = filtered.filter((t) => t.unranked);
       ranked.sort((a, b) => (state.sort === "asc" ? a.order - b.order : b.order - a.order));
+      const allOrdered = ranked.concat(unranked);
 
       if (state.view === "table") {
-        mount.innerHTML = renderTable(ranked.concat(unranked));
+        mount.innerHTML = renderTable(allOrdered);
         return;
       }
 
-      // Group ordered blocks preserving order direction
+      if (state.view === "flat") {
+        const flatTitle =
+          state.sort === "asc"
+            ? "连续天梯模式：#01 昆虫级 → #97 论天最上（按量级从小到大直排）"
+            : "连续天梯模式：#97 论天最上 → #01 昆虫级（按量级从大到小直排）";
+        mount.innerHTML = `
+          <section class="tier-group-block" id="group-flat">
+            <div class="tier-group-header">
+              <h2 class="tier-group-title">${flatTitle}</h2>
+              <span class="tier-group-sub">共 ${allOrdered.length} 档</span>
+            </div>
+            <div class="tier-grid">${allOrdered.map(renderCard).join("")}</div>
+          </section>`;
+        return;
+      }
+
       const orderedGroupIds = [];
-      ranked.concat(unranked).forEach((t) => {
+      allOrdered.forEach((t) => {
         if (!orderedGroupIds.includes(t.group_id)) orderedGroupIds.push(t.group_id);
       });
 
       mount.innerHTML = orderedGroupIds
         .map((gid) => {
           const g = groupMap[gid];
-          const gItems = ranked.concat(unranked).filter((t) => t.group_id === gid);
+          const gItems = allOrdered.filter((t) => t.group_id === gid);
           return `
             <section class="tier-group-block" id="group-${gid}">
               <div class="tier-group-header">
@@ -910,12 +1124,23 @@
     tiers.forEach((t) => (tierBySlug[t.slug] = t));
 
     const savedPrefs = safeGetJSON(localStorage, STORAGE_KEYS.charPrefs, {});
+    const params = new URLSearchParams(location.search);
+
+    // Default showDemo to true when formal characters === 0 unless explicitly turned off,
+    // so users can immediately test 首字母 A-Z & 量级从小到大 sorting out of the box!
+    const defaultShowDemo =
+      characters.length === 0
+        ? savedPrefs.showDemo !== undefined
+          ? Boolean(savedPrefs.showDemo)
+          : true
+        : false;
+
     const state = {
-      sort: savedPrefs.sort || "asc", // asc | desc | alpha
+      sort: params.get("sort") || savedPrefs.sort || "asc", // asc | desc | alpha
       series: "all",
       domain: "all",
-      query: "",
-      showDemo: characters.length === 0 ? Boolean(savedPrefs.showDemo) : false
+      query: params.get("q") || "",
+      showDemo: defaultShowDemo
     };
 
     const sortBtns = document.querySelectorAll("[data-char-sort]");
@@ -926,6 +1151,9 @@
     const alphaBar = document.getElementById("char-alpha-bar");
     const alphaLettersEl = document.getElementById("char-alpha-letters");
     const countBadge = document.getElementById("char-result-count");
+    const demoBannerSlot = document.getElementById("char-demo-banner-slot");
+
+    if (filterInput && state.query) filterInput.value = state.query;
 
     function getActivePool() {
       const src = state.showDemo && characters.length === 0 ? demoArchetypes : characters;
@@ -991,13 +1219,16 @@
             <span class="char-rating-pill mono">⊙ ${escapeHTML(t ? t.code : "待定")}</span>
           </div>
           <div class="char-modifiers">
-            <span class="mod-chip" style="color:var(--accent-blue)">主档：${escapeHTML(t ? t.name : "待定")}（#${t ? t.order : "—"}）</span>
-            <span class="mod-chip">首字母：${escapeHTML(c.initial || "#")}</span>
+            <span class="mod-chip" style="color:var(--accent-blue)">主档：${escapeHTML(t ? t.name : "待定")}（#${t ? String(t.order).padStart(2, "0") : "—"}）</span>
+            <span class="mod-chip mono">首字母：${escapeHTML(c.initial || "#")}</span>
             ${modHtml}
-            ${c._isDemo ? '<span class="mod-chip" style="color:var(--accent-gold);border-color:var(--border-gold)">体系演示样例</span>' : ""}
+            ${c._isDemo ? '<span class="mod-chip" style="color:var(--accent-gold);border-color:var(--border-gold)">体系标准示例</span>' : ""}
           </div>
           <div class="dims-mini-grid">${dimsHtml}</div>
-          <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">${escapeHTML(c.summary || "")}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--text-secondary)">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(c.summary || "")}</span>
+            <span style="color:var(--accent-gold);white-space:nowrap;font-weight:600">七维面板 ›</span>
+          </div>
         </a>`;
     }
 
@@ -1006,11 +1237,12 @@
       const body = document.getElementById("demo-char-modal-body");
       if (!modal || !body) return;
       const t = c._tier;
+      const radarSvg = buildHeptadRadarSVG(c.dims || {}, t ? t.order : 30);
       const dimRows = ["破", "控", "域", "御", "速", "算", "性"]
         .map(
           (k) => `
           <tr>
-            <th style="width:90px">维度「${k}」</th>
+            <th style="width:92px">维度「${k}」</th>
             <td>${formatEvidenceBadges((c.dims && c.dims[k]) || "〔缺〕")}</td>
           </tr>`
         )
@@ -1019,19 +1251,31 @@
       body.innerHTML = `
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px">
           <div>
-            <div class="detail-code-pill mono" style="margin-bottom:8px">⊙ ${escapeHTML(t.code)} · ${escapeHTML(t.name)}</div>
+            <div class="detail-code-pill mono" style="margin-bottom:8px">⊙ ${escapeHTML(t.code)} · ${escapeHTML(t.name)}（#${String(t.order).padStart(2, "0")}）</div>
             <h2 style="margin:0;font-size:22px">${escapeHTML(c.name)}</h2>
             <div style="color:var(--text-muted);font-size:13px;margin-top:4px">${escapeHTML(c.alias || "")} ｜ ${escapeHTML(c.series || "")}</div>
           </div>
           <a class="btn btn-surface" href="${resolveUrl("tier/" + t.slug + ".html")}">查看所属量级（⊙${escapeHTML(t.code)}）›</a>
         </div>
-        <p style="color:var(--text-secondary);margin:0 0 14px">${escapeHTML(c.summary || "")}</p>
-        <div style="font-size:13px;color:var(--accent-gold);margin-bottom:10px">可信度依据：${formatEvidenceBadges(c.credibility || "—")}</div>
+        <div class="heptad-modal-grid">
+          <div class="heptad-radar-box">
+            ${radarSvg}
+            <span style="font-size:11.5px;color:var(--text-muted)">衡天⊙ 七维浑仪示意</span>
+          </div>
+          <div>
+            <p style="color:var(--text-secondary);margin:0 0 12px;line-height:1.7">${escapeHTML(c.summary || "")}</p>
+            <div style="font-size:13px;color:var(--accent-gold);margin-bottom:10px">可信度依据：${formatEvidenceBadges(c.credibility || "—")}</div>
+            <div class="char-modifiers">
+              <span class="mod-chip mono">拼音首字母：${escapeHTML(c.initial)} (${escapeHTML(c.pinyin)})</span>
+              ${(c.modifiers || []).map((m) => `<span class="mod-chip">${escapeHTML(m)}</span>`).join("")}
+            </div>
+          </div>
+        </div>
         <div class="table-scroll" style="margin:0">
           <table class="compact-table"><tbody>${dimRows}</tbody></table>
         </div>
         <div style="margin-top:14px;font-size:12.5px;color:var(--text-muted)">
-          注：本条目为《衡天⊙ 多维战力量级体系（第二版）》1.5 / 8.3 节书写格式的交互演示样例，不计入正式角色库统计。
+          注：本条目为依据《衡天⊙ 多维战力量级体系（第二版）》1.5 / 8.3 节规范制作的七维示例卡，用于直观演示角色分类排序与面板样式。
         </div>
       `;
       modal.classList.add("open");
@@ -1044,8 +1288,19 @@
         demoToggleBtn.style.display = characters.length === 0 ? "inline-flex" : "none";
         demoToggleBtn.classList.toggle("active", state.showDemo);
         demoToggleBtn.innerHTML = state.showDemo
-          ? "✦ 关闭演示样例（返回正式空库）"
-          : "✦ 预览体系书写演示样例（6 组）";
+          ? "✦ 隐藏示例卡（查看纯空库状态）"
+          : "✦ 展示 6 组体系标准示例卡";
+      }
+
+      if (demoBannerSlot) {
+        if (characters.length === 0 && state.showDemo) {
+          demoBannerSlot.innerHTML = `
+            <div class="notice-banner">
+              <span>📌 <strong>说明：</strong>正式角色库当前待录入（0 条）。下方已为您载入 <strong>6 组《衡天⊙》七维标准示例角色卡</strong>（涵盖首字母 A / C / L / S / X / Y，跨爆墙至论外门槛），可直接点击上方按钮体验<strong>「量级从小到大 ↑」</strong>与<strong>「首字母 A–Z」</strong>排序及七维星盘检视。</span>
+            </div>`;
+        } else {
+          demoBannerSlot.innerHTML = "";
+        }
       }
 
       const pool = getActivePool();
@@ -1059,11 +1314,11 @@
             <div class="empty-icon">⊙</div>
             <h3 style="margin:0 0 10px;font-size:20px">正式角色档案库 · 待录入</h3>
             <p style="color:var(--text-secondary);margin:0 auto 18px;max-width:540px;line-height:1.75">
-              本站已全面升级至<strong>《衡天⊙ 多维战力量级体系（第二版）》</strong>，旧版单维档位角色已清空重制。
-              所有新角色将严格按<strong>七维评定表（破·控·域·御·速·算·性）</strong>与证据状态标记录入。
+              本站已全面采用<strong>《衡天⊙ 多维战力量级体系（第二版）》</strong>，旧版单维角色数据已清空。
+              在 <code>data/characters.json</code> 填入角色数据并运行 <code>python3 build_site.py</code> 即可自动生成独立档案页。
             </p>
             <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
-              <button type="button" class="btn btn-primary" id="empty-open-demo">✦ 开启 6 组演示卡片（体验首字母 / 量级排序）</button>
+              <button type="button" class="btn btn-primary" id="empty-open-demo">✦ 开启 6 组示例角色卡（体验首字母 / 从小到大排序）</button>
               <a class="btn btn-surface" href="${resolveUrl("rules.html")}">查阅《衡天⊙》定级标准</a>
             </div>
           </div>`;
@@ -1105,7 +1360,7 @@
 
       if (countBadge) {
         countBadge.textContent = state.showDemo
-          ? `演示模式：显示 ${filtered.length} / ${pool.length} 组样例`
+          ? `示例预览：显示 ${filtered.length} / ${pool.length} 组`
           : `正式收录：显示 ${filtered.length} / ${pool.length} 位角色`;
       }
 
@@ -1134,7 +1389,7 @@
             .map((L) => {
               const has = buckets[L] && buckets[L].length > 0;
               return `<button type="button" class="alpha-key mono ${has ? "" : "disabled"}" ${
-                has ? `data-char-letter="${L}"` : "disabled"
+                has ? `data-char-letter="${L}" title="跳转至首字母 ${L}"` : "disabled"
               }>${L}</button>`;
             })
             .join("");
@@ -1170,10 +1425,10 @@
         });
         const dirTitle =
           state.sort === "asc"
-            ? "按主档量级从小到大排列（凡人 → 恒星 → 宇宙 → 论外）"
-            : "按主档量级从大到小排列（论外 → 宇宙 → 恒星 → 凡人）";
+            ? "按主档量级从小到大排列（低档位 → 高档位）"
+            : "按主档量级从大到小排列（高档位 → 低档位）";
         mount.innerHTML = `
-          <section class="tier-group-block">
+          <section class="tier-group-block" id="char-scale-list">
             <div class="tier-group-header">
               <h2 class="tier-group-title">${dirTitle}</h2>
               <span class="tier-group-sub">共 ${sorted.length} 位角色</span>
@@ -1182,7 +1437,6 @@
           </section>`;
       }
 
-      // Bind demo modal clicks if in demo mode
       mount.querySelectorAll("[data-demo-slug]").forEach((card) => {
         card.addEventListener("click", (e) => {
           e.preventDefault();
@@ -1191,6 +1445,13 @@
           if (found) openDemoModal(found);
         });
       });
+
+      // Auto-open demo modal if navigated via search hash #demo-xxx
+      if (location.hash && location.hash.startsWith("#demo-")) {
+        const targetSlug = location.hash.slice(6);
+        const found = pool.find((x) => x.slug === targetSlug);
+        if (found) openDemoModal(found);
+      }
     }
 
     sortBtns.forEach((btn) => {
@@ -1260,7 +1521,7 @@
     for (const item of index) {
       if (typeFilter && typeFilter !== "all" && item.type !== typeFilter) continue;
       if (tokens.length === 0) {
-        results.push({ item, score: item.type === "tier" ? 50 : 30 });
+        results.push({ item, score: item.type === "tier" ? 50 : item.type === "char" ? 45 : 30 });
         continue;
       }
       const titleLow = (item.title || "").toLowerCase();
@@ -1309,7 +1570,10 @@
       if (idx !== -1 && (firstIdx === -1 || idx < firstIdx)) firstIdx = idx;
     }
     const start = Math.max(0, firstIdx - 32);
-    const slice = (start > 0 ? "…" : "") + clean.slice(start, start + 150) + (start + 150 < clean.length ? "…" : "");
+    const slice =
+      (start > 0 ? "…" : "") +
+      clean.slice(start, start + 150) +
+      (start + 150 < clean.length ? "…" : "");
     let html = escapeHTML(slice);
     tokens.forEach((tok) => {
       const safeTok = escapeHTML(tok).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -1321,10 +1585,10 @@
   }
 
   const TYPE_LABELS = {
-    tier: "量级档位",
-    char: "角色档案",
-    rules: "衡天体系标准",
-    materials: "材质能量库"
+    tier: "量级分类",
+    char: "角色分类",
+    rules: "标准·衡天体系",
+    materials: "标准·材质能量库"
   };
 
   function initGlobalSearchModal() {
@@ -1337,22 +1601,23 @@
 
     if (!backdrop || !input || !body) return;
     let activeTab = "all";
+    let focusedIdx = 0;
 
     function renderHits() {
       const q = input.value;
-      const hits = runSearchQuery(q, activeTab);
+      const hits = runSearchQuery(q, activeTab).slice(0, 30);
+      focusedIdx = 0;
       if (hits.length === 0) {
         body.innerHTML = `<div style="padding:32px 16px;text-align:center;color:var(--text-muted)">未找到与「${escapeHTML(q)}」相关的条目，试试搜索「宇◆」「白矮星」「0#」「多击不认」「花岗岩」。</div>`;
         return;
       }
       body.innerHTML = hits
-        .slice(0, 30)
         .map(
-          (h) => `
-          <a class="search-hit" href="${resolveUrl(h.url)}">
+          (h, idx) => `
+          <a class="search-hit ${idx === 0 ? "focused" : ""}" href="${resolveUrl(h.url)}">
             <div class="search-hit-top">
               <span class="search-hit-title">${highlightSnippet(h.title, q)}</span>
-              <span class="search-hit-type">${TYPE_LABELS[h.type] || h.type}</span>
+              <span class="search-hit-type">${escapeHTML(h.badge || TYPE_LABELS[h.type] || h.type)}</span>
             </div>
             <div class="search-hit-snippet">${highlightSnippet(h.text, q)}</div>
           </a>`
@@ -1387,6 +1652,24 @@
     });
 
     input.addEventListener("input", renderHits);
+    input.addEventListener("keydown", (e) => {
+      const items = Array.from(body.querySelectorAll(".search-hit"));
+      if (!items.length) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        focusedIdx = (focusedIdx + 1) % items.length;
+        items.forEach((el, i) => el.classList.toggle("focused", i === focusedIdx));
+        items[focusedIdx].scrollIntoView({ block: "nearest" });
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        focusedIdx = (focusedIdx - 1 + items.length) % items.length;
+        items.forEach((el, i) => el.classList.toggle("focused", i === focusedIdx));
+        items[focusedIdx].scrollIntoView({ block: "nearest" });
+      } else if (e.key === "Enter" && items[focusedIdx]) {
+        e.preventDefault();
+        items[focusedIdx].click();
+      }
+    });
 
     document.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
@@ -1402,6 +1685,8 @@
         backdrop.classList.remove("open");
         const histModal = document.getElementById("history-modal");
         if (histModal) histModal.classList.remove("open");
+        const demoModal = document.getElementById("demo-char-modal");
+        if (demoModal) demoModal.classList.remove("open");
       }
     });
   }
@@ -1434,7 +1719,7 @@
           <a class="search-hit" style="background:var(--bg-surface-1);border-color:var(--border-subtle);padding:15px 18px;margin-bottom:10px" href="${resolveUrl(h.url)}">
             <div class="search-hit-top">
               <span class="search-hit-title" style="font-size:16px">${highlightSnippet(h.title, q)}</span>
-              <span class="search-hit-type">${TYPE_LABELS[h.type] || h.type}</span>
+              <span class="search-hit-type">${escapeHTML(h.badge || TYPE_LABELS[h.type] || h.type)}</span>
             </div>
             <div class="search-hit-snippet" style="font-size:13.8px">${highlightSnippet(h.text, q)}</div>
           </a>`
