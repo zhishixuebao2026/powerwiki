@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>全站搜索 · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ 多维战力量级体系（第二版）与材质破坏能量数据库官方百科站——包含角色与量级两大分类（首字母与量级从小到大排序）、全文检索、浏览进度保存与智能返回。">
+  <meta name="description" content="衡天⊙ 多维战力量级体系（第三版·最新）与材质破坏能量数据库官方百科站——角色分类（首字母与量级从小到大排序）、量级分类（从小到大排列）、全文检索与浏览进度保存。">
   <script>
     (function() {
       try {
@@ -25,7 +25,7 @@
       <a class="brand" href="./index.html">
         <span class="brand-mark mono" aria-hidden="true">⊙</span>
         <span class="brand-text">
-          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">v2</span></span>
+          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">第三版</span></span>
           <span class="brand-sub">角色 · 量级 · 标准与规则全文</span>
         </span>
       </a>
@@ -35,7 +35,7 @@
         <a class="nav-link" href="./characters.html">角色分类 <span class="nav-count mono">示例</span></a>
         <a class="nav-link" href="./tiers.html">量级分类 <span class="nav-count mono">97</span></a>
         <span class="nav-divider" aria-hidden="true"></span>
-        <a class="nav-link" href="./rules.html">标准·衡天量级体系</a>
+        <a class="nav-link" href="./rules.html">标准·衡天体系(第三版)</a>
         <a class="nav-link" href="./materials.html">标准·材质能量库</a>
       </nav>
 
@@ -83,8 +83,8 @@
       <div class="page-hero-bg" style="background-image:url('./static/img/banner-tiers.jpg')"></div>
       <div class="page-hero-mask"></div>
       <div class="container page-hero-inner">
-        <h1 class="page-hero-title"><span>全站即时检索中心</span><span class="brand-badge mono">252 条索引块</span></h1>
-        <p class="page-hero-desc">跨角色分类、量级分类、《衡天⊙ 多维战力量级体系》及《材质与破坏能量数据库》全章节毫秒级检索。</p>
+        <h1 class="page-hero-title"><span>全站即时检索中心</span><span class="brand-badge mono">258 条索引块</span></h1>
+        <p class="page-hero-desc">跨角色分类、量级分类、《衡天⊙ 多维战力量级体系（第三版）》及《材质与破坏能量数据库》全章节毫秒级检索。</p>
       </div>
     </section>
 
@@ -92,29 +92,29 @@
       <div class="toolbar-panel" style="margin-top:0">
         <div style="display:flex;gap:10px;align-items:center">
           <span style="font-size:20px">🔍</span>
-          <input type="search" id="dedicated-search-input" class="filter-input" style="max-width:none;font-size:15.5px;padding:11px 16px" placeholder="输入多个关键词空格分隔，例如：白矮星 束缚能 / 宇◆ / 0# 拉姆齐 / 花岗岩 汽化 / 多击不认…" autofocus>
+          <input type="search" id="dedicated-search-input" class="filter-input" style="max-width:none;font-size:15.5px;padding:11px 16px" placeholder="输入多个关键词空格分隔，例如：归因 知情度 / 完整书写 / 白矮星 束缚能 / 宇◆ / 0#…" autofocus>
         </div>
         <div class="toolbar-row">
           <div class="filter-Chips">
             <button type="button" class="chip-btn active" data-page-search-type="all">全部类别</button>
             <button type="button" class="chip-btn" data-page-search-type="char">角色分类（6）</button>
             <button type="button" class="chip-btn" data-page-search-type="tier">量级分类（98）</button>
-            <button type="button" class="chip-btn" data-page-search-type="rules">衡天量级体系（115 节）</button>
+            <button type="button" class="chip-btn" data-page-search-type="rules">衡天体系第三版（121 节）</button>
             <button type="button" class="chip-btn" data-page-search-type="materials">材质破坏能量库（33 节）</button>
           </div>
           <span class="mono" id="dedicated-search-count" style="font-size:12.5px;color:var(--text-muted)"></span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:var(--text-muted)">
           <span>热门速查词：</span>
+          <button type="button" class="chip-btn" data-hot-query="完整书写">完整书写原则(v3)</button>
+          <button type="button" class="chip-btn" data-hot-query="归因与知情度">0.14.2 归因审查(v3)</button>
+          <button type="button" class="chip-btn" data-hot-query="超长篇自行通读">超长篇通读流程(v3)</button>
+          <button type="button" class="chip-btn" data-hot-query="层级轴必检">7.9 层级轴必检(v3)</button>
           <button type="button" class="chip-btn" data-hot-query="宇◆">宇◆（极宇宙）</button>
           <button type="button" class="chip-btn" data-hot-query="F*">通量常数 F*</button>
-          <button type="button" class="chip-btn" data-hot-query="多击不认">多击不认</button>
-          <button type="button" class="chip-btn" data-hot-query="证伪">证伪五信号</button>
           <button type="button" class="chip-btn" data-hot-query="0#">0#（零尖）</button>
-          <button type="button" class="chip-btn" data-hot-query="图灵跃迁">图灵跃迁</button>
           <button type="button" class="chip-btn" data-hot-query="中子星">中子星外壳/束缚能</button>
           <button type="button" class="chip-btn" data-hot-query="花岗岩">花岗岩粉碎/汽化</button>
-          <button type="button" class="chip-btn" data-hot-query="斩陨">斩陨规则</button>
         </div>
       </div>
 
@@ -145,7 +145,7 @@
     <div class="modal-dialog">
       <div class="search-modal-head">
         <span style="font-size:18px">🔍</span>
-        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="搜索角色、量级代字（宇◆、恒○）、规则术语或材质（白矮星、花岗岩、0#）…" autocomplete="off">
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="搜索角色、量级代字（宇◆、恒○）、第三版规则或材质（归因、白矮星、花岗岩）…" autocomplete="off">
         <a href="./search.html" class="chip-btn" style="white-space:nowrap">独立搜索页 ↗</a>
         <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭">✕</button>
       </div>
@@ -153,7 +153,7 @@
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
         <button type="button" class="chip-btn" data-search-tab="char">角色分类</button>
         <button type="button" class="chip-btn" data-search-tab="tier">量级分类</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天量级体系</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天体系(第三版)</button>
         <button type="button" class="chip-btn" data-search-tab="materials">材质破坏能量库</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
@@ -177,13 +177,13 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div>
-        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 依据《衡天⊙ 多维战力量级体系（第二版）》与《材质与破坏能量数据库（第二版）》构建
+        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 依据《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》构建
       </div>
       <div class="footer-links">
         <a href="./index.html">首页</a>
         <a href="./characters.html">角色分类</a>
         <a href="./tiers.html">量级分类</a>
-        <a href="./rules.html">衡天体系全文</a>
+        <a href="./rules.html">衡天体系(第三版)全文</a>
         <a href="./materials.html">材质数据库全文</a>
         <a href="./search.html">全站搜索</a>
       </div>

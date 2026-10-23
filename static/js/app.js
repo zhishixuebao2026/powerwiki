@@ -1,19 +1,20 @@
 /* ==========================================================================
-   衡天⊙ PowerWiki — Client Interactive Engine v2.1 (Zero External Dependencies)
-   Supports: raw.githack.com, GitHub Pages, Live Preview, and offline file://
+   衡天⊙ PowerWiki — Client Interactive Engine v3.0 (Zero External Dependencies)
+   - 量级分类：从小到大递增排布（支持分区卡片 / 连续天梯 / 紧凑总表 + 区间筛选）
+   - 角色分类：支持「首字母 A–Z」与「量级从小到大」双排序 + 七维浑仪星盘
    ========================================================================== */
 (function () {
   "use strict";
 
   const STORAGE_KEYS = {
     theme: "pw_theme_v2",
-    progress: "pw_progress_v2",
-    footprints: "pw_footprints_v2",
-    navStack: "pw_nav_stack_v2",
-    restoreScroll: "pw_restore_scroll_v2",
-    tierPrefs: "pw_tier_prefs_v2",
-    charPrefs: "pw_char_prefs_v2",
-    readerPrefs: "pw_reader_prefs_v2"
+    progress: "pw_progress_v3",
+    footprints: "pw_footprints_v3",
+    navStack: "pw_nav_stack_v3",
+    restoreScroll: "pw_restore_scroll_v3",
+    tierPrefs: "pw_tier_prefs_v3",
+    charPrefs: "pw_char_prefs_v3",
+    readerPrefs: "pw_reader_prefs_v3"
   };
 
   const ROOT_PREFIX = document.documentElement.getAttribute("data-root") || "./";
@@ -327,13 +328,12 @@
       });
     }
 
-    const headings = Array.from(
-      document.querySelectorAll(
-        ".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id], .tier-group-block[id]"
-      )
-    );
-
     function getCurrentHeading() {
+      const headings = Array.from(
+        document.querySelectorAll(
+          ".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id], .tier-group-block[id]"
+        )
+      );
       const threshold = window.scrollY + 140;
       let active = headings[0] || null;
       for (const h of headings) {
@@ -384,7 +384,7 @@
       bookmarkBtn.addEventListener("click", () => {
         saveNow(true);
         const orig = bookmarkBtn.innerHTML;
-        bookmarkBtn.innerHTML = "✓ 已保存书签";
+        bookmarkBtn.innerHTML = "✓ 已保存位置";
         bookmarkBtn.classList.add("active");
         setTimeout(() => {
           bookmarkBtn.innerHTML = orig;
@@ -412,7 +412,6 @@
     window.addEventListener("scroll", updateVisualProgress, { passive: true });
     updateVisualProgress();
 
-    // Show Resume Toast if returning to a long page with saved scroll position
     if (isTrackable && !location.hash) {
       const allProg = safeGetJSON(localStorage, STORAGE_KEYS.progress, {});
       const saved = allProg[PAGE_ID];
@@ -461,13 +460,13 @@
     const docEntries = [
       {
         key: "rules.html",
-        defaultTitle: "《衡天⊙ 多维战力量级体系（第二版）》全文",
-        subtitle: "核心判定与 97 档量级标准"
+        defaultTitle: "《衡天⊙ 多维战力量级体系（第三版）》全文",
+        subtitle: "最新第三版判定通则、使用流程与 97 档标尺"
       },
       {
         key: "materials.html",
         defaultTitle: "《材质与破坏能量数据库（第二版）》全文",
-        subtitle: "工程材料强度、相变与天体束缚能"
+        subtitle: "工程材料强度、相变与天体引力束缚能"
       }
     ];
 
@@ -517,7 +516,7 @@
     hub.innerHTML = `
       <div class="section-head" style="margin-bottom:14px">
         <h2 class="section-title"><span class="dot"></span>浏览进度保存与断点续读</h2>
-        <span class="section-sub">自动记忆阅读位置、分类排序偏好与最近访问足迹</span>
+        <span class="section-sub">自动记忆阅读位置、分类浏览偏好与最近访问足迹</span>
       </div>
       <div class="resume-grid">${cardsHtml}</div>
       ${fpHtml}
@@ -643,7 +642,6 @@
     const dockTocBtn = document.getElementById("dock-toc-btn");
     const mdBody = document.querySelector(".markdown-body");
 
-    // Reader Comfort Controls (Font Size & Wide Table Mode)
     const prefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, { fontSize: 15.8, wide: false });
     if (mdBody && prefs.fontSize) {
       mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
@@ -680,7 +678,6 @@
       });
     }
 
-    // In-Document Paragraph/Row Finder
     const findInput = document.getElementById("doc-find-input");
     const findNextBtn = document.getElementById("doc-find-next");
     const findCountEl = document.getElementById("doc-find-count");
@@ -696,7 +693,7 @@
         if (findCountEl) findCountEl.textContent = "";
         return;
       }
-      const blocks = Array.from(mdBody.querySelectorAll("h1, h2, h3, p, li, tr, blockquote"));
+      const blocks = Array.from(mdBody.querySelectorAll("h1, h2, h3, p, li, tr"));
       findMatches = blocks.filter((el) => el.textContent.toLowerCase().includes(q));
       if (findMatches.length === 0) {
         if (findCountEl) findCountEl.textContent = "0 处";
@@ -729,7 +726,6 @@
       findNextBtn.addEventListener("click", () => runDocFind(true));
     }
 
-    // Copy heading link buttons
     document.querySelectorAll(".heading-anchor").forEach((anchor) => {
       anchor.addEventListener("click", (e) => {
         e.preventDefault();
@@ -802,7 +798,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     7. Interactive Tiers Explorer (tiers.html)
+     7. Interactive Tiers Explorer (tiers.html) — 量级从小到大排列
      -------------------------------------------------------------------------- */
   function initTiersExplorer() {
     const mount = document.getElementById("tiers-explorer-mount");
@@ -816,29 +812,21 @@
     const params = new URLSearchParams(location.search);
 
     const state = {
-      sort: params.get("sort") || savedPrefs.sort || "asc", // asc | desc | alpha
-      alphaKey: savedPrefs.alphaKey || "code", // code | full
       segment: params.get("seg") || savedPrefs.segment || "all",
       view: savedPrefs.view || "card", // card | flat | table
       query: params.get("q") || ""
     };
 
-    const sortBtns = document.querySelectorAll("[data-tier-sort]");
     const segBtns = document.querySelectorAll("[data-tier-seg]");
     const viewBtns = document.querySelectorAll("[data-tier-view]");
-    const alphaKeyBtns = document.querySelectorAll("[data-alpha-key]");
     const filterInput = document.getElementById("tier-filter-input");
     const clearBtn = document.getElementById("tier-filter-clear");
-    const alphaBar = document.getElementById("tier-alpha-bar");
-    const alphaLettersEl = document.getElementById("tier-alpha-letters");
     const countBadge = document.getElementById("tier-result-count");
 
     if (filterInput && state.query) filterInput.value = state.query;
 
     function persistPrefs() {
       safeSetJSON(localStorage, STORAGE_KEYS.tierPrefs, {
-        sort: state.sort,
-        alphaKey: state.alphaKey,
         segment: state.segment,
         view: state.view
       });
@@ -860,9 +848,7 @@
         t.model,
         t.notes,
         t.code_pinyin,
-        t.full_pinyin,
-        t.code_initial,
-        t.full_initial
+        t.full_pinyin
       ]
         .join(" ")
         .toLowerCase();
@@ -870,13 +856,13 @@
     }
 
     function renderCard(t) {
-      const orderText = t.unranked ? "兜底暂存" : `#${String(t.order).padStart(2, "0")}`;
+      const orderText = t.unranked ? "兜底暂存" : `#${String(t.order).padStart(2, "0")} / 97`;
       const barPct = t.unranked ? 0 : Math.max(3, Math.round((t.order / 97) * 100));
       return `
         <a class="tier-card" data-domain="${t.domain}" href="${resolveUrl("tier/" + t.slug + ".html")}">
           <div class="tier-card-top">
             <span class="tier-code-badge mono">⊙ ${escapeHTML(t.code)}</span>
-            <span class="tier-order-num mono">${orderText} · 首字母 ${state.alphaKey === "code" ? t.code_initial : t.full_initial}</span>
+            <span class="tier-order-num mono">${orderText}</span>
           </div>
           <div class="tier-card-name">
             <span>${escapeHTML(t.name)}</span>
@@ -884,7 +870,7 @@
           </div>
           <div class="tier-energy-line mono">${escapeHTML(t.energy)}</div>
           <div class="tier-scale-line">${escapeHTML(t.scale)}</div>
-          <div class="tier-scale-meter" title="天梯位置：${orderText}/97"><span style="width:${barPct}%"></span></div>
+          <div class="tier-scale-meter" title="从小到大序位：${orderText}"><span style="width:${barPct}%"></span></div>
           <div class="tier-card-foot">
             <span>${escapeHTML(t.model)}</span>
             <span style="color:var(--accent-blue)">详情 ›</span>
@@ -901,7 +887,6 @@
             <td class="mono" style="color:var(--text-muted)">${orderText}</td>
             <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" class="tier-code-badge mono" style="display:inline-flex">⊙ ${escapeHTML(t.code)}</a></td>
             <td><a href="${resolveUrl("tier/" + t.slug + ".html")}" style="font-weight:700;color:var(--text-primary)">${escapeHTML(t.name)}</a></td>
-            <td class="mono" style="color:var(--text-muted)">${t.code_initial} / ${t.full_initial}</td>
             <td class="mono" style="color:var(--accent-gold)">${escapeHTML(t.energy)}</td>
             <td>${escapeHTML(t.scale)}</td>
             <td style="color:var(--text-muted)">${escapeHTML(t.model)}</td>
@@ -913,10 +898,9 @@
           <table class="compact-table">
             <thead>
               <tr>
-                <th>序位</th>
+                <th>从小到大序位</th>
                 <th>衡天代字</th>
                 <th>量级名称</th>
-                <th>首字母</th>
                 <th>能量 / 数学刻度</th>
                 <th>覆盖尺度与典型参照</th>
                 <th>计算模型</th>
@@ -928,22 +912,19 @@
     }
 
     function render() {
-      sortBtns.forEach((b) => b.classList.toggle("active", b.dataset.tierSort === state.sort));
       segBtns.forEach((b) => b.classList.toggle("active", b.dataset.tierSeg === state.segment));
       viewBtns.forEach((b) => b.classList.toggle("active", b.dataset.tierView === state.view));
-      alphaKeyBtns.forEach((b) => b.classList.toggle("active", b.dataset.alphaKey === state.alphaKey));
       if (clearBtn) clearBtn.style.display = state.query ? "block" : "none";
 
       const filtered = tiers.filter(matchesTier);
-      if (countBadge) countBadge.textContent = `共显示 ${filtered.length} 个档位`;
+      if (countBadge) countBadge.textContent = `按量级从小到大显示 ${filtered.length} 个档位`;
 
       if (filtered.length === 0) {
-        if (alphaBar) alphaBar.classList.remove("visible");
         mount.innerHTML = `
           <div class="empty-state-box">
             <div class="empty-icon">🔍</div>
             <h3 style="margin:0 0 8px">未找到匹配的量级档位</h3>
-            <p style="color:var(--text-muted);margin:0 0 16px">请尝试更换搜索词或切换上方分段筛选条件。</p>
+            <p style="color:var(--text-muted);margin:0 0 16px">请尝试更换搜索词或切换上方区间筛选条件。</p>
             <button type="button" class="btn btn-surface" id="reset-tier-filters">重置全部筛选</button>
           </div>`;
         const resetBtn = document.getElementById("reset-tier-filters");
@@ -958,67 +939,9 @@
         return;
       }
 
-      // Alphabetical Mode
-      if (state.sort === "alpha") {
-        if (alphaBar) alphaBar.classList.add("visible");
-        const initField = state.alphaKey === "code" ? "code_initial" : "full_initial";
-        const pyField = state.alphaKey === "code" ? "code_pinyin" : "full_pinyin";
-
-        const buckets = {};
-        filtered.forEach((t) => {
-          const letter = (t[initField] || "#").toUpperCase();
-          if (!buckets[letter]) buckets[letter] = [];
-          buckets[letter].push(t);
-        });
-
-        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-        if (alphaLettersEl) {
-          alphaLettersEl.innerHTML = alphabet
-            .map((L) => {
-              const has = buckets[L] && buckets[L].length > 0;
-              return `<button type="button" class="alpha-key mono ${has ? "" : "disabled"}" ${
-                has ? `data-jump-letter="${L}" title="${L} 组（${buckets[L].length} 项）"` : "disabled"
-              }>${L}</button>`;
-            })
-            .join("");
-          alphaLettersEl.querySelectorAll("[data-jump-letter]").forEach((btn) => {
-            btn.addEventListener("click", () => {
-              const target = document.getElementById("tier-letter-" + btn.dataset.jumpLetter);
-              if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-          });
-        }
-
-        const activeLetters = Object.keys(buckets).sort();
-        mount.innerHTML = activeLetters
-          .map((L) => {
-            const items = buckets[L].slice().sort((a, b) => {
-              const cmp = String(a[pyField]).localeCompare(String(b[pyField]));
-              return cmp !== 0 ? cmp : a.order - b.order;
-            });
-            const body =
-              state.view === "table"
-                ? renderTable(items)
-                : `<div class="tier-grid">${items.map(renderCard).join("")}</div>`;
-            return `
-              <section class="tier-group-block" id="tier-letter-${L}">
-                <div class="tier-group-header">
-                  <h2 class="tier-group-title"><span class="letter-badge mono">${L}</span> 拼音首字母 ${L}</h2>
-                  <span class="tier-group-sub">本组共 ${items.length} 个量级档位（同音组内按量级由小到大排列）</span>
-                </div>
-                ${body}
-              </section>`;
-          })
-          .join("");
-        return;
-      }
-
-      // Scale Order Mode (从小到大 asc / 从大到小 desc)
-      if (alphaBar) alphaBar.classList.remove("visible");
-
-      const ranked = filtered.filter((t) => !t.unranked);
+      // Strictly ascending (从小到大)
+      const ranked = filtered.filter((t) => !t.unranked).sort((a, b) => a.order - b.order);
       const unranked = filtered.filter((t) => t.unranked);
-      ranked.sort((a, b) => (state.sort === "asc" ? a.order - b.order : b.order - a.order));
       const allOrdered = ranked.concat(unranked);
 
       if (state.view === "table") {
@@ -1027,14 +950,10 @@
       }
 
       if (state.view === "flat") {
-        const flatTitle =
-          state.sort === "asc"
-            ? "连续天梯模式：#01 昆虫级 → #97 论天最上（按量级从小到大直排）"
-            : "连续天梯模式：#97 论天最上 → #01 昆虫级（按量级从大到小直排）";
         mount.innerHTML = `
           <section class="tier-group-block" id="group-flat">
             <div class="tier-group-header">
-              <h2 class="tier-group-title">${flatTitle}</h2>
+              <h2 class="tier-group-title">连续天梯模式：#01 昆虫级 → #97 论天最上（按量级从小到大连续直排）</h2>
               <span class="tier-group-sub">共 ${allOrdered.length} 档</span>
             </div>
             <div class="tier-grid">${allOrdered.map(renderCard).join("")}</div>
@@ -1063,14 +982,6 @@
         .join("");
     }
 
-    sortBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        state.sort = btn.dataset.tierSort;
-        persistPrefs();
-        render();
-      });
-    });
-
     segBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         state.segment = btn.dataset.tierSeg;
@@ -1082,14 +993,6 @@
     viewBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         state.view = btn.dataset.tierView;
-        persistPrefs();
-        render();
-      });
-    });
-
-    alphaKeyBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        state.alphaKey = btn.dataset.alphaKey;
         persistPrefs();
         render();
       });
@@ -1113,7 +1016,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     8. Interactive Characters Explorer (characters.html)
+     8. Interactive Characters Explorer (characters.html) — 首字母 & 量级从小到大
      -------------------------------------------------------------------------- */
   function initCharactersExplorer() {
     const mount = document.getElementById("chars-explorer-mount");
@@ -1126,8 +1029,6 @@
     const savedPrefs = safeGetJSON(localStorage, STORAGE_KEYS.charPrefs, {});
     const params = new URLSearchParams(location.search);
 
-    // Default showDemo to true when formal characters === 0 unless explicitly turned off,
-    // so users can immediately test 首字母 A-Z & 量级从小到大 sorting out of the box!
     const defaultShowDemo =
       characters.length === 0
         ? savedPrefs.showDemo !== undefined
@@ -1135,8 +1036,9 @@
           : true
         : false;
 
+    const initSort = params.get("sort") || savedPrefs.sort || "asc";
     const state = {
-      sort: params.get("sort") || savedPrefs.sort || "asc", // asc | desc | alpha
+      sort: initSort === "alpha" ? "alpha" : "asc", // asc (量级从小到大) | alpha (首字母 A-Z)
       series: "all",
       domain: "all",
       query: params.get("q") || "",
@@ -1222,7 +1124,7 @@
             <span class="mod-chip" style="color:var(--accent-blue)">主档：${escapeHTML(t ? t.name : "待定")}（#${t ? String(t.order).padStart(2, "0") : "—"}）</span>
             <span class="mod-chip mono">首字母：${escapeHTML(c.initial || "#")}</span>
             ${modHtml}
-            ${c._isDemo ? '<span class="mod-chip" style="color:var(--accent-gold);border-color:var(--border-gold)">体系标准示例</span>' : ""}
+            ${c._isDemo ? '<span class="mod-chip" style="color:var(--accent-gold);border-color:var(--border-gold)">第三版标准示例</span>' : ""}
           </div>
           <div class="dims-mini-grid">${dimsHtml}</div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--text-secondary)">
@@ -1248,6 +1150,10 @@
         )
         .join("");
 
+      const fullWritingHtml = c.full_writing
+        ? `<blockquote style="margin:0 0 14px;padding:11px 14px;background:var(--bg-surface-2);border-left:3.5px solid var(--accent-gold);border-radius:0 9px 9px 0;font-size:13.5px;color:var(--text-primary)"><strong>第三版「完整书写」展开：</strong>${formatEvidenceBadges(c.full_writing)}</blockquote>`
+        : "";
+
       body.innerHTML = `
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px">
           <div>
@@ -1257,6 +1163,7 @@
           </div>
           <a class="btn btn-surface" href="${resolveUrl("tier/" + t.slug + ".html")}">查看所属量级（⊙${escapeHTML(t.code)}）›</a>
         </div>
+        ${fullWritingHtml}
         <div class="heptad-modal-grid">
           <div class="heptad-radar-box">
             ${radarSvg}
@@ -1275,7 +1182,7 @@
           <table class="compact-table"><tbody>${dimRows}</tbody></table>
         </div>
         <div style="margin-top:14px;font-size:12.5px;color:var(--text-muted)">
-          注：本条目为依据《衡天⊙ 多维战力量级体系（第二版）》1.5 / 8.3 节规范制作的七维示例卡，用于直观演示角色分类排序与面板样式。
+          注：本条目为依据《衡天⊙ 多维战力量级体系（第三版）》1.5 节「完整书写」与 8.3 节规范制作的七维示例卡。
         </div>
       `;
       modal.classList.add("open");
@@ -1289,14 +1196,14 @@
         demoToggleBtn.classList.toggle("active", state.showDemo);
         demoToggleBtn.innerHTML = state.showDemo
           ? "✦ 隐藏示例卡（查看纯空库状态）"
-          : "✦ 展示 6 组体系标准示例卡";
+          : "✦ 展示 6 组第三版标准示例卡";
       }
 
       if (demoBannerSlot) {
         if (characters.length === 0 && state.showDemo) {
           demoBannerSlot.innerHTML = `
             <div class="notice-banner">
-              <span>📌 <strong>说明：</strong>正式角色库当前待录入（0 条）。下方已为您载入 <strong>6 组《衡天⊙》七维标准示例角色卡</strong>（涵盖首字母 A / C / L / S / X / Y，跨爆墙至论外门槛），可直接点击上方按钮体验<strong>「量级从小到大 ↑」</strong>与<strong>「首字母 A–Z」</strong>排序及七维星盘检视。</span>
+              <span>📌 <strong>说明：</strong>正式角色库当前待录入（0 条）。下方已载入 <strong>6 组《衡天⊙ 第三版》标准示例角色卡</strong>（涵盖首字母 A / C / L / S / X / Y，跨超爆墙至论外门槛），可直接点击上方按钮体验<strong>「↑ 按量级从小到大」</strong>与<strong>「A–Z 按首字母排序」</strong>及七维完整书写面板。</span>
             </div>`;
         } else {
           demoBannerSlot.innerHTML = "";
@@ -1314,12 +1221,12 @@
             <div class="empty-icon">⊙</div>
             <h3 style="margin:0 0 10px;font-size:20px">正式角色档案库 · 待录入</h3>
             <p style="color:var(--text-secondary);margin:0 auto 18px;max-width:540px;line-height:1.75">
-              本站已全面采用<strong>《衡天⊙ 多维战力量级体系（第二版）》</strong>，旧版单维角色数据已清空。
+              本站已全面采用<strong>《衡天⊙ 多维战力量级体系（第三版）》</strong>，旧版单维角色数据已清空。
               在 <code>data/characters.json</code> 填入角色数据并运行 <code>python3 build_site.py</code> 即可自动生成独立档案页。
             </p>
             <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
               <button type="button" class="btn btn-primary" id="empty-open-demo">✦ 开启 6 组示例角色卡（体验首字母 / 从小到大排序）</button>
-              <a class="btn btn-surface" href="${resolveUrl("rules.html")}">查阅《衡天⊙》定级标准</a>
+              <a class="btn btn-surface" href="${resolveUrl("rules.html")}">查阅《衡天⊙ 第三版》标准全文</a>
             </div>
           </div>`;
         const btn = document.getElementById("empty-open-demo");
@@ -1349,6 +1256,7 @@
           c.series,
           c.realm,
           c.summary,
+          c.full_writing || "",
           c._tier ? c._tier.code : "",
           c._tier ? c._tier.name : "",
           JSON.stringify(c.dims || {})
@@ -1420,17 +1328,13 @@
       } else {
         if (alphaBar) alphaBar.classList.remove("visible");
         const sorted = filtered.slice().sort((a, b) => {
-          const diff = state.sort === "asc" ? a._order - b._order : b._order - a._order;
+          const diff = a._order - b._order;
           return diff !== 0 ? diff : String(a.pinyin || a.name).localeCompare(String(b.pinyin || b.name));
         });
-        const dirTitle =
-          state.sort === "asc"
-            ? "按主档量级从小到大排列（低档位 → 高档位）"
-            : "按主档量级从大到小排列（高档位 → 低档位）";
         mount.innerHTML = `
           <section class="tier-group-block" id="char-scale-list">
             <div class="tier-group-header">
-              <h2 class="tier-group-title">${dirTitle}</h2>
+              <h2 class="tier-group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
               <span class="tier-group-sub">共 ${sorted.length} 位角色</span>
             </div>
             <div class="char-grid">${sorted.map(renderCharCard).join("")}</div>
@@ -1446,7 +1350,6 @@
         });
       });
 
-      // Auto-open demo modal if navigated via search hash #demo-xxx
       if (location.hash && location.hash.startsWith("#demo-")) {
         const targetSlug = location.hash.slice(6);
         const found = pool.find((x) => x.slug === targetSlug);
@@ -1587,7 +1490,7 @@
   const TYPE_LABELS = {
     tier: "量级分类",
     char: "角色分类",
-    rules: "标准·衡天体系",
+    rules: "标准·衡天第三版",
     materials: "标准·材质能量库"
   };
 
@@ -1608,7 +1511,7 @@
       const hits = runSearchQuery(q, activeTab).slice(0, 30);
       focusedIdx = 0;
       if (hits.length === 0) {
-        body.innerHTML = `<div style="padding:32px 16px;text-align:center;color:var(--text-muted)">未找到与「${escapeHTML(q)}」相关的条目，试试搜索「宇◆」「白矮星」「0#」「多击不认」「花岗岩」。</div>`;
+        body.innerHTML = `<div style="padding:32px 16px;text-align:center;color:var(--text-muted)">未找到与「${escapeHTML(q)}」相关的条目，试试搜索「宇◆」「归因」「白矮星」「0#」「多击不认」「花岗岩」。</div>`;
         return;
       }
       body.innerHTML = hits
@@ -1709,7 +1612,7 @@
       if (countEl) countEl.textContent = `匹配结果：${hits.length} 条`;
 
       if (hits.length === 0) {
-        mount.innerHTML = `<div class="empty-state-box"><div class="empty-icon">🔍</div><h3>没有找到匹配内容</h3><p style="color:var(--text-muted)">试试搜索代字（如 恒○、宇◆、外·门）、规则术语（如 证伪五信号、图灵跃迁）或材质名称（如 中子星、玄武岩、GBU-57）。</p></div>`;
+        mount.innerHTML = `<div class="empty-state-box"><div class="empty-icon">🔍</div><h3>没有找到匹配内容</h3><p style="color:var(--text-muted)">试试搜索代字（如 恒○、宇◆、外·门）、第三版新规则（如 归因与知情度审查、完整书写、超长篇）或材质名称（如 中子星、花岗岩）。</p></div>`;
         return;
       }
 

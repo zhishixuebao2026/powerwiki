@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>⊙虫 昆虫 · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ 多维战力量级体系（第二版）与材质破坏能量数据库官方百科站——包含角色与量级两大分类（首字母与量级从小到大排序）、全文检索、浏览进度保存与智能返回。">
+  <meta name="description" content="衡天⊙ 多维战力量级体系（第三版·最新）与材质破坏能量数据库官方百科站——角色分类（首字母与量级从小到大排序）、量级分类（从小到大排列）、全文检索与浏览进度保存。">
   <script>
     (function() {
       try {
@@ -25,7 +25,7 @@
       <a class="brand" href="../index.html">
         <span class="brand-mark mono" aria-hidden="true">⊙</span>
         <span class="brand-text">
-          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">v2</span></span>
+          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">第三版</span></span>
           <span class="brand-sub">角色 · 量级 · 标准与规则全文</span>
         </span>
       </a>
@@ -35,7 +35,7 @@
         <a class="nav-link" href="../characters.html">角色分类 <span class="nav-count mono">示例</span></a>
         <a class="nav-link active" href="../tiers.html">量级分类 <span class="nav-count mono">97</span></a>
         <span class="nav-divider" aria-hidden="true"></span>
-        <a class="nav-link" href="../rules.html">标准·衡天量级体系</a>
+        <a class="nav-link" href="../rules.html">标准·衡天体系(第三版)</a>
         <a class="nav-link" href="../materials.html">标准·材质能量库</a>
       </nav>
 
@@ -87,7 +87,7 @@
                 <h1 class="detail-title">昆虫 <span style="font-size:18px;font-weight:500;color:var(--text-muted)">· 昆虫（虫）</span></h1>
               </div>
               <div style="display:flex;gap:10px;flex-wrap:wrap">
-                <a class="btn btn-primary" href="../rules.html#sec-2-3" title="跳转至：2.3 量级表（昆虫～爆恒星）">📖 查阅标准原文：2.3 量级表（昆虫～爆恒星） ↗</a>
+                <a class="btn btn-primary" href="../rules.html#sec-2-3" title="跳转至：2.3 量级表（昆虫～爆恒星）">📖 查阅第三版原文：2.3 量级表（昆虫～爆恒星） ↗</a>
                 <a class="btn btn-surface" href="../tiers.html">返回量级分类</a>
               </div>
             </div>
@@ -114,16 +114,12 @@
                 <div class="spec-value">目标式 · 微观生物做功基准</div>
               </div>
               <div class="spec-box wide">
+                <div class="spec-label">第三版「完整书写」推荐展开格式（1.5 节规范）</div>
+                <div class="spec-value mono" style="font-size:14px;color:var(--accent-cyan)">⊙虫（昆虫：昆虫叮咬，5×10⁻⁵ J）</div>
+              </div>
+              <div class="spec-box wide">
                 <div class="spec-label">判定细则与注意事项</div>
                 <div class="spec-value" style="font-weight:400;color:var(--text-secondary);line-height:1.75">有限能量轴起点参照。昆虫级以下不再单列档位。</div>
-              </div>
-              <div class="spec-box">
-                <div class="spec-label">拼音检索索引（代字 / 全称）</div>
-                <div class="spec-value mono">K (kunchong) / K (kunchong)</div>
-              </div>
-              <div class="spec-box">
-                <div class="spec-label">配套材质与天体参数参考</div>
-                <div class="spec-value"><a href="../materials.html">查阅《材质与破坏能量数据库》↗</a></div>
               </div>
             </div>
 
@@ -132,7 +128,7 @@
               
             <div style="background:var(--bg-surface-2);border:1px dashed var(--border-subtle);border-radius:12px;padding:18px;color:var(--text-muted);font-size:13.5px;margin-top:10px">
               当前正式角色库暂无定级于 <strong>⊙ 虫（昆虫）</strong> 的角色档案。
-              可前往 <a href="../characters.html">角色分类页</a> 浏览体系示例或录入新角色。
+              可前往 <a href="../characters.html">角色分类页</a> 浏览第三版示例卡或录入新角色。
             </div>
             </section>
           </article>
@@ -167,7 +163,7 @@
     <div class="modal-dialog">
       <div class="search-modal-head">
         <span style="font-size:18px">🔍</span>
-        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="搜索角色、量级代字（宇◆、恒○）、规则术语或材质（白矮星、花岗岩、0#）…" autocomplete="off">
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="搜索角色、量级代字（宇◆、恒○）、第三版规则或材质（归因、白矮星、花岗岩）…" autocomplete="off">
         <a href="../search.html" class="chip-btn" style="white-space:nowrap">独立搜索页 ↗</a>
         <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭">✕</button>
       </div>
@@ -175,7 +171,7 @@
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
         <button type="button" class="chip-btn" data-search-tab="char">角色分类</button>
         <button type="button" class="chip-btn" data-search-tab="tier">量级分类</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天量级体系</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天体系(第三版)</button>
         <button type="button" class="chip-btn" data-search-tab="materials">材质破坏能量库</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
@@ -199,13 +195,13 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div>
-        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 依据《衡天⊙ 多维战力量级体系（第二版）》与《材质与破坏能量数据库（第二版）》构建
+        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 依据《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》构建
       </div>
       <div class="footer-links">
         <a href="../index.html">首页</a>
         <a href="../characters.html">角色分类</a>
         <a href="../tiers.html">量级分类</a>
-        <a href="../rules.html">衡天体系全文</a>
+        <a href="../rules.html">衡天体系(第三版)全文</a>
         <a href="../materials.html">材质数据库全文</a>
         <a href="../search.html">全站搜索</a>
       </div>
