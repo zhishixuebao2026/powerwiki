@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-root="./" data-page-id="tiers.html" data-page-type="tiers">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>量级分类 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ 多维战力量级体系（第二版）与材质破坏能量数据库官方百科站——支持角色与量级按首字母及从小到大排序、全文检索与阅读进度保存。">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('pw_theme_v2');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="./static/css/style.css">
+</head>
+<body>
+  <div class="reading-progress-track" aria-hidden="true">
+    <div class="reading-progress-bar" id="reading-progress-bar"></div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-mark mono" aria-hidden="true">⊙</span>
+        <span class="brand-text">
+          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">v2.0</span></span>
+          <span class="brand-sub">多维战力量级 · 材质破坏能量参考系</span>
+        </span>
+      </a>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link" href="./index.html">首页</a>
+        <a class="nav-link active" href="./tiers.html">量级分类 <span class="nav-count mono">97</span></a>
+        <a class="nav-link" href="./characters.html">角色档案 <span class="nav-count mono">0</span></a>
+        <a class="nav-link" href="./rules.html">衡天体系全文</a>
+        <a class="nav-link" href="./materials.html">材质能量全文</a>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="search-trigger" id="global-search-trigger" aria-label="打开全站搜索">
+          <span class="search-trigger-left">
+            <span>🔍</span>
+            <span class="search-trigger-placeholder">搜索量级 / 角色 / 材质…</span>
+          </span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="history-open-btn" title="阅读进度与浏览足迹">
+          <span>📖</span>
+          <span class="dot-indicator"></span>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" title="切换深浅色主题">☀️</button>
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">☰</button>
+      </div>
+    </div>
+  </header>
+
+  
+  <div class="context-bar">
+    <div class="container context-inner">
+      <div class="context-left">
+        <button type="button" class="back-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页">
+          <span>‹</span>
+          <span class="js-back-label">返回首页</span>
+        </button>
+        <nav class="breadcrumbs" aria-label="面包屑导航">
+          <a href="./index.html">首页</a><span class="sep">/</span><span class="current">量级分类总览</span>
+        </nav>
+      </div>
+      <div class="context-right"><a href="./rules.html#part-11">对照第十一部分速查表 ↗</a></div>
+    </div>
+  </div>
+
+
+  <main style="flex:1">
+    
+    <section class="page-hero">
+      <div class="page-hero-bg" style="background-image:url('./static/img/banner-tiers.jpg')"></div>
+      <div class="page-hero-mask"></div>
+      <div class="container page-hero-inner">
+        <h1 class="page-hero-title"><span>量级分类总览</span><span class="brand-badge mono">⊙ 97 正式档位 + 待定</span></h1>
+        <p class="page-hero-desc">完整映射《衡天⊙ 多维战力量级体系（第二版）》从昆虫级（#01）到论天最上（#97）的全部标尺。支持按量级从小到大、从大到小及按首字母 A–Z 排序检索。</p>
+      </div>
+    </section>
+
+    <div class="container" style="padding-bottom:54px">
+      <div class="toolbar-panel">
+        <div class="toolbar-row">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="font-size:13px;color:var(--text-muted);font-weight:600">排序方式：</span>
+            <div class="segmented-group" role="group" aria-label="量级排序切换">
+              <button type="button" class="seg-btn active" data-tier-sort="asc">↑ 量级从小到大</button>
+              <button type="button" class="seg-btn" data-tier-sort="desc">↓ 量级从大到小</button>
+              <button type="button" class="seg-btn" data-tier-sort="alpha">A–Z 首字母排序</button>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;justify-content:flex-end">
+            <div class="filter-input-wrap">
+              <span class="filter-input-icon">🔍</span>
+              <input type="search" class="filter-input" id="tier-filter-input" placeholder="筛选代字、名称、能量阈值（如 宇◆、10⁴¹、阿克曼）…">
+              <button type="button" class="filter-clear-btn" id="tier-filter-clear" aria-label="清空">✕</button>
+            </div>
+            <div class="segmented-group" role="group" aria-label="视图切换">
+              <button type="button" class="seg-btn active" data-tier-view="card">卡片</button>
+              <button type="button" class="seg-btn" data-tier-view="table">总表</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar-row">
+          <div class="filter-Chips">
+            <button type="button" class="chip-btn active" data-tier-seg="all">全部区间（98）</button>
+            <button type="button" class="chip-btn" data-tier-seg="inherited">继承区 · 目标式（虫→恒）</button>
+            <button type="button" class="chip-btn" data-tier-seg="transition">跨体系过渡带</button>
+            <button type="button" class="chip-btn" data-tier-seg="coverage">覆盖体系（系→宇）</button>
+            <button type="button" class="chip-btn" data-tier-seg="fgh">广义无限区（FGH）</button>
+            <button type="button" class="chip-btn" data-tier-seg="beyond">论外与论天大基数</button>
+          </div>
+          <span class="mono" id="tier-result-count" style="font-size:12.5px;color:var(--text-muted)">共显示 98 个档位</span>
+        </div>
+      </div>
+
+      <div class="alpha-bar" id="tier-alpha-bar">
+        <div class="alpha-letters" id="tier-alpha-letters"></div>
+        <div class="alpha-mode-switch">
+          <span>首字母依据：</span>
+          <button type="button" class="chip-btn active" data-alpha-key="code" title="按衡天核心代字拼音首字母（如 城△→C、宇◆→Y、阿克曼→A），分布最均匀">按核心代字</button>
+          <button type="button" class="chip-btn" data-alpha-key="full" title="按完整中文名称首字拼音（如 强爆城→Q、极宇宙→J）">按完整名称</button>
+        </div>
+      </div>
+
+      <div id="tiers-explorer-mount">
+        
+        <section class="tier-group-block" id="group-inheritance">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">第二部分 · 有限能量轴 · 继承区</h2>
+            <span class="tier-group-sub">昆虫 ～ 爆恒星（55 档）· 默认目标式计算（结合能或碎块/粉碎能） · 共 55 档</span>
+          </div>
+          <div class="tier-grid">
+            <a class="tier-card" data-domain="terrestrial" href="./tier/insect.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 虫</span>
+                <span class="tier-order-num mono">#01 · 首字母 K</span>
+              </div>
+              <div class="tier-card-name">
+                <span>昆虫</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">昆虫（虫）</span>
+              </div>
+              <div class="tier-energy-line mono">5×10⁻⁵ J</div>
+              <div class="tier-scale-line">昆虫叮咬</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 微观生物做功基准</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/human-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 人▽</span>
+                <span class="tier-order-num mono">#02 · 首字母 R</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱人类</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">凡人（人）</span>
+              </div>
+              <div class="tier-energy-line mono">50–60 J</div>
+              <div class="tier-scale-line">成年男性不完全发力一拳／成年女性全力一拳</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 人体动能输出</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/human-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 人○</span>
+                <span class="tier-order-num mono">#03 · 首字母 R</span>
+              </div>
+              <div class="tier-card-name">
+                <span>普通人</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">凡人（人）</span>
+              </div>
+              <div class="tier-energy-line mono">100 J</div>
+              <div class="tier-scale-line">普通人类全力一拳</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 人体动能输出</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/human-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 人△</span>
+                <span class="tier-order-num mono">#04 · 首字母 R</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强人类</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">凡人（人）</span>
+              </div>
+              <div class="tier-energy-line mono">150–250 J</div>
+              <div class="tier-scale-line">经系统训练的运动员／格斗选手全力一拳</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 搏击力学实测区间</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/human-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 人☆</span>
+                <span class="tier-order-num mono">#05 · 首字母 R</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超人类</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">凡人（人）</span>
+              </div>
+              <div class="tier-energy-line mono">300–600 J</div>
+              <div class="tier-scale-line">人类体能巅峰</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 人类生理极限输出</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/brick-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 砖▽</span>
+                <span class="tier-order-num mono">#06 · 首字母 Z</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆砖</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆砖（砖）</span>
+              </div>
+              <div class="tier-energy-line mono">600 J</div>
+              <div class="tier-scale-line">破坏一块砖的一部分</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 碎块标定（约 0.4–5.2 J/cc）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/brick-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 砖○</span>
+                <span class="tier-order-num mono">#07 · 首字母 Z</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆砖</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆砖（砖）</span>
+              </div>
+              <div class="tier-energy-line mono">2,000 J</div>
+              <div class="tier-scale-line">打碎一块 240×115×53 mm 红砖（1463 cc）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 单位能量密度 1.37 J/cc（碎块）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/brick-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 砖△</span>
+                <span class="tier-order-num mono">#08 · 首字母 Z</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆砖</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆砖（砖）</span>
+              </div>
+              <div class="tier-energy-line mono">6,000 J</div>
+              <div class="tier-scale-line">一次打碎三块标准红砖当量</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 3 倍标准爆砖</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/brick-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 砖☆</span>
+                <span class="tier-order-num mono">#09 · 首字母 Z</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆砖</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆砖（砖）</span>
+              </div>
+              <div class="tier-energy-line mono">2×10⁴ J</div>
+              <div class="tier-scale-line">十倍爆砖当量</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 10 倍标准爆砖</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/wall-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 墙▽</span>
+                <span class="tier-order-num mono">#10 · 首字母 Q</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆墙</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆墙（墙）</span>
+              </div>
+              <div class="tier-energy-line mono">30 g TNT ／ 1.25×10⁵ J</div>
+              <div class="tier-scale-line">打碎一面砖墙的一部分，或将混凝土墙打成数块大碎块</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 碎块标定</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/wall-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 墙○</span>
+                <span class="tier-order-num mono">#11 · 首字母 Q</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆墙</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆墙（墙）</span>
+              </div>
+              <div class="tier-energy-line mono">100 g TNT ／ 4.184×10⁵ J</div>
+              <div class="tier-scale-line">打爆 2×2×0.24 m 红砖墙（0.96 m³），较小碎块</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 单位能量密度 0.44 J/cc（碎块）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/wall-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 墙△</span>
+                <span class="tier-order-num mono">#12 · 首字母 Q</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆墙</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆墙（墙）</span>
+              </div>
+              <div class="tier-energy-line mono">300 g TNT ／ 1.255×10⁶ J</div>
+              <div class="tier-scale-line">三倍标准爆墙</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 碎块标定</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/wall-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 墙☆</span>
+                <span class="tier-order-num mono">#13 · 首字母 Q</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆墙</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆墙（墙）</span>
+              </div>
+              <div class="tier-energy-line mono">1 kg TNT ／ 4.184×10⁶ J</div>
+              <div class="tier-scale-line">打碎 2×2×0.2 m、体积 0.8 m³ 的钢筋混凝土墙</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 单位能量密度 5.23 J/cc（碎块）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/room-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 屋▽</span>
+                <span class="tier-order-num mono">#14 · 首字母 W</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆屋</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆屋（屋）</span>
+              </div>
+              <div class="tier-energy-line mono">4 kg TNT ／ 1.673×10⁷ J</div>
+              <div class="tier-scale-line">打碎 2×2×3 m 以上、结构体积 2.4～数 m³ 的钢混小屋</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 结构材料体积（非围合空间）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/room-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 屋○</span>
+                <span class="tier-order-num mono">#15 · 首字母 W</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆屋</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆屋（屋）</span>
+              </div>
+              <div class="tier-energy-line mono">20 kg TNT ／ 8.368×10⁷ J</div>
+              <div class="tier-scale-line">打碎 6×6×3 m、结构体积 20 m³ 的钢混屋子（一室一厅）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 结构材料体积</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/room-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 屋△</span>
+                <span class="tier-order-num mono">#16 · 首字母 W</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆屋</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆屋（屋）</span>
+              </div>
+              <div class="tier-energy-line mono">40 kg TNT ／ 1.673×10⁸ J</div>
+              <div class="tier-scale-line">打碎 10×10×3 m、结构体积 67.5 m³ 的混凝土房屋（居民楼一户）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 结构材料体积</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/room-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 屋☆</span>
+                <span class="tier-order-num mono">#17 · 首字母 W</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆屋</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆屋（屋）</span>
+              </div>
+              <div class="tier-energy-line mono">80 kg TNT ／ 3.34×10⁸ J</div>
+              <div class="tier-scale-line">打碎 15×15×3 m、结构体积 135 m³ 的钢混平房／仓库</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 单位能量密度 2.47 J/cc</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/building-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 楼▽</span>
+                <span class="tier-order-num mono">#18 · 首字母 L</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆楼</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆楼（楼）</span>
+              </div>
+              <div class="tier-energy-line mono">300 kg TNT ／ 1.255×10⁹ J</div>
+              <div class="tier-scale-line">打碎 15×15×15 m、结构体积 675 m³ 的混凝土楼（5–6 层公寓一单元）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 单位能量密度 1.86 J/cc</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/building-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 楼○</span>
+                <span class="tier-order-num mono">#19 · 首字母 L</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆楼</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆楼（楼）</span>
+              </div>
+              <div class="tier-energy-line mono">1 t TNT ／ 4.184×10⁹ J</div>
+              <div class="tier-scale-line">打碎一栋现代 30×30×30 m 写字楼</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 结构材料体积</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/building-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 楼△</span>
+                <span class="tier-order-num mono">#20 · 首字母 L</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆楼</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆楼（楼）</span>
+              </div>
+              <div class="tier-energy-line mono">3 t TNT ／ 1.255×10¹⁰ J</div>
+              <div class="tier-scale-line">高层居民楼；3 倍标准爆楼；破坏部分大型建筑</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 结构碎块化</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/building-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 楼☆</span>
+                <span class="tier-order-num mono">#21 · 首字母 L</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆楼</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆楼（楼）</span>
+              </div>
+              <div class="tier-energy-line mono">10 t TNT ／ 4.184×10¹⁰ J</div>
+              <div class="tier-scale-line">洗地 1 万 m² 小型街区；破坏 30 层大厦；破坏大量大楼</div>
+              <div class="tier-card-foot">
+                <span>目标式 → 局部面杀伤衔接</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/street-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 街▽</span>
+                <span class="tier-order-num mono">#22 · 首字母 J</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆街</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆街（街）</span>
+              </div>
+              <div class="tier-energy-line mono">50 t TNT ／ 2.092×10¹¹ J</div>
+              <div class="tier-scale-line">破坏 10 万 m² 现代街区 ／ 100 万 m² 古代建筑</div>
+              <div class="tier-card-foot">
+                <span>面覆盖破坏（区分现代钢混与古代土木密度）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/street-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 街○</span>
+                <span class="tier-order-num mono">#23 · 首字母 J</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆街</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆街（街）</span>
+              </div>
+              <div class="tier-energy-line mono">100 t TNT ／ 4.184×10¹¹ J</div>
+              <div class="tier-scale-line">破坏 20 万 m² 现代街区 ／ 200 万 m² 古代建筑</div>
+              <div class="tier-card-foot">
+                <span>面覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/street-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 街△</span>
+                <span class="tier-order-num mono">#24 · 首字母 J</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆街</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆街（街）</span>
+              </div>
+              <div class="tier-energy-line mono">400 t TNT ／ 1.673×10¹² J</div>
+              <div class="tier-scale-line">破坏 50 万 m² 现代街区 ／ 近 500 万 m² 古代建筑</div>
+              <div class="tier-card-foot">
+                <span>面覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/street-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 街☆</span>
+                <span class="tier-order-num mono">#25 · 首字母 J</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆街</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆街（街）</span>
+              </div>
+              <div class="tier-energy-line mono">3,000 t TNT ／ 1.255×10¹³ J</div>
+              <div class="tier-scale-line">破坏 200 万 m²（2 km²）城区 ／ 20 km² 荒野、古代城市</div>
+              <div class="tier-card-foot">
+                <span>面覆盖破坏（约 6.28×10¹² J/km²）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="transition" href="./tier/street-super-plus.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 街☆+</span>
+                <span class="tier-order-num mono">#26 · 首字母 J</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强化超爆街</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">街→城过渡区</span>
+              </div>
+              <div class="tier-energy-line mono">1.26×10¹³ – 2.3×10¹⁴ J</div>
+              <div class="tier-scale-line">数 km² 现代建成城区（约 3,000 t ～ 5.5 万 t TNT）</div>
+              <div class="tier-card-foot">
+                <span>过渡区 · 几何中点 2.3×10¹⁴ J 下段</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="transition" href="./tier/city-weak-minus.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 城▽-</span>
+                <span class="tier-order-num mono">#27 · 首字母 C</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱化弱爆城</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">街→城过渡区</span>
+              </div>
+              <div class="tier-energy-line mono">2.3×10¹⁴ – 4.18×10¹⁵ J</div>
+              <div class="tier-scale-line">数十 km² 城区（约 5.5 万 t ～ 100 万 t TNT）</div>
+              <div class="tier-card-foot">
+                <span>过渡区 · 几何中点 2.3×10¹⁴ J 上段</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/city-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 城▽</span>
+                <span class="tier-order-num mono">#28 · 首字母 C</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆城</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆城（城）</span>
+              </div>
+              <div class="tier-energy-line mono">100 万 t TNT ／ 4.184×10¹⁵ J</div>
+              <div class="tier-scale-line">巴黎市 105 km² 完全摧毁</div>
+              <div class="tier-card-foot">
+                <span>面覆盖破坏（约 3.98×10¹³ J/km²）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/city-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 城○</span>
+                <span class="tier-order-num mono">#29 · 首字母 C</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆城</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆城（城）</span>
+              </div>
+              <div class="tier-energy-line mono">725 万 t TNT ／ 3.0334×10¹⁶ J</div>
+              <div class="tier-scale-line">横滨 437 km²（行政区面积）</div>
+              <div class="tier-card-foot">
+                <span>面覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/city-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 城△</span>
+                <span class="tier-order-num mono">#30 · 首字母 C</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆城</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆城（城）</span>
+              </div>
+              <div class="tier-energy-line mono">3,500 万 t TNT ／ 1.4644×10¹⁷ J</div>
+              <div class="tier-scale-line">纽约市 1,214 km²</div>
+              <div class="tier-card-foot">
+                <span>面覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/city-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 城☆</span>
+                <span class="tier-order-num mono">#31 · 首字母 C</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆城</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆城（城）</span>
+              </div>
+              <div class="tier-energy-line mono">10 亿 t TNT ／ 4.184×10¹⁸ J</div>
+              <div class="tier-scale-line">上海市 6,340 km²（行政区面积）</div>
+              <div class="tier-card-foot">
+                <span>面覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/country-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 国▽</span>
+                <span class="tier-order-num mono">#32 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆国</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆国（国）</span>
+              </div>
+              <div class="tier-energy-line mono">150 亿 t TNT ／ 6.276×10¹⁹ J</div>
+              <div class="tier-scale-line">荷兰 4 万 km²（爆国底线）</div>
+              <div class="tier-card-foot">
+                <span>广域面覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/country-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 国○</span>
+                <span class="tier-order-num mono">#33 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆国</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆国（国）</span>
+              </div>
+              <div class="tier-energy-line mono">5,000 亿 t TNT ／ 2.092×10²¹ J</div>
+              <div class="tier-scale-line">日本 37.8 万 km²</div>
+              <div class="tier-card-foot">
+                <span>广域面覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/country-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 国△</span>
+                <span class="tier-order-num mono">#34 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆国</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆国（国）</span>
+              </div>
+              <div class="tier-energy-line mono">2.25 万亿 t TNT ／ 9.414×10²¹ J</div>
+              <div class="tier-scale-line">埃及 100 万 km²</div>
+              <div class="tier-card-foot">
+                <span>广域面覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/country-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 国☆</span>
+                <span class="tier-order-num mono">#35 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆国</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆国（国）</span>
+              </div>
+              <div class="tier-energy-line mono">10 万亿 t TNT ／ 4.8116×10²² J</div>
+              <div class="tier-scale-line">印度 300 万 km²</div>
+              <div class="tier-card-foot">
+                <span>广域面覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/continent-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 陆▽</span>
+                <span class="tier-order-num mono">#36 · 首字母 L</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆大陆</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆大陆（陆）</span>
+              </div>
+              <div class="tier-energy-line mono">50 万亿 t TNT ／ 2.092×10²³ J</div>
+              <div class="tier-scale-line">澳大利亚大陆 770 万 km²</div>
+              <div class="tier-card-foot">
+                <span>大陆尺度覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/continent-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 陆○</span>
+                <span class="tier-order-num mono">#37 · 首字母 L</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆大陆</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆大陆（陆）</span>
+              </div>
+              <div class="tier-energy-line mono">200 万亿 t TNT ／ 8.368×10²³ J</div>
+              <div class="tier-scale-line">俄罗斯 1,700 万 km²</div>
+              <div class="tier-card-foot">
+                <span>大陆尺度覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/continent-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 陆△</span>
+                <span class="tier-order-num mono">#38 · 首字母 L</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆大陆</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆大陆（陆）</span>
+              </div>
+              <div class="tier-energy-line mono">1.85×10²⁴ J（修正值）</div>
+              <div class="tier-scale-line">非洲大陆 3,000 万 km²</div>
+              <div class="tier-card-foot">
+                <span>大陆尺度对数插值修正</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/continent-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 陆☆</span>
+                <span class="tier-order-num mono">#39 · 首字母 L</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆大陆</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆大陆（陆）</span>
+              </div>
+              <div class="tier-energy-line mono">1,000 万亿 t TNT ／ 4.184×10²⁴ J</div>
+              <div class="tier-scale-line">亚欧大陆 5,400 万 km²</div>
+              <div class="tier-card-foot">
+                <span>大陆尺度覆盖破坏</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/surface-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 表▽</span>
+                <span class="tier-order-num mono">#40 · 首字母 B</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆地表</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆地表（表）</span>
+              </div>
+              <div class="tier-energy-line mono">洗地 5.0208×10²⁵ J ／ 蒸发太平洋 2.1×10²⁷ J</div>
+              <div class="tier-scale-line">太平洋 1.8 亿 km²</div>
+              <div class="tier-card-foot">
+                <span>半球/洋面洗地或相变蒸发</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/surface-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 表○</span>
+                <span class="tier-order-num mono">#41 · 首字母 B</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆地表</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆地表（表）</span>
+              </div>
+              <div class="tier-energy-line mono">洗地 3.2×10²⁶ J ／ 融化地表 2.9×10²⁸ J</div>
+              <div class="tier-scale-line">地球总表面积 5.1 亿 km²</div>
+              <div class="tier-card-foot">
+                <span>全球地表摧毁／岩浆洋熔融</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/surface-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 表△</span>
+                <span class="tier-order-num mono">#42 · 首字母 B</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆地表</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆地表（表）</span>
+              </div>
+              <div class="tier-energy-line mono">8.76×10²⁸ J</div>
+              <div class="tier-scale-line">一击炸飞地球全部海洋（1.4×10²¹ kg）逃逸出地球</div>
+              <div class="tier-card-foot">
+                <span>逃逸功 E = m × GM/R（6.256×10⁷ J/kg）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="terrestrial" href="./tier/surface-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 表☆</span>
+                <span class="tier-order-num mono">#43 · 首字母 B</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆地表</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆地表（表）</span>
+              </div>
+              <div class="tier-energy-line mono">1.63×10³⁰ J</div>
+              <div class="tier-scale-line">一击炸飞整个地球地壳（2.6×10²² kg）逃逸出地球</div>
+              <div class="tier-card-foot">
+                <span>逃逸功 E = m × GM/R</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/planet-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 星▽</span>
+                <span class="tier-order-num mono">#44 · 首字母 X</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆行星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆行星（星）</span>
+              </div>
+              <div class="tier-energy-line mono">4.865×10³⁰ J</div>
+              <div class="tier-scale-line">打爆火星（克服引力结合能）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 引力结合能 U = 3GM²/5R</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/planet-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 星○</span>
+                <span class="tier-order-num mono">#45 · 首字母 X</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆行星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆行星（星）</span>
+              </div>
+              <div class="tier-energy-line mono">2.24×10³² J</div>
+              <div class="tier-scale-line">打爆地球（均匀球 2.241×10³² J；PREM 真实密度剖面 2.49×10³² J）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 引力结合能下限（0.13）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/planet-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 星△</span>
+                <span class="tier-order-num mono">#46 · 首字母 X</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆行星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆行星（星）</span>
+              </div>
+              <div class="tier-energy-line mono">4.48×10³² ～ 2.062×10³⁶ J</div>
+              <div class="tier-scale-line">打爆两倍地球质量行星，上至将地球蒸发并高速抛飞／木星下限</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 超级地球至气态巨行星下界</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/planet-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 星☆</span>
+                <span class="tier-order-num mono">#47 · 首字母 X</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆行星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆行星（星）</span>
+              </div>
+              <div class="tier-energy-line mono">2.06×10³⁶ – 3.49×10³⁸ J</div>
+              <div class="tier-scale-line">打爆木星（2.06×10³⁶ J），上探至 13 倍木星质量（氘燃烧极限）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 均匀球模型统一值</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/brown-dwarf-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 褐▽</span>
+                <span class="tier-order-num mono">#48 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆褐矮星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆褐矮星（褐）</span>
+              </div>
+              <div class="tier-energy-line mono">3.49×10³⁸ – 8.25×10³⁸ J</div>
+              <div class="tier-scale-line">13–20 倍木星质量褐矮星（R ≈ 1.0 R_J）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 简并态近似等半径 U ∝ M²</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/brown-dwarf-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 褐○</span>
+                <span class="tier-order-num mono">#49 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆褐矮星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆褐矮星（褐）</span>
+              </div>
+              <div class="tier-energy-line mono">8.25×10³⁸ – 3.30×10³⁹ J</div>
+              <div class="tier-scale-line">20–40 倍木星质量褐矮星</div>
+              <div class="tier-card-foot">
+                <span>目标式 · U ∝ M²（R ≈ 1.0 R_J）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/brown-dwarf-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 褐△</span>
+                <span class="tier-order-num mono">#50 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆褐矮星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆褐矮星（褐）</span>
+              </div>
+              <div class="tier-energy-line mono">3.30×10³⁹ – 8.72×10³⁹ J</div>
+              <div class="tier-scale-line">40–65 倍木星质量褐矮星</div>
+              <div class="tier-card-foot">
+                <span>目标式 · U ∝ M²（R ≈ 1.0 R_J）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/brown-dwarf-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 褐☆</span>
+                <span class="tier-order-num mono">#51 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆褐矮星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆褐矮星（褐）</span>
+              </div>
+              <div class="tier-energy-line mono">8.72×10³⁹ – 1.32×10⁴⁰ J</div>
+              <div class="tier-scale-line">65–80 倍木星质量（氢核聚变临界）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 距弱恒星仅差 1.82 倍</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/star-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 恒▽</span>
+                <span class="tier-order-num mono">#52 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱爆恒星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆恒星（恒）</span>
+              </div>
+              <div class="tier-energy-line mono">2.4×10⁴⁰ J</div>
+              <div class="tier-scale-line">打爆红矮星（比邻星 0.122 M☉ 实算 2.202×10⁴⁰ J）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 主序星引力结合能</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/star-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 恒○</span>
+                <span class="tier-order-num mono">#53 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准爆恒星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆恒星（恒）</span>
+              </div>
+              <div class="tier-energy-line mono">2.28×10⁴¹ J</div>
+              <div class="tier-scale-line">打爆太阳（复算 2.277×10⁴¹ J；银河系平均场星 0.8 M☉ 约 1.7×10⁴¹ J）</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 太阳基准结合能 U</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/star-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 恒△</span>
+                <span class="tier-order-num mono">#54 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强爆恒星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆恒星（恒）</span>
+              </div>
+              <div class="tier-energy-line mono">4.56×10⁴¹ J 以上</div>
+              <div class="tier-scale-line">打爆 2 倍太阳结合能以上恒星</div>
+              <div class="tier-card-foot">
+                <span>目标式 · 大质量恒星结合能</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="stellar" href="./tier/star-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 恒☆</span>
+                <span class="tier-order-num mono">#55 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超爆恒星</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">爆恒星（恒）</span>
+              </div>
+              <div class="tier-energy-line mono">2.28×10⁴² J 以上</div>
+              <div class="tier-scale-line">一击打爆十颗以上恒星组成的星团（目标总和）；白矮星（6–9×10⁴² J）亦在此上沿</div>
+              <div class="tier-card-foot">
+                <span>目标式终点 · 衔接覆盖模型地板 8U (1.82×10⁴² J)</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a></div>
+        </section>
+        <section class="tier-group-block" id="group-transition-a">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">第三部分 · 过渡带 A（恒星 → 恒星系）</h2>
+            <span class="tier-group-sub">1.8×10⁴² ～ 3.7×10⁴⁹ J · 跨 7.3 个数量级命名空白，以 1 AU 为界，须写具体焦耳数 · 共 1 档</span>
+          </div>
+          <div class="tier-grid">
+            <a class="tier-card" data-domain="transition" href="./tier/transition-a.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 过渡A</span>
+                <span class="tier-order-num mono">#56 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>过渡带 A（恒星→恒星系）</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">过渡带（无代字）</span>
+              </div>
+              <div class="tier-energy-line mono">1.8×10⁴² ～ 3.7×10⁴⁹ J</div>
+              <div class="tier-scale-line">1 恒星直径 ～ 40 AU（1 AU = 2.31×10⁴⁶ J 为分界；1.4 M☉ 中子星束缚能 3×10⁴⁶ J）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*（必须写出具体焦耳数）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a></div>
+        </section>
+        <section class="tier-group-block" id="group-coverage-sys">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">第四部分 · 覆盖体系 · 恒星系级</h2>
+            <span class="tier-group-sub">40 AU ～ 2 光年（4 档）· 半球扩散 E = 2πD² × F* · 共 4 档</span>
+          </div>
+          <div class="tier-grid">
+            <a class="tier-card" data-domain="cosmic" href="./tier/system-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 系▽</span>
+                <span class="tier-order-num mono">#57 · 首字母 X</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱恒星系</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">恒星系级（系）</span>
+              </div>
+              <div class="tier-energy-line mono">3.7×10⁴⁹ – 1.5×10⁵⁰ J</div>
+              <div class="tier-scale-line">覆盖直径 40–80 AU（冥王星轨道级）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*（F* = 1.64×10²³ J/m²）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/system-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 系○</span>
+                <span class="tier-order-num mono">#58 · 首字母 X</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准恒星系</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">恒星系级（系）</span>
+              </div>
+              <div class="tier-energy-line mono">2.3×10⁵² – 2.1×10⁵³ J</div>
+              <div class="tier-scale-line">覆盖直径 1,000–3,000 AU（离散盘外边界／奥尔特云内起点）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/system-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 系△</span>
+                <span class="tier-order-num mono">#59 · 首字母 X</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强恒星系</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">恒星系级（系）</span>
+              </div>
+              <div class="tier-energy-line mono">2.3×10⁵⁴ – 2.1×10⁵⁵ J</div>
+              <div class="tier-scale-line">覆盖直径 1 万–3 万 AU（奥尔特云内区／深厚彗星云）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/system-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 系☆</span>
+                <span class="tier-order-num mono">#60 · 首字母 X</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超恒星系</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">恒星系级（系）</span>
+              </div>
+              <div class="tier-energy-line mono">2.1×10⁵⁶ – 3.7×10⁵⁶ J</div>
+              <div class="tier-scale-line">覆盖直径 1.5–2 光年（约 9.5 万–12.6 万 AU，太阳引力边界希尔球极限）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a></div>
+        </section>
+        <section class="tier-group-block" id="group-transition-b">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">第三部分 · 过渡带 B（恒星系 → 星团）</h2>
+            <span class="tier-group-sub">3.7×10⁵⁶ ～ 3.7×10⁵⁸ J · 2 ～ 20 光年，以 6.3 光年为界，须写具体焦耳数 · 共 1 档</span>
+          </div>
+          <div class="tier-grid">
+            <a class="tier-card" data-domain="transition" href="./tier/transition-b.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 过渡B</span>
+                <span class="tier-order-num mono">#61 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>过渡带 B（恒星系→星团）</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">过渡带（无代字）</span>
+              </div>
+              <div class="tier-energy-line mono">3.7×10⁵⁶ ～ 3.7×10⁵⁸ J</div>
+              <div class="tier-scale-line">覆盖直径 2 ～ 20 光年（比邻星 4.24 光年；6.3 光年 = 3.66×10⁵⁷ J 为几何分界）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*（必须写出具体焦耳数）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a></div>
+        </section>
+        <section class="tier-group-block" id="group-coverage-deep">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">第四部分 · 覆盖体系 · 星团级至宇宙级</h2>
+            <span class="tier-group-sub">星团 / 星系 / 星系团 / 宇宙结构 / 宇宙五档（21 档，含第二版新增「宇◆ 极宇宙」） · 共 21 档</span>
+          </div>
+          <div class="tier-grid">
+            <a class="tier-card" data-domain="cosmic" href="./tier/cluster-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 团▽</span>
+                <span class="tier-order-num mono">#62 · 首字母 T</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱星团</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星团级（团）</span>
+              </div>
+              <div class="tier-energy-line mono">3.7×10⁵⁸ – 2.3×10⁵⁹ J</div>
+              <div class="tier-scale-line">覆盖直径 20–50 光年（小型疏散星团）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/cluster-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 团○</span>
+                <span class="tier-order-num mono">#63 · 首字母 T</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准星团</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星团级（团）</span>
+              </div>
+              <div class="tier-energy-line mono">2.3×10⁵⁹ – 9.2×10⁵⁹ J</div>
+              <div class="tier-scale-line">覆盖直径 50–100 光年（毕宿星团潮汐直径约 66 光年、鬼星团、昴宿星团）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/cluster-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 团△</span>
+                <span class="tier-order-num mono">#64 · 首字母 T</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强星团</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星团级（团）</span>
+              </div>
+              <div class="tier-energy-line mono">9.2×10⁵⁹ – 2.1×10⁶⁰ J</div>
+              <div class="tier-scale-line">覆盖直径 100–150 光年（杜鹃 47、M13 等标准球状星团）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/cluster-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 团☆</span>
+                <span class="tier-order-num mono">#65 · 首字母 T</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超星团</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星团级（团）</span>
+              </div>
+              <div class="tier-energy-line mono">2.1×10⁶⁰ – 8.3×10⁶⁰ J</div>
+              <div class="tier-scale-line">覆盖直径 150–300 光年（半人马座 ω 及以上巨型球状星团）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/galaxy-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 河▽</span>
+                <span class="tier-order-num mono">#66 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱星系</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星系级（河）</span>
+              </div>
+              <div class="tier-energy-line mono">1.15×10⁶¹ – 4.6×10⁶³ J</div>
+              <div class="tier-scale-line">覆盖直径 1,000–20,000 光年（小麦哲伦云约 7,000 光年、大麦哲伦云约 14,000 光年）</div>
+              <div class="tier-card-foot">
+                <span>盘面适配 E = πD²/4 × F*（无控自然球形爆发 ×8）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/galaxy-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 河○</span>
+                <span class="tier-order-num mono">#67 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准星系</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星系级（河）</span>
+              </div>
+              <div class="tier-energy-line mono">4.6×10⁶³ – 1.15×10⁶⁵ J</div>
+              <div class="tier-scale-line">覆盖直径 20,000–100,000 光年（三角座 M33 约 6 万光年、银河系盘面约 10 万光年）</div>
+              <div class="tier-card-foot">
+                <span>盘面适配 E = πD²/4 × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/galaxy-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 河△</span>
+                <span class="tier-order-num mono">#68 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强星系</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星系级（河）</span>
+              </div>
+              <div class="tier-energy-line mono">1.15×10⁶⁵ – 1.04×10⁶⁶ J</div>
+              <div class="tier-scale-line">覆盖直径 10 万–30 万光年（仙女座星系 M31 约 22 万光年）</div>
+              <div class="tier-card-foot">
+                <span>盘面适配 E = πD²/4 × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/galaxy-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 河☆</span>
+                <span class="tier-order-num mono">#69 · 首字母 H</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超星系</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星系级（河）</span>
+              </div>
+              <div class="tier-energy-line mono">1.04×10⁶⁶ – 4.2×10⁶⁸ J</div>
+              <div class="tier-scale-line">覆盖直径 30 万–600 万光年（巨型椭圆星系 IC 1101 约 400 万光年至星系群）</div>
+              <div class="tier-card-foot">
+                <span>盘面适配 E = πD²/4 × F*（椭圆星系球状时按半球算）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/galaxy-cluster-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 簇▽</span>
+                <span class="tier-order-num mono">#70 · 首字母 C</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱星系团</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星系团级（簇）</span>
+              </div>
+              <div class="tier-energy-line mono">9.2×10⁶⁹ – 3.7×10⁷⁰ J</div>
+              <div class="tier-scale-line">覆盖直径 1,000 万–2,000 万光年（本星系群约 1,000 万光年、室女座星系团约 1,500 万光年）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/galaxy-cluster-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 簇○</span>
+                <span class="tier-order-num mono">#71 · 首字母 C</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准星系团</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星系团级（簇）</span>
+              </div>
+              <div class="tier-energy-line mono">3.7×10⁷⁰ – 2.3×10⁷¹ J</div>
+              <div class="tier-scale-line">覆盖直径 2,000 万–5,000 万光年（大型星系团）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/galaxy-cluster-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 簇△</span>
+                <span class="tier-order-num mono">#72 · 首字母 C</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强星系团</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星系团级（簇）</span>
+              </div>
+              <div class="tier-energy-line mono">2.3×10⁷¹ – 9.2×10⁷¹ J</div>
+              <div class="tier-scale-line">覆盖直径 5,000 万–1 亿光年（小型超星系团）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散默认（扁球形状适配约 1/4–1/8 仅作同级控制标注）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/galaxy-cluster-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 簇☆</span>
+                <span class="tier-order-num mono">#73 · 首字母 C</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超星系团</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">星系团级（簇）</span>
+              </div>
+              <div class="tier-energy-line mono">9.2×10⁷¹ – 3.7×10⁷² J</div>
+              <div class="tier-scale-line">覆盖直径 1 亿–2 亿光年（室女座超星系团约 1.1 亿光年）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/structure-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 构▽</span>
+                <span class="tier-order-num mono">#74 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱宇宙结构</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">宇宙结构级（构）</span>
+              </div>
+              <div class="tier-energy-line mono">3.7×10⁷² – 2.3×10⁷³ J</div>
+              <div class="tier-scale-line">最长维度 2–5 亿光年（典型宇宙大尺度纤维，长 1.5–3 亿光年）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散默认（纤维形状适配约 1/100–1/200 作参考）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/structure-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 构○</span>
+                <span class="tier-order-num mono">#75 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准宇宙结构</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">宇宙结构级（构）</span>
+              </div>
+              <div class="tier-energy-line mono">2.3×10⁷³ – 2.1×10⁷⁴ J</div>
+              <div class="tier-scale-line">最长维度 5–15 亿光年（拉尼亚凯亚 5.2 亿光年、CfA2 长城、斯隆长城约 14 亿光年）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散默认（壁状适配约 1/10–1/20 作参考）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/structure-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 构△</span>
+                <span class="tier-order-num mono">#76 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强宇宙结构</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">宇宙结构级（构）</span>
+              </div>
+              <div class="tier-energy-line mono">2.1×10⁷⁴ – 9.2×10⁷⁵ J</div>
+              <div class="tier-scale-line">最长维度 15–100 亿光年（巨弧约 33 亿光年、武仙-北冕座长城约 100 亿光年）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/structure-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 构☆</span>
+                <span class="tier-order-num mono">#77 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超宇宙结构</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">宇宙结构级（构）</span>
+              </div>
+              <div class="tier-energy-line mono">9.2×10⁷⁵ – 3.7×10⁷⁶ J</div>
+              <div class="tier-scale-line">最长维度 100–200 亿光年（逼近可观测宇宙显著比例）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/universe-weak.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 宇▽</span>
+                <span class="tier-order-num mono">#78 · 首字母 Y</span>
+              </div>
+              <div class="tier-card-name">
+                <span>弱宇宙</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">宇宙级（宇 · 五档）</span>
+              </div>
+              <div class="tier-energy-line mono">3.7×10⁷⁶ – 8.0×10⁷⁷ J</div>
+              <div class="tier-scale-line">覆盖直径 200–930 亿光年（可观测宇宙的显著部分）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E = 2πD² × F*</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/universe-std.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 宇○</span>
+                <span class="tier-order-num mono">#79 · 首字母 Y</span>
+              </div>
+              <div class="tier-card-name">
+                <span>标准宇宙</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">宇宙级（宇 · 五档）</span>
+              </div>
+              <div class="tier-energy-line mono">8.0×10⁷⁷ J</div>
+              <div class="tier-scale-line">覆盖直径 930 亿光年（完全摧毁整个可观测宇宙）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 2π × (8.80×10²⁶ m)² × 1.64×10²³ ≈ 8.0×10⁷⁷ J</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/universe-strong.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 宇△</span>
+                <span class="tier-order-num mono">#80 · 首字母 Y</span>
+              </div>
+              <div class="tier-card-name">
+                <span>强宇宙</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">宇宙级（宇 · 五档）</span>
+              </div>
+              <div class="tier-energy-line mono">8.0×10⁷⁷ – 8.0×10⁸⁵ J</div>
+              <div class="tier-scale-line">可观测宇宙直径 ×1 ～ ×10⁴（或一次同时摧毁 2 ～ 10⁸ 个标准宇宙）</div>
+              <div class="tier-card-foot">
+                <span>半球扩散 E ∝ D² ／ 数量轴当量 N × 8.0×10⁷⁷ J</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/universe-extreme.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 宇◆</span>
+                <span class="tier-order-num mono">#81 · 首字母 Y</span>
+              </div>
+              <div class="tier-card-name">
+                <span>极宇宙</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">宇宙级（宇 · 五档）</span>
+              </div>
+              <div class="tier-energy-line mono">8.0×10⁸⁵ – 8.0×10⁹³ J</div>
+              <div class="tier-scale-line">可观测宇宙直径 ×10⁴ ～ ×10⁸（或一次同时摧毁 10⁸ ～ 10¹⁶ 个标准宇宙）</div>
+              <div class="tier-card-foot">
+                <span>第二版新增修饰符「◆ 极」· 位于强与超之间</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="cosmic" href="./tier/universe-super.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 宇☆</span>
+                <span class="tier-order-num mono">#82 · 首字母 Y</span>
+              </div>
+              <div class="tier-card-name">
+                <span>超宇宙</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">宇宙级（宇 · 五档）</span>
+              </div>
+              <div class="tier-energy-line mono">8.0×10⁹³ J 起，至 10↑↑3 倍标准宇宙能量</div>
+              <div class="tier-scale-line">可观测宇宙直径 ×10⁸ 起（或 N ≥ 10¹⁶ 个标准宇宙，直至科学记数法失效边界）</div>
+              <div class="tier-card-foot">
+                <span>科学记数法 a×10ⁿ 可表达的最后一段</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a></div>
+        </section>
+        <section class="tier-group-block" id="group-fgh">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">第五部分 · 广义无限区（快速增长层级）</h2>
+            <span class="tier-group-sub">仍属有限量 · 入区线 10↑↑3 倍标准宇宙能量，按快速增长层级 FGH 分 7 段 · 共 7 档</span>
+          </div>
+          <div class="tier-grid">
+            <a class="tier-card" data-domain="fgh" href="./tier/fgh-tower.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 广·塔</span>
+                <span class="tier-order-num mono">#83 · 首字母 M</span>
+              </div>
+              <div class="tier-card-name">
+                <span>幂塔段</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">广义无限区（广 · FGH 七段）</span>
+              </div>
+              <div class="tier-energy-line mono">10↑↑3 倍标准宇宙能量起（约 f₃）</div>
+              <div class="tier-scale-line">倍数写成 10↑↑n（n 为普通有限数），迭代指数幂塔结构</div>
+              <div class="tier-card-foot">
+                <span>快速增长层级 f₃ · 递归层数驱动规模</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="fgh" href="./tier/fgh-arrow.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 广·箭</span>
+                <span class="tier-order-num mono">#84 · 首字母 J</span>
+              </div>
+              <div class="tier-card-name">
+                <span>箭头段</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">广义无限区（广 · FGH 七段）</span>
+              </div>
+              <div class="tier-energy-line mono">快速增长层级 f₄ 至 f_k（k 有限）</div>
+              <div class="tier-scale-line">需要 3 个及以上高德纳箭头（↑↑↑…），但箭头个数本身是普通有限数</div>
+              <div class="tier-card-foot">
+                <span>快速增长层级 f₄ ～ f_k</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="fgh" href="./tier/fgh-ackermann.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 广·阿</span>
+                <span class="tier-order-num mono">#85 · 首字母 A</span>
+              </div>
+              <div class="tier-card-name">
+                <span>阿克曼段</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">广义无限区（广 · FGH 七段）</span>
+              </div>
+              <div class="tier-energy-line mono">快速增长层级 f_ω</div>
+              <div class="tier-scale-line">高德纳箭头个数本身随规模同步增长（沿有限箭头序列对角化）</div>
+              <div class="tier-card-foot">
+                <span>快速增长层级 f_ω（单变量阿克曼函数级）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="fgh" href="./tier/fgh-graham.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 广·葛</span>
+                <span class="tier-order-num mono">#86 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>葛立恒段</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">广义无限区（广 · FGH 七段）</span>
+              </div>
+              <div class="tier-energy-line mono">快速增长层级 f_{ω+1}</div>
+              <div class="tier-scale-line">箭头个数取上一轮运算结果并反复迭代（葛立恒数 G₆₄ 构造方式）</div>
+              <div class="tier-card-foot">
+                <span>快速增长层级 f_{ω+1}（f_{ω+1}(64) &gt; 葛立恒数）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="fgh" href="./tier/fgh-goodstein.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 广·古</span>
+                <span class="tier-order-num mono">#87 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>古德斯坦段</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">广义无限区（广 · FGH 七段）</span>
+              </div>
+              <div class="tier-energy-line mono">快速增长层级 f_{ε₀}</div>
+              <div class="tier-scale-line">古德斯坦序列／皮亚诺算术（PA）可证全函数的增长速度上界</div>
+              <div class="tier-card-foot">
+                <span>快速增长层级 f_{ε₀}</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="fgh" href="./tier/fgh-ordinal.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 广·序</span>
+                <span class="tier-order-num mono">#88 · 首字母 G</span>
+              </div>
+              <div class="tier-card-name">
+                <span>高序数段</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">广义无限区（广 · FGH 七段）</span>
+              </div>
+              <div class="tier-energy-line mono">快速增长层级 f_α（α ≥ Γ₀ 等更大可数序数）</div>
+              <div class="tier-scale-line">费弗曼-舒特序数 Γ₀ 及以上；Kruskal 树定理 TREE(n) 等位于此段</div>
+              <div class="tier-card-foot">
+                <span>快速增长层级 f_α（高阶证明论序数）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="fgh" href="./tier/fgh-top.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 广·顶</span>
+                <span class="tier-order-num mono">#89 · 首字母 D</span>
+              </div>
+              <div class="tier-card-name">
+                <span>顶段</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">广义无限区（广 · FGH 七段）</span>
+              </div>
+              <div class="tier-energy-line mono">超越一切可计算函数的增长率</div>
+              <div class="tier-scale-line">忙碌海狸函数 Σ(n)、Rayo 数一类不可计算增长率构造出的有限数</div>
+              <div class="tier-card-foot">
+                <span>有限量的绝对天花板（仍在 ℵ₀ 之下）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a></div>
+        </section>
+        <section class="tier-group-block" id="group-beyond">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">第八部分 · 论外级（真无限 · ℵ₀ 起）</h2>
+            <span class="tier-group-sub">跨过 ℵ₀ 进入真无限（8 档）· 比计数基数与结构序数，论天段按一致性强度排序 · 共 8 档</span>
+          </div>
+          <div class="tier-grid">
+            <a class="tier-card" data-domain="beyond" href="./tier/beyond-gate.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 外·门</span>
+                <span class="tier-order-num mono">#90 · 首字母 L</span>
+              </div>
+              <div class="tier-card-name">
+                <span>论外门槛</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">论外级（真无限 · ℵ₀ 起）</span>
+              </div>
+              <div class="tier-energy-line mono">ℵ₀（可数无限）</div>
+              <div class="tier-scale-line">一次涉及 ℵ₀ 个完整结构 ／ 覆盖物质无限分布的无限空间 ／ 完成态可数无限层结构</div>
+              <div class="tier-card-foot">
+                <span>真无限起点 · 计数基数 ℵ₀ + 可数序数比结构复杂度（8.3）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="beyond" href="./tier/beyond-line3.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 外·三</span>
+                <span class="tier-order-num mono">#91 · 首字母 S</span>
+              </div>
+              <div class="tier-card-name">
+                <span>三线</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">论外级 · ZFC 可证区</span>
+              </div>
+              <div class="tier-energy-line mono">ℶ₁ = 2^ℵ₀（连续统基数）</div>
+              <div class="tier-scale-line">第一次跨入不可数无限；真正展示对 ℵ₀ 全体子集的幂集支配</div>
+              <div class="tier-card-foot">
+                <span>集合论基数 ℶ₁（ZFC 内可证明存在）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="beyond" href="./tier/beyond-line2.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 外·二</span>
+                <span class="tier-order-num mono">#92 · 首字母 E</span>
+              </div>
+              <div class="tier-card-name">
+                <span>二线</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">论外级 · ZFC 可证区</span>
+              </div>
+              <div class="tier-energy-line mono">ℶ₂、ℶ₃ …… ℶ_ω、ℶ_{ℶ₀} 等</div>
+              <div class="tier-scale-line">幂集运算的有限次与超限极限迭代阶段</div>
+              <div class="tier-card-foot">
+                <span>贝斯序列迭代（绕开连续统假设，ZFC 内可证）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="beyond" href="./tier/beyond-line1.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 外·一</span>
+                <span class="tier-order-num mono">#93 · 首字母 Y</span>
+              </div>
+              <div class="tier-card-name">
+                <span>一线</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">论外级 · ZFC 可证区</span>
+              </div>
+              <div class="tier-energy-line mono">ℶ 不动点系列（ℶ_κ = κ），巅峰含世界基数（V_κ ⊨ ZFC）</div>
+              <div class="tier-scale-line">自我指涉的贝斯不动点结构，直至 ZFC 可证区终点</div>
+              <div class="tier-card-foot">
+                <span>ZFC 可证存在区的最后一段（世界基数已推出 Con(ZFC)）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="beyond" href="./tier/beyond-sky-low.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 天·下</span>
+                <span class="tier-order-num mono">#94 · 首字母 T</span>
+              </div>
+              <div class="tier-card-name">
+                <span>论天下</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">论外级 · 大基数公理区</span>
+              </div>
+              <div class="tier-energy-line mono">不可达 → 马洛 → 弱紧致 → 不可描述 →（0# 刻度）→ 拉姆齐</div>
+              <div class="tier-scale-line">ZFC 无法证明存在（须作额外大基数公理）；以大小与组合性质定义</div>
+              <div class="tier-card-foot">
+                <span>按一致性强度排序（第二版修正 0# 刻度位置）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="beyond" href="./tier/beyond-sky-mid.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 天·中</span>
+                <span class="tier-order-num mono">#95 · 首字母 T</span>
+              </div>
+              <div class="tier-card-name">
+                <span>论天中</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">论外级 · 大基数公理区</span>
+              </div>
+              <div class="tier-energy-line mono">可测 → 强 → 伍丁 → 强紧致 → 超紧致</div>
+              <div class="tier-scale-line">定义范式转为宇宙 V 到传递内模型 M 的非平凡初等嵌入 j: V → M</div>
+              <div class="tier-card-foot">
+                <span>按一致性强度排序（看内模型 M 与 V 的接近程度）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="beyond" href="./tier/beyond-sky-high.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 天·上</span>
+                <span class="tier-order-num mono">#96 · 首字母 T</span>
+              </div>
+              <div class="tier-card-name">
+                <span>论天上</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">论外级 · 大基数公理区</span>
+              </div>
+              <div class="tier-energy-line mono">可扩 → 巨大 → n-巨大 → I3 → I2 → I1 → I0</div>
+              <div class="tier-scale-line">定义范式转为秩到秩初等嵌入（j: V_λ → V_λ）；I0 为已知与 ZFC 相容的最强公理</div>
+              <div class="tier-card-foot">
+                <span>按一致性强度排序（优先于基数大小排序）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a>
+            <a class="tier-card" data-domain="beyond" href="./tier/beyond-sky-top.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 天·最</span>
+                <span class="tier-order-num mono">#97 · 首字母 T</span>
+              </div>
+              <div class="tier-card-name">
+                <span>论天最上</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">论外级 · 超越 ZFC 边界</span>
+              </div>
+              <div class="tier-energy-line mono">莱茵哈特基数（Reinhardt）→ 伯克利基数（Berkeley）</div>
+              <div class="tier-scale-line">库能不一致性定理（Kunen&#x27;s Inconsistency）逼停处，与选择公理 AC 不相容</div>
+              <div class="tier-card-foot">
+                <span>须放弃选择公理、在 ZF 框架下讨论（换了公理规则）</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a></div>
+        </section>
+        <section class="tier-group-block" id="group-unranked">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">未归档 · 待定与暂存</h2>
+            <span class="tier-group-sub">证据不足、仅具特殊规则或尚未完成多维核定的暂存条目（不参与强弱排序） · 共 1 档</span>
+          </div>
+          <div class="tier-grid">
+            <a class="tier-card" data-domain="unranked" href="./tier/pending.html">
+              <div class="tier-card-top">
+                <span class="tier-code-badge mono">⊙ 待定</span>
+                <span class="tier-order-num mono">兜底暂存 · 首字母 D</span>
+              </div>
+              <div class="tier-card-name">
+                <span>待定／暂存</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text-muted)">未归档（兜底）</span>
+              </div>
+              <div class="tier-energy-line mono">—</div>
+              <div class="tier-scale-line">证据缺失、仅展现特殊规则（性/域）或尚未完成多维核定</div>
+              <div class="tier-card-foot">
+                <span>不参与主档强弱排序，置于序列最末</span>
+                <span style="color:var(--accent-blue)">详情 ›</span>
+              </div>
+            </a></div>
+        </section>
+      </div>
+    </div>
+    
+  </main>
+
+  <div class="resume-toast" id="resume-toast" role="status" aria-live="polite">
+    <span class="resume-toast-text" id="resume-toast-text">上次阅读进度</span>
+    <button type="button" class="resume-toast-btn" id="resume-toast-btn">继续阅读</button>
+    <button type="button" class="resume-toast-close" id="resume-toast-close" aria-label="关闭提示">×</button>
+  </div>
+
+  <div class="floating-dock">
+    
+    <button type="button" class="dock-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页" title="返回上一页">‹</button>
+    <button type="button" class="dock-btn" id="dock-top-btn" title="回到顶部">
+      <svg class="progress-ring-svg" viewBox="0 0 44 44" aria-hidden="true">
+        <circle class="progress-ring-circle" id="dock-progress-circle" cx="22" cy="22" r="20"></circle>
+      </svg>
+      <span>↑</span>
+    </button>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站即时检索">
+    <div class="modal-dialog">
+      <div class="search-modal-head">
+        <span style="font-size:18px">🔍</span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入代字（宇◆、恒○）、角色、规则或材质（白矮星、花岗岩、0#）…" autocomplete="off">
+        <a href="./search.html" class="chip-btn" style="white-space:nowrap">高级搜索页 ↗</a>
+        <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭">✕</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级档位</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天体系标准</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+    </div>
+  </div>
+
+  <!-- Reading Progress & Footprints Modal -->
+  <div class="modal-backdrop" id="history-modal" role="dialog" aria-modal="true" aria-label="阅读进度与足迹">
+    <div class="modal-dialog">
+      <div class="search-modal-head" style="justify-content:space-between">
+        <strong style="font-size:16px">📖 阅读进度与最近浏览记录</strong>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button type="button" class="chip-btn" id="history-clear-btn">清空全部</button>
+          <button type="button" class="resume-toast-close" id="history-close-btn" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <div class="search-modal-body" id="history-modal-body"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 基于《衡天⊙ 多维战力量级体系（第二版）》与《材质与破坏能量数据库（第二版）》构建
+      </div>
+      <div class="footer-links">
+        <a href="./index.html">首页</a>
+        <a href="./tiers.html">量级分类</a>
+        <a href="./characters.html">角色分类</a>
+        <a href="./rules.html">衡天体系全文</a>
+        <a href="./materials.html">材质数据库全文</a>
+        <a href="./search.html">全站检索</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./static/js/search-index.js"></script>
+  <script src="./static/js/app.js"></script>
+</body>
+</html>

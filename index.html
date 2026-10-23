@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-root="./" data-page-id="index.html" data-page-type="home">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>首页 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ 多维战力量级体系（第二版）与材质破坏能量数据库官方百科站——支持角色与量级按首字母及从小到大排序、全文检索与阅读进度保存。">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('pw_theme_v2');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="./static/css/style.css">
+</head>
+<body>
+  <div class="reading-progress-track" aria-hidden="true">
+    <div class="reading-progress-bar" id="reading-progress-bar"></div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">
+        <span class="brand-mark mono" aria-hidden="true">⊙</span>
+        <span class="brand-text">
+          <span class="brand-title">衡天 PowerWiki <span class="brand-badge">v2.0</span></span>
+          <span class="brand-sub">多维战力量级 · 材质破坏能量参考系</span>
+        </span>
+      </a>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link active" href="./index.html">首页</a>
+        <a class="nav-link" href="./tiers.html">量级分类 <span class="nav-count mono">97</span></a>
+        <a class="nav-link" href="./characters.html">角色档案 <span class="nav-count mono">0</span></a>
+        <a class="nav-link" href="./rules.html">衡天体系全文</a>
+        <a class="nav-link" href="./materials.html">材质能量全文</a>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="search-trigger" id="global-search-trigger" aria-label="打开全站搜索">
+          <span class="search-trigger-left">
+            <span>🔍</span>
+            <span class="search-trigger-placeholder">搜索量级 / 角色 / 材质…</span>
+          </span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="history-open-btn" title="阅读进度与浏览足迹">
+          <span>📖</span>
+          <span class="dot-indicator"></span>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" title="切换深浅色主题">☀️</button>
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">☰</button>
+      </div>
+    </div>
+  </header>
+
+  
+
+  <main style="flex:1">
+    
+    <section class="hero-section">
+      <div class="hero-bg" style="background-image:url('./static/img/hero-hengtian.jpg')"></div>
+      <div class="hero-mask"></div>
+      <div class="container hero-content">
+        <div class="hero-eyebrow mono">⊙ HENGTIAN MULTIDIMENSIONAL SCALE · SECOND EDITION</div>
+        <h1 class="hero-title">衡天<span class="sun-mark">⊙</span> 多维战力量级与破坏能量百科</h1>
+        <p class="hero-desc">
+          告别单维标签与叠盒跳档——以<strong>七维独立评定（破·控·域·御·速·算·性）</strong>、物理通量统一模型
+          <span class="mono">F* = 1.64×10²³ J/m²</span>、快速增长层级（FGH）及大基数公理谱系，构建从<strong>昆虫级（10⁻⁴ J）</strong>直至<strong>论天最上（莱茵哈特—伯克利基数）</strong>的严谨标尺。
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="./tiers.html">浏览 97 档量级天梯 ›</a>
+          <a class="btn btn-ghost" href="./characters.html">进入角色分类库</a>
+          <a class="btn btn-ghost" href="./rules.html">阅读《衡天⊙》全文标准</a>
+          <a class="btn btn-ghost" href="./materials.html">查阅材质破坏能量库</a>
+        </div>
+        <div class="hero-metrics">
+          <div class="metric-chip">
+            <div class="metric-val mono">97 <span style="font-size:13px;font-weight:500">+ 1</span></div>
+            <div class="metric-label">规范量级档位 + 待定兜底</div>
+          </div>
+          <div class="metric-chip">
+            <div class="metric-val mono">7 维</div>
+            <div class="metric-label">破·控·域·御·速·算·性</div>
+          </div>
+          <div class="metric-chip">
+            <div class="metric-val mono">A–Z / ↑↓</div>
+            <div class="metric-label">首字母与量级双向排序</div>
+          </div>
+          <div class="metric-chip">
+            <div class="metric-val mono">100%</div>
+            <div class="metric-label">两部核心典籍全文无删减</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <section class="scale-ribbon-section">
+        <div class="section-head">
+          <h2 class="section-title"><span class="dot"></span>衡天⊙ 全域刻度速览（由小到大）</h2>
+          <a href="./tiers.html?sort=asc" style="font-size:13.5px">查看完整 97 档递增序列 →</a>
+        </div>
+        <div class="scale-track">
+          <a class="scale-node" style="--node-color:var(--dom-terrestrial)" href="./tier/insect.html">
+            <span class="scale-node-range mono">#01 · ⊙虫 → ⊙表☆</span>
+            <span class="scale-node-title">地表与常规目标区</span>
+            <span class="scale-node-energy mono">&lt; 10⁻⁴ J ～ 1.8×10²⁹ J</span>
+          </a>
+          <a class="scale-node" style="--node-color:var(--dom-stellar)" href="./tier/star-std.html">
+            <span class="scale-node-range mono">#43 · ⊙星▽ → ⊙恒☆</span>
+            <span class="scale-node-title">天体自引力束缚区</span>
+            <span class="scale-node-energy mono">1.8×10²⁹ J ～ 1.8×10⁴² J</span>
+          </a>
+          <a class="scale-node" style="--node-color:var(--dom-cosmic)" href="./tier/system-std.html">
+            <span class="scale-node-range mono">#57 · ⊙系▽ → ⊙构☆</span>
+            <span class="scale-node-title">球面/盘面通量覆盖区</span>
+            <span class="scale-node-energy mono">3.7×10⁴⁹ J ～ 1.4×10⁷⁵ J</span>
+          </a>
+          <a class="scale-node" style="--node-color:var(--accent-gold)" href="./tier/universe-extreme.html">
+            <span class="scale-node-range mono">#79 · ⊙宇▽ → ⊙宇☆</span>
+            <span class="scale-node-title">宇宙五档（含极宇宙◆）</span>
+            <span class="scale-node-energy mono">1.4×10⁷⁵ J ～ 10↑↑3 倍宇○</span>
+          </a>
+          <a class="scale-node" style="--node-color:var(--dom-fgh)" href="./tier/fgh-tower.html">
+            <span class="scale-node-range mono">#84 · ⊙广·塔 → ⊙广·顶</span>
+            <span class="scale-node-title">广义无限区（FGH 7段）</span>
+            <span class="scale-node-energy mono">f₃ 幂塔 → f_ω → 不可计算</span>
+          </a>
+          <a class="scale-node" style="--node-color:var(--dom-beyond)" href="./tier/beyond-sky-top.html">
+            <span class="scale-node-range mono">#90 · ⊙外·门 → ⊙天·最</span>
+            <span class="scale-node-title">论外与论天大基数区</span>
+            <span class="scale-node-energy mono">ℵ₀ → ℶ 不动点 → 莱茵哈特</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="resume-hub" id="home-resume-hub" aria-label="阅读进度与足迹">
+        <div class="section-head" style="margin-bottom:8px">
+          <h2 class="section-title"><span class="dot"></span>阅读进度与浏览足迹</h2>
+          <span class="section-sub">正在读取本地进度…</span>
+        </div>
+      </section>
+
+      <section class="portal-section">
+        <div class="section-head">
+          <h2 class="section-title"><span class="dot"></span>四大核心板块</h2>
+          <span class="section-sub">支持首字母索引、从小到大排序、全文锚点定位与进度记忆</span>
+        </div>
+        <div class="portal-grid">
+          <a class="portal-card" href="./tiers.html">
+            <div class="portal-banner" style="background-image:url('./static/img/banner-tiers.jpg')">
+              <span class="portal-tag mono">CATEGORY 01 · TIERS</span>
+            </div>
+            <div class="portal-body">
+              <h3 class="portal-title"><span>量级分类总览</span><span style="color:var(--accent-gold)">→</span></h3>
+              <p class="portal-desc">完整收录衡天⊙第二版全部 97 个正式量级与过渡带。支持<strong>按量级从小到大</strong>、<strong>从大到小</strong>及<strong>按拼音首字母 A–Z</strong>自由切换，点击任一档位可直达规则原文对应条款。</p>
+              <div class="portal-features">
+                <span class="mini-chip">从小到大排序</span>
+                <span class="mini-chip">首字母 A–Z 索引</span>
+                <span class="mini-chip">卡片 / 紧凑表双视图</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="portal-card" href="./characters.html">
+            <div class="portal-banner" style="background-image:url('./static/img/banner-characters.jpg')">
+              <span class="portal-tag mono">CATEGORY 02 · CHARACTERS</span>
+            </div>
+            <div class="portal-body">
+              <h3 class="portal-title"><span>角色档案分类</span><span style="color:var(--accent-gold)">→</span></h3>
+              <p class="portal-desc">采用七维战力面板（破·控·域·御·速·算·性）与五级证据可信度标记展示角色评定。支持<strong>按角色首字母 A–Z</strong>与<strong>按主档量级从小到大</strong>排序，内置 6 组标准书写演示样例供随时预览。</p>
+              <div class="portal-features">
+                <span class="mini-chip">七维雷达结构</span>
+                <span class="mini-chip">首字母 / 量级双排序</span>
+                <span class="mini-chip">证据状态高亮</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="portal-card" href="./rules.html">
+            <div class="portal-banner" style="background-image:url('./static/img/hero-hengtian.jpg')">
+              <span class="portal-tag mono">CANONICAL DOC 01 · FULL TEXT</span>
+            </div>
+            <div class="portal-body">
+              <h3 class="portal-title"><span>《衡天⊙ 多维战力量级体系（第二版）》</span><span style="color:var(--accent-gold)">→</span></h3>
+              <p class="portal-desc">一字不漏全文展示全部十一部分与未定稿附则：核心判定总则、多击不认、证伪五信号、覆盖通量推导、广义无限 FGH 分段、数量轴与层级跃迁、论外大基数及漫改量化细则。</p>
+              <div class="portal-features">
+                <span class="mini-chip">全文无删减展示</span>
+                <span class="mini-chip">目录同步高亮</span>
+                <span class="mini-chip">自动保存阅读位置</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="portal-card" href="./materials.html">
+            <div class="portal-banner" style="background-image:url('./static/img/banner-materials.jpg')">
+              <span class="portal-tag mono">CANONICAL DOC 02 · FULL TEXT</span>
+            </div>
+            <div class="portal-body">
+              <h3 class="portal-title"><span>《材质与破坏能量数据库（第二版）》</span><span style="color:var(--accent-gold)">→</span></h3>
+              <p class="portal-desc">全文展示破坏动词双轴矩阵、常规物质粉碎能量密度、抗压/剪切/断裂韧性、熔化与汽化热力学上限、白矮星与中子星引力束缚能、撞击成坑与云层推算公式及文献出处。</p>
+              <div class="portal-features">
+                <span class="mini-chip">全文数据速查</span>
+                <span class="mini-chip">移动端横向滚表</span>
+                <span class="mini-chip">跨文档双向互链</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+    </div>
+    
+  </main>
+
+  <div class="resume-toast" id="resume-toast" role="status" aria-live="polite">
+    <span class="resume-toast-text" id="resume-toast-text">上次阅读进度</span>
+    <button type="button" class="resume-toast-btn" id="resume-toast-btn">继续阅读</button>
+    <button type="button" class="resume-toast-close" id="resume-toast-close" aria-label="关闭提示">×</button>
+  </div>
+
+  <div class="floating-dock">
+    
+    <button type="button" class="dock-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页" title="返回上一页">‹</button>
+    <button type="button" class="dock-btn" id="dock-top-btn" title="回到顶部">
+      <svg class="progress-ring-svg" viewBox="0 0 44 44" aria-hidden="true">
+        <circle class="progress-ring-circle" id="dock-progress-circle" cx="22" cy="22" r="20"></circle>
+      </svg>
+      <span>↑</span>
+    </button>
+  </div>
+
+  <!-- Global Search Modal -->
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站即时检索">
+    <div class="modal-dialog">
+      <div class="search-modal-head">
+        <span style="font-size:18px">🔍</span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入代字（宇◆、恒○）、角色、规则或材质（白矮星、花岗岩、0#）…" autocomplete="off">
+        <a href="./search.html" class="chip-btn" style="white-space:nowrap">高级搜索页 ↗</a>
+        <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭">✕</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级档位</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天体系标准</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+    </div>
+  </div>
+
+  <!-- Reading Progress & Footprints Modal -->
+  <div class="modal-backdrop" id="history-modal" role="dialog" aria-modal="true" aria-label="阅读进度与足迹">
+    <div class="modal-dialog">
+      <div class="search-modal-head" style="justify-content:space-between">
+        <strong style="font-size:16px">📖 阅读进度与最近浏览记录</strong>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button type="button" class="chip-btn" id="history-clear-btn">清空全部</button>
+          <button type="button" class="resume-toast-close" id="history-close-btn" aria-label="关闭">✕</button>
+        </div>
+      </div>
+      <div class="search-modal-body" id="history-modal-body"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong style="color:var(--text-primary)">衡天⊙ PowerWiki</strong> · 基于《衡天⊙ 多维战力量级体系（第二版）》与《材质与破坏能量数据库（第二版）》构建
+      </div>
+      <div class="footer-links">
+        <a href="./index.html">首页</a>
+        <a href="./tiers.html">量级分类</a>
+        <a href="./characters.html">角色分类</a>
+        <a href="./rules.html">衡天体系全文</a>
+        <a href="./materials.html">材质数据库全文</a>
+        <a href="./search.html">全站检索</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./static/js/search-index.js"></script>
+  <script src="./static/js/app.js"></script>
+</body>
+</html>
