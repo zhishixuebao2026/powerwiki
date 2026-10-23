@@ -1,493 +1,405 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-衡天⊙ PowerWiki Static Site Generator v4.0 (Celestial Monograph UI)
-- Canonical Standard 1: data/docs/衡天量级体系【第三版·最新】.md (100% Verbatim Full Text)
-- Canonical Standard 2: data/docs/材质与破坏能量数据库（新）.md (100% Verbatim Full Text)
-- Tiers Category: Strictly ordered 从小到大 (#01 -> #97)
-- Characters Category: Dual sorting (按量级从小到大 & 按首字母 A–Z)
-- UI v4.0: Zero Emojis · Bespoke Vector Astrolabe · 120fps Scroll Architecture
+衡天⊙ PowerWiki Static Site Builder v5.0 — Obsidian Celestial Archive
+Generates:
+  - index.html             (Home: feathered celestial hero, 4 art-backed portals, spectrum, featured dossiers)
+  - tiers.html             (98-tier taxonomy strictly ordered 从小到大 #01 -> #97)
+  - tier/<slug>.html       (98 standalone tier detail pages)
+  - characters.html        (Character archive: 首字母 A-Z & 量级从小到大 dual sort)
+  - character/<slug>.html  (Standalone character dossier pages for all characters — zero modals)
+  - rules.html             (Full-text verbatim: 衡天量级体系【第三版·最新】.md)
+  - materials.html         (Full-text verbatim: 材质与破坏能量数据库（新）.md)
+  - search.html            (Full-site instant search center)
+  - static/js/search-index.js (Offline data & search index for RawGit / static hosting)
 """
+
+from __future__ import annotations
 
 import html
 import json
-import math
 import re
 from pathlib import Path
+from typing import Any, Dict, List, Tuple
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
 DOCS_DIR = DATA_DIR / "docs"
+TIER_OUT_DIR = ROOT / "tier"
+CHAR_OUT_DIR = ROOT / "character"
+JS_OUT_DIR = ROOT / "static" / "js"
 
-# Crisp 1.65px-stroke monochrome SVG icons (Zero raw system emojis)
-SVG = {
-    "search": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
-    "search_sm": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
-    "history": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>',
-    "sun": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
-    "menu": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>',
-    "close": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
-    "back": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>',
-    "up": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>',
-    "arrow_ur": '<svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
-    "toc": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>',
-    "bookmark": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>',
-    "book": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>',
-    "layers": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>',
-    "asc": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/><path d="M11 12h4"/><path d="M11 16h7"/><path d="M11 20h10"/></svg>',
+RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第三版·最新】.md"
+MATERIALS_MD_PATH = DOCS_DIR / "材质与破坏能量数据库（新）.md"
+
+SVGS = {
+    "search": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+    "menu": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>',
+    "sun": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+    "arrow_left": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    "arrow_up": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
+    "arrow_up_right": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
+    "toc": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>',
 }
 
-CN_NUM_MAP = {
-    "零": 0,
-    "一": 1,
-    "二": 2,
-    "三": 3,
-    "四": 4,
-    "五": 5,
-    "六": 6,
-    "七": 7,
-    "八": 8,
-    "九": 9,
-    "十": 10,
-    "十一": 11,
-    "十二": 12,
-}
+DIM_META = [
+    ("破", "破坏能量", "单次作用直接瓦解、打爆目标结构的实测或推定能量阈值"),
+    ("控", "能量操控", "对物质、能量或时空结构进行整体掌控的尺度与上限"),
+    ("御", "防御承受", "正面承受对应量级能量冲击而不丧失核心结构的耐久锚点"),
+    ("速", "机动反应", "战斗机动、巡航跨越或无延迟响应的物理/超限速度标定"),
+    ("域", "作用范围", "规则干涉、精神场域或概念覆写的空间/层级覆盖边界"),
+    ("算", "演算感知", "有限算力至图灵跃迁（0′ / 0⁽ω⁾）级的信息处理与预判能力"),
+    ("性", "机制特性", "独立于纯能量数值之外的存续形态、材质构成与特殊机制"),
+]
 
 
-def build_hero_astrolabe_svg() -> str:
-    """Generate a razor-sharp architectural SVG Celestial Astrolabe for the Home Hero."""
-    cx, cy = 200, 200
-    ticks = []
-    for deg in range(0, 360, 6):
-        rad = math.radians(deg)
-        r_outer = 166
-        r_inner = 156 if deg % 30 == 0 else (160 if deg % 15 == 0 else 163)
-        stroke_op = "0.42" if deg % 30 == 0 else "0.18"
-        x1 = cx + r_inner * math.cos(rad)
-        y1 = cy + r_inner * math.sin(rad)
-        x2 = cx + r_outer * math.cos(rad)
-        y2 = cy + r_outer * math.sin(rad)
-        ticks.append(
-            f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
-            f'stroke="currentColor" stroke-opacity="{stroke_op}" stroke-width="1"/>'
-        )
-
-    dims = ["破", "控", "域", "御", "速", "算", "性"]
-    hept_pts = []
-    star_pts = []
-    dim_nodes = []
-    r_hept = 96
-    for i, label in enumerate(dims):
-        ang = -math.pi / 2 + (i * 2 * math.pi) / 7
-        px = cx + r_hept * math.cos(ang)
-        py = cy + r_hept * math.sin(ang)
-        hept_pts.append(f"{px:.1f},{py:.1f}")
-        lx = cx + (r_hept + 22) * math.cos(ang)
-        ly = cy + (r_hept + 22) * math.sin(ang) + 4
-        dim_nodes.append(
-            f'<line x1="{cx}" y1="{cy}" x2="{px:.1f}" y2="{py:.1f}" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/>'
-            f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3.2" fill="var(--accent-gold)"/>'
-            f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5" font-weight="600">{label}</text>'
-        )
-
-    # {7/2} heptagram star polygon
-    for k in range(8):
-        idx = (k * 2) % 7
-        star_pts.append(hept_pts[idx])
-
-    return f"""
-    <svg class="astrolabe-svg" viewBox="0 0 400 400" aria-hidden="true" style="color:var(--accent-gold)">
-      <defs>
-        <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="var(--accent-gold)" stop-opacity="0.24"/>
-          <stop offset="65%" stop-color="var(--accent-gold)" stop-opacity="0.04"/>
-          <stop offset="100%" stop-color="var(--accent-gold)" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-      <circle cx="200" cy="200" r="145" fill="url(#coreGlow)"/>
-      <line x1="20" y1="200" x2="380" y2="200" stroke="currentColor" stroke-opacity="0.11" stroke-width="1"/>
-      <line x1="200" y1="20" x2="200" y2="380" stroke="currentColor" stroke-opacity="0.11" stroke-width="1"/>
-
-      <g class="orbit-slow">
-        <circle cx="200" cy="200" r="166" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/>
-        <circle cx="200" cy="200" r="148" fill="none" stroke="currentColor" stroke-opacity="0.14" stroke-dasharray="3 5" stroke-width="1"/>
-        {"".join(ticks)}
-      </g>
-
-      <g class="orbit-reverse">
-        <ellipse cx="200" cy="200" rx="134" ry="52" transform="rotate(-24 200 200)" fill="none" stroke="var(--accent-blue)" stroke-opacity="0.22" stroke-width="1"/>
-        <ellipse cx="200" cy="200" rx="134" ry="52" transform="rotate(36 200 200)" fill="none" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/>
-      </g>
-
-      <polygon points="{' '.join(hept_pts)}" fill="var(--accent-gold-soft)" stroke="currentColor" stroke-opacity="0.38" stroke-width="1.2"/>
-      <polyline points="{' '.join(star_pts)}" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/>
-      {"".join(dim_nodes)}
-
-      <circle cx="200" cy="200" r="26" fill="var(--bg-surface-1)" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.4"/>
-      <circle cx="200" cy="200" r="4.5" fill="var(--accent-gold)"/>
-    </svg>"""
+def esc(val: Any) -> str:
+    return html.escape(str(val if val is not None else ""), quote=True)
 
 
-def make_heading_id(text: str, seen: set, doc_prefix: str = "sec") -> str:
-    clean = text.strip()
-    m_part = re.match(r"^第([零一二三四五六七八九十百]+)部分", clean)
-    if m_part:
-        cn = m_part.group(1)
-        num = CN_NUM_MAP.get(cn, cn)
-        base = f"part-{num}"
-    else:
-        m_sec = re.match(r"^(\d+(?:\.\d+)+)", clean)
-        if m_sec:
-            nums = m_sec.group(1).replace(".", "-")
-            base = f"sec-{nums}"
-        elif clean.startswith("附：") or clean.startswith("附录"):
-            base = "appendix"
-        elif clean.startswith("参考来源"):
-            base = "references"
-        elif clean.startswith("待补充事项"):
-            base = "todo-items"
-        else:
-            slug = re.sub(r"[^\w\u4e00-\u9fff]+", "-", clean).strip("-").lower()
-            base = f"{doc_prefix}-{slug[:28]}" if slug else f"{doc_prefix}-h"
-
-    candidate = base
-    idx = 2
-    while candidate in seen:
-        candidate = f"{base}-{idx}"
-        idx += 1
-    seen.add(candidate)
-    return candidate
-
-
-def format_inline_md(raw_text: str, doc_kind: str = "") -> str:
-    code_store = []
-
-    def save_code(match):
-        idx = len(code_store)
-        inner = html.escape(match.group(1))
-        code_store.append(f"<code>{inner}</code>")
-        return f"\x00CODE{idx}\x00"
-
-    s = re.sub(r"`([^`]+)`", save_code, raw_text)
-    s = s.replace(r"\*", "\x00AST\x00").replace(r"\|", "\x00PIPE\x00")
-    s = html.escape(s)
-    s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
-    s = re.sub(
-        r"\[([^\]]+)\]\((https?://[^\s)]+)\)",
-        r'<a href="\2" target="_blank" rel="noopener noreferrer">\1</a>',
-        s,
-    )
-    s = (
-        s.replace("〔实〕", '<span class="ev-badge ev-confirmed">〔实〕</span>')
-        .replace("〔下〕", '<span class="ev-badge ev-lower">〔下〕</span>')
-        .replace("〔推〕", '<span class="ev-badge ev-inferred">〔推〕</span>')
-        .replace("〔隐〕", '<span class="ev-badge ev-hidden">〔隐〕</span>')
-        .replace("〔缺〕", '<span class="ev-badge ev-missing">〔缺〕</span>')
-    )
-
-    if doc_kind == "rules":
-        s = s.replace(
-            "《材质与破坏能量数据库》",
-            '<a class="xref-link" href="./materials.html" title="点击跳转至《材质与破坏能量数据库（第二版）》全文">《材质与破坏能量数据库》↗</a>',
-        )
-    elif doc_kind == "materials":
-        s = s.replace(
-            "《衡天⊙ 多维战力量级体系》",
-            '<a class="xref-link" href="./rules.html" title="点击跳转至《衡天⊙ 多维战力量级体系（第三版）》全文">《衡天⊙ 多维战力量级体系》↗</a>',
-        )
-
-    s = s.replace("\x00AST\x00", "*").replace("\x00PIPE\x00", "|")
-    for idx, code_html in enumerate(code_store):
-        s = s.replace(f"\x00CODE{idx}\x00", code_html)
-
+def format_evidence_html(val: str) -> str:
+    s = esc(val)
+    s = s.replace("〔实〕", '<span class="ev-badge ev-confirmed">〔实〕</span>')
+    s = s.replace("〔下〕", '<span class="ev-badge ev-lower">〔下〕</span>')
+    s = s.replace("〔推〕", '<span class="ev-badge ev-inferred">〔推〕</span>')
+    s = s.replace("〔隐〕", '<span class="ev-badge ev-hidden">〔隐〕</span>')
+    s = s.replace("〔缺〕", '<span class="ev-badge ev-missing">〔缺〕</span>')
     return s
 
 
-def split_md_table_row(line: str) -> list:
-    s = line.strip()
-    if s.startswith("|"):
-        s = s[1:]
-    if s.endswith("|") and not s.endswith(r"\|"):
-        s = s[:-1]
+# ==============================================================================
+# Custom Zero-Dependency Verbatim Markdown Parser (Preserves Subscripts & Tables)
+# ==============================================================================
+class VerbatimMarkdownRenderer:
+    def __init__(self) -> None:
+        self.toc: List[Dict[str, Any]] = []
+        self._slug_counts: Dict[str, int] = {}
+        self.sections_for_index: List[Dict[str, str]] = []
 
-    cells = []
-    cur = []
-    in_code = False
-    i = 0
-    while i < len(s):
-        ch = s[i]
-        if ch == "`":
-            in_code = not in_code
-            cur.append(ch)
-        elif ch == "\\" and i + 1 < len(s) and s[i + 1] == "|":
-            cur.append(r"\|")
-            i += 1
-        elif ch == "|" and not in_code:
-            cells.append("".join(cur).strip())
-            cur = []
-        else:
-            cur.append(ch)
-        i += 1
-    cells.append("".join(cur).strip())
-    return cells
+    def _make_id(self, text: str) -> str:
+        clean = re.sub(r"[`*_~]", "", text).strip()
+        slug = re.sub(r"[^\w\u4e00-\u9fff\-]+", "-", clean).strip("-").lower()
+        if not slug:
+            slug = "sec"
+        slug = f"sec-{slug}"
+        count = self._slug_counts.get(slug, 0)
+        self._slug_counts[slug] = count + 1
+        return slug if count == 0 else f"{slug}-{count + 1}"
 
+    @staticmethod
+    def render_inline(text: str) -> str:
+        placeholders: List[str] = []
 
-def is_table_separator(line: str) -> bool:
-    s = line.strip()
-    if not s.startswith("|"):
-        return False
-    cells = split_md_table_row(s)
-    return len(cells) >= 1 and all(re.match(r"^:?-{2,}:?$", c.replace(" ", "")) for c in cells)
+        def save_span(html_fragment: str) -> str:
+            idx = len(placeholders)
+            placeholders.append(html_fragment)
+            return f"\x00SPAN{idx}\x00"
 
+        def repl_code(m: re.Match[str]) -> str:
+            inner = html.escape(m.group(1), quote=False)
+            return save_span(f"<code>{inner}</code>")
 
-def render_inner_blocks(lines: list, doc_kind: str, line_sink: list) -> str:
-    out = []
-    n = len(lines)
-    i = 0
-    while i < n:
-        stripped = lines[i].strip()
-        if not stripped:
-            i += 1
-            continue
-        if stripped.startswith("|") and i + 1 < n and is_table_separator(lines[i + 1]):
-            headers = split_md_table_row(lines[i])
-            line_sink.append(" ".join(headers))
-            i += 2
-            rows = []
-            while i < n and lines[i].strip().startswith("|"):
-                row_cells = split_md_table_row(lines[i])
-                line_sink.append(" ".join(row_cells))
-                rows.append(row_cells)
-                i += 1
-            col_count = len(headers)
-            th_html = "".join(f"<th>{format_inline_md(c, doc_kind)}</th>" for c in headers)
-            tbody_rows = []
-            for r in rows:
-                padded = r + [""] * max(0, col_count - len(r))
-                tds = "".join(f"<td>{format_inline_md(c, doc_kind)}</td>" for c in padded[:col_count])
-                tbody_rows.append(f"<tr>{tds}</tr>")
-            out.append(
-                f'<div class="table-scroll"><table><thead><tr>{th_html}</tr></thead>'
-                f'<tbody>{"".join(tbody_rows)}</tbody></table></div>'
-            )
-            continue
-        if re.match(r"^-\s+", stripped):
-            items = []
-            while i < n and re.match(r"^-\s+", lines[i].strip()):
-                item_txt = re.sub(r"^-\s+", "", lines[i].strip())
-                line_sink.append(item_txt)
-                items.append(f"<li>{format_inline_md(item_txt, doc_kind)}</li>")
-                i += 1
-            out.append(f'<ul>{"".join(items)}</ul>')
-            continue
-        para_lines = []
-        while i < n:
-            ln = lines[i].strip()
-            if (
-                not ln
-                or re.match(r"^-\s+", ln)
-                or (ln.startswith("|") and i + 1 < n and is_table_separator(lines[i + 1]))
-            ):
-                break
-            line_sink.append(ln)
-            para_lines.append(ln)
-            i += 1
-        out.append("<p>" + "<br>".join(format_inline_md(pl, doc_kind) for pl in para_lines) + "</p>")
-    return "\n".join(out)
+        text = re.sub(r"`([^`]+)`", repl_code, text)
 
+        def repl_escape(m: re.Match[str]) -> str:
+            ch = html.escape(m.group(1), quote=False)
+            return save_span(ch)
 
-def parse_markdown_document(md_text: str, doc_kind: str, doc_url: str):
-    lines = md_text.splitlines()
-    n = len(lines)
-    i = 0
+        text = re.sub(r"\\([\\`*_{}\[\]()#+\-.!|])", repl_escape, text)
 
-    out = []
-    toc = []
-    seen_ids = set()
+        def repl_link(m: re.Match[str]) -> str:
+            label = html.escape(m.group(1), quote=False)
+            url = html.escape(m.group(2), quote=True)
+            return save_span(f'<a href="{url}" target="_blank" rel="noopener">{label}</a>')
 
-    sections = []
-    cur_section = {
-        "id": "doc-top",
-        "title": "总览",
-        "lines": [],
-    }
+        text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", repl_link, text)
 
-    def flush_section():
-        plain = " ".join(cur_section["lines"]).strip()
-        plain = re.sub(r"[#*`|>-]+", " ", plain)
-        plain = re.sub(r"\s+", " ", plain).strip()
-        if plain:
-            anchor = f"#{cur_section['id']}" if cur_section["id"] != "doc-top" else ""
-            sections.append(
-                {
-                    "type": doc_kind,
-                    "title": cur_section["title"],
-                    "url": f"{doc_url}{anchor}",
-                    "text": plain,
-                    "code": "",
-                    "pinyin": "",
-                }
-            )
+        escaped = html.escape(text, quote=False)
+        escaped = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", escaped)
+        escaped = re.sub(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", r"<em>\1</em>", escaped)
 
-    doc_title_seen = False
+        for badge, cls in [
+            ("〔实〕", "ev-confirmed"),
+            ("〔下〕", "ev-lower"),
+            ("〔推〕", "ev-inferred"),
+            ("〔隐〕", "ev-hidden"),
+            ("〔缺〕", "ev-missing"),
+        ]:
+            escaped = escaped.replace(badge, f'<span class="ev-badge {cls}">{badge}</span>')
 
-    while i < n:
-        line = lines[i]
-        stripped = line.strip()
+        for idx, frag in enumerate(placeholders):
+            escaped = escaped.replace(f"\x00SPAN{idx}\x00", frag)
 
-        if not stripped:
-            i += 1
-            continue
+        return escaped
 
-        if re.match(r"^-{3,}\s*$", stripped):
-            out.append("<hr>")
-            i += 1
-            continue
+    @staticmethod
+    def _split_table_row(line: str) -> List[str]:
+        s = line.strip()
+        if s.startswith("|"):
+            s = s[1:]
+        if s.endswith("|") and not s.endswith(r"\|"):
+            s = s[:-1]
+        cells = re.split(r"(?<!\\)\|", s)
+        return [c.strip().replace(r"\|", "|") for c in cells]
 
-        m_h = re.match(r"^(#{1,4})\s+(.+)$", stripped)
-        if m_h:
-            hashes, raw_h_text = m_h.group(1), m_h.group(2).strip()
-            level = len(hashes)
+    @staticmethod
+    def _is_table_sep(line: str) -> bool:
+        s = line.strip()
+        if "|" not in s:
+            return False
+        cells = VerbatimMarkdownRenderer._split_table_row(s)
+        if not cells:
+            return False
+        return all(bool(re.match(r"^:?-{2,}:?$", c.strip())) for c in cells if c.strip() != "")
 
-            if level == 1 and not doc_title_seen:
-                doc_title_seen = True
-                h_id = "doc-top"
-                seen_ids.add(h_id)
-                cur_section["title"] = raw_h_text
-                cur_section["id"] = h_id
-                out.append(
-                    f'<h1 id="{h_id}" class="doc-main-h1">{format_inline_md(raw_h_text, doc_kind)}'
-                    f'<a class="heading-anchor" href="#{h_id}" data-target-id="{h_id}" title="复制章节链接">#</a></h1>'
+    def _render_blocks(self, lines: List[str], record_toc: bool) -> str:
+        n = len(lines)
+        i = 0
+        out: List[str] = []
+
+        cur_sec_id = "sec-top"
+        cur_sec_title = "正文导言"
+        cur_sec_buf: List[str] = []
+
+        def flush_section_index() -> None:
+            nonlocal cur_sec_buf
+            if not record_toc:
+                return
+            joined = " ".join(cur_sec_buf).strip()
+            if joined:
+                self.sections_for_index.append(
+                    {"id": cur_sec_id, "title": cur_sec_title, "text": joined}
                 )
+            cur_sec_buf = []
+
+        while i < n:
+            line = lines[i]
+            stripped = line.strip()
+
+            if not stripped:
                 i += 1
                 continue
 
-            flush_section()
-            h_id = make_heading_id(raw_h_text, seen_ids, doc_kind)
-            cur_section = {"id": h_id, "title": raw_h_text, "lines": []}
-
-            plain_toc = raw_h_text.replace("**", "").replace(r"\*", "*")
-            toc.append({"id": h_id, "level": level, "text": plain_toc})
-
-            tag = f"h{min(level, 4)}"
-            out.append(
-                f'<{tag} id="{h_id}">{format_inline_md(raw_h_text, doc_kind)}'
-                f'<a class="heading-anchor" href="#{h_id}" data-target-id="{h_id}" title="复制本节链接">#</a></{tag}>'
-            )
-            i += 1
-            continue
-
-        if stripped.startswith("|") and i + 1 < n and is_table_separator(lines[i + 1]):
-            headers = split_md_table_row(lines[i])
-            cur_section["lines"].append(" ".join(headers))
-            i += 2
-            rows = []
-            while i < n and lines[i].strip().startswith("|"):
-                row_cells = split_md_table_row(lines[i])
-                cur_section["lines"].append(" ".join(row_cells))
-                rows.append(row_cells)
+            if stripped.startswith("```"):
+                lang = stripped[3:].strip()
                 i += 1
+                code_lines: List[str] = []
+                while i < n and not lines[i].strip().startswith("```"):
+                    code_lines.append(lines[i])
+                    if record_toc:
+                        cur_sec_buf.append(lines[i])
+                    i += 1
+                if i < n:
+                    i += 1
+                code_html = html.escape("\n".join(code_lines), quote=False)
+                lang_attr = f' data-lang="{esc(lang)}"' if lang else ""
+                out.append(f"<pre{lang_attr}><code>{code_html}</code></pre>")
+                continue
 
-            col_count = len(headers)
-            th_html = "".join(f"<th>{format_inline_md(c, doc_kind)}</th>" for c in headers)
-            tbody_rows = []
-            for r in rows:
-                padded = r + [""] * max(0, col_count - len(r))
-                tds = "".join(f"<td>{format_inline_md(c, doc_kind)}</td>" for c in padded[:col_count])
-                tbody_rows.append(f"<tr>{tds}</tr>")
-            out.append(
-                f'<div class="table-scroll"><table><thead><tr>{th_html}</tr></thead>'
-                f'<tbody>{"".join(tbody_rows)}</tbody></table></div>'
-            )
-            continue
-
-        if stripped.startswith(">"):
-            bq_raw_lines = []
-            while i < n and lines[i].strip().startswith(">"):
-                content = re.sub(r"^>\s?", "", lines[i].strip())
-                bq_raw_lines.append(content)
+            m_head = re.match(r"^(#{1,4})\s+(.+?)\s*$", stripped)
+            if m_head:
+                level = len(m_head.group(1))
+                raw_title = m_head.group(2)
+                plain_title = re.sub(r"[`*_]", "", raw_title).replace(r"\*", "*").strip()
+                if record_toc:
+                    flush_section_index()
+                    hid = self._make_id(plain_title)
+                    cur_sec_id = hid
+                    cur_sec_title = plain_title
+                    cur_sec_buf.append(plain_title)
+                    if level in (1, 2, 3):
+                        self.toc.append({"level": level, "id": hid, "title": plain_title})
+                    inline_html = self.render_inline(raw_title)
+                    out.append(
+                        f'<h{level} id="{hid}">{inline_html}'
+                        f'<a class="heading-anchor" href="#{hid}" data-target-id="{hid}" title="复制本节锚点链接">#</a>'
+                        f"</h{level}>"
+                    )
+                else:
+                    out.append(f"<h{level}>{self.render_inline(raw_title)}</h{level}>")
                 i += 1
-            inner_html = render_inner_blocks(bq_raw_lines, doc_kind, cur_section["lines"])
-            out.append(f"<blockquote>{inner_html}</blockquote>")
-            continue
+                continue
 
-        if re.match(r"^-\s+", stripped):
-            items = []
-            while i < n and re.match(r"^-\s+", lines[i].strip()):
-                item_txt = re.sub(r"^-\s+", "", lines[i].strip())
-                cur_section["lines"].append(item_txt)
-                items.append(f"<li>{format_inline_md(item_txt, doc_kind)}</li>")
+            if re.match(r"^-{3,}\s*$", stripped) or re.match(r"^\*{3,}\s*$", stripped):
+                out.append("<hr>")
                 i += 1
-            out.append(f'<ul>{"".join(items)}</ul>')
-            continue
+                continue
 
-        if re.match(r"^\d+\.\s+", stripped):
-            items = []
-            while i < n and re.match(r"^\d+\.\s+", lines[i].strip()):
-                item_txt = re.sub(r"^\d+\.\s+", "", lines[i].strip())
-                cur_section["lines"].append(item_txt)
-                items.append(f"<li>{format_inline_md(item_txt, doc_kind)}</li>")
+            if "|" in stripped and (i + 1 < n) and self._is_table_sep(lines[i + 1]):
+                headers = self._split_table_row(lines[i])
+                align_raw = self._split_table_row(lines[i + 1])
+                aligns: List[str] = []
+                for a in align_raw:
+                    a = a.strip()
+                    if a.startswith(":") and a.endswith(":"):
+                        aligns.append("center")
+                    elif a.endswith(":"):
+                        aligns.append("right")
+                    else:
+                        aligns.append("left")
+                i += 2
+                rows: List[List[str]] = []
+                while i < n and lines[i].strip() and "|" in lines[i]:
+                    if re.match(r"^(#{1,4})\s+", lines[i].strip()):
+                        break
+                    rows.append(self._split_table_row(lines[i]))
+                    if record_toc:
+                        cur_sec_buf.append(lines[i])
+                    i += 1
+
+                th_html = "".join(
+                    f'<th style="text-align:{aligns[idx] if idx < len(aligns) else "left"}">{self.render_inline(h)}</th>'
+                    for idx, h in enumerate(headers)
+                )
+                if record_toc:
+                    cur_sec_buf.append(" ".join(headers))
+                tr_list: List[str] = []
+                for r in rows:
+                    if len(r) < len(headers):
+                        r = r + [""] * (len(headers) - len(r))
+                    elif len(r) > len(headers):
+                        r = r[: len(headers) - 1] + [" | ".join(r[len(headers) - 1 :])]
+                    tds = "".join(
+                        f'<td style="text-align:{aligns[idx] if idx < len(aligns) else "left"}">{self.render_inline(cell)}</td>'
+                        for idx, cell in enumerate(r)
+                    )
+                    tr_list.append(f"<tr>{tds}</tr>")
+                out.append(
+                    f'<div class="md-table-wrap"><table><thead><tr>{th_html}</tr></thead>'
+                    f"<tbody>{''.join(tr_list)}</tbody></table></div>"
+                )
+                continue
+
+            if stripped.startswith(">"):
+                bq_inner_lines: List[str] = []
+                while i < n and lines[i].strip().startswith(">"):
+                    raw_bq = re.sub(r"^\s*>\s?", "", lines[i])
+                    bq_inner_lines.append(raw_bq)
+                    if record_toc:
+                        cur_sec_buf.append(raw_bq)
+                    i += 1
+                inner_html = self._render_blocks(bq_inner_lines, record_toc=False)
+                out.append(f"<blockquote>{inner_html}</blockquote>")
+                continue
+
+            m_ul = re.match(r"^(\s*)[-*+]\s+(.+)$", line)
+            m_ol = re.match(r"^(\s*)(\d+)\.\s+(.+)$", line)
+            if m_ul or m_ol:
+                is_ordered = bool(m_ol)
+                tag = "ol" if is_ordered else "ul"
+                items_html: List[str] = []
+                while i < n:
+                    l_cur = lines[i]
+                    if not l_cur.strip():
+                        break
+                    mu = re.match(r"^(\s*)[-*+]\s+(.+)$", l_cur)
+                    mo = re.match(r"^(\s*)(\d+)\.\s+(.+)$", l_cur)
+                    if is_ordered and mo and len(mo.group(1)) == 0:
+                        item_chunks = [self.render_inline(mo.group(3))]
+                        if record_toc:
+                            cur_sec_buf.append(mo.group(3))
+                        i += 1
+                    elif (not is_ordered) and mu and len(mu.group(1)) == 0:
+                        item_chunks = [self.render_inline(mu.group(2))]
+                        if record_toc:
+                            cur_sec_buf.append(mu.group(2))
+                        i += 1
+                    else:
+                        break
+
+                    sub_items: List[str] = []
+                    while i < n and lines[i].strip():
+                        l_sub = lines[i]
+                        msu = re.match(r"^(\s{2,})[-*+]\s+(.+)$", l_sub)
+                        mso = re.match(r"^(\s{2,})(\d+)\.\s+(.+)$", l_sub)
+                        if msu:
+                            sub_items.append(f"<li>{self.render_inline(msu.group(2))}</li>")
+                            if record_toc:
+                                cur_sec_buf.append(msu.group(2))
+                            i += 1
+                        elif mso:
+                            sub_items.append(f"<li>{self.render_inline(mso.group(3))}</li>")
+                            if record_toc:
+                                cur_sec_buf.append(mso.group(3))
+                            i += 1
+                        elif l_sub.startswith("  ") and not re.match(r"^\s*[-*+\d]", l_sub):
+                            item_chunks.append("<br>" + self.render_inline(l_sub.strip()))
+                            if record_toc:
+                                cur_sec_buf.append(l_sub.strip())
+                            i += 1
+                        else:
+                            break
+                    if sub_items:
+                        item_chunks.append(f"<ul>{''.join(sub_items)}</ul>")
+                    items_html.append(f"<li>{''.join(item_chunks)}</li>")
+
+                out.append(f"<{tag}>{''.join(items_html)}</{tag}>")
+                continue
+
+            para_lines: List[str] = []
+            while i < n:
+                l_p = lines[i]
+                s_p = l_p.strip()
+                if not s_p:
+                    break
+                if (
+                    s_p.startswith("```")
+                    or s_p.startswith(">")
+                    or re.match(r"^(#{1,4})\s+", s_p)
+                    or re.match(r"^-{3,}\s*$", s_p)
+                    or re.match(r"^(\s*)[-*+]\s+", l_p)
+                    or re.match(r"^(\s*)(\d+)\.\s+", l_p)
+                    or ("|" in s_p and (i + 1 < n) and self._is_table_sep(lines[i + 1]))
+                ):
+                    break
+                para_lines.append(self.render_inline(s_p))
+                if record_toc:
+                    cur_sec_buf.append(s_p)
                 i += 1
-            out.append(f'<ol>{"".join(items)}</ol>')
-            continue
+            if para_lines:
+                out.append(f"<p>{'<br>'.join(para_lines)}</p>")
 
-        para_lines = []
-        while i < n:
-            ln = lines[i].strip()
-            if (
-                not ln
-                or re.match(r"^(#{1,4})\s+", ln)
-                or re.match(r"^-{3,}\s*$", ln)
-                or ln.startswith(">")
-                or re.match(r"^-\s+", ln)
-                or re.match(r"^\d+\.\s+", ln)
-                or (ln.startswith("|") and i + 1 < n and is_table_separator(lines[i + 1]))
-            ):
-                break
-            cur_section["lines"].append(ln)
-            para_lines.append(ln)
-            i += 1
+        if record_toc:
+            flush_section_index()
+        return "\n".join(out)
 
-        para_joined = "<br>".join(format_inline_md(pl, doc_kind) for pl in para_lines)
-        out.append(f"<p>{para_joined}</p>")
-
-    flush_section()
-    return "\n".join(out), toc, sections
+    def render(self, md_text: str) -> str:
+        return self._render_blocks(md_text.splitlines(), record_toc=True)
 
 
+# ==============================================================================
+# Shared Layout Shell (Header + Search Modal + Floating Dock + Footer)
+# ==============================================================================
 def render_shell(
     *,
     title: str,
     page_id: str,
-    page_type: str,
     active_nav: str,
-    root_prefix: str,
     body_html: str,
-    context_bar_html: str = "",
-    has_toc_drawer: bool = False,
-    tier_count: int = 97,
-    char_count: int = 0,
+    root_prefix: str = "./",
+    has_toc_button: bool = False,
+    back_fallback: Tuple[str, str] = ("index.html", "首页"),
 ) -> str:
     r = root_prefix
 
-    def nav_cls(key):
-        return "nav-link active" if active_nav == key else "nav-link"
+    def nav_link(key: str, href: str, label: str) -> str:
+        cls = "nav-link active" if active_nav == key else "nav-link"
+        return f'<a class="{cls}" href="{r}{href}">{label}</a>'
 
-    toc_dock_btn = (
-        f'<button type="button" class="dock-btn dock-toc-btn" id="dock-toc-btn" title="展开/收起章节目录">{SVG["toc"]}</button>'
-        if has_toc_drawer
+    toc_dock_html = (
+        f'<button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录">'
+        f'{SVGS["toc"]} <span>目录</span></button>'
+        if has_toc_button
         else ""
     )
 
-    char_badge_label = str(char_count) if char_count > 0 else "6"
-
     return f"""<!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark" data-root="{r}" data-page-id="{html.escape(page_id)}" data-page-type="{html.escape(page_type)}">
+<html lang="zh-CN" data-theme="dark" data-root="{r}" data-page-id="{esc(page_id)}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{html.escape(title)} · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ 多维战力量级体系（第三版·最新）与材质破坏能量数据库官方百科站——角色分类（首字母与量级从小到大排序）、量级分类（从小到大排列）、全文检索与浏览进度保存。">
+  <title>{esc(title)} · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {{
       try {{
@@ -496,126 +408,116 @@ def render_shell(
       }} catch (e) {{}}
     }})();
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{r}static/css/style.css">
 </head>
 <body>
-  <div class="reading-progress-track" aria-hidden="true">
-    <div class="reading-progress-bar" id="reading-progress-bar"></div>
-  </div>
-
   <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="{r}index.html">
-        <span class="brand-mark mono" aria-hidden="true">⊙</span>
-        <span class="brand-text">
-          <span class="brand-title">衡天 PowerWiki</span>
-          <span class="brand-badge mono">v3.0</span>
-        </span>
-      </a>
+    <div class="header-inner">
+      <div class="brand-cluster">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
+          {SVGS["menu"]}
+        </button>
+        <a class="brand-logo" href="{r}index.html">
+          <span class="brand-emblem">⊙</span>
+          <span class="brand-text">
+            <span class="brand-title">衡天 PowerWiki</span>
+            <span class="brand-sub">Celestial Scale Archive · V3</span>
+          </span>
+        </a>
+      </div>
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
-        <a class="{nav_cls('home')}" href="{r}index.html">首页</a>
-        <a class="{nav_cls('chars')}" href="{r}characters.html">角色 <span class="nav-count mono">{char_badge_label}</span></a>
-        <a class="{nav_cls('tiers')}" href="{r}tiers.html">量级 <span class="nav-count mono">{tier_count}</span></a>
-        <a class="{nav_cls('rules')}" href="{r}rules.html">衡天体系</a>
-        <a class="{nav_cls('materials')}" href="{r}materials.html">材质数据库</a>
+        {nav_link("home", "index.html", "首页")}
+        {nav_link("tiers", "tiers.html", "量级")}
+        {nav_link("characters", "characters.html", "角色")}
+        {nav_link("rules", "rules.html", "衡天体系全文")}
+        {nav_link("materials", "materials.html", "材质能量库")}
+        {nav_link("search", "search.html", "搜索")}
       </nav>
 
       <div class="header-actions">
-        <button type="button" class="search-trigger" id="global-search-trigger" aria-label="打开全站搜索">
-          <span class="search-trigger-left">
-            {SVG['search_sm']}
-            <span class="search-trigger-placeholder">搜索全站…</span>
-          </span>
+        <button type="button" class="search-trigger-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          {SVGS["search"]}
+          <span>检索角色、量级、规则…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
-        <button type="button" class="icon-btn" id="history-open-btn" title="浏览进度与最近足迹">
-          {SVG['history']}
-          <span class="dot-indicator"></span>
-        </button>
-        <button type="button" class="icon-btn" id="theme-toggle-btn" title="切换深浅色主题">
-          {SVG['sun']}
-        </button>
-        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
-          {SVG['menu']}
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
+          {SVGS["sun"]}
         </button>
       </div>
     </div>
   </header>
 
-  <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
-  {context_bar_html}
-
-  <main style="flex:1">
+  <main>
     {body_html}
   </main>
 
-  <div class="resume-toast" id="resume-toast" role="status" aria-live="polite">
-    <span class="resume-toast-text" id="resume-toast-text">上次浏览位置</span>
-    <button type="button" class="resume-toast-btn" id="resume-toast-btn">继续浏览</button>
-    <button type="button" class="resume-toast-close" id="resume-toast-close" aria-label="关闭提示">{SVG['close']}</button>
-  </div>
-
-  <div class="floating-dock">
-    {toc_dock_btn}
-    <button type="button" class="dock-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页" title="返回上一页">{SVG['back']}</button>
-    <button type="button" class="dock-btn" id="dock-top-btn" title="回到顶部">
-      <svg class="progress-ring-svg" viewBox="0 0 40 40" aria-hidden="true">
-        <circle class="progress-ring-circle" id="dock-progress-circle" cx="20" cy="20" r="18"></circle>
-      </svg>
-      {SVG['up']}
+  <!-- Floating Navigation Dock (Smart Back + Back to Top) -->
+  <div class="floating-dock" aria-label="快捷返回工具栏">
+    {toc_dock_html}
+    <button type="button" class="dock-btn js-smart-back" data-fallback="{esc(back_fallback[0])}" data-fallback-name="{esc(back_fallback[1])}" title="返回上一页并恢复浏览位置">
+      {SVGS["arrow_left"]} <span class="js-back-label">返回</span>
+    </button>
+    <button type="button" class="dock-btn" id="dock-top-btn" title="回到页面顶部">
+      {SVGS["arrow_up"]} <span>顶部</span>
     </button>
   </div>
 
-  <!-- Global Search Command Palette -->
-  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站即时检索">
-    <div class="modal-dialog">
+  <!-- Global Search Command Palette Modal -->
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
       <div class="search-modal-head">
-        <span style="color:var(--text-muted);display:inline-flex">{SVG['search']}</span>
-        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="搜索角色、量级代字（宇◆、恒○）、第三版规则或材质（归因、白矮星、花岗岩）…" autocomplete="off">
-        <a href="{r}search.html" class="chip-btn">检索页 {SVG['arrow_ur']}</a>
-        <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭">{SVG['close']}</button>
+        <span style="color:var(--accent-gold);display:flex">{SVGS["search"]}</span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、角色名、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-surface" id="search-modal-close" style="padding:5px 11px;font-size:12px">ESC</button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
-        <button type="button" class="chip-btn" data-search-tab="char">角色分类</button>
-        <button type="button" class="chip-btn" data-search-tab="tier">量级分类</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天体系(第三版)</button>
-        <button type="button" class="chip-btn" data-search-tab="materials">材质破坏能量库</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第三版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
-    </div>
-  </div>
-
-  <!-- Reading Progress & Footprints Modal -->
-  <div class="modal-backdrop" id="history-modal" role="dialog" aria-modal="true" aria-label="浏览进度与足迹">
-    <div class="modal-dialog">
-      <div class="search-modal-head" style="justify-content:space-between">
-        <strong style="font-size:14.5px;display:inline-flex;align-items:center;gap:8px">{SVG['history']}<span>浏览进度与最近足迹</span></strong>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button type="button" class="chip-btn" id="history-clear-btn">清空记录</button>
-          <button type="button" class="resume-toast-close" id="history-close-btn" aria-label="关闭">{SVG['close']}</button>
-        </div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择条目 · <kbd class="kbd-hint">Enter</kbd> 进入页面</span>
+        <a href="{r}search.html" style="font-weight:500">进入独立搜索页 →</a>
       </div>
-      <div class="search-modal-body" id="history-modal-body"></div>
     </div>
   </div>
 
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <div>
-        <strong style="color:var(--text-primary);font-weight:600">衡天⊙ PowerWiki</strong>
-        <span style="margin:0 6px;opacity:0.4">·</span>
-        <span>《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》</span>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom:10px">
+            <span class="brand-emblem" style="width:28px;height:28px;font-size:14px">⊙</span>
+            <span class="brand-title" style="font-size:15px">衡天 PowerWiki</span>
+          </div>
+          <p class="footer-desc">
+            以《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》为唯一基准锚点，提供从昆虫级（5×10⁻⁵ J）至论天最上（莱因哈特 / 贝克莱基数）的全尺度量级检索与独立角色战力档案。
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>核心导览</h4>
+          <a href="{r}tiers.html">量级分类（从小到大）</a>
+          <a href="{r}characters.html">角色档案（首字母 / 从小到大）</a>
+          <a href="{r}search.html">全站检索引擎</a>
+        </div>
+        <div class="footer-col">
+          <h4>基准典籍全文</h4>
+          <a href="{r}rules.html">衡天量级体系（第三版·全文）</a>
+          <a href="{r}materials.html">材质与破坏能量数据库（第二版·全文）</a>
+        </div>
       </div>
-      <div class="footer-links">
-        <a href="{r}index.html">首页</a>
-        <a href="{r}characters.html">角色分类</a>
-        <a href="{r}tiers.html">量级分类</a>
-        <a href="{r}rules.html">衡天体系全文</a>
-        <a href="{r}materials.html">材质数据库全文</a>
-        <a href="{r}search.html">全站检索</a>
+      <div class="footer-bottom">
+        <span>衡天⊙ PowerWiki · Obsidian Celestial Edition</span>
+        <span>全部角色与量级均采用独立静态档案页 · 自动记忆浏览状态与滚动位置</span>
       </div>
     </div>
   </footer>
@@ -627,900 +529,1381 @@ def render_shell(
 """
 
 
-def make_context_bar(
-    root_prefix: str,
-    fallback_rel: str,
-    fallback_name: str,
-    crumbs: list,
-    right_note: str = "",
-    show_bookmark: bool = True,
-) -> str:
-    crumb_parts = [f'<a href="{root_prefix}index.html">首页</a>']
-    for label, href in crumbs:
-        crumb_parts.append('<span class="sep">/</span>')
-        if href:
-            crumb_parts.append(f'<a href="{href}">{html.escape(label)}</a>')
-        else:
-            crumb_parts.append(f'<span class="current">{html.escape(label)}</span>')
+# ==============================================================================
+# Page Builders
+# ==============================================================================
+def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]) -> str:
+    ranked_count = sum(1 for t in tiers if not t.get("unranked"))
+    tier_by_slug = {t["slug"]: t for t in tiers}
 
-    bkm_html = (
-        f'<span class="save-status-pill mono" id="live-save-status">进度 0%</span>'
-        f'<button type="button" class="chip-btn" id="save-bookmark-btn" title="保存当前阅读位置">{SVG["bookmark"]}<span>记录位置</span></button>'
-        if show_bookmark
-        else ""
+    segments = [
+        ("human", "个体与战术阶", "虫 → 城☆", "5×10⁻⁵ J ～ 4.2×10¹⁷ J", "var(--dom-human)", "tiers.html?seg=human"),
+        ("continent", "地理与大陆阶", "国▽ → 陆☆", "4.2×10¹⁷ ～ 2×10²⁹ J", "var(--dom-continent)", "tiers.html?seg=continent"),
+        ("planet", "行星与巨行星阶", "星▽ → 巨☆", "2×10²⁹ ～ 2.2×10³⁸ J", "var(--dom-planet)", "tiers.html?seg=planet"),
+        ("star", "致密星与恒星系阶", "矮○ → 系☆", "10³⁹ ～ 10⁴⁹ J", "var(--dom-star)", "tiers.html?seg=star"),
+        ("galaxy", "星团与星系阶", "团▽ → 河☆", "1.3×10⁵² ～ 10⁶⁹ J", "var(--dom-galaxy)", "tiers.html?seg=galaxy"),
+        ("universe", "宇宙与单体顶点", "网▽ → 宇★", "10⁶⁹ J ～ 10^(10^100) J", "var(--dom-universe)", "tiers.html?seg=universe"),
+        ("multiverse", "多元与无限高维", "多 → 维·∞", "N×8×10⁷⁷ J ～ ∞-D", "var(--dom-multiverse)", "tiers.html?seg=multiverse"),
+        ("outer", "论外与论天大基数", "外·门 → 天·最", "ℵ₀ ～ 莱因哈特/贝克莱", "var(--dom-heaven)", "tiers.html?seg=outer"),
+    ]
+    seg_html = "".join(
+        f"""
+        <a class="spectrum-seg" href="{s[5]}" style="--seg-color:{s[4]}">
+          <div class="spectrum-seg-range mono">{esc(s[2])}</div>
+          <div class="spectrum-seg-label">{esc(s[1])}</div>
+          <div class="spectrum-seg-energy mono">{esc(s[3])}</div>
+        </a>"""
+        for s in segments
     )
 
-    return f"""
-  <div class="context-bar">
-    <div class="container context-inner">
-      <div class="context-left">
-        <button type="button" class="back-btn js-smart-back" data-fallback="{html.escape(fallback_rel)}" data-fallback-name="{html.escape(fallback_name)}">
-          {SVG['back']}
-          <span class="js-back-label">返回{html.escape(fallback_name)}</span>
-        </button>
-        <nav class="breadcrumbs" aria-label="面包屑导航">
-          {"".join(crumb_parts)}
-        </nav>
-      </div>
-      <div class="context-right">
-        {bkm_html}
-        {right_note}
-      </div>
-    </div>
-  </div>
-"""
-
-
-def build_all():
-    tiers_payload = json.loads((DATA_DIR / "tiers.json").read_text(encoding="utf-8"))
-    chars_payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
-
-    groups = tiers_payload["groups"]
-    tiers = tiers_payload["tiers"]
-    ranked_tiers = [t for t in tiers if not t.get("unranked")]
-    formal_chars = chars_payload.get("characters", [])
-    demo_chars = chars_payload.get("demo_archetypes", [])
-
-    tier_count = len(ranked_tiers)
-    char_count = len(formal_chars)
-
-    rules_md = (DOCS_DIR / "衡天量级体系【第三版·最新】.md").read_text(encoding="utf-8")
-    materials_md = (DOCS_DIR / "材质与破坏能量数据库（新）.md").read_text(encoding="utf-8")
-
-    rules_html_body, rules_toc, rules_sections = parse_markdown_document(rules_md, "rules", "rules.html")
-    mat_html_body, mat_toc, mat_sections = parse_markdown_document(materials_md, "materials", "materials.html")
-
-    rules_ids = {item["id"] for item in rules_toc} | {"doc-top"}
-    rules_title_to_id = {item["text"]: item["id"] for item in rules_toc}
-    tier_anchor_map = {}
-    for t in tiers:
-        sec_ref = t.get("rule_section", "")
-        if not sec_ref:
-            tier_anchor_map[t["slug"]] = "doc-top"
-        elif sec_ref in rules_ids:
-            tier_anchor_map[t["slug"]] = sec_ref
-        elif sec_ref in rules_title_to_id:
-            tier_anchor_map[t["slug"]] = rules_title_to_id[sec_ref]
-        else:
-            raise AssertionError(f"Tier {t['slug']} points to missing rules anchor/heading: {sec_ref!r}")
-
-    # 1. Build Search Index & Client Data Bundle
-    search_items = []
-    for t in tiers:
-        search_items.append(
-            {
-                "type": "tier",
-                "badge": "量级分类",
-                "title": f"⊙ {t['code']} · {t['name']}（{t['family']}）",
-                "code": t["code"],
-                "pinyin": f"{t['code_pinyin']} {t['full_pinyin']}",
-                "url": f"tier/{t['slug']}.html",
-                "text": f"能量/数学刻度：{t['energy']} ｜ 覆盖尺度：{t['scale']} ｜ 模型：{t['model']} ｜ 说明：{t['notes']}",
-            }
-        )
-
-    chars_for_index = formal_chars if formal_chars else demo_chars
-    is_demo_idx = len(formal_chars) == 0
-    for c in chars_for_index:
-        t_obj = next((x for x in tiers if x["slug"] == c["tier_slug"]), None)
-        t_label = f"⊙{t_obj['code']} {t_obj['name']}" if t_obj else "待定"
-        url_target = f"characters.html#demo-{c['slug']}" if is_demo_idx else f"character/{c['slug']}.html"
-        search_items.append(
-            {
-                "type": "char",
-                "badge": "角色示例" if is_demo_idx else "角色分类",
-                "title": f"{c['name']}（{c.get('series', '')}）· {t_label}",
-                "code": t_obj["code"] if t_obj else "",
-                "pinyin": f"{c.get('pinyin', '')} {c.get('initial', '')}",
-                "url": url_target,
-                "text": f"{c.get('full_writing', '')} {c.get('summary', '')} ｜ 七维：{json.dumps(c.get('dims', {}), ensure_ascii=False)}",
-            }
-        )
-
-    search_items.extend(rules_sections)
-    search_items.extend(mat_sections)
-
-    client_data = {
-        "groups": groups,
-        "tiers": tiers,
-        "characters": formal_chars,
-        "demoArchetypes": demo_chars,
-    }
-
-    js_bundle = (
-        "window.__POWERWIKI_DATA__ = "
-        + json.dumps(client_data, ensure_ascii=False, separators=(",", ":"))
-        + ";\nwindow.__POWERWIKI_INDEX__ = "
-        + json.dumps(search_items, ensure_ascii=False, separators=(",", ":"))
-        + ";\n"
-    )
-    (ROOT / "static" / "js" / "search-index.js").write_text(js_bundle, encoding="utf-8")
-
-    # 2. Generate index.html (Sculptural Editorial Hero + Precision Bento Grid)
-    astrolabe_svg = build_hero_astrolabe_svg()
-    home_body = f"""
-    <section class="hero-section">
-      <div class="container hero-grid">
-        <div>
-          <div class="hero-eyebrow mono">
-            <span class="hero-eyebrow-dot"></span>
-            <span>HENGTIAN CODEX · EDITION III · 2026.10.23</span>
-          </div>
-          <h1 class="hero-title">衡天<span class="sun-mark serif-display">⊙</span> 多维战力量级与材质能量百科</h1>
-          <p class="hero-desc">
-            围绕<strong>角色档案</strong>（支持<strong>首字母 A–Z</strong> 与<strong>量级从小到大</strong>双排序）与<strong>量级标尺</strong>（严格按<strong>从小到大</strong>递增排布）构建；全文无删减收录最新<strong>《衡天⊙ 多维战力量级体系（第三版）》</strong>与<strong>《材质与破坏能量数据库（第二版）》</strong>。
-          </p>
-
-          <button type="button" class="hero-command-bar js-open-search" aria-label="打开全站快速检索">
-            <span style="display:inline-flex;align-items:center;gap:10px">
-              {SVG['search']}
-              <span>检索角色、量级代字（宇◆、恒○）、第三版通则或材质参数…</span>
-            </span>
-            <kbd class="kbd-hint">Ctrl K</kbd>
-          </button>
-
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="./tiers.html">浏览 {tier_count} 档量级标尺 {SVG['arrow_ur']}</a>
-            <a class="btn btn-gold" href="./characters.html">进入角色分类 {SVG['arrow_ur']}</a>
-            <a class="btn btn-ghost" href="./rules.html">《衡天⊙ 第三版》全文</a>
-            <a class="btn btn-ghost" href="./materials.html">《材质能量库》全文</a>
-          </div>
-        </div>
-
-        <div class="astrolabe-stage">
-          <div class="astrolabe-card">
-            <span class="astrolabe-corner tl mono">F* = 3.04×10²⁰ J/m²</span>
-            <span class="astrolabe-corner tr mono">⊙ SCALE 01 → 97</span>
-            {astrolabe_svg}
-            <span class="astrolabe-corner bl mono">5×10⁻⁵ J → 8×10¹⁰¹ J</span>
-            <span class="astrolabe-corner br mono">f_ω · ℶ_κ = κ</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="container home-main">
-      <div id="home-footprints-mount"></div>
-
-      <section>
-        <div class="section-head">
-          <div>
-            <span class="section-kicker mono">CORE ARCHIVES</span>
-            <h2 class="section-title">核心分类目录</h2>
-          </div>
-          <span class="section-sub">角色支持「首字母 A–Z &amp; 量级从小到大」 ｜ 量级严格按「从小到大」递增</span>
-        </div>
-
-        <div class="bento-grid">
-          <a class="bento-card" href="./characters.html">
-            <div>
-              <div class="bento-top" style="margin-bottom:14px">
-                <span class="bento-index mono">01 / CHARACTER ARCHIVE</span>
-                <span class="bento-arrow">{SVG['arrow_ur']}</span>
+    # Pick 3 featured standalone character dossiers ordered weak -> strong
+    featured_slugs = ["demo-alpha", "demo-cangqiong", "demo-yuanxu"]
+    featured_cards = []
+    for slug in featured_slugs:
+        c = next((x for x in all_chars if x["slug"] == slug), None)
+        if not c:
+            continue
+        t = tier_by_slug.get(c["tier_slug"])
+        t_code = t["code"] if t else "待定"
+        t_name = t["name"] if t else "待定"
+        t_order = f"#{t['order']:02d}" if t and not t.get("unranked") else "—"
+        initial = esc((c.get("initial") or "#").upper())
+        featured_cards.append(
+            f"""
+            <a class="char-card" href="character/{esc(c['slug'])}.html">
+              <span class="char-watermark-letter" aria-hidden="true">{initial}</span>
+              <div class="char-card-head">
+                <div style="display:flex;align-items:center;gap:13px;min-width:0">
+                  <div class="char-avatar">{esc(c['name'][:1])}</div>
+                  <div class="char-title-group">
+                    <h3 class="char-name">{esc(c['name'])}</h3>
+                    <div class="char-series">{esc(c.get('alias') or c.get('series') or '')}</div>
+                  </div>
+                </div>
+                <span class="char-rating-pill mono">⊙ {esc(t_code)}</span>
               </div>
-              <h3 class="bento-title">角色档案分类</h3>
-              <p class="bento-desc">依据第三版<strong>完整书写规范</strong>与<strong>破·控·域·御·速·算·性</strong>七维战力浑仪呈现角色定级，支持按主档<strong>量级从小到大</strong>与<strong>拼音首字母 A–Z</strong>自由切换。</p>
-              <div class="bento-heptad-strip" aria-hidden="true">
-                <span class="bento-heptad-pill">破</span>
-                <span class="bento-heptad-pill">控</span>
-                <span class="bento-heptad-pill">域</span>
-                <span class="bento-heptad-pill">御</span>
-                <span class="bento-heptad-pill">速</span>
-                <span class="bento-heptad-pill">算</span>
-                <span class="bento-heptad-pill">性</span>
+              <div class="char-modifiers">
+                <span class="mod-chip" style="color:var(--accent-blue)">{esc(t_name)} · {t_order}</span>
+                <span class="mod-chip mono">首字母 {initial}</span>
               </div>
-            </div>
-            <div class="bento-meta-strip">
-              <div class="tag-row">
-                <span class="mini-chip">↑ 按量级从小到大</span>
-                <span class="mini-chip">A–Z 按首字母排序</span>
-                <span class="mini-chip">七维浑仪与证据标签</span>
-              </div>
-            </div>
-          </a>
-
-          <a class="bento-card" href="./tiers.html">
-            <div>
-              <div class="bento-top" style="margin-bottom:14px">
-                <span class="bento-index mono">02 / 97-TIER SCALE</span>
-                <span class="bento-arrow">{SVG['arrow_ur']}</span>
-              </div>
-              <h3 class="bento-title">量级标尺分类（{tier_count} 档）</h3>
-              <p class="bento-desc">严格按<strong>量级从小到大（#01 昆虫级 → #97 论天最上）</strong>递增排布，完整覆盖常规破坏、天体束缚能、通量覆盖、FGH 函数层级与大基数公理。</p>
-              <div class="bento-spectrum" aria-hidden="true">
-                <span style="background:var(--dom-terrestrial)"></span>
-                <span style="background:var(--dom-stellar)"></span>
-                <span style="background:var(--dom-cosmic)"></span>
-                <span style="background:var(--accent-gold)"></span>
-                <span style="background:var(--dom-fgh)"></span>
-                <span style="background:var(--dom-beyond)"></span>
-              </div>
-            </div>
-            <div class="bento-meta-strip">
-              <div class="tag-row">
-                <span class="mini-chip">↑ 严格从小到大排列</span>
-                <span class="mini-chip">分区 / 连续天梯 / 总表</span>
-                <span class="mini-chip">直链第三版条文</span>
-              </div>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <section>
-        <div class="section-head">
-          <div>
-            <span class="section-kicker mono">CANONICAL MONOGRAPHS · UNABRIDGED</span>
-            <h2 class="section-title">标准与规则典籍（100% 全文展示）</h2>
-          </div>
-          <span class="section-sub">自动保存阅读进度与章节位置 · 点击卡片可断点续读</span>
-        </div>
-
-        <div class="bento-grid">
-          <a class="bento-card" href="./rules.html">
-            <div>
-              <div class="bento-top" style="margin-bottom:14px">
-                <span class="bento-index mono">STANDARD I · 1,445 LINES · {len(rules_toc)} SECTIONS</span>
-                <span class="bento-arrow">{SVG['arrow_ur']}</span>
-              </div>
-              <h3 class="bento-title">《衡天⊙ 多维战力量级体系（第三版）》</h3>
-              <p class="bento-desc">2026-10-23 最新第三版原文无删减直出：含新增<strong>完整书写原则</strong>、<strong>0.14.2 归因与知情度审查</strong>、<strong>超长篇自行通读流程</strong>、<strong>7.9 层级轴必检</strong>及全部十一部分标准。</p>
-            </div>
-            <div class="bento-progress-box" data-bento-progress="rules.html">
-              <div class="bento-progress-head">
-                <span data-prog-label>点击阅读完整无删减原文</span>
-                <span class="mono" style="color:var(--accent-gold)" data-prog-pct>0%</span>
-              </div>
-              <div class="resume-bar-wrap"><div class="resume-bar-fill" data-prog-fill style="width:0%"></div></div>
-            </div>
-          </a>
-
-          <a class="bento-card" href="./materials.html">
-            <div>
-              <div class="bento-top" style="margin-bottom:14px">
-                <span class="bento-index mono">STANDARD II · 416 LINES · {len(mat_toc)} SECTIONS</span>
-                <span class="bento-arrow">{SVG['arrow_ur']}</span>
-              </div>
-              <h3 class="bento-title">《材质与破坏能量数据库（第二版）》</h3>
-              <p class="bento-desc">配套工程物理参数全文：破坏动词双轴定性、斩陨规则、物质粉碎能量密度、抗压/剪切/断裂韧性、相变潜热、白矮星/中子星引力束缚能与撞击成坑推算。</p>
-            </div>
-            <div class="bento-progress-box" data-bento-progress="materials.html">
-              <div class="bento-progress-head">
-                <span data-prog-label>点击阅读完整无删减原文</span>
-                <span class="mono" style="color:var(--accent-gold)" data-prog-pct>0%</span>
-              </div>
-              <div class="resume-bar-wrap"><div class="resume-bar-fill" data-prog-fill style="width:0%"></div></div>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <section>
-        <div class="section-head">
-          <div>
-            <span class="section-kicker mono">LOGARITHMIC SPECTRUM</span>
-            <h2 class="section-title">全域量级谱系速览（从小到大）</h2>
-          </div>
-          <a href="./tiers.html" style="font-size:13px;color:var(--accent-gold);display:inline-flex;align-items:center;gap:4px">查看全部 97 档标尺 {SVG['arrow_ur']}</a>
-        </div>
-        <div class="scale-track">
-          <a class="scale-node" style="--node-color:var(--dom-terrestrial)" href="./tier/insect.html">
-            <span class="scale-node-range mono">#01 · ⊙虫 → ⊙表☆</span>
-            <span class="scale-node-title">地表与常规目标区</span>
-            <span class="scale-node-energy mono">5×10⁻⁵ J ～ 1.63×10³⁰ J</span>
-          </a>
-          <a class="scale-node" style="--node-color:var(--dom-stellar)" href="./tier/star-std.html">
-            <span class="scale-node-range mono">#43 · ⊙星▽ → ⊙恒☆</span>
-            <span class="scale-node-title">天体自引力束缚区</span>
-            <span class="scale-node-energy mono">4.87×10³⁰ J ～ 2.28×10⁴² J</span>
-          </a>
-          <a class="scale-node" style="--node-color:var(--dom-cosmic)" href="./tier/system-std.html">
-            <span class="scale-node-range mono">#57 · ⊙系▽ → ⊙构☆</span>
-            <span class="scale-node-title">球面/盘面通量覆盖</span>
-            <span class="scale-node-energy mono">3.7×10⁴⁹ J ～ 3.7×10⁷⁶ J</span>
-          </a>
-          <a class="scale-node" style="--node-color:var(--accent-gold)" href="./tier/universe-extreme.html">
-            <span class="scale-node-range mono">#79 · ⊙宇▽ → ⊙宇☆</span>
-            <span class="scale-node-title">宇宙五档（含宇◆）</span>
-            <span class="scale-node-energy mono">3.7×10⁷⁶ J ～ 10↑↑3 倍宇○</span>
-          </a>
-          <a class="scale-node" style="--node-color:var(--dom-fgh)" href="./tier/fgh-tower.html">
-            <span class="scale-node-range mono">#84 · ⊙广·塔 → ⊙广·顶</span>
-            <span class="scale-node-title">广义无限区（FGH）</span>
-            <span class="scale-node-energy mono">f₃ 幂塔 → f_ω → 不可计算</span>
-          </a>
-          <a class="scale-node" style="--node-color:var(--dom-beyond)" href="./tier/beyond-sky-top.html">
-            <span class="scale-node-range mono">#90 · ⊙外·门 → ⊙天·最</span>
-            <span class="scale-node-title">论外与论天大基数</span>
-            <span class="scale-node-energy mono">ℵ₀ → ℶ 不动点 → 莱茵哈特</span>
-          </a>
-        </div>
-      </section>
-    </div>
-    """
-
-    (ROOT / "index.html").write_text(
-        render_shell(
-            title="首页",
-            page_id="index.html",
-            page_type="home",
-            active_nav="home",
-            root_prefix="./",
-            body_html=home_body,
-            tier_count=tier_count,
-            char_count=char_count,
-        ),
-        encoding="utf-8",
-    )
-
-    # 3. Generate tiers.html — Strictly 从小到大!
-    group_map = {g["id"]: g for g in groups}
-    ssr_tier_blocks = []
-    for g in groups:
-        g_tiers = [t for t in tiers if t["group_id"] == g["id"]]
-        cards = []
-        for t in g_tiers:
-            ord_str = "待定" if t.get("unranked") else f"#{t['order']:02d}"
-            cards.append(
-                f"""
-            <a class="tier-card" data-domain="{t['domain']}" href="./tier/{t['slug']}.html">
-              <div class="tier-card-top">
-                <span class="tier-code-badge mono">⊙ {html.escape(t['code'])}</span>
-                <span class="tier-order-num mono">{ord_str}</span>
-              </div>
-              <div class="tier-card-name">
-                <span>{html.escape(t['name'])}</span>
-                <span class="tier-family-tag">{html.escape(t['family'])}</span>
-              </div>
-              <div class="tier-energy-line mono">{html.escape(t['energy'])}</div>
-              <div class="tier-scale-line">{html.escape(t['scale'])}</div>
-              <div class="tier-card-foot">
-                <span>{html.escape(t['model'])}</span>
-                {SVG['arrow_ur']}
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">{esc(c.get('summary') or '')}</div>
+              <div class="char-card-foot">
+                <span class="mono" style="font-size:11.5px">{esc(c.get('credibility') or '')}</span>
+                <span class="char-enter-link" style="white-space:nowrap;font-weight:500;display:inline-flex;align-items:center;gap:4px">独立档案页 {SVGS['arrow_up_right']}</span>
               </div>
             </a>"""
-            )
-        ssr_tier_blocks.append(
-            f"""
-        <section class="tier-group-block" id="group-{g['id']}">
-          <div class="tier-group-header">
-            <h2 class="tier-group-title">{html.escape(g['title'])}</h2>
-            <span class="tier-group-sub">{html.escape(g['subtitle'])} · {len(g_tiers)} 档</span>
-          </div>
-          <div class="tier-grid">{"".join(cards)}</div>
-        </section>"""
         )
 
-    tiers_body = f"""
-    <section class="page-hero">
-      <div class="container page-hero-inner">
-        <span class="page-kicker mono">CATEGORY 02 · TIER SCALE ARCHIVE</span>
-        <h1 class="page-hero-title"><span>量级分类总览</span><span class="brand-badge mono">⊙ {tier_count} 档 + 待定 · 从小到大</span></h1>
-        <p class="page-hero-desc">依据最新《衡天⊙ 多维战力量级体系（第三版）》，将全部量级标尺严格按<strong>从小到大（#01 昆虫级 → #97 论天最上）</strong>递增排列，点击任意档位可查阅完整书写展开格式与规则原文。</p>
-      </div>
-    </section>
+    body = f"""
+    <div class="container">
+      <!-- Obsidian Celestial Hero Stage -->
+      <section class="hero-stage">
+        <div class="hero-art-layer" aria-hidden="true">
+          <img src="static/img/cosmos-eclipse.jpg" alt="" style="--art-pos: 76% 48%;">
+        </div>
+        <div class="hero-content">
+          <div class="hero-eyebrow">
+            <span class="hero-eyebrow-line"></span>
+            <span>OBSIDIAN CELESTIAL ARCHIVE · 衡天⊙ 第三版</span>
+          </div>
+          <h1 class="hero-title">
+            多维战力刻度与<span class="gold-accent">实证角色典藏</span>
+          </h1>
+          <p class="hero-lead">
+            以《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》为唯一标尺。拒绝脱离物理与集合论的空洞标签——每一档位锚定明确焦耳阈值或超限基数，每一位角色拥有独立实证档案。
+          </p>
 
-    <div class="container" style="padding-bottom:60px">
-      <div class="toolbar-panel">
-        <div class="toolbar-row">
-          <span class="order-indicator mono">{SVG['asc']}<span>量级从小到大排列（#01 虫 → #97 天·最）</span></span>
+          <div class="hero-actions">
+            <a class="btn btn-gold" href="tiers.html">浏览量级天梯（从小到大） {SVGS["arrow_up_right"]}</a>
+            <a class="btn btn-surface" href="characters.html">查阅角色档案库</a>
+            <button type="button" class="btn btn-surface js-open-search">{SVGS["search"]} 全站检索</button>
+          </div>
 
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;justify-content:flex-end">
-            <div class="filter-input-wrap">
-              <span class="filter-input-icon">{SVG['search_sm']}</span>
-              <input type="search" class="filter-input" id="tier-filter-input" placeholder="筛选代字、名称或能量（如 宇◆、10⁴¹、阿克曼）…">
-              <button type="button" class="filter-clear-btn" id="tier-filter-clear" aria-label="清空">{SVG['close']}</button>
+          <div class="hero-metrics">
+            <div>
+              <div class="metric-val mono">{ranked_count}<span style="font-size:14px;color:var(--text-muted);font-weight:400"> +1</span></div>
+              <div class="metric-label">连续量级刻度（#01 虫 → #97 天·最）</div>
             </div>
-            <div class="segmented-group" role="group" aria-label="视图切换">
-              <button type="button" class="seg-btn active" data-tier-view="card">分区视图</button>
+            <div>
+              <div class="metric-val mono">7 <span style="font-size:14px;color:var(--accent-gold)">维</span> × 5 <span style="font-size:14px;color:var(--accent-blue)">态</span></div>
+              <div class="metric-label">破控域御速算性 · 实证状态分离</div>
+            </div>
+            <div>
+              <div class="metric-val mono">{len(all_chars)} <span style="font-size:14px;color:var(--text-muted);font-weight:400">份</span></div>
+              <div class="metric-label">独立角色档案页（首字母 / 量级双排序）</div>
+            </div>
+            <div>
+              <div class="metric-val mono">1,861 <span style="font-size:14px;color:var(--text-muted);font-weight:400">行</span></div>
+              <div class="metric-label">双基准典籍一字不漏全文收录</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Four Art-Backed Editorial Portals -->
+      <section class="section-block">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Core Archives</span>
+            <h2 class="section-title">四大核心典藏入口</h2>
+          </div>
+        </div>
+
+        <div class="portal-grid">
+          <a class="portal-card" href="tiers.html">
+            <div class="portal-art" aria-hidden="true">
+              <img src="static/img/monolith-scale.jpg" alt="" loading="lazy" style="--art-pos: 50% 48%;">
+            </div>
+            <div class="portal-body">
+              <div class="portal-top">
+                <span class="portal-index">01 / TIER TAXONOMY</span>
+                <span class="portal-arrow">{SVGS["arrow_up_right"]}</span>
+              </div>
+              <div>
+                <h3 class="portal-title">量级分类天梯</h3>
+                <p class="portal-desc">严格按能量与数学结构「从小到大」单向递增排列：由昆虫级（5×10⁻⁵ J）经行星、恒星、宇宙网，直至莱因哈特与贝克莱基数。全 98 档均设独立规格页。</p>
+                <div class="portal-meta">
+                  <span class="portal-tag">↑ 严格从小到大</span>
+                  <span class="portal-tag">98 独立规格页</span>
+                  <span class="portal-tag">三视图切换</span>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <a class="portal-card" href="characters.html">
+            <div class="portal-art" aria-hidden="true">
+              <img src="static/img/character-chronicle.jpg" alt="" loading="lazy" style="--art-pos: 78% 45%;">
+            </div>
+            <div class="portal-body">
+              <div class="portal-top">
+                <span class="portal-index">02 / CHARACTER ARCHIVES</span>
+                <span class="portal-arrow">{SVGS["arrow_up_right"]}</span>
+              </div>
+              <div>
+                <h3 class="portal-title">角色战力档案</h3>
+                <p class="portal-desc">支持「按首字母 A–Z」与「按量级从小到大」双模式切换；点击任意角色直接进入专属独立档案界面，呈现第三版完整书写与七维证据链。</p>
+                <div class="portal-meta">
+                  <span class="portal-tag">A–Z 首字母索引</span>
+                  <span class="portal-tag">↑ 量级从小到大</span>
+                  <span class="portal-tag">独立角色页面</span>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <a class="portal-card" href="rules.html">
+            <div class="portal-art" aria-hidden="true">
+              <img src="static/img/cosmos-eclipse.jpg" alt="" loading="lazy" style="--art-pos: 82% 46%;">
+            </div>
+            <div class="portal-body">
+              <div class="portal-top">
+                <span class="portal-index">03 / CANONICAL STANDARD V3</span>
+                <span class="portal-arrow">{SVGS["arrow_up_right"]}</span>
+              </div>
+              <div>
+                <h3 class="portal-title">衡天多维战力量级体系（第三版）</h3>
+                <p class="portal-desc">100% 完整原文呈现：涵盖总则与常见违规审查、归因与知情度六问表、1.5 完整书写规范、七维并列记录、论外序数与基数双轴及超长篇通读流程。</p>
+                <div class="portal-meta">
+                  <span class="portal-tag">1,445 行全文展示</span>
+                  <span class="portal-tag">126 节目录联动</span>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <a class="portal-card" href="materials.html">
+            <div class="portal-art" aria-hidden="true">
+              <img src="static/img/physics-lattice.jpg" alt="" loading="lazy" style="--art-pos: 84% 50%;">
+            </div>
+            <div class="portal-body">
+              <div class="portal-top">
+                <span class="portal-index">04 / PHYSICS &amp; MATERIALS DB</span>
+                <span class="portal-arrow">{SVGS["arrow_up_right"]}</span>
+              </div>
+              <div>
+                <h3 class="portal-title">材质与破坏能量数据库（第二版）</h3>
+                <p class="portal-desc">完整收录常规岩石金属抗压抗拉参数、碎裂/粉碎/熔化/汽化至核子完全解离的全破坏方式比能（J/cm³），以及白矮星与中子星外壳极端物理锚点。</p>
+                <div class="portal-meta">
+                  <span class="portal-tag">416 行全文展示</span>
+                  <span class="portal-tag">物理比能速查表</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Scale Spectrum -->
+      <section class="section-block">
+        <div class="spectrum-box">
+          <div class="section-head" style="margin-bottom:4px">
+            <div>
+              <span class="section-kicker">Continuous Scale Spectrum</span>
+              <h2 class="section-title" style="font-size:20px">八大量级跨度速览（点击直达对应区间）</h2>
+            </div>
+            <a class="btn btn-surface" href="tiers.html" style="padding:7px 14px;font-size:12.5px">展开全部 98 档 →</a>
+          </div>
+          <div class="spectrum-track">
+            {seg_html}
+          </div>
+        </div>
+      </section>
+
+      <!-- Featured Standalone Character Dossiers -->
+      <section class="section-block">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Standalone Character Dossiers</span>
+            <h2 class="section-title">代表性角色独立档案预览</h2>
+          </div>
+          <a class="btn btn-surface" href="characters.html" style="padding:7px 14px;font-size:12.5px">全部 {len(all_chars)} 位角色档案 →</a>
+        </div>
+        <div class="char-grid">
+          {"".join(featured_cards)}
+        </div>
+      </section>
+
+      <!-- Seven Dimensions & Five Evidence Badges -->
+      <section class="section-block">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Methodology</span>
+            <h2 class="section-title">七维并列评定与五态证据规范</h2>
+          </div>
+          <a class="btn btn-surface" href="rules.html" style="padding:7px 14px;font-size:12.5px">查阅第三版总则 →</a>
+        </div>
+        <div class="arch-grid">
+          <div class="arch-card">
+            <h3 style="margin:0 0 8px;font-family:var(--font-serif);font-size:17px">七维不互推原则</h3>
+            <p style="margin:0;color:var(--text-secondary);font-size:13.3px;line-height:1.7">
+              除 0.11 条「整体掌控物质与结构可单向推出破坏」外，破坏、防御、速度、算力、场域与特性严格独立计分，缺项记为〔缺〕而不脑补补齐。
+            </p>
+            <div class="arch-pills">
+              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">破</strong> 破坏能量</span>
+              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">控</strong> 整体掌控</span>
+              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">域</strong> 作用范围</span>
+              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">御</strong> 防御承受</span>
+              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">速</strong> 机动速度</span>
+              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">算</strong> 图灵演算</span>
+              <span class="arch-pill"><strong class="mono" style="color:var(--accent-gold)">性</strong> 机制特性</span>
+            </div>
+          </div>
+
+          <div class="arch-card">
+            <h3 style="margin:0 0 8px;font-family:var(--font-serif);font-size:17px">五级证据可信度标识</h3>
+            <p style="margin:0;color:var(--text-secondary);font-size:13.3px;line-height:1.7">
+              所有定级必须通过 0.14.2「归因与知情度审查」（在场、知情、记忆可靠、表现一致、无后文推翻、归因准确），并显式标注证据等级。
+            </p>
+            <div class="arch-pills">
+              <span class="arch-pill"><span class="ev-badge ev-confirmed">〔实〕</span> 已确认表现</span>
+              <span class="arch-pill"><span class="ev-badge ev-lower">〔下〕</span> 保守下限</span>
+              <span class="arch-pill"><span class="ev-badge ev-inferred">〔推〕</span> 规则单向推定</span>
+              <span class="arch-pill"><span class="ev-badge ev-hidden">〔隐〕</span> 隐含结构锚点</span>
+              <span class="arch-pill"><span class="ev-badge ev-missing">〔缺〕</span> 原文未涉及</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    """
+    return render_shell(
+        title="首页",
+        page_id="home",
+        active_nav="home",
+        body_html=body,
+        root_prefix="./",
+    )
+
+
+def build_tiers_page(tiers: List[Dict[str, Any]], groups: List[Dict[str, Any]]) -> str:
+    group_map = {g["id"]: g for g in groups}
+    ranked = sorted([t for t in tiers if not t.get("unranked")], key=lambda x: x["order"])
+    unranked = [t for t in tiers if t.get("unranked")]
+    all_ordered = ranked + unranked
+
+    ordered_gids: List[str] = []
+    for t in all_ordered:
+        if t["group_id"] not in ordered_gids:
+            ordered_gids.append(t["group_id"])
+
+    ssr_sections: List[str] = []
+    for gid in ordered_gids:
+        g = group_map.get(gid, {"title": gid, "subtitle": ""})
+        g_items = [t for t in all_ordered if t["group_id"] == gid]
+        cards_html = []
+        for t in g_items:
+            order_str = "待定" if t.get("unranked") else f"#{t['order']:02d}"
+            cards_html.append(
+                f"""
+                <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
+                  <div class="tier-card-top">
+                    <span class="tier-code-badge mono">⊙ {esc(t['code'])}</span>
+                    <span class="tier-order-num mono">{order_str}</span>
+                  </div>
+                  <div class="tier-card-name">
+                    <span>{esc(t['name'])}</span>
+                    <span class="tier-family-tag">{esc(t['family'])}</span>
+                  </div>
+                  <div class="tier-energy-line mono">{esc(t['energy'])}</div>
+                  <div class="tier-scale-line">{esc(t['scale'])}</div>
+                  <div class="tier-card-foot">
+                    <span>{esc(t['model'])}</span>
+                    {SVGS["arrow_up_right"]}
+                  </div>
+                </a>"""
+            )
+        ssr_sections.append(
+            f"""
+            <section class="tier-group-block" id="group-{esc(gid)}">
+              <div class="tier-group-header">
+                <h2 class="tier-group-title">{esc(g['title'])}</h2>
+                <span class="tier-group-sub">{esc(g['subtitle'])} · {len(g_items)} 档</span>
+              </div>
+              <div class="tier-grid">{''.join(cards_html)}</div>
+            </section>"""
+        )
+
+    body = f"""
+    <div class="container">
+      <div class="page-masthead">
+        <div class="masthead-art" aria-hidden="true">
+          <img src="static/img/monolith-scale.jpg" alt="" style="--art-pos: 62% 48%;">
+        </div>
+        <div class="masthead-inner">
+          <div class="masthead-top">
+            <button type="button" class="back-pill js-smart-back" data-fallback="index.html" data-fallback-name="首页">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回首页</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="index.html">首页</a>
+              <span>/</span>
+              <span>量级分类</span>
+            </nav>
+          </div>
+          <div class="masthead-title-row">
+            <div>
+              <h1 class="masthead-title">量级分类天梯（从小到大）</h1>
+              <p class="masthead-sub">
+                依据《衡天⊙ 多维战力量级体系（第三版）》严格按<strong>从小到大（#01 昆虫级 → #97 论天最上）</strong>单向排列。修饰符遵循 <code>▽ 弱</code> &lt; <code>○ 标准</code> &lt; <code>△ 强</code> &lt; <code>◆ 极</code> &lt; <code>☆ 超</code>。
+              </p>
+            </div>
+            <span class="count-pill mono" id="tier-result-count">{len(tiers)} / {len(tiers)} 档</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="controls-bar">
+        <div class="controls-row">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span class="seg-badge mono" style="color:var(--accent-gold);border-color:rgba(216,184,120,0.3);background:var(--accent-gold-soft)">
+              ↑ 排列基准：严格按量级从小到大 (#01 → #97)
+            </span>
+
+            <div class="seg-control" role="group" aria-label="视图模式">
+              <button type="button" class="seg-btn active" data-tier-view="card">分阶卡片</button>
               <button type="button" class="seg-btn" data-tier-view="flat">连续天梯</button>
-              <button type="button" class="seg-btn" data-tier-view="table">总表视图</button>
+              <button type="button" class="seg-btn" data-tier-view="table">紧凑总表</button>
             </div>
+          </div>
+
+          <div class="inline-search">
+            <input type="search" id="tier-filter-input" placeholder="筛选代字、名称、焦耳能量或天体参照（如 宇◆、2.24×10³²、花岗岩）…" autocomplete="off">
+            <button type="button" id="tier-filter-clear" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:12px">清空</button>
           </div>
         </div>
 
-        <div class="toolbar-row">
-          <div class="filter-Chips">
-            <button type="button" class="chip-btn active" data-tier-seg="all">全部区间（{len(tiers)}）</button>
-            <button type="button" class="chip-btn" data-tier-seg="inherited">目标式（虫→恒）</button>
-            <button type="button" class="chip-btn" data-tier-seg="transition">跨体系过渡带</button>
-            <button type="button" class="chip-btn" data-tier-seg="coverage">覆盖体系（系→宇）</button>
-            <button type="button" class="chip-btn" data-tier-seg="fgh">广义无限（FGH）</button>
-            <button type="button" class="chip-btn" data-tier-seg="beyond">论外与论天大基数</button>
+        <div class="controls-row" style="border-top:1px solid var(--border-hairline);padding-top:10px">
+          <div class="filter-Chips" role="group" aria-label="量级大类筛选">
+            <button type="button" class="chip-btn active" data-tier-seg="all">全量级 (98)</button>
+            <button type="button" class="chip-btn" data-tier-seg="human">个体～城市 (30)</button>
+            <button type="button" class="chip-btn" data-tier-seg="continent">国家～大陆 (10)</button>
+            <button type="button" class="chip-btn" data-tier-seg="planet">行星～巨行星 (10)</button>
+            <button type="button" class="chip-btn" data-tier-seg="star">致密星～恒星系 (14)</button>
+            <button type="button" class="chip-btn" data-tier-seg="galaxy">星团～星系 (10)</button>
+            <button type="button" class="chip-btn" data-tier-seg="universe">宇宙网～宇宙顶点 (11)</button>
+            <button type="button" class="chip-btn" data-tier-seg="multiverse">多元～无限维 (4)</button>
+            <button type="button" class="chip-btn" data-tier-seg="outer">论外～论天 (8)</button>
+            <button type="button" class="chip-btn" data-tier-seg="unranked">待定 (1)</button>
           </div>
-          <span class="mono" id="tier-result-count" style="font-size:12px;color:var(--text-muted);flex-shrink:0">{len(tiers)} / {len(tiers)} 档</span>
         </div>
       </div>
 
-      <div id="tiers-explorer-mount">
-        {"".join(ssr_tier_blocks)}
+      <div id="tiers-explorer-mount" style="padding-bottom:24px">
+        {''.join(ssr_sections)}
       </div>
     </div>
     """
-
-    (ROOT / "tiers.html").write_text(
-        render_shell(
-            title="量级分类",
-            page_id="tiers.html",
-            page_type="tiers",
-            active_nav="tiers",
-            root_prefix="./",
-            context_bar_html=make_context_bar(
-                "./",
-                "index.html",
-                "首页",
-                [("量级分类（从小到大）", "")],
-                f'<a href="./rules.html#part-11">对照第十一部分总表 {SVG["arrow_ur"]}</a>',
-            ),
-            body_html=tiers_body,
-            tier_count=tier_count,
-            char_count=char_count,
-        ),
-        encoding="utf-8",
+    return render_shell(
+        title="量级分类（从小到大）",
+        page_id="tiers",
+        active_nav="tiers",
+        body_html=body,
+        root_prefix="./",
+        back_fallback=("index.html", "首页"),
     )
 
-    # 4. Generate Individual Tier Detail Pages: tier/<slug>.html
-    tier_dir = ROOT / "tier"
-    tier_dir.mkdir(exist_ok=True)
-    for t in tiers:
-        g = group_map.get(t["group_id"], {})
-        prev_t = ranked_tiers[t["order"] - 2] if (not t.get("unranked") and t["order"] > 1) else None
-        next_t = ranked_tiers[t["order"]] if (not t.get("unranked") and t["order"] < len(ranked_tiers)) else None
 
-        chars_in_tier = [c for c in formal_chars if c.get("tier_slug") == t["slug"]]
+def build_tier_detail_pages(
+    tiers: List[Dict[str, Any]],
+    groups: List[Dict[str, Any]],
+    all_chars: List[Dict[str, Any]],
+    rules_title_to_id: Dict[str, str],
+) -> None:
+    TIER_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    for old in TIER_OUT_DIR.glob("*.html"):
+        old.unlink()
+
+    group_map = {g["id"]: g for g in groups}
+    ranked = sorted([t for t in tiers if not t.get("unranked")], key=lambda x: x["order"])
+
+    for t in tiers:
+        g = group_map.get(t["group_id"], {"title": t["group_id"], "subtitle": ""})
+        is_unranked = bool(t.get("unranked"))
+
+        prev_t = None
+        next_t = None
+        neighbors: List[Dict[str, Any]] = []
+        if not is_unranked:
+            idx = next(i for i, item in enumerate(ranked) if item["slug"] == t["slug"])
+            if idx > 0:
+                prev_t = ranked[idx - 1]
+            if idx + 1 < len(ranked):
+                next_t = ranked[idx + 1]
+            lo = max(0, idx - 2)
+            hi = min(len(ranked), idx + 3)
+            neighbors = ranked[lo:hi]
+
+        rule_sec_title = t.get("rule_section", "")
+        rule_anchor = rules_title_to_id.get(rule_sec_title, "")
+        rule_href = f"../rules.html#{rule_anchor}" if rule_anchor else "../rules.html"
+
+        chars_in_tier = [c for c in all_chars if c.get("tier_slug") == t["slug"]]
         if chars_in_tier:
-            char_section_html = (
-                '<div class="char-grid" style="margin-top:12px">'
+            char_list_html = (
+                '<div class="char-grid" style="margin-top:14px">'
                 + "".join(
-                    f'<a class="char-card" href="../character/{c["slug"]}.html"><h4 style="margin:0">{html.escape(c["name"])}</h4><div style="font-size:12.5px;color:var(--text-muted)">{html.escape(c.get("series",""))}</div></a>'
+                    f"""
+                    <a class="char-card" href="../character/{esc(c['slug'])}.html">
+                      <span class="char-watermark-letter" aria-hidden="true">{esc((c.get('initial') or '#').upper())}</span>
+                      <div class="char-card-head">
+                        <div style="display:flex;align-items:center;gap:12px">
+                          <div class="char-avatar">{esc(c['name'][:1])}</div>
+                          <div>
+                            <div class="char-name">{esc(c['name'])}</div>
+                            <div class="char-series">{esc(c.get('series', ''))}</div>
+                          </div>
+                        </div>
+                        <span class="char-rating-pill mono">⊙ {esc(t['code'])}</span>
+                      </div>
+                      <div style="font-size:13px;color:var(--text-secondary)">{esc(c.get('summary', ''))}</div>
+                      <div class="char-card-foot">
+                        <span class="mono" style="font-size:11.5px">{esc(c.get('credibility') or '')}</span>
+                        <span class="char-enter-link" style="display:inline-flex;align-items:center;gap:4px">进入独立角色页 {SVGS['arrow_up_right']}</span>
+                      </div>
+                    </a>"""
                     for c in chars_in_tier
                 )
                 + "</div>"
             )
         else:
-            char_section_html = f"""
-            <div style="background:var(--bg-subtle);border:1px solid var(--border-hairline);border-radius:10px;padding:16px 18px;color:var(--text-muted);font-size:13px;margin-top:10px">
-              当前正式角色库暂无定级于 <strong style="color:var(--text-primary)">⊙ {html.escape(t['code'])}（{html.escape(t['name'])}）</strong> 的角色档案。
-              可前往 <a href="../characters.html" style="color:var(--accent-gold)">角色分类页</a> 浏览第三版示例卡或录入新角色。
-            </div>"""
+            char_list_html = f"""
+            <div style="margin-top:12px;padding:18px;border-radius:var(--radius-md);background:var(--bg-surface-2);border:1px dashed var(--border-subtle);color:var(--text-muted);font-size:13px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+              <span>当前档位暂无已收录角色档案。在 <code>data/characters.json</code> 中填入 <code>"tier_slug": "{esc(t['slug'])}"</code> 并构建即可自动生成独立角色页并关联至此。</span>
+              <a class="btn btn-surface" href="../characters.html" style="padding:6px 12px;font-size:12px">前往角色库 →</a>
+            </div>
+            """
+
+        ladder_strip_html = ""
+        if neighbors:
+            pills = []
+            for nb in neighbors:
+                is_cur = nb["slug"] == t["slug"]
+                style = (
+                    "border-color:var(--accent-gold);background:var(--accent-gold-soft);color:var(--accent-gold)"
+                    if is_cur
+                    else ""
+                )
+                pills.append(
+                    f'<a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;{style}" href="{esc(nb["slug"])}.html">'
+                    f'<span class="mono" style="font-weight:700">#{nb["order"]:02d} · ⊙ {esc(nb["code"])}</span>'
+                    f'<span style="font-size:12.5px">{esc(nb["name"])}</span>'
+                    f'<span class="mono" style="font-size:12px;color:var(--text-muted)">{esc(nb["energy"])}</span>'
+                    f"</a>"
+                )
+            ladder_strip_html = f"""
+            <div class="detail-meta-card" style="margin-top:18px">
+              <div class="meta-kicker">相邻天梯序列（从小到大连续上下文）</div>
+              <div style="display:grid;gap:8px;margin-top:10px">{''.join(pills)}</div>
+            </div>
+            """
 
         prev_html = (
-            f'<a class="ladder-item prev" href="./{prev_t["slug"]}.html"><span class="ladder-dir">← 上一较低量级（#{prev_t["order"]:02d}）</span><span class="ladder-name">⊙ {html.escape(prev_t["code"])} · {html.escape(prev_t["name"])}</span><span class="mono" style="font-size:12px;color:var(--accent-gold)">{html.escape(prev_t["energy"])}</span></a>'
+            f"""<a class="adj-nav-card" href="{esc(prev_t['slug'])}.html">
+                  <span class="adj-dir">← 上一档（更低量级）</span>
+                  <span class="adj-name">#{prev_t['order']:02d} · ⊙ {esc(prev_t['code'])} {esc(prev_t['name'])}</span>
+                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">{esc(prev_t['energy'])}</span>
+                </a>"""
             if prev_t
-            else '<div class="ladder-item prev" style="opacity:0.4"><span class="ladder-dir">← 已是最低起点</span><span class="ladder-name">无更低正式量级</span></div>'
+            else """<div class="adj-nav-card" style="opacity:0.45;pointer-events:none">
+                      <span class="adj-dir">← 起点档位</span>
+                      <span class="adj-name">已是最低量级（#01 昆虫级）</span>
+                    </div>"""
         )
+
         next_html = (
-            f'<a class="ladder-item next" href="./{next_t["slug"]}.html"><span class="ladder-dir">下一较高量级（#{next_t["order"]:02d}）→</span><span class="ladder-name">⊙ {html.escape(next_t["code"])} · {html.escape(next_t["name"])}</span><span class="mono" style="font-size:12px;color:var(--accent-gold)">{html.escape(next_t["energy"])}</span></a>'
+            f"""<a class="adj-nav-card next" href="{esc(next_t['slug'])}.html">
+                  <span class="adj-dir">下一档（更高量级） →</span>
+                  <span class="adj-name">#{next_t['order']:02d} · ⊙ {esc(next_t['code'])} {esc(next_t['name'])}</span>
+                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">{esc(next_t['energy'])}</span>
+                </a>"""
             if next_t
-            else '<div class="ladder-item next" style="opacity:0.4"><span class="ladder-dir">已是最高顶点 →</span><span class="ladder-name">无更高正式量级</span></div>'
+            else """<div class="adj-nav-card next" style="opacity:0.45;pointer-events:none">
+                      <span class="adj-dir">顶点档位 →</span>
+                      <span class="adj-name">已是最高量级（#97 论天最上）</span>
+                    </div>"""
         )
 
-        rank_display = "不参与大小排序（信息不足暂存）" if t.get("unranked") else f"第 {t['order']} 档 / 共 {len(ranked_tiers)} 正式档"
-        rule_anchor_id = tier_anchor_map[t["slug"]]
-        rule_sec_label = t.get("rule_section") or "总则"
-        full_write_example = f"⊙{t['code']}（{t['name']}：{t['scale']}，{t['energy']}）"
+        order_badge = "待定档" if is_unranked else f"天梯序位 #{t['order']:02d} / 97"
 
-        detail_body = f"""
-        <div class="container detail-wrap">
-          <article class="detail-card">
-            <div class="detail-header">
-              <div>
-                <div class="detail-code-pill mono">⊙ {html.escape(t['code'])}</div>
-                <h1 class="detail-title">{html.escape(t['name'])} <span style="font-size:17px;font-weight:400;color:var(--text-muted)">· {html.escape(t['family'])}</span></h1>
+        body = f"""
+        <div class="container" style="padding-bottom:32px">
+          <div style="padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <button type="button" class="back-pill js-smart-back" data-fallback="tiers.html" data-fallback-name="量级总览">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回量级总览</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../tiers.html">量级分类</a>
+              <span>/</span>
+              <span>⊙ {esc(t['code'])} {esc(t['name'])}</span>
+            </nav>
+          </div>
+
+          <article class="detail-hero" data-domain="{esc(t['domain'])}" style="margin-top:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <span class="tier-code-badge mono" style="font-size:20px;padding:6px 16px;--dom-color:var(--dom-{esc(t['domain'])},var(--accent-gold))">⊙ {esc(t['code'])}</span>
+                <span class="count-pill mono">{order_badge}</span>
+                <span class="count-pill">{esc(g['title'])}</span>
               </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <a class="btn btn-primary" href="../rules.html#{html.escape(rule_anchor_id)}" title="跳转至：{html.escape(rule_sec_label)}">{SVG['book']}<span>第三版原文：{html.escape(rule_sec_label[:16])}{'…' if len(rule_sec_label) > 16 else ''}</span>{SVG['arrow_ur']}</a>
-                <a class="btn btn-surface" href="../tiers.html">返回量级分类</a>
+              <a class="btn btn-surface" href="{rule_href}" style="padding:7px 14px;font-size:12.5px">
+                查阅《衡天第三版》对应章节 {SVGS["arrow_up_right"]}
+              </a>
+            </div>
+
+            <h1 style="margin:18px 0 8px;font-family:var(--font-serif);font-size:clamp(26px,3.6vw,36px);font-weight:700;letter-spacing:-0.015em">
+              {esc(t['name'])} <span style="font-family:var(--font-sans);font-size:16px;color:var(--text-muted);font-weight:500">· {esc(t['family'])}系</span>
+            </h1>
+            <p style="margin:0;color:var(--text-secondary);font-size:14.5px;line-height:1.75;max-width:820px">
+              {esc(t.get('notes', ''))}
+            </p>
+
+            <div class="detail-grid">
+              <div class="detail-meta-card">
+                <div class="meta-kicker">能量阈值 / 数学定义</div>
+                <div class="meta-val mono" style="color:var(--accent-gold);font-size:16.5px">{esc(t['energy'])}</div>
+              </div>
+              <div class="detail-meta-card">
+                <div class="meta-kicker">覆盖尺度与典型参照物</div>
+                <div class="meta-val">{esc(t['scale'])}</div>
+              </div>
+              <div class="detail-meta-card">
+                <div class="meta-kicker">物理 / 数学计算模型</div>
+                <div class="meta-val">{esc(t['model'])}</div>
+              </div>
+              <div class="detail-meta-card">
+                <div class="meta-kicker">检索拼音索引</div>
+                <div class="meta-val mono" style="font-size:13px;color:var(--text-secondary)">
+                  首字母 {(t.get('initial') or '#').upper()} · {esc(t.get('code_pinyin', ''))} / {esc(t.get('full_pinyin', ''))}
+                </div>
               </div>
             </div>
 
-            <div class="spec-grid">
-              <div class="spec-box">
-                <div class="spec-label">全链条序位（从小到大）</div>
-                <div class="spec-value mono">{rank_display}</div>
-              </div>
-              <div class="spec-box">
-                <div class="spec-label">所属体系区间</div>
-                <div class="spec-value">{html.escape(g.get('title', ''))}</div>
-              </div>
-              <div class="spec-box wide">
-                <div class="spec-label">能量区间 / 数学刻度定义</div>
-                <div class="spec-value mono" style="color:var(--accent-gold);font-size:16px">{html.escape(t['energy'])}</div>
-              </div>
-              <div class="spec-box">
-                <div class="spec-label">典型破坏尺度与参照物</div>
-                <div class="spec-value">{html.escape(t['scale'])}</div>
-              </div>
-              <div class="spec-box">
-                <div class="spec-label">适用物理 / 数学模型</div>
-                <div class="spec-value">{html.escape(t['model'])}</div>
-              </div>
-              <div class="spec-box wide">
-                <div class="spec-label">第三版「完整书写」推荐展开格式（1.5 节规范）</div>
-                <div class="spec-value mono" style="font-size:13.5px;color:var(--accent-cyan)">{html.escape(full_write_example)}</div>
-              </div>
-              <div class="spec-box wide">
-                <div class="spec-label">判定细则与注意事项</div>
-                <div class="spec-value" style="font-weight:400;color:var(--text-secondary);line-height:1.75;font-size:14px">{html.escape(t['notes'])}</div>
+            <div class="detail-meta-card" style="margin-top:16px;background:var(--bg-surface-1)">
+              <div class="meta-kicker">《衡天⊙ 第三版》1.5 完整书写示范格式（首次出现须写全称与标准）</div>
+              <div class="meta-val" style="font-size:13.5px;line-height:1.75;color:var(--text-secondary)">
+                综合量级：<span class="mono" style="color:var(--accent-gold)">⊙{esc(t['code'])}</span>——{esc(t['name'])}（{esc(t['scale'])}，能量/结构基准 <span class="mono">{esc(t['energy'])}</span>）
               </div>
             </div>
 
-            <section style="margin-top:24px">
-              <h2 style="font-size:15.5px;margin:0 0 6px;font-weight:650">本量级收录角色（{len(chars_in_tier)}）</h2>
-              {char_section_html}
-            </section>
+            {ladder_strip_html}
+
+            <div style="margin-top:26px">
+              <h2 style="margin:0;font-family:var(--font-serif);font-size:19px;font-weight:700">本档位已收录角色（{len(chars_in_tier)}）</h2>
+              {char_list_html}
+            </div>
+
+            <div class="adjacent-nav">
+              {prev_html}
+              {next_html}
+            </div>
           </article>
-
-          <nav class="ladder-nav" aria-label="相邻量级切换">
-            {prev_html}
-            {next_html}
-          </nav>
         </div>
         """
 
-        (tier_dir / f"{t['slug']}.html").write_text(
-            render_shell(
-                title=f"⊙{t['code']} {t['name']}",
-                page_id=f"tier/{t['slug']}.html",
-                page_type="tier-detail",
-                active_nav="tiers",
-                root_prefix="../",
-                context_bar_html=make_context_bar(
-                    "../",
-                    "tiers.html",
-                    "量级分类",
-                    [("量级分类", "../tiers.html"), (f"⊙ {t['code']} · {t['name']}", "")],
-                    f'<span class="mono">#{t["order"]:02d}</span>' if not t.get("unranked") else "待定",
-                ),
-                body_html=detail_body,
-                tier_count=tier_count,
-                char_count=char_count,
-            ),
-            encoding="utf-8",
+        page_html = render_shell(
+            title=f"⊙{t['code']} {t['name']}",
+            page_id=f"tier-{t['slug']}",
+            active_nav="tiers",
+            body_html=body,
+            root_prefix="../",
+            back_fallback=("tiers.html", "量级总览"),
+        )
+        (TIER_OUT_DIR / f"{t['slug']}.html").write_text(page_html, encoding="utf-8")
+
+
+def build_characters_page(
+    all_chars: List[Dict[str, Any]],
+    tiers: List[Dict[str, Any]],
+) -> str:
+    tier_by_slug = {t["slug"]: t for t in tiers}
+
+    # Pre-render initial SSR character cards (sorted weak -> strong) so page is complete even before JS
+    sorted_chars = sorted(
+        all_chars,
+        key=lambda c: (
+            tier_by_slug.get(c.get("tier_slug", ""), {}).get("order", 999),
+            c.get("pinyin") or c.get("name") or "",
+        ),
+    )
+
+    ssr_cards: List[str] = []
+    for c in sorted_chars:
+        t = tier_by_slug.get(c.get("tier_slug", ""))
+        t_code = t["code"] if t else "待定"
+        t_name = t["name"] if t else "待定"
+        t_order = f"#{t['order']:02d}" if t and not t.get("unranked") else "—"
+        initial = esc((c.get("initial") or "#").upper())
+        mod_html = "".join(f'<span class="mod-chip">{esc(m)}</span>' for m in (c.get("modifiers") or []))
+        dims = c.get("dims") or {}
+        dims_html = "".join(
+            f'<div class="dim-cell {"full-row" if k in ("域", "性") else ""}">'
+            f'<span class="dim-key">{k}</span>'
+            f'<span class="dim-val">{format_evidence_html(dims.get(k, "〔缺〕"))}</span></div>'
+            for k in ["破", "控", "御", "速", "域", "算", "性"]
+        )
+        ssr_cards.append(
+            f"""
+            <a class="char-card" href="character/{esc(c['slug'])}.html">
+              <span class="char-watermark-letter" aria-hidden="true">{initial}</span>
+              <div class="char-card-head">
+                <div style="display:flex;align-items:center;gap:13px;min-width:0">
+                  <div class="char-avatar">{esc(c['name'][:1])}</div>
+                  <div class="char-title-group">
+                    <h3 class="char-name">{esc(c['name'])}</h3>
+                    <div class="char-series">{esc(c.get('series') or '未知出处')}{' · ' + esc(c['realm']) if c.get('realm') else ''}</div>
+                  </div>
+                </div>
+                <span class="char-rating-pill mono">⊙ {esc(t_code)}</span>
+              </div>
+              <div class="char-modifiers">
+                <span class="mod-chip" style="color:var(--accent-blue)">{esc(t_name)} · {t_order}</span>
+                <span class="mod-chip mono">首字母 {initial}</span>
+                {mod_html}
+              </div>
+              <div class="dims-mini-grid">{dims_html}</div>
+              <div class="char-card-foot">
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{esc(c.get('summary') or '')}</span>
+                <span class="char-enter-link" style="white-space:nowrap;font-weight:500;display:inline-flex;align-items:center;gap:4px">进入档案 {SVGS['arrow_up_right']}</span>
+              </div>
+            </a>"""
         )
 
-    # 5. Generate characters.html — 首字母 A–Z & 量级从小到大
-    chars_body = f"""
-    <section class="page-hero">
-      <div class="container page-hero-inner">
-        <span class="page-kicker mono">CATEGORY 01 · CHARACTER DOSSIERS</span>
-        <h1 class="page-hero-title"><span>角色档案分类</span><span class="brand-badge mono">首字母 A–Z &amp; 量级从小到大</span></h1>
-        <p class="page-hero-desc">按《衡天⊙ 多维战力量级体系（第三版）》呈现角色主档、完整书写结论及破·控·域·御·速·算·性七维细分评定。支持<strong>按量级从小到大</strong>与<strong>按角色首字母 A–Z</strong>双模式排序。</p>
+    body = f"""
+    <div class="container">
+      <div class="page-masthead">
+        <div class="masthead-art" aria-hidden="true">
+          <img src="static/img/character-chronicle.jpg" alt="" style="--art-pos: 78% 45%;">
+        </div>
+        <div class="masthead-inner">
+          <div class="masthead-top">
+            <button type="button" class="back-pill js-smart-back" data-fallback="index.html" data-fallback-name="首页">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回首页</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="index.html">首页</a>
+              <span>/</span>
+              <span>角色分类</span>
+            </nav>
+          </div>
+          <div class="masthead-title-row">
+            <div>
+              <h1 class="masthead-title">角色战力档案库</h1>
+              <p class="masthead-sub">
+                支持<strong>按主档量级从小到大</strong>与<strong>按拼音首字母（A–Z）</strong>双基准排序；点击任意角色卡片将<strong>直接进入专属独立角色档案界面</strong>，返回时自动恢复当前排序与滚动位置。
+              </p>
+            </div>
+            <span class="count-pill mono" id="char-result-count">显示 {len(all_chars)} / {len(all_chars)} 位</span>
+          </div>
+        </div>
       </div>
-    </section>
 
-    <div class="container" style="padding-bottom:60px">
-      <div class="toolbar-panel">
-        <div class="toolbar-row">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-size:12px;color:var(--text-muted);font-weight:500">排序方式</span>
-            <div class="segmented-group" role="group" aria-label="角色排序切换">
+      <!-- Controls Bar -->
+      <div class="controls-bar">
+        <div class="controls-row">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div class="seg-control" role="group" aria-label="角色排序方式">
               <button type="button" class="seg-btn active" data-char-sort="asc">↑ 按量级从小到大</button>
               <button type="button" class="seg-btn" data-char-sort="alpha">A–Z 按首字母排序</button>
             </div>
-          </div>
 
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;justify-content:flex-end">
-            <select id="char-series-select" class="filter-input" style="max-width:190px" aria-label="按作品筛选">
+            <select id="char-series-select" aria-label="按作品筛选" style="padding:7px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-subtle);background:var(--bg-surface-2);color:var(--text-primary);font-size:12.5px">
               <option value="all">全部作品</option>
             </select>
-            <div class="filter-input-wrap">
-              <span class="filter-input-icon">{SVG['search_sm']}</span>
-              <input type="search" class="filter-input" id="char-filter-input" placeholder="搜索角色名、拼音、出处、机制特性…">
-            </div>
-            <button type="button" class="chip-btn" id="char-demo-toggle">隐藏示例卡</button>
+          </div>
+
+          <div class="inline-search">
+            <input type="search" id="char-filter-input" placeholder="检索角色名、拼音首字母、出处、量级代字或维度表现…" autocomplete="off">
           </div>
         </div>
 
-        <div class="toolbar-row">
-          <div class="filter-Chips">
-            <button type="button" class="chip-btn active" data-char-domain="all">全部量级域</button>
-            <button type="button" class="chip-btn" data-char-domain="terrestrial">地表与常规区</button>
-            <button type="button" class="chip-btn" data-char-domain="stellar">行星与恒星区</button>
-            <button type="button" class="chip-btn" data-char-domain="cosmic">星系与宇宙区</button>
-            <button type="button" class="chip-btn" data-char-domain="fgh">广义无限区</button>
-            <button type="button" class="chip-btn" data-char-domain="beyond">论外与论天区</button>
+        <div class="controls-row" style="border-top:1px solid var(--border-hairline);padding-top:10px">
+          <div class="filter-Chips" role="group" aria-label="角色所属量级段筛选">
+            <button type="button" class="chip-btn active" data-char-domain="all">全部量级区间</button>
+            <button type="button" class="chip-btn" data-char-domain="human">个体～城市</button>
+            <button type="button" class="chip-btn" data-char-domain="continent">国家～大陆</button>
+            <button type="button" class="chip-btn" data-char-domain="planet">行星～巨行星</button>
+            <button type="button" class="chip-btn" data-char-domain="star">致密星～恒星系</button>
+            <button type="button" class="chip-btn" data-char-domain="galaxy">星团～星系</button>
+            <button type="button" class="chip-btn" data-char-domain="universe">宇宙网～宇宙</button>
+            <button type="button" class="chip-btn" data-char-domain="multiverse">多元～无限维</button>
+            <button type="button" class="chip-btn" data-char-domain="outer">论外</button>
+            <button type="button" class="chip-btn" data-char-domain="heaven">论天</button>
           </div>
-          <span class="mono" id="char-result-count" style="font-size:12px;color:var(--text-muted);flex-shrink:0">收录 {char_count} 位</span>
         </div>
       </div>
 
-      <div id="char-demo-banner-slot"></div>
-
-      <div class="alpha-bar" id="char-alpha-bar">
-        <span class="mono" style="font-size:11px;color:var(--accent-gold);font-weight:600;flex-shrink:0">A–Z</span>
+      <!-- Sticky A-Z Jump Bar (Visible when A-Z Sort Active) -->
+      <div class="alpha-bar" id="char-alpha-bar" aria-label="首字母快速定位栏">
         <div class="alpha-letters" id="char-alpha-letters"></div>
       </div>
 
-      <div id="chars-explorer-mount"></div>
+      <div id="chars-explorer-mount" style="padding-bottom:28px">
+        <section class="tier-group-block" id="char-scale-list">
+          <div class="tier-group-header">
+            <h2 class="tier-group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
+            <span class="tier-group-sub">{len(sorted_chars)} 位角色</span>
+          </div>
+          <div class="char-grid">{"".join(ssr_cards)}</div>
+        </section>
+      </div>
     </div>
+    """
+    return render_shell(
+        title="角色分类（首字母 / 从小到大）",
+        page_id="characters",
+        active_nav="characters",
+        body_html=body,
+        root_prefix="./",
+        back_fallback=("index.html", "首页"),
+    )
 
-    <!-- Demo Character 7D Inspection Modal -->
-    <div class="modal-backdrop" id="demo-char-modal" role="dialog" aria-modal="true" aria-label="七维评定面板详情">
-      <div class="modal-dialog">
-        <div class="search-modal-head" style="justify-content:space-between">
-          <strong style="font-size:14.5px">⊙ 衡天第三版 · 七维角色战力档案</strong>
-          <button type="button" class="resume-toast-close" id="demo-char-close" aria-label="关闭">{SVG['close']}</button>
+
+def build_character_detail_pages(
+    all_chars: List[Dict[str, Any]],
+    tiers: List[Dict[str, Any]],
+    groups: List[Dict[str, Any]],
+    rules_title_to_id: Dict[str, str],
+) -> None:
+    CHAR_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    for old in CHAR_OUT_DIR.glob("*.html"):
+        old.unlink()
+
+    if not all_chars:
+        return
+
+    tier_by_slug = {t["slug"]: t for t in tiers}
+    group_map = {g["id"]: g for g in groups}
+
+    # Order characters weak -> strong for Prev / Next dossier navigation
+    ordered_chars = sorted(
+        all_chars,
+        key=lambda c: (
+            tier_by_slug.get(c.get("tier_slug", ""), {}).get("order", 999),
+            c.get("pinyin") or c.get("name") or "",
+        ),
+    )
+
+    for idx, c in enumerate(ordered_chars):
+        t = tier_by_slug.get(c.get("tier_slug", ""), tier_by_slug.get("pending", tiers[-1]))
+        g = group_map.get(t["group_id"], {"title": t["group_id"], "subtitle": ""})
+        prev_c = ordered_chars[idx - 1] if idx > 0 else None
+        next_c = ordered_chars[idx + 1] if idx + 1 < len(ordered_chars) else None
+
+        initial = esc((c.get("initial") or "#").upper())
+        t_order_str = "待定档" if t.get("unranked") else f"#{t['order']:02d}"
+
+        rule_sec_title = t.get("rule_section", "")
+        rule_anchor = rules_title_to_id.get(rule_sec_title, "")
+        rule_href = f"../rules.html#{rule_anchor}" if rule_anchor else "../rules.html"
+
+        dims = c.get("dims") or {}
+        dim_cards_html: List[str] = []
+        for dim_key, dim_title, dim_desc in DIM_META:
+            raw_val = dims.get(dim_key, "〔缺〕")
+            wide_cls = "wide" if dim_key == "性" else ""
+            dim_cards_html.append(
+                f"""
+                <div class="dossier-dim-card {wide_cls}">
+                  <div class="dossier-dim-head">
+                    <span class="dossier-dim-symbol mono">{esc(dim_key)}</span>
+                    <div>
+                      <div class="dossier-dim-title">{esc(dim_title)}</div>
+                      <div style="font-size:11.5px;color:var(--text-muted)">{esc(dim_desc)}</div>
+                    </div>
+                  </div>
+                  <div class="dossier-dim-body">{format_evidence_html(raw_val)}</div>
+                </div>"""
+            )
+
+        mod_chips_html = "".join(
+            f'<span class="mod-chip" style="padding:4px 10px;font-size:12px">{esc(m)}</span>'
+            for m in (c.get("modifiers") or [])
+        )
+
+        full_writing = c.get("full_writing") or (
+            f"综合量级：⊙{t['code']}——{t['name']}（{t['scale']}，能量/结构基准 {t['energy']}）。"
+        )
+
+        # Optional feats list if provided in characters.json
+        feats = c.get("feats") or []
+        feats_section_html = ""
+        if feats:
+            feat_items = "".join(
+                f'<li style="margin-bottom:8px;color:var(--text-secondary);line-height:1.75">{format_evidence_html(f)}</li>'
+                for f in feats
+            )
+            feats_section_html = f"""
+            <section class="dossier-section">
+              <div class="dossier-section-head">
+                <h2 class="dossier-section-title">关键战绩与原文引证</h2>
+              </div>
+              <div class="detail-meta-card">
+                <ul style="margin:0;padding-left:20px">{feat_items}</ul>
+              </div>
+            </section>
+            """
+
+        prev_html = (
+            f"""<a class="adj-nav-card" href="{esc(prev_c['slug'])}.html">
+                  <span class="adj-dir">← 上一位角色（更低量级）</span>
+                  <span class="adj-name">{esc(prev_c['name'])}</span>
+                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">⊙ {esc(tier_by_slug.get(prev_c.get('tier_slug',''), {}).get('code', '待定'))} · 首字母 {esc((prev_c.get('initial') or '#').upper())}</span>
+                </a>"""
+            if prev_c
+            else """<div class="adj-nav-card" style="opacity:0.45;pointer-events:none">
+                      <span class="adj-dir">← 序列起点</span>
+                      <span class="adj-name">已是当前库内最低量级角色</span>
+                    </div>"""
+        )
+
+        next_html = (
+            f"""<a class="adj-nav-card next" href="{esc(next_c['slug'])}.html">
+                  <span class="adj-dir">下一位角色（更高量级） →</span>
+                  <span class="adj-name">{esc(next_c['name'])}</span>
+                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">⊙ {esc(tier_by_slug.get(next_c.get('tier_slug',''), {}).get('code', '待定'))} · 首字母 {esc((next_c.get('initial') or '#').upper())}</span>
+                </a>"""
+            if next_c
+            else """<div class="adj-nav-card next" style="opacity:0.45;pointer-events:none">
+                      <span class="adj-dir">序列顶点 →</span>
+                      <span class="adj-name">已是当前库内最高量级角色</span>
+                    </div>"""
+        )
+
+        monogram_inner = (
+            f'<img src="{esc(c["image_url"])}" alt="{esc(c["name"])}">'
+            if c.get("image_url")
+            else esc(c["name"][:1])
+        )
+
+        body = f"""
+        <div class="container" style="padding-bottom:36px">
+          <div style="padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <button type="button" class="back-pill js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>{esc(c['name'])}</span>
+            </nav>
+          </div>
+
+          <!-- Standalone Character Dossier Hero -->
+          <section class="dossier-hero">
+            <div class="dossier-art" aria-hidden="true">
+              <img src="../static/img/character-chronicle.jpg" alt="" style="--art-pos: 82% 42%;">
+            </div>
+            <div class="dossier-inner">
+              <div class="dossier-top-bar">
+                <div class="dossier-identity">
+                  <div class="dossier-monogram">{monogram_inner}</div>
+                  <div>
+                    <div class="hero-eyebrow" style="margin-bottom:8px">
+                      <span class="hero-eyebrow-line" style="width:18px"></span>
+                      <span>CHARACTER DOSSIER · 首字母 {initial}</span>
+                    </div>
+                    <h1 class="dossier-name">{esc(c['name'])}</h1>
+                    <div class="dossier-subtitle">
+                      <span>出处：{esc(c.get('series') or '未标注')}</span>
+                      {f'<span>·</span><span>境界/形态：{esc(c["realm"])}</span>' if c.get("realm") else ""}
+                      {f'<span>·</span><span>称号：{esc(c["alias"])}</span>' if c.get("alias") else ""}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="dossier-seal-box">
+                  <a class="dossier-tier-seal mono" href="../tier/{esc(t['slug'])}.html" title="点击查看 ⊙{esc(t['code'])} 量级规格页">
+                    <span>⊙ {esc(t['code'])}</span>
+                    <span style="font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--text-primary)">{esc(t['name'])}</span>
+                    <span style="font-size:12px;color:var(--text-muted)">{t_order_str}</span>
+                    {SVGS["arrow_up_right"]}
+                  </a>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+                    <span class="mod-chip" style="padding:4px 10px;font-size:12px;color:var(--accent-blue)">{esc(g['title'])}</span>
+                    {mod_chips_html}
+                  </div>
+                </div>
+              </div>
+
+              <p style="margin:20px 0 0;color:var(--text-secondary);font-size:14.8px;line-height:1.8;max-width:860px">
+                {esc(c.get('summary') or '')}
+              </p>
+
+              <div class="dossier-quote-box">
+                <div class="meta-kicker" style="color:var(--accent-gold);margin-bottom:6px">
+                  《衡天⊙ 第三版》1.5 正式完整书写（首次出现展开全称、标准与能量）
+                </div>
+                <div>{format_evidence_html(full_writing)}</div>
+                {f'<div style="margin-top:8px;font-size:12.5px;color:var(--text-muted)">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
+              </div>
+            </div>
+          </section>
+
+          <!-- Seven Dimensions Breakdown -->
+          <section class="dossier-section">
+            <div class="dossier-section-head">
+              <h2 class="dossier-section-title">七维战力分项评定</h2>
+              <span class="dossier-section-sub">依据《衡天⊙ 第三版》七维并列与缺项不反推规范逐项标定</span>
+            </div>
+            <div class="dossier-dims-grid">
+              {"".join(dim_cards_html)}
+            </div>
+          </section>
+
+          {feats_section_html}
+
+          <!-- Canonical Tier Anchor Comparison -->
+          <section class="dossier-section">
+            <div class="dossier-section-head">
+              <h2 class="dossier-section-title">所属主档物理 / 数学基准锚点</h2>
+              <a class="btn btn-surface" href="../tier/{esc(t['slug'])}.html" style="padding:6px 13px;font-size:12.5px">
+                进入 ⊙{esc(t['code'])} 量级规格页 {SVGS["arrow_up_right"]}
+              </a>
+            </div>
+            <div class="detail-grid" style="margin-top:0">
+              <div class="detail-meta-card">
+                <div class="meta-kicker">主档代字与序位</div>
+                <div class="meta-val mono" style="color:var(--accent-gold)">⊙ {esc(t['code'])} · {esc(t['name'])}（{t_order_str}）</div>
+              </div>
+              <div class="detail-meta-card">
+                <div class="meta-kicker">能量阈值 / 超限基数</div>
+                <div class="meta-val mono">{esc(t['energy'])}</div>
+              </div>
+              <div class="detail-meta-card">
+                <div class="meta-kicker">覆盖尺度与典型参照</div>
+                <div class="meta-val">{esc(t['scale'])}</div>
+              </div>
+              <div class="detail-meta-card">
+                <div class="meta-kicker">对应《衡天第三版》章节</div>
+                <div class="meta-val">
+                  <a href="{rule_href}" style="display:inline-flex;align-items:center;gap:5px">
+                    {esc(rule_sec_title or '查阅第三版规范原文')} {SVGS["arrow_up_right"]}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Prev / Next Character Navigation -->
+          <div class="adjacent-nav" style="margin-top:30px">
+            {prev_html}
+            {next_html}
+          </div>
         </div>
-        <div class="search-modal-body" id="demo-char-modal-body" style="padding:20px 22px"></div>
+        """
+
+        page_html = render_shell(
+            title=f"{c['name']} · 角色战力档案",
+            page_id=f"char-{c['slug']}",
+            active_nav="characters",
+            body_html=body,
+            root_prefix="../",
+            back_fallback=("characters.html", "角色档案库"),
+        )
+        (CHAR_OUT_DIR / f"{c['slug']}.html").write_text(page_html, encoding="utf-8")
+
+
+def build_fulltext_doc_page(
+    *,
+    page_id: str,
+    active_nav: str,
+    title: str,
+    subtitle: str,
+    source_filename: str,
+    masthead_img: str,
+    masthead_pos: str,
+    md_text: str,
+    other_doc_link: Tuple[str, str],
+) -> Tuple[str, List[Dict[str, str]], Dict[str, str]]:
+    renderer = VerbatimMarkdownRenderer()
+    rendered_html = renderer.render(md_text)
+    line_count = len(md_text.splitlines())
+    char_count = len(md_text)
+
+    toc_links: List[str] = []
+    title_to_id: Dict[str, str] = {}
+    for item in renderer.toc:
+        lvl = item["level"]
+        hid = item["id"]
+        htitle = item["title"]
+        title_to_id[htitle] = hid
+        toc_links.append(
+            f'<a class="toc-item toc-lvl-{lvl}" href="#{esc(hid)}">{esc(htitle)}</a>'
+        )
+
+    body = f"""
+    <div class="container">
+      <div class="page-masthead">
+        <div class="masthead-art" aria-hidden="true">
+          <img src="{esc(masthead_img)}" alt="" style="--art-pos: {esc(masthead_pos)};">
+        </div>
+        <div class="masthead-inner">
+          <div class="masthead-top">
+            <button type="button" class="back-pill js-smart-back" data-fallback="index.html" data-fallback-name="首页">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回首页</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="index.html">首页</a>
+              <span>/</span>
+              <span>{esc(title)}</span>
+            </nav>
+          </div>
+          <div class="masthead-title-row">
+            <div>
+              <h1 class="masthead-title">{esc(title)}</h1>
+              <p class="masthead-sub">{esc(subtitle)}</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span class="count-pill mono">全文无删减 · {line_count} 行 · {char_count:,} 字</span>
+              <a class="btn btn-surface" href="{esc(other_doc_link[0])}" style="padding:6px 12px;font-size:12px">{esc(other_doc_link[1])} →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-layout">
+        <!-- Left Sticky TOC Sidebar -->
+        <aside class="doc-sidebar" id="doc-sidebar" aria-label="全文目录">
+          <div class="toc-head">
+            <div class="toc-head-title">
+              <span>章节目录索引</span>
+              <span class="mono" style="color:var(--text-muted)">{len(renderer.toc)} 节</span>
+            </div>
+            <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选目录章节…" autocomplete="off">
+          </div>
+          <nav class="toc-list" id="toc-nav">
+            {''.join(toc_links)}
+          </nav>
+        </aside>
+
+        <!-- Full Verbatim Markdown Reader -->
+        <article class="doc-article">
+          <div class="doc-toolbar">
+            <div class="doc-source-badge">
+              <span>源文件：<code class="mono">{esc(source_filename)}</code></span>
+              <span>·</span>
+              <span style="color:var(--ev-confirmed)">100% 完整原文展示</span>
+            </div>
+            <div class="doc-tools">
+              <div style="display:flex;align-items:center;gap:4px">
+                <input type="search" id="doc-find-input" placeholder="页内定位词句…" style="width:142px;padding:4px 9px;border-radius:var(--radius-sm);border:1px solid var(--border-subtle);background:var(--bg-surface-2);color:var(--text-primary);font-size:12px">
+                <button type="button" class="tool-mini-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
+                <span class="mono" id="doc-find-count" style="font-size:11px;color:var(--accent-gold);min-width:34px"></span>
+              </div>
+              <button type="button" class="tool-mini-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+              <button type="button" class="tool-mini-btn" id="doc-font-inc" title="放大正文字号">A+</button>
+              <button type="button" class="tool-mini-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
+            </div>
+          </div>
+
+          <div class="markdown-body">
+            {rendered_html}
+          </div>
+        </article>
       </div>
     </div>
     """
 
-    (ROOT / "characters.html").write_text(
-        render_shell(
-            title="角色分类",
-            page_id="characters.html",
-            page_type="chars",
-            active_nav="chars",
-            root_prefix="./",
-            context_bar_html=make_context_bar(
-                "./",
-                "index.html",
-                "首页",
-                [("角色档案分类", "")],
-                f'<a href="./rules.html#sec-1-5">1.5 节完整书写规范 {SVG["arrow_ur"]}</a>',
-            ),
-            body_html=chars_body,
-            tier_count=tier_count,
-            char_count=char_count,
-        ),
-        encoding="utf-8",
+    full_html = render_shell(
+        title=title,
+        page_id=page_id,
+        active_nav=active_nav,
+        body_html=body,
+        root_prefix="./",
+        has_toc_button=True,
+        back_fallback=("index.html", "首页"),
+    )
+    return full_html, renderer.sections_for_index, title_to_id
+
+
+def build_search_page() -> str:
+    hot_queries = [
+        "宇◆",
+        "完整书写",
+        "归因与知情度",
+        "超长篇",
+        "外·门",
+        "中子星外壳",
+        "花岗岩",
+        "0′",
+        "攻防双满",
+        "莱因哈特",
+    ]
+    hot_chips = "".join(
+        f'<button type="button" class="chip-btn" data-hot-query="{esc(q)}">{esc(q)}</button>'
+        for q in hot_queries
     )
 
-    if formal_chars:
-        char_dir = ROOT / "character"
-        char_dir.mkdir(exist_ok=True)
-        for c in formal_chars:
-            t_obj = next((x for x in tiers if x["slug"] == c["tier_slug"]), tiers[-1])
-            dims_rows = "".join(
-                f'<tr><th style="width:92px">维度「{k}」</th><td>{format_inline_md(c.get("dims", {}).get(k, "〔缺〕"))}</td></tr>'
-                for k in ["破", "控", "域", "御", "速", "算", "性"]
-            )
-            c_body = f"""
-            <div class="container detail-wrap">
-              <article class="detail-card">
-                <div class="detail-header">
-                  <div>
-                    <div class="detail-code-pill mono">⊙ {html.escape(t_obj['code'])} · {html.escape(t_obj['name'])}</div>
-                    <h1 class="detail-title">{html.escape(c['name'])}</h1>
-                    <div style="color:var(--text-muted);margin-top:6px;font-size:13px">{html.escape(c.get('series', ''))} · {html.escape(c.get('realm', ''))}</div>
-                  </div>
-                  <a class="btn btn-surface" href="../tier/{t_obj['slug']}.html">所属量级详情 {SVG['arrow_ur']}</a>
-                </div>
-                <p style="font-size:14.5px;color:var(--text-secondary)">{html.escape(c.get('summary', ''))}</p>
-                <div class="table-scroll"><table><tbody>{dims_rows}</tbody></table></div>
-              </article>
-            </div>
-            """
-            (char_dir / f"{c['slug']}.html").write_text(
-                render_shell(
-                    title=c["name"],
-                    page_id=f"character/{c['slug']}.html",
-                    page_type="char-detail",
-                    active_nav="chars",
-                    root_prefix="../",
-                    context_bar_html=make_context_bar(
-                        "../",
-                        "characters.html",
-                        "角色分类",
-                        [("角色分类", "../characters.html"), (c["name"], "")],
-                    ),
-                    body_html=c_body,
-                    tier_count=tier_count,
-                    char_count=char_count,
-                ),
-                encoding="utf-8",
-            )
-
-    # 6. Generate Full-Text Canonical Document Pages: rules.html & materials.html
-    def build_doc_page(
-        *,
-        filename: str,
-        kicker: str,
-        title: str,
-        subtitle: str,
-        active_nav: str,
-        rendered_md: str,
-        toc_list: list,
-        raw_md_len: int,
-        companion_link: str,
-        companion_label: str,
-    ):
-        toc_items_html = []
-        for item in toc_list:
-            lvl_cls = f"toc-lvl-{min(item['level'], 3)}"
-            toc_items_html.append(
-                f'<a class="toc-item {lvl_cls}" href="#{item["id"]}">{html.escape(item["text"])}</a>'
-            )
-
-        rules_tab_cls = "doc-switch-tab active" if filename == "rules.html" else "doc-switch-tab"
-        mat_tab_cls = "doc-switch-tab active" if filename == "materials.html" else "doc-switch-tab"
-
-        doc_body = f"""
-        <section class="page-hero">
-          <div class="container page-hero-inner">
-            <span class="page-kicker mono">{html.escape(kicker)}</span>
-            <h1 class="page-hero-title"><span>{html.escape(title)}</span><span class="brand-badge">全文无删减</span></h1>
-            <p class="page-hero-desc">{html.escape(subtitle)}</p>
-            <div class="doc-switcher-bar" role="tablist" aria-label="标准与规则文档切换">
-              <a class="{rules_tab_cls}" href="./rules.html">{SVG['book']}<span>《衡天⊙ 多维战力量级体系（第三版）》全文</span></a>
-              <a class="{mat_tab_cls}" href="./materials.html">{SVG['layers']}<span>《材质与破坏能量数据库（第二版）》全文</span></a>
-            </div>
-          </div>
-        </section>
-
-        <div class="container doc-layout">
-          <aside class="doc-sidebar" id="doc-sidebar" aria-label="文档章节目录">
-            <div class="toc-header">
-              <div class="toc-title-row">
-                <span style="display:inline-flex;align-items:center;gap:6px">{SVG['toc']}<span>章节目录（{len(toc_list)}）</span></span>
-                <span class="toc-pct mono" id="toc-progress-pct">0%</span>
-              </div>
-              <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节标题…">
-            </div>
-            <nav class="toc-nav" id="toc-nav">
-              {"".join(toc_items_html)}
+    body = f"""
+    <div class="container" style="padding-bottom:36px">
+      <div class="page-masthead">
+        <div class="masthead-art" aria-hidden="true">
+          <img src="static/img/cosmos-eclipse.jpg" alt="" style="--art-pos: 75% 46%;">
+        </div>
+        <div class="masthead-inner">
+          <div class="masthead-top">
+            <button type="button" class="back-pill js-smart-back" data-fallback="index.html" data-fallback-name="首页">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回首页</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="index.html">首页</a>
+              <span>/</span>
+              <span>全站搜索</span>
             </nav>
-          </aside>
-
-          <article class="doc-article-card">
-            <div class="doc-reader-toolbar">
-              <span>原文完整直出 · <strong style="color:var(--text-primary)">{raw_md_len:,}</strong> 字符 · <strong style="color:var(--text-primary)">{len(toc_list)}</strong> 节锚点 · 自动记录进度</span>
-              <div class="doc-reader-tools">
-                <div class="doc-find-wrap" title="在当前全文内查找并跳转段落/表格行">
-                  <span style="color:var(--text-muted);display:inline-flex">{SVG['search_sm']}</span>
-                  <input type="search" class="doc-find-input" id="doc-find-input" placeholder="文内查找定位…">
-                  <span class="mono" id="doc-find-count" style="font-size:11px;color:var(--accent-gold)"></span>
-                  <button type="button" class="chip-btn" id="doc-find-next" style="height:22px;padding:0 7px;font-size:11px">下一处</button>
-                </div>
-                <button type="button" class="chip-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
-                <button type="button" class="chip-btn" id="doc-font-inc" title="放大正文字号">A+</button>
-                <button type="button" class="chip-btn" id="doc-wide-toggle" title="切换宽屏阅读模式">宽屏</button>
-              </div>
-            </div>
-            <div class="markdown-body">
-              {rendered_md}
-            </div>
-          </article>
-        </div>
-        """
-
-        (ROOT / filename).write_text(
-            render_shell(
-                title=title,
-                page_id=filename,
-                page_type="doc",
-                active_nav=active_nav,
-                root_prefix="./",
-                context_bar_html=make_context_bar(
-                    "./",
-                    "index.html",
-                    "首页",
-                    [("标准与规则全文", ""), (title, "")],
-                    f'<a href="./{companion_link}">切换：{html.escape(companion_label)} {SVG["arrow_ur"]}</a>',
-                ),
-                body_html=doc_body,
-                has_toc_drawer=True,
-                tier_count=tier_count,
-                char_count=char_count,
-            ),
-            encoding="utf-8",
-        )
-
-    build_doc_page(
-        filename="rules.html",
-        kicker="STANDARD MONOGRAPH I · EDITION III (2026-10-23)",
-        title="《衡天⊙ 多维战力量级体系（第三版）》",
-        subtitle="最新第三版原文无删减展示：新增完整书写原则、0.14.2 归因与知情度审查、超长篇自行通读流程、0.6 体量不等于破坏、6.3 一次作用计数认定、7.9 层级轴必检及全部十一部分标准。",
-        active_nav="rules",
-        rendered_md=rules_html_body,
-        toc_list=rules_toc,
-        raw_md_len=len(rules_md),
-        companion_link="materials.html",
-        companion_label="《材质与破坏能量数据库（第二版）》",
-    )
-
-    build_doc_page(
-        filename="materials.html",
-        kicker="STANDARD MONOGRAPH II · PHYSICS & MATERIALS DB",
-        title="《材质与破坏能量数据库（第二版）》",
-        subtitle="《衡天⊙》配套工程物理参数库全文：破坏动词双轴定性、物质粉碎能量密度、材料强度与断裂韧性、相变潜热、天体引力束缚能、撞击成坑与云层推算。",
-        active_nav="materials",
-        rendered_md=mat_html_body,
-        toc_list=mat_toc,
-        raw_md_len=len(materials_md),
-        companion_link="rules.html",
-        companion_label="《衡天⊙ 多维战力量级体系（第三版）》",
-    )
-
-    # 7. Generate Dedicated Search Page: search.html
-    search_body = f"""
-    <section class="page-hero">
-      <div class="container page-hero-inner">
-        <span class="page-kicker mono">GLOBAL INDEX · {len(search_items)} ENTRIES</span>
-        <h1 class="page-hero-title"><span>全站即时检索</span><span class="brand-badge mono">{len(search_items)} 条索引</span></h1>
-        <p class="page-hero-desc">跨角色分类、量级分类、《衡天⊙ 多维战力量级体系（第三版）》及《材质与破坏能量数据库》全章节毫秒级检索。</p>
-      </div>
-    </section>
-
-    <div class="container" style="padding:22px 24px 64px;max-width:960px">
-      <div class="toolbar-panel" style="margin-top:0">
-        <div class="filter-input-wrap" style="max-width:none">
-          <span class="filter-input-icon">{SVG['search_sm']}</span>
-          <input type="search" id="dedicated-search-input" class="filter-input" style="height:42px;font-size:14.5px;padding-left:36px" placeholder="输入关键词（支持空格组合检索），例如：归因 知情度 / 完整书写 / 白矮星 束缚能 / 宇◆…" autofocus>
-        </div>
-        <div class="toolbar-row">
-          <div class="filter-Chips">
-            <button type="button" class="chip-btn active" data-page-search-type="all">全部类别</button>
-            <button type="button" class="chip-btn" data-page-search-type="char">角色分类（{len(chars_for_index)}）</button>
-            <button type="button" class="chip-btn" data-page-search-type="tier">量级分类（{len(tiers)}）</button>
-            <button type="button" class="chip-btn" data-page-search-type="rules">衡天第三版（{len(rules_sections)} 节）</button>
-            <button type="button" class="chip-btn" data-page-search-type="materials">材质能量库（{len(mat_sections)} 节）</button>
           </div>
-          <span class="mono" id="dedicated-search-count" style="font-size:12px;color:var(--text-muted);flex-shrink:0"></span>
+          <div class="masthead-title-row">
+            <div>
+              <h1 class="masthead-title">全站即时检索引擎</h1>
+              <p class="masthead-sub">
+                跨<strong>角色独立档案</strong>、<strong>98 个量级档位</strong>、《衡天量级体系（第三版）》全文与《材质与破坏能量数据库（第二版）》全文毫秒级检索。支持代字、拼音、焦耳数值、数学符号与正文词句。
+              </p>
+            </div>
+            <span class="count-pill mono" id="dedicated-search-count">准备就绪</span>
+          </div>
         </div>
-        <div class="filter-Chips">
-          <span style="font-size:12px;color:var(--text-muted);flex-shrink:0">速查词：</span>
-          <button type="button" class="chip-btn" data-hot-query="完整书写">完整书写原则</button>
-          <button type="button" class="chip-btn" data-hot-query="归因与知情度">0.14.2 归因审查</button>
-          <button type="button" class="chip-btn" data-hot-query="超长篇自行通读">超长篇通读流程</button>
-          <button type="button" class="chip-btn" data-hot-query="层级轴必检">7.9 层级轴必检</button>
-          <button type="button" class="chip-btn" data-hot-query="宇◆">宇◆（极宇宙）</button>
-          <button type="button" class="chip-btn" data-hot-query="F*">通量常数 F*</button>
-          <button type="button" class="chip-btn" data-hot-query="0#">0#（零尖）</button>
-          <button type="button" class="chip-btn" data-hot-query="中子星">中子星束缚能</button>
-          <button type="button" class="chip-btn" data-hot-query="花岗岩">花岗岩粉碎</button>
+      </div>
+
+      <div class="controls-bar">
+        <div style="position:relative">
+          <input type="search" id="dedicated-search-input" placeholder="输入关键词（支持空格分词组合检索，如：星○ 2.24、归因 审查、花岗岩 粉碎、虚空观测者）…" autofocus style="width:100%;padding:13px 18px;border-radius:var(--radius-md);border:1px solid var(--border-strong);background:var(--bg-surface-2);color:var(--text-primary);font-size:15px;outline:none">
+        </div>
+
+        <div class="controls-row" style="justify-content:flex-start;gap:8px">
+          <span style="font-size:12px;color:var(--text-muted)">范围：</span>
+          <button type="button" class="chip-btn active" data-page-search-type="all">全部类别</button>
+          <button type="button" class="chip-btn" data-page-search-type="char">角色独立档案</button>
+          <button type="button" class="chip-btn" data-page-search-type="tier">量级分类 (98)</button>
+          <button type="button" class="chip-btn" data-page-search-type="rules">衡天第三版全文</button>
+          <button type="button" class="chip-btn" data-page-search-type="materials">材质能量库全文</button>
+        </div>
+
+        <div class="controls-row" style="justify-content:flex-start;gap:6px;border-top:1px solid var(--border-hairline);padding-top:10px">
+          <span style="font-size:12px;color:var(--text-muted)">高频检索词：</span>
+          {hot_chips}
         </div>
       </div>
 
       <div id="dedicated-search-results"></div>
     </div>
     """
-
-    (ROOT / "search.html").write_text(
-        render_shell(
-            title="全站搜索",
-            page_id="search.html",
-            page_type="search",
-            active_nav="",
-            root_prefix="./",
-            context_bar_html=make_context_bar(
-                "./", "index.html", "首页", [("全站搜索", "")], show_bookmark=False
-            ),
-            body_html=search_body,
-            tier_count=tier_count,
-            char_count=char_count,
-        ),
-        encoding="utf-8",
+    return render_shell(
+        title="全站搜索",
+        page_id="search",
+        active_nav="search",
+        body_html=body,
+        root_prefix="./",
+        back_fallback=("index.html", "首页"),
     )
 
+
+def build_search_index_bundle(
+    *,
+    tiers_payload: Dict[str, Any],
+    all_chars: List[Dict[str, Any]],
+    rules_sections: List[Dict[str, str]],
+    materials_sections: List[Dict[str, str]],
+) -> str:
+    index_entries: List[Dict[str, str]] = []
+    tiers = tiers_payload["tiers"]
+    tier_by_slug = {t["slug"]: t for t in tiers}
+
+    # 1. Tiers -> standalone tier/<slug>.html
+    for t in tiers:
+        order_tag = "待定" if t.get("unranked") else f"#{t['order']:02d}"
+        index_entries.append(
+            {
+                "type": "tier",
+                "code": f"⊙{t['code']} {t['code']}",
+                "title": f"⊙{t['code']} · {t['name']}（{order_tag}）",
+                "badge": f"量级 {order_tag}",
+                "pinyin": f"{t.get('code_pinyin', '')} {t.get('full_pinyin', '')}",
+                "text": f"能量/数学刻度：{t['energy']} ｜ 覆盖尺度：{t['scale']} ｜ 模型：{t['model']} ｜ {t.get('notes', '')}",
+                "url": f"tier/{t['slug']}.html",
+            }
+        )
+
+    # 2. All Characters -> standalone character/<slug>.html
+    for c in all_chars:
+        t = tier_by_slug.get(c.get("tier_slug", ""))
+        t_code = t["code"] if t else "待定"
+        t_name = t["name"] if t else "待定"
+        dims_str = " ".join(f"{k}:{v}" for k, v in (c.get("dims") or {}).items())
+        index_entries.append(
+            {
+                "type": "char",
+                "code": f"{c.get('initial', '')} ⊙{t_code}",
+                "title": f"{c['name']}（{c.get('series', '未知出处')}）",
+                "badge": f"角色 · ⊙{t_code} {t_name}",
+                "pinyin": c.get("pinyin", ""),
+                "text": f"{c.get('summary', '')} ｜ {c.get('full_writing', '')} ｜ {dims_str}",
+                "url": f"character/{c['slug']}.html",
+            }
+        )
+
+    # 3. Rules sections
+    for sec in rules_sections:
+        clean_txt = re.sub(r"\s+", " ", sec["text"]).strip()
+        index_entries.append(
+            {
+                "type": "rules",
+                "code": "",
+                "title": f"衡天第三版 · {sec['title']}",
+                "badge": "衡天第三版",
+                "pinyin": "",
+                "text": clean_txt[:900],
+                "url": f"rules.html#{sec['id']}",
+            }
+        )
+
+    # 4. Materials sections
+    for sec in materials_sections:
+        clean_txt = re.sub(r"\s+", " ", sec["text"]).strip()
+        index_entries.append(
+            {
+                "type": "materials",
+                "code": "",
+                "title": f"材质库 · {sec['title']}",
+                "badge": "材质能量库",
+                "pinyin": "",
+                "text": clean_txt[:900],
+                "url": f"materials.html#{sec['id']}",
+            }
+        )
+
+    client_data = {
+        "groups": tiers_payload["groups"],
+        "tiers": tiers_payload["tiers"],
+        "allCharacters": all_chars,
+    }
+
+    js_content = (
+        "/* Auto-generated by build_site.py v5.0 — DO NOT EDIT MANUALLY */\n"
+        f"window.__POWERWIKI_DATA__ = {json.dumps(client_data, ensure_ascii=False, separators=(',', ':'))};\n"
+        f"window.__POWERWIKI_INDEX__ = {json.dumps(index_entries, ensure_ascii=False, separators=(',', ':'))};\n"
+    )
+    return js_content
+
+
+def main() -> None:
+    tiers_payload = json.loads((DATA_DIR / "tiers.json").read_text(encoding="utf-8"))
+    chars_payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
+
+    # Merge formal characters + Third Edition archetype dossiers (deduplicated by slug)
+    by_slug: Dict[str, Dict[str, Any]] = {}
+    for entry in chars_payload.get("demo_archetypes", []):
+        by_slug[entry["slug"]] = entry
+    for entry in chars_payload.get("characters", []):
+        by_slug[entry["slug"]] = entry
+    all_chars = list(by_slug.values())
+
+    rules_md = RULES_MD_PATH.read_text(encoding="utf-8")
+    materials_md = MATERIALS_MD_PATH.read_text(encoding="utf-8")
+
+    # 1. Full-text Standard & Materials pages
+    rules_html, rules_sections, rules_title_to_id = build_fulltext_doc_page(
+        page_id="rules",
+        active_nav="rules",
+        title="衡天⊙ 多维战力量级体系（第三版·全文）",
+        subtitle="完整收录总则、常见违规与归因审查、1.5 完整书写规范、全量级定义、论外基数序数双轴及超长篇自行通读流程。",
+        source_filename="衡天量级体系【第三版·最新】.md",
+        masthead_img="static/img/cosmos-eclipse.jpg",
+        masthead_pos="80% 46%",
+        md_text=rules_md,
+        other_doc_link=("materials.html", "查阅《材质与破坏能量数据库》全文"),
+    )
+    (ROOT / "rules.html").write_text(rules_html, encoding="utf-8")
+
+    materials_html, materials_sections, _ = build_fulltext_doc_page(
+        page_id="materials",
+        active_nav="materials",
+        title="材质与破坏能量数据库（第二版·全文）",
+        subtitle="完整收录岩石/金属/生物力学强度、碎裂至核子解离破坏方式比能（J/cm³）、天体结合能与致密星物质锚点。",
+        source_filename="材质与破坏能量数据库（新）.md",
+        masthead_img="static/img/physics-lattice.jpg",
+        masthead_pos="84% 50%",
+        md_text=materials_md,
+        other_doc_link=("rules.html", "查阅《衡天量级体系（第三版）》全文"),
+    )
+    (ROOT / "materials.html").write_text(materials_html, encoding="utf-8")
+
+    # 2. Home, Tiers, Tier Details, Characters, Character Details, Search
+    tiers = tiers_payload["tiers"]
+    groups = tiers_payload["groups"]
+
+    (ROOT / "index.html").write_text(build_home_page(tiers, all_chars), encoding="utf-8")
+    (ROOT / "tiers.html").write_text(build_tiers_page(tiers, groups), encoding="utf-8")
+    build_tier_detail_pages(tiers, groups, all_chars, rules_title_to_id)
+
+    (ROOT / "characters.html").write_text(build_characters_page(all_chars, tiers), encoding="utf-8")
+    build_character_detail_pages(all_chars, tiers, groups, rules_title_to_id)
+
+    (ROOT / "search.html").write_text(build_search_page(), encoding="utf-8")
+
+    # 3. Search & Data JS Bundle
+    JS_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    bundle_js = build_search_index_bundle(
+        tiers_payload=tiers_payload,
+        all_chars=all_chars,
+        rules_sections=rules_sections,
+        materials_sections=materials_sections,
+    )
+    (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
+
     print(
-        f"Build v4.0 complete: {len(tiers)} tier pages, {len(formal_chars)} character pages, "
-        f"{len(rules_toc)} rules TOC anchors, {len(mat_toc)} materials TOC anchors, "
-        f"{len(search_items)} search index entries."
+        f"[OK] PowerWiki v5.0 built successfully:\n"
+        f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
+        f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
+        f"  - Standalone Character pages: {len(all_chars)} files in character/*.html\n"
+        f"  - Rules TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections\n"
+        f"  - Search index entries: {len(tiers) + len(all_chars) + len(rules_sections) + len(materials_sections)}"
     )
 
 
 if __name__ == "__main__":
-    build_all()
+    main()

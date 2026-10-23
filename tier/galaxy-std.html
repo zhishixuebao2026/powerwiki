@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark" data-root="../" data-page-id="tier/galaxy-std.html" data-page-type="tier-detail">
+<html lang="zh-CN" data-theme="dark" data-root="../" data-page-id="tier-galaxy-std">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>⊙河○ 标准星系 · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ 多维战力量级体系（第三版·最新）与材质破坏能量数据库官方百科站——角色分类（首字母与量级从小到大排序）、量级分类（从小到大排列）、全文检索与浏览进度保存。">
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {
       try {
@@ -13,204 +13,222 @@
       } catch (e) {}
     })();
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
-  <div class="reading-progress-track" aria-hidden="true">
-    <div class="reading-progress-bar" id="reading-progress-bar"></div>
-  </div>
-
   <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="../index.html">
-        <span class="brand-mark mono" aria-hidden="true">⊙</span>
-        <span class="brand-text">
-          <span class="brand-title">衡天 PowerWiki</span>
-          <span class="brand-badge mono">v3.0</span>
-        </span>
-      </a>
+    <div class="header-inner">
+      <div class="brand-cluster">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
+        <a class="brand-logo" href="../index.html">
+          <span class="brand-emblem">⊙</span>
+          <span class="brand-text">
+            <span class="brand-title">衡天 PowerWiki</span>
+            <span class="brand-sub">Celestial Scale Archive · V3</span>
+          </span>
+        </a>
+      </div>
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
         <a class="nav-link" href="../index.html">首页</a>
-        <a class="nav-link" href="../characters.html">角色 <span class="nav-count mono">6</span></a>
-        <a class="nav-link active" href="../tiers.html">量级 <span class="nav-count mono">97</span></a>
-        <a class="nav-link" href="../rules.html">衡天体系</a>
-        <a class="nav-link" href="../materials.html">材质数据库</a>
+        <a class="nav-link active" href="../tiers.html">量级</a>
+        <a class="nav-link" href="../characters.html">角色</a>
+        <a class="nav-link" href="../rules.html">衡天体系全文</a>
+        <a class="nav-link" href="../materials.html">材质能量库</a>
+        <a class="nav-link" href="../search.html">搜索</a>
       </nav>
 
       <div class="header-actions">
-        <button type="button" class="search-trigger" id="global-search-trigger" aria-label="打开全站搜索">
-          <span class="search-trigger-left">
-            <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <span class="search-trigger-placeholder">搜索全站…</span>
-          </span>
+        <button type="button" class="search-trigger-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>检索角色、量级、规则…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
-        <button type="button" class="icon-btn" id="history-open-btn" title="浏览进度与最近足迹">
-          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
-          <span class="dot-indicator"></span>
-        </button>
-        <button type="button" class="icon-btn" id="theme-toggle-btn" title="切换深浅色主题">
-          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-        </button>
-        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
-          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
-  
-  <div class="context-bar">
-    <div class="container context-inner">
-      <div class="context-left">
-        <button type="button" class="back-btn js-smart-back" data-fallback="tiers.html" data-fallback-name="量级分类">
-          <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-          <span class="js-back-label">返回量级分类</span>
-        </button>
-        <nav class="breadcrumbs" aria-label="面包屑导航">
-          <a href="../index.html">首页</a><span class="sep">/</span><a href="../tiers.html">量级分类</a><span class="sep">/</span><span class="current">⊙ 河○ · 标准星系</span>
-        </nav>
-      </div>
-      <div class="context-right">
-        <span class="save-status-pill mono" id="live-save-status">进度 0%</span><button type="button" class="chip-btn" id="save-bookmark-btn" title="保存当前阅读位置"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg><span>记录位置</span></button>
-        <span class="mono">#67</span>
-      </div>
-    </div>
-  </div>
-
-
-  <main style="flex:1">
+  <main>
     
-        <div class="container detail-wrap">
-          <article class="detail-card">
-            <div class="detail-header">
-              <div>
-                <div class="detail-code-pill mono">⊙ 河○</div>
-                <h1 class="detail-title">标准星系 <span style="font-size:17px;font-weight:400;color:var(--text-muted)">· 星系级（河）</span></h1>
+        <div class="container" style="padding-bottom:32px">
+          <div style="padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <button type="button" class="back-pill js-smart-back" data-fallback="tiers.html" data-fallback-name="量级总览">
+              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回量级总览</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../tiers.html">量级分类</a>
+              <span>/</span>
+              <span>⊙ 河○ 标准星系</span>
+            </nav>
+          </div>
+
+          <article class="detail-hero" data-domain="cosmic" style="margin-top:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <span class="tier-code-badge mono" style="font-size:20px;padding:6px 16px;--dom-color:var(--dom-cosmic,var(--accent-gold))">⊙ 河○</span>
+                <span class="count-pill mono">天梯序位 #67 / 97</span>
+                <span class="count-pill">第四部分 · 覆盖体系 · 星团级至宇宙级</span>
               </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <a class="btn btn-primary" href="../rules.html#sec-4-6" title="跳转至：4.6 星系级（河，盘面适配 πD²/4）"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg><span>第三版原文：4.6 星系级（河，盘面适配 π…</span><svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
-                <a class="btn btn-surface" href="../tiers.html">返回量级分类</a>
+              <a class="btn btn-surface" href="../rules.html#sec-4-6-星系级-河-盘面适配-πd²-4" style="padding:7px 14px;font-size:12.5px">
+                查阅《衡天第三版》对应章节 <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+              </a>
+            </div>
+
+            <h1 style="margin:18px 0 8px;font-family:var(--font-serif);font-size:clamp(26px,3.6vw,36px);font-weight:700;letter-spacing:-0.015em">
+              标准星系 <span style="font-family:var(--font-sans);font-size:16px;color:var(--text-muted);font-weight:500">· 星系级（河）系</span>
+            </h1>
+            <p style="margin:0;color:var(--text-secondary);font-size:14.5px;line-height:1.75;max-width:820px">
+              银河系盘面（1.15×10⁶⁵ J）比旧体系「恒星结合能简单求和」高约 3.3×10¹² 倍——严格体现范围覆盖开销（4.2）。
+            </p>
+
+            <div class="detail-grid">
+              <div class="detail-meta-card">
+                <div class="meta-kicker">能量阈值 / 数学定义</div>
+                <div class="meta-val mono" style="color:var(--accent-gold);font-size:16.5px">4.6×10⁶³ – 1.15×10⁶⁵ J</div>
+              </div>
+              <div class="detail-meta-card">
+                <div class="meta-kicker">覆盖尺度与典型参照物</div>
+                <div class="meta-val">覆盖直径 20,000–100,000 光年（三角座 M33 约 6 万光年、银河系盘面约 10 万光年）</div>
+              </div>
+              <div class="detail-meta-card">
+                <div class="meta-kicker">物理 / 数学计算模型</div>
+                <div class="meta-val">盘面适配 E = πD²/4 × F*</div>
+              </div>
+              <div class="detail-meta-card">
+                <div class="meta-kicker">检索拼音索引</div>
+                <div class="meta-val mono" style="font-size:13px;color:var(--text-secondary)">
+                  首字母 # · he2-2-biaozhunxingxi / biaozhunxingxi
+                </div>
               </div>
             </div>
 
-            <div class="spec-grid">
-              <div class="spec-box">
-                <div class="spec-label">全链条序位（从小到大）</div>
-                <div class="spec-value mono">第 67 档 / 共 97 正式档</div>
-              </div>
-              <div class="spec-box">
-                <div class="spec-label">所属体系区间</div>
-                <div class="spec-value">第四部分 · 覆盖体系 · 星团级至宇宙级</div>
-              </div>
-              <div class="spec-box wide">
-                <div class="spec-label">能量区间 / 数学刻度定义</div>
-                <div class="spec-value mono" style="color:var(--accent-gold);font-size:16px">4.6×10⁶³ – 1.15×10⁶⁵ J</div>
-              </div>
-              <div class="spec-box">
-                <div class="spec-label">典型破坏尺度与参照物</div>
-                <div class="spec-value">覆盖直径 20,000–100,000 光年（三角座 M33 约 6 万光年、银河系盘面约 10 万光年）</div>
-              </div>
-              <div class="spec-box">
-                <div class="spec-label">适用物理 / 数学模型</div>
-                <div class="spec-value">盘面适配 E = πD²/4 × F*</div>
-              </div>
-              <div class="spec-box wide">
-                <div class="spec-label">第三版「完整书写」推荐展开格式（1.5 节规范）</div>
-                <div class="spec-value mono" style="font-size:13.5px;color:var(--accent-cyan)">⊙河○（标准星系：覆盖直径 20,000–100,000 光年（三角座 M33 约 6 万光年、银河系盘面约 10 万光年），4.6×10⁶³ – 1.15×10⁶⁵ J）</div>
-              </div>
-              <div class="spec-box wide">
-                <div class="spec-label">判定细则与注意事项</div>
-                <div class="spec-value" style="font-weight:400;color:var(--text-secondary);line-height:1.75;font-size:14px">银河系盘面（1.15×10⁶⁵ J）比旧体系「恒星结合能简单求和」高约 3.3×10¹² 倍——严格体现范围覆盖开销（4.2）。</div>
+            <div class="detail-meta-card" style="margin-top:16px;background:var(--bg-surface-1)">
+              <div class="meta-kicker">《衡天⊙ 第三版》1.5 完整书写示范格式（首次出现须写全称与标准）</div>
+              <div class="meta-val" style="font-size:13.5px;line-height:1.75;color:var(--text-secondary)">
+                综合量级：<span class="mono" style="color:var(--accent-gold)">⊙河○</span>——标准星系（覆盖直径 20,000–100,000 光年（三角座 M33 约 6 万光年、银河系盘面约 10 万光年），能量/结构基准 <span class="mono">4.6×10⁶³ – 1.15×10⁶⁵ J</span>）
               </div>
             </div>
 
-            <section style="margin-top:24px">
-              <h2 style="font-size:15.5px;margin:0 0 6px;font-weight:650">本量级收录角色（0）</h2>
-              
-            <div style="background:var(--bg-subtle);border:1px solid var(--border-hairline);border-radius:10px;padding:16px 18px;color:var(--text-muted);font-size:13px;margin-top:10px">
-              当前正式角色库暂无定级于 <strong style="color:var(--text-primary)">⊙ 河○（标准星系）</strong> 的角色档案。
-              可前往 <a href="../characters.html" style="color:var(--accent-gold)">角色分类页</a> 浏览第三版示例卡或录入新角色。
+            
+            <div class="detail-meta-card" style="margin-top:18px">
+              <div class="meta-kicker">相邻天梯序列（从小到大连续上下文）</div>
+              <div style="display:grid;gap:8px;margin-top:10px"><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;" href="cluster-super.html"><span class="mono" style="font-weight:700">#65 · ⊙ 团☆</span><span style="font-size:12.5px">超星团</span><span class="mono" style="font-size:12px;color:var(--text-muted)">2.1×10⁶⁰ – 8.3×10⁶⁰ J</span></a><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;" href="galaxy-weak.html"><span class="mono" style="font-weight:700">#66 · ⊙ 河▽</span><span style="font-size:12.5px">弱星系</span><span class="mono" style="font-size:12px;color:var(--text-muted)">1.15×10⁶¹ – 4.6×10⁶³ J</span></a><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;border-color:var(--accent-gold);background:var(--accent-gold-soft);color:var(--accent-gold)" href="galaxy-std.html"><span class="mono" style="font-weight:700">#67 · ⊙ 河○</span><span style="font-size:12.5px">标准星系</span><span class="mono" style="font-size:12px;color:var(--text-muted)">4.6×10⁶³ – 1.15×10⁶⁵ J</span></a><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;" href="galaxy-strong.html"><span class="mono" style="font-weight:700">#68 · ⊙ 河△</span><span style="font-size:12.5px">强星系</span><span class="mono" style="font-size:12px;color:var(--text-muted)">1.15×10⁶⁵ – 1.04×10⁶⁶ J</span></a><a class="btn btn-surface" style="justify-content:space-between;padding:10px 14px;" href="galaxy-super.html"><span class="mono" style="font-weight:700">#69 · ⊙ 河☆</span><span style="font-size:12.5px">超星系</span><span class="mono" style="font-size:12px;color:var(--text-muted)">1.04×10⁶⁶ – 4.2×10⁶⁸ J</span></a></div>
             </div>
-            </section>
+            
+
+            <div style="margin-top:26px">
+              <h2 style="margin:0;font-family:var(--font-serif);font-size:19px;font-weight:700">本档位已收录角色（1）</h2>
+              <div class="char-grid" style="margin-top:14px">
+                    <a class="char-card" href="../character/demo-lingxiao.html">
+                      <span class="char-watermark-letter" aria-hidden="true">L</span>
+                      <div class="char-card-head">
+                        <div style="display:flex;align-items:center;gap:12px">
+                          <div class="char-avatar">凌</div>
+                          <div>
+                            <div class="char-name">凌霄巡星者（示例）</div>
+                            <div class="char-series">衡天⊙ 第三版书写示例</div>
+                          </div>
+                        </div>
+                        <span class="char-rating-pill mono">⊙ 河○</span>
+                      </div>
+                      <div style="font-size:13px;color:var(--text-secondary)">演示第四部分「星系级盘面适配模型（πD²/4 × F*）」与 0.11「掌控单向推出毁灭」规则。</div>
+                      <div class="char-card-foot">
+                        <span class="mono" style="font-size:11.5px">控〔实〕（整体掌控已确认）</span>
+                        <span class="char-enter-link" style="display:inline-flex;align-items:center;gap:4px">进入独立角色页 <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+                      </div>
+                    </a></div>
+            </div>
+
+            <div class="adjacent-nav">
+              <a class="adj-nav-card" href="galaxy-weak.html">
+                  <span class="adj-dir">← 上一档（更低量级）</span>
+                  <span class="adj-name">#66 · ⊙ 河▽ 弱星系</span>
+                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">1.15×10⁶¹ – 4.6×10⁶³ J</span>
+                </a>
+              <a class="adj-nav-card next" href="galaxy-strong.html">
+                  <span class="adj-dir">下一档（更高量级） →</span>
+                  <span class="adj-name">#68 · ⊙ 河△ 强星系</span>
+                  <span class="mono" style="font-size:12px;color:var(--accent-gold)">1.15×10⁶⁵ – 1.04×10⁶⁶ J</span>
+                </a>
+            </div>
           </article>
-
-          <nav class="ladder-nav" aria-label="相邻量级切换">
-            <a class="ladder-item prev" href="./galaxy-weak.html"><span class="ladder-dir">← 上一较低量级（#66）</span><span class="ladder-name">⊙ 河▽ · 弱星系</span><span class="mono" style="font-size:12px;color:var(--accent-gold)">1.15×10⁶¹ – 4.6×10⁶³ J</span></a>
-            <a class="ladder-item next" href="./galaxy-strong.html"><span class="ladder-dir">下一较高量级（#68）→</span><span class="ladder-name">⊙ 河△ · 强星系</span><span class="mono" style="font-size:12px;color:var(--accent-gold)">1.15×10⁶⁵ – 1.04×10⁶⁶ J</span></a>
-          </nav>
         </div>
         
   </main>
 
-  <div class="resume-toast" id="resume-toast" role="status" aria-live="polite">
-    <span class="resume-toast-text" id="resume-toast-text">上次浏览位置</span>
-    <button type="button" class="resume-toast-btn" id="resume-toast-btn">继续浏览</button>
-    <button type="button" class="resume-toast-close" id="resume-toast-close" aria-label="关闭提示"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-  </div>
-
-  <div class="floating-dock">
+  <!-- Floating Navigation Dock (Smart Back + Back to Top) -->
+  <div class="floating-dock" aria-label="快捷返回工具栏">
     
-    <button type="button" class="dock-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页" title="返回上一页"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-    <button type="button" class="dock-btn" id="dock-top-btn" title="回到顶部">
-      <svg class="progress-ring-svg" viewBox="0 0 40 40" aria-hidden="true">
-        <circle class="progress-ring-circle" id="dock-progress-circle" cx="20" cy="20" r="18"></circle>
-      </svg>
-      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+    <button type="button" class="dock-btn js-smart-back" data-fallback="tiers.html" data-fallback-name="量级总览" title="返回上一页并恢复浏览位置">
+      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回</span>
+    </button>
+    <button type="button" class="dock-btn" id="dock-top-btn" title="回到页面顶部">
+      <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> <span>顶部</span>
     </button>
   </div>
 
-  <!-- Global Search Command Palette -->
-  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站即时检索">
-    <div class="modal-dialog">
+  <!-- Global Search Command Palette Modal -->
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
       <div class="search-modal-head">
-        <span style="color:var(--text-muted);display:inline-flex"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
-        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="搜索角色、量级代字（宇◆、恒○）、第三版规则或材质（归因、白矮星、花岗岩）…" autocomplete="off">
-        <a href="../search.html" class="chip-btn">检索页 <svg class="svg-icon sm tier-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
-        <button type="button" class="resume-toast-close" id="search-modal-close" aria-label="关闭"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+        <span style="color:var(--accent-gold);display:flex"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、角色名、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-surface" id="search-modal-close" style="padding:5px 11px;font-size:12px">ESC</button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
-        <button type="button" class="chip-btn" data-search-tab="char">角色分类</button>
-        <button type="button" class="chip-btn" data-search-tab="tier">量级分类</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天体系(第三版)</button>
-        <button type="button" class="chip-btn" data-search-tab="materials">材质破坏能量库</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第三版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
-    </div>
-  </div>
-
-  <!-- Reading Progress & Footprints Modal -->
-  <div class="modal-backdrop" id="history-modal" role="dialog" aria-modal="true" aria-label="浏览进度与足迹">
-    <div class="modal-dialog">
-      <div class="search-modal-head" style="justify-content:space-between">
-        <strong style="font-size:14.5px;display:inline-flex;align-items:center;gap:8px"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg><span>浏览进度与最近足迹</span></strong>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button type="button" class="chip-btn" id="history-clear-btn">清空记录</button>
-          <button type="button" class="resume-toast-close" id="history-close-btn" aria-label="关闭"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-        </div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择条目 · <kbd class="kbd-hint">Enter</kbd> 进入页面</span>
+        <a href="../search.html" style="font-weight:500">进入独立搜索页 →</a>
       </div>
-      <div class="search-modal-body" id="history-modal-body"></div>
     </div>
   </div>
 
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <div>
-        <strong style="color:var(--text-primary);font-weight:600">衡天⊙ PowerWiki</strong>
-        <span style="margin:0 6px;opacity:0.4">·</span>
-        <span>《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》</span>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom:10px">
+            <span class="brand-emblem" style="width:28px;height:28px;font-size:14px">⊙</span>
+            <span class="brand-title" style="font-size:15px">衡天 PowerWiki</span>
+          </div>
+          <p class="footer-desc">
+            以《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》为唯一基准锚点，提供从昆虫级（5×10⁻⁵ J）至论天最上（莱因哈特 / 贝克莱基数）的全尺度量级检索与独立角色战力档案。
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>核心导览</h4>
+          <a href="../tiers.html">量级分类（从小到大）</a>
+          <a href="../characters.html">角色档案（首字母 / 从小到大）</a>
+          <a href="../search.html">全站检索引擎</a>
+        </div>
+        <div class="footer-col">
+          <h4>基准典籍全文</h4>
+          <a href="../rules.html">衡天量级体系（第三版·全文）</a>
+          <a href="../materials.html">材质与破坏能量数据库（第二版·全文）</a>
+        </div>
       </div>
-      <div class="footer-links">
-        <a href="../index.html">首页</a>
-        <a href="../characters.html">角色分类</a>
-        <a href="../tiers.html">量级分类</a>
-        <a href="../rules.html">衡天体系全文</a>
-        <a href="../materials.html">材质数据库全文</a>
-        <a href="../search.html">全站检索</a>
+      <div class="footer-bottom">
+        <span>衡天⊙ PowerWiki · Obsidian Celestial Edition</span>
+        <span>全部角色与量级均采用独立静态档案页 · 自动记忆浏览状态与滚动位置</span>
       </div>
     </div>
   </footer>
