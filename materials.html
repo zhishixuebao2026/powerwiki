@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-root="./" data-page-id="materials">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>材质与破坏能量数据库（第二版·全文） · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('pw_theme_v2');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
+        <a class="brand-link" href="./index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-name">衡天 PowerWiki</span>
+        </a>
+      </div>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link" href="./index.html">首页</a>
+        <a class="nav-link nav-cat" href="./tiers.html">量级分类</a>
+        <a class="nav-link nav-cat" href="./characters.html">角色档案</a>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <a class="nav-link nav-doc" href="./rules.html">体系原文</a>
+        <a class="nav-link nav-doc active" href="./materials.html">材质原文</a>
+        <a class="nav-link" href="./search.html">搜索</a>
+      </nav>
+
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="search-btn-label">检索…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="./index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-name">衡天 PowerWiki</span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">核心分类大库</div>
+        <a class="drawer-card-link" href="./tiers.html"><span class="drawer-card-title"><span>量级分类大库</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档从小到大 · 物理焦耳与集合论标尺</span></a>
+        <a class="drawer-card-link" href="./characters.html"><span class="drawer-card-title"><span>角色战力档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">首字母 A–Z / 量级从小到大双模式排序</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">基准规则原文（全文无删减）</div>
+        <a class="drawer-doc-link" href="./rules.html"><span>卷一 · 衡天量级体系（第四版）</span><span>→</span></a>
+        <a class="drawer-doc-link active" href="./materials.html"><span>卷二 · 材质与破坏能量数据库</span><span>→</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        <a class="drawer-doc-link" href="./index.html"><span>返回首页总览</span><span>→</span></a>
+        <a class="drawer-doc-link" href="./search.html"><span>全站即时检索</span><span>→</span></a>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {
+        if (window.__PW_SYNC_LOCK__) { window.__PW_SYNC_LOCK__(); return; }
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }
+      function closeAll() {
+        if (window.__PW_CLOSE_ALL__) { window.__PW_CLOSE_ALL__(); return; }
+        drawer.classList.remove('open');
+        sync();
+      }
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      });
+      if (closeBtn) { closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }
+      if (backdrop) { backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {
+        links[j].addEventListener('click', function() { drawer.classList.remove('open'); sync(); });
+      }
+      window.addEventListener('pageshow', function() { drawer.classList.remove('open'); sync(); });
+    })();
+  </script>
+
+  <main>
+    
+    <div class="container">
+      <header class="codex-header" aria-label="基准原文典籍页头">
+        <div class="codex-tabs" role="tablist" aria-label="基准原文双卷切换">
+          <a class="codex-tab" href="rules.html">卷一：《衡天⊙ 多维战力量级体系（第四版）》原文</a>
+          <a class="codex-tab active" href="materials.html">卷二：《材质与破坏能量数据库（第二版）》原文</a>
+        </div>
+
+        <div class="codex-folio">
+          <div class="codex-folio-kicker">
+            <span class="codex-folio-badge mono">CODEX VOL. II · 物理能量原文</span>
+            <span class="mono">全文无删减收录 · 416 行 · 14,494 字 · 35 节</span>
+          </div>
+          <h1 class="codex-folio-title">材质与破坏能量数据库（第二版·全文）</h1>
+          <p class="codex-folio-desc">完整收录岩石/金属/生物力学强度、碎裂至核子解离破坏方式比能（J/cm³）、天体结合能与致密星物质锚点。</p>
+          <div class="codex-folio-meta">
+            <span>定级标尺参考文本（区别于动态分类目录，完整保留 Markdown 原貌与表格数据）</span>
+            <div>
+              <a class="table-primary-link" href="tiers.html">前往「量级分类」大库 →</a>
+              <span> · </span>
+              <a class="table-primary-link" href="characters.html">前往「角色档案」大库 →</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="doc-layout">
+        <aside class="doc-sidebar" id="doc-sidebar" aria-label="全文目录">
+          <div class="toc-head">
+            <div class="toc-head-row">
+              <span>原文目录大纲</span>
+              <span class="mono">35 节</span>
+            </div>
+            <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选目录章节…" autocomplete="off">
+          </div>
+          <nav class="toc-list" id="toc-nav">
+            <a class="toc-item toc-lvl-1" href="#sec-材质与破坏能量数据库-第二版">材质与破坏能量数据库（第二版）</a><a class="toc-item toc-lvl-1" href="#sec-第二版修订要点">第二版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-第零部分-方法论-先分清问的是哪种物理量">第零部分　方法论：先分清问的是哪种物理量</a><a class="toc-item toc-lvl-2" href="#sec-0-1-破坏动词映射-两条独立轴">0.1 破坏动词映射：两条独立轴</a><a class="toc-item toc-lvl-2" href="#sec-0-2-斩断-切开高速运动物体-不等于承受其全部动能">0.2 斩断、切开高速运动物体，不等于承受其全部动能</a><a class="toc-item toc-lvl-2" href="#sec-0-3-两个可直接验证描写是否符合物理的小工具">0.3 两个可直接验证描写是否符合物理的小工具</a><a class="toc-item toc-lvl-1" href="#sec-第一部分-常规材质粉碎能量密度-继承自汪吧摘录">第一部分　常规材质粉碎能量密度（继承自汪吧摘录）</a><a class="toc-item toc-lvl-2" href="#sec-1-1-破碎程度定义">1.1 破碎程度定义</a><a class="toc-item toc-lvl-2" href="#sec-1-2-粉碎能量密度参照表">1.2 粉碎能量密度参照表</a><a class="toc-item toc-lvl-2" href="#sec-1-3-gbu-57-一个-权威数字-其实是多方矛盾的案例">1.3 GBU-57：一个&quot;权威数字&quot;其实是多方矛盾的案例</a><a class="toc-item toc-lvl-1" href="#sec-第二部分-材料强度参考表-区别于破碎能量-单独使用">第二部分　材料强度参考表（区别于破碎能量，单独使用）</a><a class="toc-item toc-lvl-2" href="#sec-2-1-常见材质">2.1 常见材质</a><a class="toc-item toc-lvl-2" href="#sec-2-2-防御维度的高端锚点-中子星外壳">2.2 防御维度的高端锚点：中子星外壳</a><a class="toc-item toc-lvl-1" href="#sec-第三部分-相变能量-熔化与汽化">第三部分　相变能量：熔化与汽化</a><a class="toc-item toc-lvl-2" href="#sec-3-1-常见材质的相变能量密度-第二版统一口径">3.1 常见材质的相变能量密度（第二版统一口径）</a><a class="toc-item toc-lvl-2" href="#sec-3-2-关键锚点-汽化是粉碎的两到三个数量级">3.2 关键锚点：汽化是粉碎的两到三个数量级</a><a class="toc-item toc-lvl-2" href="#sec-3-3-数据来源说明">3.3 数据来源说明</a><a class="toc-item toc-lvl-1" href="#sec-第四部分-天体引力束缚能-公式与参考值">第四部分　天体引力束缚能：公式与参考值</a><a class="toc-item toc-lvl-2" href="#sec-4-1-引力束缚能的定义边界">4.1 引力束缚能的定义边界</a><a class="toc-item toc-lvl-2" href="#sec-4-2-基础公式">4.2 基础公式</a><a class="toc-item toc-lvl-2" href="#sec-4-3-常规天体参考值-均匀球公式复算">4.3 常规天体参考值（均匀球公式复算）</a><a class="toc-item toc-lvl-2" href="#sec-4-4-致密天体-白矮星与中子星-第二版更正">4.4 致密天体：白矮星与中子星（第二版更正）</a><a class="toc-item toc-lvl-3" href="#sec-束缚能阶梯">束缚能阶梯</a><a class="toc-item toc-lvl-2" href="#sec-4-5-两类不要求完整引力束缚能的天体级表现">4.5 两类不要求完整引力束缚能的天体级表现</a><a class="toc-item toc-lvl-1" href="#sec-第五部分-全球性持续热注入的物理阈值-ki-与-sn-极限">第五部分　全球性持续热注入的物理阈值：KI 与 SN 极限</a><a class="toc-item toc-lvl-2" href="#sec-5-1-两条阈值">5.1 两条阈值</a><a class="toc-item toc-lvl-2" href="#sec-5-2-使用方法">5.2 使用方法</a><a class="toc-item toc-lvl-2" href="#sec-5-3-适用边界">5.3 适用边界</a><a class="toc-item toc-lvl-1" href="#sec-第六部分-撞击成坑的物理框架-补充参考">第六部分　撞击成坑的物理框架（补充参考）</a><a class="toc-item toc-lvl-1" href="#sec-第七部分-数据源现状-为何没有统一权威站点">第七部分　数据源现状：为何没有统一权威站点</a><a class="toc-item toc-lvl-1" href="#sec-第八部分-爆炸与云层-图像判读用的数据表-第二版新增">第八部分　爆炸与云层：图像判读用的数据表（第二版新增）</a><a class="toc-item toc-lvl-2" href="#sec-8-1-爆炸半径与当量">8.1 爆炸半径与当量</a><a class="toc-item toc-lvl-2" href="#sec-8-2-云层计算">8.2 云层计算</a><a class="toc-item toc-lvl-1" href="#sec-附-参考来源">附：参考来源</a><a class="toc-item toc-lvl-1" href="#sec-附-待补充事项">附：待补充事项</a>
+          </nav>
+        </aside>
+
+        <article class="doc-panel">
+          <div class="doc-toolbar">
+            <div class="doc-source-info">
+              <span>基准原文全文</span>
+              <span>·</span>
+              <code class="mono">材质与破坏能量数据库（新）.md</code>
+            </div>
+            <div class="doc-tools">
+              <div class="doc-find-box">
+                <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
+                <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
+                <span class="doc-find-count mono" id="doc-find-count"></span>
+              </div>
+              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+              <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
+              <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
+            </div>
+          </div>
+
+          <div class="markdown-body">
+            <h1 id="sec-材质与破坏能量数据库-第二版">材质与破坏能量数据库（第二版）<a class="heading-anchor" href="#sec-材质与破坏能量数据库-第二版" data-target-id="sec-材质与破坏能量数据库-第二版" title="复制本节锚点链接">#</a></h1>
+<blockquote><p>本文件是《衡天⊙多维战力量级体系》（下称"衡天"）的配套数据参考，回答"某种材质或天体被破坏到某种程度需要多少能量"，以及"某种材质能扛住多大的力"。<br>所有数值标注来源，可交叉核实。使用前先看第零部分，确定应查哪张表。按需查表即可，不需要通读。长篇作品的分批流程见衡天"使用流程与分批处理"。</p></blockquote>
+<hr>
+<h1 id="sec-第二版修订要点">第二版修订要点<a class="heading-anchor" href="#sec-第二版修订要点" data-target-id="sec-第二版修订要点" title="复制本节锚点链接">#</a></h1>
+<ol><li><strong>白矮星束缚能更正</strong>：旧版把白矮星半径取为太阳的 0.001 倍（约 696 km），比真实值小一个数量级；按真实半径重算后，典型白矮星的引力束缚能约为 6×10⁴² 至 9×10⁴² J，不是 9.5×10⁴³ J（4.4）。</li><li><strong>Ia 型超新星校准案例重写</strong>：改用 Woosley 等人（2007）的能量收支模型，并说明"实际输出是下限的 2–3 倍"只对<strong>净束缚能</strong>成立，对引力束缚能本身不成立（4.1）。</li><li><strong>撕星标度律更正</strong>：两半球之间的引力与密度的平方、半径的四次方成正比，不是线性（4.5）。</li><li><strong>相变表口径统一</strong>：熔化、汽化两列改为只列潜热；含升温的总能量单列；花岗岩"加热到汽化点"的数据移出熔化列（3.1）。</li><li><strong>汽化/粉碎比值重算</strong>：玄武岩 224–291 倍，花岗岩 482–1090 倍（3.2）。</li><li><strong>碎块与粉碎口径统一</strong>：大块碎块对应衡天 2.2 的碎块刻度（0.4–5.2 J/cc），粉碎对应第一部分的粉碎表（40–1200 J/cc）（0.1）。</li><li><strong>振星数值标为存疑</strong>：原值未经复核，按弹性能粗估可能偏低一个到两个数量级（4.5）。</li><li><strong>新增材质</strong>：冰、木材、人骨，以及作为防御高端锚点的中子星外壳（第二部分）。</li><li><strong>新增第八部分</strong>：爆炸半径与当量、云层计算的数据表（方法见衡天第十部分）。</li><li><strong>章节引用</strong>：统一改为衡天的章节编号。</li></ol>
+<hr>
+<h1 id="sec-第零部分-方法论-先分清问的是哪种物理量">第零部分　方法论：先分清问的是哪种物理量<a class="heading-anchor" href="#sec-第零部分-方法论-先分清问的是哪种物理量" data-target-id="sec-第零部分-方法论-先分清问的是哪种物理量" title="复制本节锚点链接">#</a></h1>
+<p>实战判定最容易出错的地方，不是查错数字，而是<strong>用错量纲</strong>。以下五种量互相独立，不能互相替代：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">量</th><th style="text-align:left">单位</th><th style="text-align:left">回答什么问题</th><th style="text-align:left">本文件对应章节</th></tr></thead><tbody><tr><td style="text-align:left"><strong>强度</strong>（抗压、抗拉、断裂韧性）</td><td style="text-align:left">MPa、MPa·√m</td><td style="text-align:left">材料在多大<strong>应力</strong>下失效——"能不能破"的阈值，不是"破需要多少能量"</td><td style="text-align:left">第二部分</td></tr><tr><td style="text-align:left"><strong>破碎比能</strong>（碎块、粉碎）</td><td style="text-align:left">J/cc（J/m³）</td><td style="text-align:left">把单位体积材料打碎、打成粉需要多少<strong>能量</strong>——工程爆破的经验数据</td><td style="text-align:left">第一部分；碎块刻度见衡天 2.2</td></tr><tr><td style="text-align:left"><strong>相变潜热</strong>（熔化、汽化）</td><td style="text-align:left">J/kg 或 J/cc</td><td style="text-align:left">把材料熔化、汽化需要多少能量——与破碎是完全不同的物理机制</td><td style="text-align:left">第三部分</td></tr><tr><td style="text-align:left"><strong>引力束缚能</strong></td><td style="text-align:left">J（对象总量，不是单位体积）</td><td style="text-align:left">把一个天体的物质<strong>送到无穷远</strong>需要多少能量——不是破碎，是拆散</td><td style="text-align:left">第四部分</td></tr><tr><td style="text-align:left"><strong>持续通量</strong></td><td style="text-align:left">W/m²、W</td><td style="text-align:left">维持多大的<strong>持续功率</strong>才能让全球性热效应失控——不是单次爆破，是长期热注入</td><td style="text-align:left">第五部分</td></tr></tbody></table></div>
+<p><strong>常见错误</strong>：拿破碎能量密度去套天体，拿引力束缚能去套地面建筑，或者把持续通量的功率直接当一次性能量比较。最后一种的单位（W）与其余四种（J）维度不同，混用前必须先明确作用时长完成换算。</p>
+<p><strong>与衡天多维评定的对应</strong>：第一、三、四部分主要服务于"破"（破坏）维度；第二部分主要服务于"御"（防御）维度和衡天 0.16 的"可影响强度上限"；第五部分属于持续性表现，结论须注明功率单位。</p>
+<h2 id="sec-0-1-破坏动词映射-两条独立轴">0.1 破坏动词映射：两条独立轴<a class="heading-anchor" href="#sec-0-1-破坏动词映射-两条独立轴" data-target-id="sec-0-1-破坏动词映射-两条独立轴" title="复制本节锚点链接">#</a></h2>
+<p>判定"碎、爆、毁、粉碎、湮灭、化为齑粉"这类描述该套哪一行，先分清动词其实在回答<strong>两个不同的问题</strong>，两条轴分别判断再组合，不能看见一个字就锁定一个固定倍率。</p>
+<p><strong>轴一：残骸是否克服了引力束缚（只对行星、恒星级天体适用）</strong></p>
+<ul><li><strong>碎、裂</strong>：仅代表结构断裂，残骸可能仍彼此吸引、原地或松散堆积——只需克服<strong>材质强度</strong>（第二部分），<strong>不套引力束缚能</strong>；</li><li><strong>爆、毁、灭</strong>：残骸被抛散到彼此再也无法靠引力重新聚合的程度——需要克服<strong>引力束缚能</strong>（第四部分）。</li></ul>
+<p>同一个天体，"碎"和"爆"可以相差好几个完整分级（如六千公里直径的星球，"爆它"是星▽，"碎它"只到表☆），不能因为原文用了"碎、裂"就直接套引力束缚能。</p>
+<p><strong>轴二：残骸颗粒大小与物质形态（任意尺度都适用）</strong></p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">描写</th><th style="text-align:left">取值</th><th style="text-align:left">依据</th></tr></thead><tbody><tr><td style="text-align:left">破、裂成大块或小碎块</td><td style="text-align:left">约 0.4–5.2 J/cc</td><td style="text-align:left">衡天 2.2 的碎块刻度</td></tr><tr><td style="text-align:left">粉碎、化为齑粉、打成灰尘</td><td style="text-align:left">约 40–1200 J/cc，比碎块高约 40–90 倍</td><td style="text-align:left">本文件第一部分</td></tr><tr><td style="text-align:left">熔、熔毁</td><td style="text-align:left">在破碎能量之上另加熔化潜热与升温</td><td style="text-align:left">第三部分</td></tr><tr><td style="text-align:left">汽化、湮灭</td><td style="text-align:left">另加汽化潜热与升温，比粉碎再高两到三个数量级</td><td style="text-align:left">第三部分 3.2</td></tr></tbody></table></div>
+<p><strong>两条轴分别判断、按需叠加，不是二选一</strong>：先问残骸有没有飞散、克服引力（轴一，决定要不要算第四部分），再问残骸细到什么程度、有没有相变（轴二，决定第一、三部分怎么取值）。</p>
+<ul><li>"爆炸粉碎成尘"（天体级）= 轴一（套引力束缚能）+ 轴二（粉碎），两项相加；</li><li>"原地碎成粉末，没有飞散"（天体级）= 只套轴二，残骸仍在原处，没有被真正拆散；</li><li>"湮灭"通常默认轴一加轴二（汽化）一起算，因为汽化的物质必然离开原位，除非原文明确写了"原地湮灭、残骸未曾飞散"；</li><li>地面尺度目标（建筑、山体）不涉及轴一，只按轴二取值。</li></ul>
+<h2 id="sec-0-2-斩断-切开高速运动物体-不等于承受其全部动能">0.2 斩断、切开高速运动物体，不等于承受其全部动能<a class="heading-anchor" href="#sec-0-2-斩断-切开高速运动物体-不等于承受其全部动能" data-target-id="sec-0-2-斩断-切开高速运动物体-不等于承受其全部动能" title="复制本节锚点链接">#</a></h2>
+<p>"斩开陨石""格挡、斩断攻击"一类描写，容易被直接判定为角色具备等同于该物体动能的输出。但<strong>单纯的切开（不改变物体运动状态，只分割结构）所需能量，只是该物体材质本身的切割、断裂能量</strong>，与它携带多少动能无关：被切开的两半仍以原速度继续运动，破坏效果不变。</p>
+<p><strong>判定规则：</strong></p>
+<ul><li>原文只写"斩开、切断"，物体继续按原轨迹运动 → 按<strong>材质切割、断裂能量</strong>计算（第二部分强度，或第一部分破碎值），<strong>不能按被斩物体的动能定级</strong>。"斩陨"的真实难度约等于"斩开一颗同样大小的静止岩球"；</li><li>原文写"斩开后物体威力尽失、静止、消散" → 说明还包含了吸收、抵消动能的额外效果，这部分需要<strong>原文给出独立依据</strong>才能采信；</li><li>唯一等同于承受全部动能的情况：物体被真正<strong>拦停</strong>（速度归零、被弹开、被完全摧毁到无法继续造成原有效果）。</li></ul>
+<p>本条适用于一切"格挡、斩断、拦截高速运动物体"的描写。攻击被格挡而未被吸收时，格挡所需的只是维持自身结构不被破坏，不等于攻击携带的总能量。按衡天 1.4，这类表现可以给"御"记<span class="ev-badge ev-lower">〔下〕</span>，但不能给"破"记数值。</p>
+<h2 id="sec-0-3-两个可直接验证描写是否符合物理的小工具">0.3 两个可直接验证描写是否符合物理的小工具<a class="heading-anchor" href="#sec-0-3-两个可直接验证描写是否符合物理的小工具" data-target-id="sec-0-3-两个可直接验证描写是否符合物理的小工具" title="复制本节锚点链接">#</a></h2>
+<p><strong>"深不见底"</strong>：坑或裂缝宽度 b、深度 h、太阳高度角 a，满足 h &gt; b × tan(a) 时，日光确实无法直射底部，"深不见底"在物理上成立。日常经验中很多"深不见底"其实是漫反射不足的观感；尺度足够大、反射可忽略时，这个关系才真正决定是否见底。</p>
+<p><strong>"远处可见"</strong>：</p>
+<ul><li><strong>曲率遮挡</strong>（忽略大气，理想球形星体）：观察者能看见的最远距离 S = √(2Rh + h²)，R 为星体半径，h 为观察点高度；远处目标本身有高度 H 时，S最大 = √(2Rh + h²) + √(2RH + H²)。</li><li><strong>空气消光</strong>（忽略曲率）：光强随距离 x（公里）按 e 的 −kx 次方衰减，k 取值参考：极清澈大气 0.01–0.03，干净乡村大气 0.05–0.1，城市或轻度霾 0.2–0.5。</li></ul>
+<p>星体表面观测取曲率公式，普通地表远眺取消光公式。</p>
+<hr>
+<h1 id="sec-第一部分-常规材质粉碎能量密度-继承自汪吧摘录">第一部分　常规材质粉碎能量密度（继承自汪吧摘录）<a class="heading-anchor" href="#sec-第一部分-常规材质粉碎能量密度-继承自汪吧摘录" data-target-id="sec-第一部分-常规材质粉碎能量密度-继承自汪吧摘录" title="复制本节锚点链接">#</a></h1>
+<h2 id="sec-1-1-破碎程度定义">1.1 破碎程度定义<a class="heading-anchor" href="#sec-1-1-破碎程度定义" data-target-id="sec-1-1-破碎程度定义" title="复制本节锚点链接">#</a></h2>
+<p><strong>大碎块</strong>：肉眼可见的巨大碎块（一人高、半米、数米等）。脆性介质破碎为大碎块，含金量只比开裂成数块略高。</p>
+<p><strong>小碎块</strong>：碎块大小在常人认知的较小物体左右，巴掌大到小西瓜、猫、婴儿大小。</p>
+<p><strong>碎屑、抛掷</strong>：完全打成细小碎屑，爆山或挖坑中含金量很高。抛掷是碎屑再被抛飞形成的广义"砸坑"（与真正的粉碎坑不同）。</p>
+<p><strong>粉碎</strong>：被破坏体积完全消失，需要佐证才能判断，画面类似广义"蒸发"。典例："打成齑粉"。</p>
+<p>碎块与碎屑对应的能量刻度见衡天 2.2（约 0.4–5.2 J/cc）；本部分的表只用于<strong>粉碎</strong>。</p>
+<h2 id="sec-1-2-粉碎能量密度参照表">1.2 粉碎能量密度参照表<a class="heading-anchor" href="#sec-1-2-粉碎能量密度参照表" data-target-id="sec-1-2-粉碎能量密度参照表" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">材质</th><th style="text-align:left">TNT 当量</th><th style="text-align:left">能量密度</th></tr></thead><tbody><tr><td style="text-align:left">一般水泥、混凝土</td><td style="text-align:left">9.5 kg/m³</td><td style="text-align:left">40 J/cc</td></tr><tr><td style="text-align:left">一般岩石</td><td style="text-align:left">14 kg/m³</td><td style="text-align:left">60 J/cc</td></tr><tr><td style="text-align:left">花岗岩等坚硬岩石</td><td style="text-align:left">24 kg/m³</td><td style="text-align:left">100 J/cc 以上</td></tr><tr><td style="text-align:left">一般钢筋混凝土</td><td style="text-align:left">25 kg/m³</td><td style="text-align:left">105 J/cc</td></tr><tr><td style="text-align:left">70 MPa 钢混</td><td style="text-align:left">72 kg/m³</td><td style="text-align:left">300 J/cc 以上</td></tr><tr><td style="text-align:left">军用高硬度钢纤维混凝土</td><td style="text-align:left">286.8 kg/m³</td><td style="text-align:left">1200 J/cc</td></tr></tbody></table></div>
+<p><strong>来源与可靠性</strong>：这套数据是战力论战社区（汪吧）长期使用的经验值，量级正确、内部自洽，但<strong>不是任何单一论文的直接产物</strong>——它更接近工程爆破中"破碎比功"的粗略估计。真实工程文献中这类数据高度依赖岩体裂隙率、炸药耦合方式、自由面数量等现场条件，本身就有数倍浮动，只能当经验参照，不是物理常数。</p>
+<h2 id="sec-1-3-gbu-57-一个-权威数字-其实是多方矛盾的案例">1.3 GBU-57：一个"权威数字"其实是多方矛盾的案例<a class="heading-anchor" href="#sec-1-3-gbu-57-一个-权威数字-其实是多方矛盾的案例" data-target-id="sec-1-3-gbu-57-一个-权威数字-其实是多方矛盾的案例" title="复制本节锚点链接">#</a></h2>
+<p>网络流传的版本是"GBU-57 动能 12 亿焦耳，坚硬岩石 40 m 深坑，35 MPa 混凝土 60 m 深坑"。核实后发现<strong>开源资料本身互相矛盾</strong>：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">来源类型</th><th style="text-align:left">声称的穿透深度</th><th style="text-align:left">材质</th></tr></thead><tbody><tr><td style="text-align:left">美国空军官方声明</td><td style="text-align:left">约 61 m（200 英尺）</td><td style="text-align:left">未指明材质，通常理解为土壤</td></tr><tr><td style="text-align:left">简氏防务独立评估</td><td style="text-align:left">约 18 m（59 英尺）</td><td style="text-align:left">5,000 psi（34.5 MPa）钢筋混凝土</td></tr><tr><td style="text-align:left">同一评估</td><td style="text-align:left">约 2.4 m（8 英尺）</td><td style="text-align:left">10,000 psi（69 MPa）超高强混凝土</td></tr><tr><td style="text-align:left">部分早期或未证实报道</td><td style="text-align:left">60 m</td><td style="text-align:left">5,000 psi 混凝土（多篇资料自称"数字高得可疑"）</td></tr><tr><td style="text-align:left">部分早期或未证实报道</td><td style="text-align:left">40 m</td><td style="text-align:left">"较硬岩石"</td></tr></tbody></table></div>
+<p>"60 m 混凝土"和"18 m 混凝土"不可能同时为真。军用武器的穿透数据大多保密，公开数字来自二手推测或早期宣传材料，可信度天然有限。</p>
+<p><strong>建议</strong>：用 GBU-57 做参照时，标注取值范围而非单一数字，并注明存疑；更稳妥的锚点是它的<strong>动能</strong>（约 12 亿焦耳，由公开质量 13,600 kg 与典型末速反推，比穿深数据可靠得多）。</p>
+<hr>
+<h1 id="sec-第二部分-材料强度参考表-区别于破碎能量-单独使用">第二部分　材料强度参考表（区别于破碎能量，单独使用）<a class="heading-anchor" href="#sec-第二部分-材料强度参考表-区别于破碎能量-单独使用" data-target-id="sec-第二部分-材料强度参考表-区别于破碎能量-单独使用" title="复制本节锚点链接">#</a></h1>
+<p>这套数字回答"多大的力能让它开裂"，不能直接换算成"打碎它要多少能量"（后者还取决于破坏体积、裂纹扩展路径等）。用于判断"某个力或压强是否足以使材料开始破坏"，以及衡天"御"维度和 0.16"可影响强度上限"的锚点。</p>
+<h2 id="sec-2-1-常见材质">2.1 常见材质<a class="heading-anchor" href="#sec-2-1-常见材质" data-target-id="sec-2-1-常见材质" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">材质</th><th style="text-align:left">抗压强度</th><th style="text-align:left">抗拉强度</th><th style="text-align:left">断裂韧性 K_IC</th><th style="text-align:left">备注</th></tr></thead><tbody><tr><td style="text-align:left">天然湖冰</td><td style="text-align:left">约 1.2–12 MPa</td><td style="text-align:left">—</td><td style="text-align:left">—</td><td style="text-align:left">温度越低、加载越快越强；−10 °C 约为 −5 °C 的 1.4–1.8 倍</td></tr><tr><td style="text-align:left">木材（顺纹，针叶材）</td><td style="text-align:left">约 30–60 MPa</td><td style="text-align:left">约 70–140 MPa</td><td style="text-align:left">—</td><td style="text-align:left">含水率 12% 时；阔叶材一般更高（橡木抗压约 58 MPa）</td></tr><tr><td style="text-align:left">人类股骨（沿长轴）</td><td style="text-align:left">约 205 MPa</td><td style="text-align:left">约 135 MPa</td><td style="text-align:left">—</td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">普通混凝土</td><td style="text-align:left">20–40 MPa</td><td style="text-align:left">2–5 MPa</td><td style="text-align:left">0.2–1.4 MPa·√m</td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">高强混凝土</td><td style="text-align:left">60–110 MPa</td><td style="text-align:left">5–10 MPa</td><td style="text-align:left">—</td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">花岗岩</td><td style="text-align:left">100–310 MPa（典型 175）</td><td style="text-align:left">5–25 MPa</td><td style="text-align:left">1.9–2.24 MPa·√m</td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">建筑钢材（常见等级）</td><td style="text-align:left">—</td><td style="text-align:left">400–2,000 MPa</td><td style="text-align:left">数十至上百 MPa·√m</td><td style="text-align:left">韧性金属远高于脆性材料</td></tr><tr><td style="text-align:left">金刚石</td><td style="text-align:left">理论 223–470 GPa；纳米尺度实测压缩可达约 250 GPa</td><td style="text-align:left">理论格里菲斯极限约 122 GPa；压痕实测约 20 GPa；纳米针实测已接近理论极限</td><td style="text-align:left">约 18.7 MPa·√m</td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">石墨烯（对照）</td><td style="text-align:left">—</td><td style="text-align:left">约 100–130 GPa</td><td style="text-align:left">—</td><td style="text-align:left">已知实测抗拉强度最高的材料之一</td></tr></tbody></table></div>
+<p><strong>读法</strong>：花岗岩抗压约是抗拉的 10–20 倍，混凝土、岩石、陶瓷都是"耐压不耐拉"；木材则相反，顺纹抗拉高于抗压。需要精确判断时不要把两者混用。</p>
+<p><strong>关于金刚石的定位</strong>：实测最高抗拉纪录在石墨烯；金刚石的理论压缩极限（约 470 GPa）更高，但那是理论计算值，实验室能稳定实现的压缩强度在 100–250 GPa 区间。<strong>某一世界观设定中若存在"比金刚石更硬"的材料，此处即为需要标注倍数的起点。</strong></p>
+<h2 id="sec-2-2-防御维度的高端锚点-中子星外壳">2.2 防御维度的高端锚点：中子星外壳<a class="heading-anchor" href="#sec-2-2-防御维度的高端锚点-中子星外壳" data-target-id="sec-2-2-防御维度的高端锚点-中子星外壳" title="复制本节锚点链接">#</a></h2>
+<p>Horowitz 与 Kadau 2009 年发表于《物理评论快报》的分子动力学模拟表明，中子星外壳（库仑晶体）可承受的应力约为钢的<strong>一百亿倍</strong>，断裂应变约 0.1，是目前已知最强的物质。</p>
+<p><strong>用法</strong>：作品写明角色身体"由中子星物质构成"或"比中子星还坚固"时，以此为物质强度锚点，按衡天 9.2 记入"御"，并注明这是外壳材料的模拟值，不是整颗中子星的束缚能（后者见 4.4）。</p>
+<hr>
+<h1 id="sec-第三部分-相变能量-熔化与汽化">第三部分　相变能量：熔化与汽化<a class="heading-anchor" href="#sec-第三部分-相变能量-熔化与汽化" data-target-id="sec-第三部分-相变能量-熔化与汽化" title="复制本节锚点链接">#</a></h1>
+<p>这是<strong>完全独立于破碎</strong>的物理机制。破碎只需克服材料内部的结合强度，相变需要把材料加热到临界温度并克服潜热，数值上通常比破碎高<strong>两到三个数量级</strong>。</p>
+<h2 id="sec-3-1-常见材质的相变能量密度-第二版统一口径">3.1 常见材质的相变能量密度（第二版统一口径）<a class="heading-anchor" href="#sec-3-1-常见材质的相变能量密度-第二版统一口径" data-target-id="sec-3-1-常见材质的相变能量密度-第二版统一口径" title="复制本节锚点链接">#</a></h2>
+<p><strong>只列潜热</strong>（不含从室温升温的部分）：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">材质</th><th style="text-align:left">熔化潜热</th><th style="text-align:left">汽化潜热</th><th style="text-align:left">推算依据</th></tr></thead><tbody><tr><td style="text-align:left">水（对照锚点）</td><td style="text-align:left">334 J/cc</td><td style="text-align:left">2,257 J/cc</td><td style="text-align:left">标准物理常数，密度取 1 g/cm³</td></tr><tr><td style="text-align:left">铁</td><td style="text-align:left">约 1,947 J/cc</td><td style="text-align:left">约 47,900 J/cc</td><td style="text-align:left">熔化热 13.81 kJ/mol、汽化热 340 kJ/mol、密度 7.874 g/cm³</td></tr></tbody></table></div>
+<p><strong>含升温在内的汽化总能量</strong>（从室温加热到全部汽化）：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">材质</th><th style="text-align:left">汽化总能量</th><th style="text-align:left">说明</th></tr></thead><tbody><tr><td style="text-align:left">玄武岩</td><td style="text-align:left">约 22,400–29,100 J/cc</td><td style="text-align:left">因岩性不同浮动</td></tr><tr><td style="text-align:left">花岗岩</td><td style="text-align:left">约 48,200–109,000 J/cc</td><td style="text-align:left">因产地、成分浮动极大</td></tr></tbody></table></div>
+<p><strong>下界参考（不完整）</strong>：花岗岩"仅加热到汽化温度、不含汽化潜热"约 12,500 J/cc。文献注明岩石汽化潜热尚无可靠数据，此值只能当下界，不能当完整汽化能。</p>
+<p><strong>升温部分的估算</strong>：需要从室温算起时，另加"比热容 × 温升 × 质量"。铁的常温摩尔热容约 25.1 J/(mol·K)，熔点 1811 K、沸点 3134 K；比热会随温度上升，精确计算须查温度相关的焓值表。</p>
+<h2 id="sec-3-2-关键锚点-汽化是粉碎的两到三个数量级">3.2 关键锚点：汽化是粉碎的两到三个数量级<a class="heading-anchor" href="#sec-3-2-关键锚点-汽化是粉碎的两到三个数量级" data-target-id="sec-3-2-关键锚点-汽化是粉碎的两到三个数量级" title="复制本节锚点链接">#</a></h2>
+<p>以第一部分的坚硬岩石粉碎值（100 J/cc）为基准：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">材质</th><th style="text-align:left">汽化总能量 ÷ 粉碎能量</th></tr></thead><tbody><tr><td style="text-align:left">玄武岩</td><td style="text-align:left"><strong>约 224–291 倍</strong></td></tr><tr><td style="text-align:left">花岗岩</td><td style="text-align:left"><strong>约 482–1090 倍</strong></td></tr></tbody></table></div>
+<p><strong>判定规则</strong>：作品中"打成齑粉"和"直接蒸发"若用同一个能量数字，是明显的错误——真实物理上二者差了两到三个数量级，不是同一挡的细分，是完全不同的破坏方式。</p>
+<h2 id="sec-3-3-数据来源说明">3.3 数据来源说明<a class="heading-anchor" href="#sec-3-3-数据来源说明" data-target-id="sec-3-3-数据来源说明" title="复制本节锚点链接">#</a></h2>
+<ul><li>玄武岩汽化能：两个独立来源交叉验证——一篇 arXiv 论文（暗物质撞击天体的研究）直接给出玄武岩总汽化热约 25 kJ/cm³；Bacon、Russell 与 Carstens 的岩石量热实验数据换算后得 21.4–29.1 kJ/cc，两者吻合。</li><li>花岗岩汽化能：同一份实验数据，不同产地花岗岩（Barre、Westerly、St. Cloud）差异达 2.3 倍，"花岗岩"作为笼统类别本身就有天然浮动，需就近取值。</li><li>花岗岩加热至汽化温度：MIT 定向能钻探技术报告给出约 12.5 kJ/cc，未计汽化潜热，系统性偏低，只作下界。</li><li>铁：熔化热、汽化热、密度、熔沸点均取标准物性数据。</li></ul>
+<hr>
+<h1 id="sec-第四部分-天体引力束缚能-公式与参考值">第四部分　天体引力束缚能：公式与参考值<a class="heading-anchor" href="#sec-第四部分-天体引力束缚能-公式与参考值" data-target-id="sec-第四部分-天体引力束缚能-公式与参考值" title="复制本节锚点链接">#</a></h1>
+<h2 id="sec-4-1-引力束缚能的定义边界">4.1 引力束缚能的定义边界<a class="heading-anchor" href="#sec-4-1-引力束缚能的定义边界" data-target-id="sec-4-1-引力束缚能的定义边界" title="复制本节锚点链接">#</a></h2>
+<p>引力束缚能严格对应的物理过程是<strong>拆散到无穷远</strong>，不是熔化、汽化，也不是打成粉末。这个定义决定了它在实战判定中只能作<strong>下限参考</strong>。</p>
+<p><strong>边界一：束缚能只管拆散，不管碎块状态。</strong> 达到束缚能，天体失去自身引力束缚、物质向外扩散，扩散出去的可以是完整的大块碎片。若表现明确为"天体被汽化、蒸发"，需在束缚能之上叠加第三部分的相变能量。</p>
+<p><strong>边界二：束缚能是理论最小值，几乎不会被真实表现精确命中。</strong> 它假设能量百分之百转化为拆散功、零耗散，对应的画面是天体"静悄悄"地缓慢解体。真实表现（爆炸、撞击、光爆、高速抛飞碎片）必然伴随热辐射、光辐射与远超"刚好逃逸"所需的碎片动能，这些都不计入束缚能。所以只要表现是爆炸性的、有可见光热的，实际输出<strong>必然更高</strong>。反过来，<strong>精确的上限算不出来</strong>：溢出部分没有统一比例或公式，只能回读原文对路径与范围的具体描写来限定区间（衡天 0.10、0.13）。</p>
+<p><strong>校准案例：Ia 型超新星（第二版重写）</strong></p>
+<p>Ia 型超新星是少数能比较"束缚能"与"实际输出"的真实天体事件：接近钱德拉塞卡质量的白矮星被核燃烧完全炸散，释放的能量大部分转化为抛射物动能。按 Woosley 等人 2007 年的模型：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">量</th><th style="text-align:left">数值</th></tr></thead><tbody><tr><td style="text-align:left">前身白矮星的引力束缚能</td><td style="text-align:left">约 3.35×10⁴⁴ J（3.35×10⁵¹ erg）</td></tr><tr><td style="text-align:left">前身白矮星的内能（简并压）</td><td style="text-align:left">约 2.89×10⁴⁴ J</td></tr><tr><td style="text-align:left">净束缚能（引力束缚能扣除内能）</td><td style="text-align:left">约 4.6×10⁴³ J</td></tr><tr><td style="text-align:left">抛射物在无穷远处的动能</td><td style="text-align:left">约 1.2×10⁴⁴ J（±0.2）</td></tr></tbody></table></div>
+<ul><li>动能约为<strong>净束缚能</strong>的 2.6 倍；</li><li>但动能<strong>低于引力束缚能本身</strong>——白矮星的简并内能抵消了大部分引力束缚。</li></ul>
+<p><strong>结论</strong>：这个案例只能说明"拆散一个天体实际付出的能量会超过其净束缚能"，<strong>不能</strong>当成"实际输出约为引力束缚能 2–3 倍"的估算系数。岩石行星的内能相对引力束缚能可以忽略，与白矮星不同，二者不能类比。旧版用 5,000–9,000 km 的半径计算钱德拉塞卡质量白矮星的束缚能，半径取值有误（白矮星越重越小），已废弃。</p>
+<p><strong>边界三：束缚能要求碎片送达无穷远，比"仅仅碎裂"更严格。</strong> 若表现只是天体碎裂成仍有引力联系的松散碎片群（如残留的环状结构），所需能量可以低于完整束缚能。按衡天 0.5，"摧毁天体系统"统一按完整束缚能门槛处理，以保持口径一致。</p>
+<h2 id="sec-4-2-基础公式">4.2 基础公式<a class="heading-anchor" href="#sec-4-2-基础公式" data-target-id="sec-4-2-基础公式" title="复制本节锚点链接">#</a></h2>
+<p>均匀球近似：<strong>U = 3GM²/(5R)</strong></p>
+<p>真实天体密度不均匀（核心更致密），真实束缚能通常<strong>高于</strong>均匀球估计，差异幅度因天体类型而异。已验证的地球案例：均匀球估计 2.241×10³² J，按真实密度剖面（PREM 模型）为 2.49×10³² J，高出约 11%。</p>
+<h2 id="sec-4-3-常规天体参考值-均匀球公式复算">4.3 常规天体参考值（均匀球公式复算）<a class="heading-anchor" href="#sec-4-3-常规天体参考值-均匀球公式复算" data-target-id="sec-4-3-常规天体参考值-均匀球公式复算" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">天体</th><th style="text-align:left">束缚能</th></tr></thead><tbody><tr><td style="text-align:left">火星</td><td style="text-align:left">4.864×10³⁰ J</td></tr><tr><td style="text-align:left">地球</td><td style="text-align:left">2.241×10³² J（真实值 2.49×10³²）</td></tr><tr><td style="text-align:left">木星</td><td style="text-align:left">2.063×10³⁶ J</td></tr><tr><td style="text-align:left">太阳</td><td style="text-align:left">2.277×10⁴¹ J</td></tr><tr><td style="text-align:left">平均场星（0.8 M☉，衡天覆盖体系基准）</td><td style="text-align:left">1.7×10⁴¹ J</td></tr></tbody></table></div>
+<h2 id="sec-4-4-致密天体-白矮星与中子星-第二版更正">4.4 致密天体：白矮星与中子星（第二版更正）<a class="heading-anchor" href="#sec-4-4-致密天体-白矮星与中子星-第二版更正" data-target-id="sec-4-4-致密天体-白矮星与中子星-第二版更正" title="复制本节锚点链接">#</a></h2>
+<p>这两类天体由简并压支撑，<strong>不能直接用均匀球公式</strong>。</p>
+<p><strong>白矮星</strong>：真实白矮星的半径约为太阳的 0.004–0.014 倍，与地球相当，而且质量越大半径越小。</p>
+<ul><li>普通白矮星的结构近似 n = 1.5 的多方球，引力束缚能为 (6/7)GM²/R；由位力定理，净束缚能约为其一半。</li><li>按 0.5 M☉、约 0.014 倍太阳半径（约 9,700 km）计算：引力束缚能约 5.8×10⁴² J，净束缚能约 2.9×10⁴² J。</li><li>按 0.6 M☉、约 0.0125 倍太阳半径（约 8,700 km）计算：引力束缚能约 9.4×10⁴² J，净束缚能约 4.7×10⁴² J。</li><li>接近钱德拉塞卡极限时，引力束缚能约 3.35×10⁴⁴ J，净束缚能约 4.6×10⁴³ J（4.1）。</li></ul>
+<p>旧版取半径 0.001 倍太阳半径（约 696 km），比真实白矮星小一个数量级，得出的 9.5×10⁴³ J 偏高约十倍，已废弃。</p>
+<p><strong>中子星</strong>：天文学界的标准参考值为 <strong>3×10⁵³ erg = 3×10⁴⁶ J</strong>，即典型 1.4 M☉ 中子星形成时释放的束缚能（Fukugita 与 Peebles 的宇宙能量收支综述，转引 Burrows 1990、Janka 与 Hillebrandt 1989 的超新星理论计算）。</p>
+<h3 id="sec-束缚能阶梯">束缚能阶梯<a class="heading-anchor" href="#sec-束缚能阶梯" data-target-id="sec-束缚能阶梯" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">天体</th><th style="text-align:left">束缚能</th><th style="text-align:left">相对太阳倍数</th></tr></thead><tbody><tr><td style="text-align:left">太阳</td><td style="text-align:left">2.28×10⁴¹ J</td><td style="text-align:left">×1</td></tr><tr><td style="text-align:left">白矮星（0.5–0.6 M☉，引力束缚能）</td><td style="text-align:left">约 6×10⁴² – 9×10⁴² J</td><td style="text-align:left">约 ×25–40</td></tr><tr><td style="text-align:left">白矮星（钱德拉塞卡极限附近，引力束缚能）</td><td style="text-align:left">约 3.35×10⁴⁴ J</td><td style="text-align:left">约 ×1,500</td></tr><tr><td style="text-align:left">中子星（1.4 M☉ 标准值）</td><td style="text-align:left">3×10⁴⁶ J</td><td style="text-align:left">约 ×130,000</td></tr></tbody></table></div>
+<p>作品中若出现摧毁白矮星、中子星的战绩，按衡天 0.19 的目标式直接查此表，不套覆盖模型。是否扣除内能，取决于原文描写的是"拆散"（用净束缚能为下限）还是"克服引力本身"（用引力束缚能）；不确定时两者都列出。</p>
+<h2 id="sec-4-5-两类不要求完整引力束缚能的天体级表现">4.5 两类不要求完整引力束缚能的天体级表现<a class="heading-anchor" href="#sec-4-5-两类不要求完整引力束缚能的天体级表现" data-target-id="sec-4-5-两类不要求完整引力束缚能的天体级表现" title="复制本节锚点链接">#</a></h2>
+<p><strong>撕星（沿单一截面撕开，不要求整体解体）</strong>：所需能量只是<strong>克服该截面两侧之间的引力</strong>，远小于整体束缚能。</p>
+<ul><li>均匀球两个半球之间的引力为 F = 3GM²/(16R²)。把两半拉开一小段距离 d，所需能量约为 F × d。</li><li>参考量级：直径 1000 km、密度 2 t/m³ 的星球，F 约 5.5×10¹⁹ N，每拉开 1 米约需 5.5×10¹⁹ J，约合 130 亿吨 TNT。</li><li><strong>标度律（第二版更正）</strong>：由于 M 与 ρR³ 成正比，F 与 <strong>ρ²R⁴</strong> 成正比——半径扩大 n 倍，每米能耗扩大 n⁴ 倍；密度扩大 n 倍，扩大 n² 倍。旧版写的"随半径、密度线性放大"有误。</li></ul>
+<p><strong>振星（只使天体振动、形变，不破坏整体结构）</strong>：只涉及材质本身的弹性力学，与引力束缚能无关，能量远低于爆星标准。</p>
+<ul><li>旧版参考值"密度 2 t/m³、直径 10 km 的岩石球，表面振幅 1 米，约 1.27 万吨 TNT"出自汪吧摘录，<strong>未经复核，标为存疑</strong>。</li><li>按弹性能粗估：整体径向"呼吸"振动（体积模量取约 50 GPa）约 110 万吨 TNT，剪切形变（剪切模量取约 30 GPa）约 7.5 万吨 TNT，比原值高 6 至 90 倍，具体取决于振动模式。</li><li>小振幅时能量与振幅的平方成正比。当球体足够大、引力开始主导恢复力时，需改用：振动能 = 收缩态的爆星能量 − 膨胀态的爆星能量。</li></ul>
+<p>完整解体、单截面撕裂、表面振动三者能量可差数个数量级，判定前须先确认原文描述的是哪一种。</p>
+<hr>
+<h1 id="sec-第五部分-全球性持续热注入的物理阈值-ki-与-sn-极限">第五部分　全球性持续热注入的物理阈值：KI 与 SN 极限<a class="heading-anchor" href="#sec-第五部分-全球性持续热注入的物理阈值-ki-与-sn-极限" data-target-id="sec-第五部分-全球性持续热注入的物理阈值-ki-与-sn-极限" title="复制本节锚点链接">#</a></h1>
+<p>前四部分回答"一次性输出多少焦耳"。部分作品描写的是<strong>持续、渐进</strong>的热效应——角色散发的热量持续烤炙大地、气候逐渐失控——这类表现对应的是<strong>持续通量</strong>（W/m²），需要单独的判定框架。</p>
+<h2 id="sec-5-1-两条阈值">5.1 两条阈值<a class="heading-anchor" href="#sec-5-1-两条阈值" data-target-id="sec-5-1-两条阈值" title="复制本节锚点链接">#</a></h2>
+<p><strong>KI 极限（Komabayashi–Ingersoll 极限）</strong>：海洋完全蒸发的吸收通量阈值，约 <strong>280 W/m²</strong>。地球现有吸收通量约 240 W/m²，只需再提升约 15%–17% 即可触及。</p>
+<p><strong>SN 极限（Simpson–Nakajima 极限）</strong>：吸收通量突破此值后，温室效应彻底失控，地表温度飙升到可以熔化岩石的水平，形成全球岩浆洋。具体数值文献间存在真实分歧：早期估计约 310–385 W/m²；Goldblatt 等人 2013 年（《自然·地球科学》）用更精细的辐射模型下修至约 <strong>282 W/m²</strong>；另有研究指出，高浓度二氧化碳可将其进一步压低到 280–290 W/m²。</p>
+<p><strong>引用提醒</strong>：常见转述把"310 W/m²"归给 Goldblatt 等人 2013 年，方向是反的——该文是把 SN 极限<strong>下修</strong>到 282 W/m²，310 W/m² 是被它修正掉的早期估计。</p>
+<h2 id="sec-5-2-使用方法">5.2 使用方法<a class="heading-anchor" href="#sec-5-2-使用方法" data-target-id="sec-5-2-使用方法" title="复制本节锚点链接">#</a></h2>
+<ol><li>用当前地球吸收通量（约 240 W/m²）与目标阈值的<strong>差值</strong>，结合地球接收的总日照功率（太阳常数 1367 W/m² × 地球截面积），反推角色需要额外注入的<strong>总功率</strong>。</li><li>输出单位是<strong>持续功率（W）</strong>，不是一次性能量（J），须标注单位差异，不可直接与其他部分的焦耳数值比较。</li><li>若需要换算成总能量做跨部分对比，必须先从原文明确作用时长，用功率乘以时间得出。</li></ol>
+<h2 id="sec-5-3-适用边界">5.3 适用边界<a class="heading-anchor" href="#sec-5-3-适用边界" data-target-id="sec-5-3-适用边界" title="复制本节锚点链接">#</a></h2>
+<p>只适合<strong>持续性、至少行星尺度</strong>的热注入描写；单次打击造成的局部高温用第三部分。</p>
+<hr>
+<h1 id="sec-第六部分-撞击成坑的物理框架-补充参考">第六部分　撞击成坑的物理框架（补充参考）<a class="heading-anchor" href="#sec-第六部分-撞击成坑的物理框架-补充参考" data-target-id="sec-第六部分-撞击成坑的物理框架-补充参考" title="复制本节锚点链接">#</a></h1>
+<p>行星科学有一套成熟的<strong>撞击成坑标度律</strong>（如 Housen 与 Holsapple 的 π 标度体系），能从撞击体的质量、速度、密度反推坑的直径和深度，或反过来从坑的尺寸反推撞击能量。它考虑了冲击波耦合效率、重力与强度控制机制的转换等真实物理过程，比"能量密度乘体积"更精确。</p>
+<p>这套模型较复杂，暂不展开；需要精确判定"炸出多大的坑对应多少能量"时，这是该查的方向。</p>
+<hr>
+<h1 id="sec-第七部分-数据源现状-为何没有统一权威站点">第七部分　数据源现状：为何没有统一权威站点<a class="heading-anchor" href="#sec-第七部分-数据源现状-为何没有统一权威站点" data-target-id="sec-第七部分-数据源现状-为何没有统一权威站点" title="复制本节锚点链接">#</a></h1>
+<p><strong>不存在单一网站能同时覆盖常规材质破碎、天体引力束缚能与极端材料强度，且做到严谨可信。</strong></p>
+<p><strong>VS Battles Wiki</strong> 是战力论战社区最常引用的站点，它尝试建立统一方法论：用抗剪强度算碎块化、用抗压强度算粉碎、用相变潜热算汽化，思路与本文件的分类一致。它的计算指南（像素比例尺、角尺寸、叠算规则、爆炸与云层计算）已被衡天第十部分部分采用，并按衡天的通则做了取舍。但它是爱好者众包编辑的 wiki，社区内部对"高估"与"低估"的争论从未停止，部分表现的判读（例如"比眼睛还快"的感知阈值）至今没有共识。它的数据可以当起点，但不能当最终依据。</p>
+<p><strong>真正可靠的数据分散在完全不同的专业领域</strong>，这也是本文件的编纂方式：</p>
+<ul><li><strong>破碎、粉碎能量</strong> → 采矿爆破工程文献，因现场条件浮动大，本身就是经验区间；</li><li><strong>材料强度极限</strong> → 材料科学期刊与工程数据库；</li><li><strong>相变能量</strong> → 热力学标准数据与岩石量热实验；</li><li><strong>天体引力束缚能</strong> → 天体物理论文，致密星须用真实物态方程，不能直接套均匀球公式；</li><li><strong>撞击成坑标度律</strong> → 行星科学的撞击动力学研究；</li><li><strong>军事装备毁伤数据</strong> → 大多保密，开源渠道充满互相矛盾的二手推测（GBU-57 就是现成案例）。</li></ul>
+<p>这些领域的研究者彼此独立，数据也从未以"比较破坏力"为目的产生过。本文件的工作，本质上是把它们摘出来，按"能否用于战力比较"的标准重新整理。</p>
+<hr>
+<h1 id="sec-第八部分-爆炸与云层-图像判读用的数据表-第二版新增">第八部分　爆炸与云层：图像判读用的数据表（第二版新增）<a class="heading-anchor" href="#sec-第八部分-爆炸与云层-图像判读用的数据表-第二版新增" data-target-id="sec-第八部分-爆炸与云层-图像判读用的数据表-第二版新增" title="复制本节锚点链接">#</a></h1>
+<blockquote><p>判读方法见衡天第十部分。本部分只提供数据与公式，均来自 VS Battles Wiki 的计算规范，本体系只作<strong>交叉校验</strong>使用。</p></blockquote>
+<h2 id="sec-8-1-爆炸半径与当量">8.1 爆炸半径与当量<a class="heading-anchor" href="#sec-8-1-爆炸半径与当量" data-target-id="sec-8-1-爆炸半径与当量" title="复制本节锚点链接">#</a></h2>
+<p>社区常用核爆效应经验式，由"近乎全部致死"（大型地上建筑被毁、其中人员被冲击压力致死）的半径反推当量：</p>
+<ul><li><strong>空爆</strong>：Y（百万吨 TNT）=（x ÷ 0.28）³ ÷ 1000，x 为半径（公里）。常规爆炸只有约 40%–50% 的能量来自冲击波，结果再乘以 0.5；真正的核爆不减半。</li><li><strong>地爆</strong>：W（吨 TNT）= R³ ×（√(27136P + 8649) ÷ 13568 − 93 ÷ 13568）²，R 为半径（米），P 为冲击波超压（巴），社区通常取 1.37895 巴（约 20 psi）；地爆式不需要减半。</li></ul>
+<p><strong>与衡天继承区的口径差异</strong>：按巴黎 105 km² 反算（等效半径约 5.78 km），空爆式减半后约为 1.84×10¹⁶ J，比衡天城▽（4.184×10¹⁵ J）高约 4 倍。两者定义不同（"近乎全部致死"与"完全摧毁"），<strong>以衡天继承区为准</strong>，经验式只作交叉校验，差异须在结论中注明。</p>
+<p><strong>承受爆炸的防御判定</strong>：角色只有在爆炸发生于体内、被其完全包覆、或紧贴爆心且爆炸比他小时，才算承受了全部当量。否则按平方反比：强度 I = P ÷ A，A = 4πr²（地爆取一半），角色承受的能量 = I × 截面积；成年人截面积约 0.68 m²。</p>
+<h2 id="sec-8-2-云层计算">8.2 云层计算<a class="heading-anchor" href="#sec-8-2-云层计算" data-target-id="sec-8-2-云层计算" title="复制本节锚点链接">#</a></h2>
+<p><strong>体积</strong>：π ×（视距）² × 云层厚度。标准视距取 20 公里（能见度通常比地平线更早限制视线）；能用像素比例尺时优先。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">云型</th><th style="text-align:left">典型厚度</th><th style="text-align:left">液态含水量</th></tr></thead><tbody><tr><td style="text-align:left">积云</td><td style="text-align:left">—</td><td style="text-align:left">0.25–0.3 g/m³</td></tr><tr><td style="text-align:left">层积云</td><td style="text-align:left">—</td><td style="text-align:left">0.45 g/m³</td></tr><tr><td style="text-align:left">雨层云</td><td style="text-align:left">2000–4000 m</td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">积雨云</td><td style="text-align:left">8000–11800 m</td><td style="text-align:left">1–3 g/m³</td></tr></tbody></table></div>
+<p><strong>能量的三种算法</strong>：</p>
+<ul><li><strong>凝结或汽化</strong>：水的质量 × 汽化潜热（2,264,705 J/kg）；</li><li><strong>动能</strong>：0.5 × 云的总质量 × 移动速度²，质量取水加空气（约 1.003 kg/m³），只适用于云被推动的情形；</li><li><strong>对流有效位能</strong>：用于"造出风暴"一类表现；低于凝结值时改用凝结值。</li><li>不确定该用哪种时，三种都算，取最低值。</li></ul>
+<p><strong>常见结果</strong>（视距 20 公里、积雨云厚 8000 米、含水量至少 1 g/m³）：凝结约 2.277×10¹⁶ J；动能约 2.241×10¹⁸ J（假设一分钟内覆盖全部天空）。时间更长、视距不足 20 公里或不是积雨云时，不能直接套用。</p>
+<p><strong>归属</strong>：云层表现多属衡天的"控"或"域"，只有确实摧毁了物体时才进入"破"。</p>
+<hr>
+<h1 id="sec-附-参考来源">附：参考来源<a class="heading-anchor" href="#sec-附-参考来源" data-target-id="sec-附-参考来源" title="复制本节锚点链接">#</a></h1>
+<ul><li>玄武岩汽化能：《A dark matter hail》（arXiv）；Bacon、Russell 与 Carstens 的岩石热学性质实验数据（经 SpaceBattles 论坛技术讨论转引并交叉核实）</li><li>花岗岩加热至汽化温度：MIT 定向能钻探技术报告（毫米波深孔钻探）</li><li>铁的熔化热、汽化热、密度、熔沸点：标准物性数据（维基百科"铁"条目信息框）</li><li>金刚石强度：《Approaching diamond's theoretical elasticity and strength limits》（Nature Communications, 2019）；金刚石压缩强度第一性原理计算（J. Phys. Chem. C）；CVD 金刚石综述（arXiv, 2009）</li><li>花岗岩强度：多产地花岗岩三点弯曲实验（PLOS ONE, 2018）；工程材料数据库交叉比对</li><li>天然湖冰抗压强度：《Applied Sciences》 2017 年第 7 卷第 5 期（MDPI）湖冰单轴压缩实验</li><li>木材顺纹强度：Ecochoice《木材的力学性质》</li><li>人类股骨强度：Rod Lakes《骨的弹性各向异性》（转引自 OpenOregon《人体物理学》）</li><li>中子星外壳强度：Horowitz 与 Kadau，《The breaking strain of neutron star crust and gravitational waves》（Physical Review Letters, 2009）</li><li>白矮星质量与半径：康涅狄格大学物理系白矮星讲义</li><li>Ia 型超新星能量收支：Woosley 等，《Type Ia Supernova Light Curves》（arXiv astro-ph/0609562）</li><li>中子星束缚能：《The Cosmic Energy Inventory》（Fukugita 与 Peebles）</li><li>两半球引力：均匀球两半之间作用力的标准结果（参照 MathWorks 均匀带电球算例，引力情形同理）</li><li>KI 与 SN 极限：Komabayashi（1967）、Ingersoll（1969）原始文献；Goldblatt 与 Watson（2012, Phil. Trans. R. Soc. A）；Goldblatt 等（2013, Nature Geoscience）；Kodama 等（2018, JGR Planets）</li><li>斩陨原则、破坏动词两轴框架等：《汪峰在吧量级参考册》（2026），经交叉验证部分内容</li><li>地球真实束缚能（PREM 修正）：HandWiki 引力束缚能条目</li><li>GBU-57 数据矛盾：美国空军公开声明、简氏防务独立评估、多家防务媒体二手报道的交叉比对</li><li>爆炸当量、云层计算：VS Battles Wiki 的 Explosion Yield Calculations 与 Cloud Calculations 页面</li></ul>
+<hr>
+<h1 id="sec-附-待补充事项">附：待补充事项<a class="heading-anchor" href="#sec-附-待补充事项" data-target-id="sec-附-待补充事项" title="复制本节锚点链接">#</a></h1>
+<ol><li>撞击成坑标度律的完整展开（π 标度公式、参数取值）。</li><li>振星的规范算法：按振动模式分别给出弹性能公式，替换存疑的旧值。</li><li>冰的抗拉强度、生物软组织与更多金属的数据。</li><li>世界观强度换算的具体操作案例（衡天 0.7）。</li></ol>
+          </div>
+        </article>
+      </div>
+    </div>
+    
+  </main>
+
+  <div class="floating-dock" aria-label="快捷工具">
+    <button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录" aria-label="展开章节目录"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg></button>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
+      <div class="search-modal-head">
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第四版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="./search.html">进入独立搜索页 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第四版基准）</span>
+      </div>
+      <div class="footer-links">
+        <a href="./tiers.html">量级天梯</a>
+        <a href="./characters.html">角色档案</a>
+        <a href="./rules.html">衡天体系全文</a>
+        <a href="./materials.html">材质能量库</a>
+        <a href="./search.html">全站检索</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./static/js/search-index.js"></script>
+  <script src="./static/js/app.js"></script>
+</body>
+</html>

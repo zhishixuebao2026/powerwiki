@@ -1,1643 +1,2228 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-文件式静态站点生成器（无 Flask / 无 SQLite 依赖）
-
-数据来源：data/ 下的可编辑 YAML 文件
-  - categories.yaml   战力量级体系表（分组 + 档位），首页「战力等级」、
-                      「量级体系表」页、分类页、搜索筛选器全部由它驱动
-  - realms.yaml       境界体系（按作品分组）
-  - characters.yaml   角色
-  - pages.yaml        规则 / 世界观等独立页面（正文在 data/pages/*.md）
-
-档位与规则原文的同步：categories.yaml 里每个档位的 source 字段写 rules.md 的
-小节标题，构建时自动解析成该页的锚点，分类页与量级体系表页都能一键跳到原文。
-
-使用方法：
-    python build_site.py                       # 只构建到 dist/
-    python build_site.py --base /powerwiki     # 指定站点子路径
-    python build_site.py --deploy-root         # 构建并把产物同步到仓库根目录
-                                               # （GitHub Pages 直接读根目录）
-    python build_site.py --check               # 只校验数据一致性，不写文件
-
---deploy-root 会按 .site-manifest.json 清掉上一次生成、这一次已不存在的文件
-（例如废弃档位留下的 category/xxx.html），源码文件不在清单里，不会被误删。
-
-维护数据只需编辑 data/*.yaml 与 data/pages/*.md，然后重新运行本脚本。
+衡天⊙ PowerWiki Static Site Builder v6.2
+Updated for 《衡天⊙ 多维战力量级体系（第四版）》 & Full-Text Character Dossiers
 """
 
-import os
-import sys
-import shutil
+from __future__ import annotations
+
+import html
 import json
 import re
-from urllib.parse import quote
-import yaml
-import markdown
-from markdown.extensions.toc import slugify_unicode
+import struct
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, 'data')
-DIST_DIR = os.path.join(BASE_DIR, 'dist')
-STATIC_SRC = os.path.join(BASE_DIR, 'static')
-MANIFEST_NAME = '.site-manifest.json'
+ROOT = Path(__file__).resolve().parent
+DATA_DIR = ROOT / "data"
+DOCS_DIR = DATA_DIR / "docs"
+TIER_OUT_DIR = ROOT / "tier"
+CHAR_OUT_DIR = ROOT / "character"
+JS_OUT_DIR = ROOT / "static" / "js"
 
-BASE = '/powerwiki'
-# 实际写盘目录：默认 dist/，--deploy-root 时同步阶段写仓库根目录
-OUT_DIR = DIST_DIR
-# 本次构建产出的相对路径清单（写盘时登记，用于下次清理孤儿文件）
-_MANIFEST = []
-# 只做数据校验、不写任何文件
-CHECK_ONLY = False
+RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第四版·最新】.md"
+MATERIALS_MD_PATH = DOCS_DIR / "材质与破坏能量数据库（新）.md"
 
+SVGS = {
+    "search": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+    "menu": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>',
+    "close": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+    "sun": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+    "arrow_left": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    "arrow_up": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
+    "arrow_up_right": '<svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
+    "toc": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>',
+}
 
-def slugify(text):
-    """生成 URL 友好的 slug。"""
-    if not text:
-        return ''
-    s = str(text).strip().lower()
-    s = re.sub(r'[^\w一-龥]+', '-', s)
-    s = re.sub(r'-+', '-', s).strip('-')
-    return s or 'item'
-
-
-def url(path):
-    path = path.lstrip('/')
-    return f'{BASE}/{path}' if BASE else f'/{path}'
-
-
-def load_data():
-    def load(name):
-        p = os.path.join(DATA_DIR, name)
-        if not os.path.exists(p):
-            return []
-        with open(p, 'r', encoding='utf-8') as f:
-            data = yaml.safe_load(f)
-        return data or []
-
-    raw_categories = load('categories.yaml')
-    # categories.yaml 支持两种写法：
-    #   1) {groups: [...], items: [...]}  —— 现行写法，带体系分段
-    #   2) [...]                          —— 旧的扁平写法，全部归入默认分段
-    if isinstance(raw_categories, dict):
-        categories = raw_categories.get('items') or []
-        groups = raw_categories.get('groups') or []
-    else:
-        categories = raw_categories
-        groups = []
-    realms = load('realms.yaml')
-    characters = load('characters.yaml')
-    pages = load('pages.yaml')
-
-    # 档位 slug 兜底 + 唯一化
-    seen_c = set()
-    for c in categories:
-        s = c.get('slug') or slugify(c.get('name')) or 'tier'
-        if s in seen_c:
-            s = f"{s}-{len(seen_c)}"
-        seen_c.add(s)
-        c['slug'] = s
-
-    # 角色 slug 兜底 + 唯一化
-    seen = set()
-    for c in characters:
-        s = c.get('slug') or slugify(c.get('name')) or 'char'
-        if s in seen:
-            s = f"{s}-{len(seen)}"
-        seen.add(s)
-        c['slug'] = s
-
-    # 境界 slug 兜底 + 唯一化（按名称）
-    seen_r = set()
-    for r in realms:
-        s = r.get('slug') or slugify(r.get('name')) or 'realm'
-        if s in seen_r:
-            s = f"{s}-{len(seen_r)}"
-        seen_r.add(s)
-        r['slug'] = s
-
-    # 档位卡片背景图（categories.yaml 的 backgrounds 块，外链不入库）
-    if isinstance(raw_categories, dict):
-        load_backgrounds(raw_categories)
-
-    return categories, groups, realms, characters, pages
+DIM_META = [
+    ("破", "破坏能量", "单次作用直接瓦解、打爆目标结构的实测或推定能量阈值"),
+    ("控", "能量操控", "对物质、能量或时空结构进行整体掌控的尺度与上限"),
+    ("御", "防御承受", "正面承受对应量级能量冲击而不丧失核心结构的耐久锚点"),
+    ("速", "机动反应", "战斗机动、巡航跨越或无延迟响应的物理/超限速度标定"),
+    ("域", "作用范围", "规则干涉、精神场域或概念覆写的空间/层级覆盖边界"),
+    ("算", "演算感知", "有限算力至图灵跃迁（0′ / 0⁽ω⁾）级的信息处理与预判能力"),
+    ("性", "机制特性", "独立于纯能量数值之外的存续形态、材质构成与特殊机制"),
+]
 
 
-def validate_data(categories, groups, realms, characters, pages):
-    """构建前的一致性自检。返回问题列表；有 error 级问题时构建中止。
-
-    这一层是「档位表 ↔ 首页战力等级 ↔ 分类页 ↔ 搜索筛选器」保持同步的保险：
-    任何一处数据写歪（重名 slug、排序值撞车、分段没定义、角色挂在废弃档上），
-    都会在构建时直接报出来，而不是生成一个页面缺失的站点。
-    """
-    errors, warnings = [], []
-
-    slugs = [c.get('slug') for c in categories]
-    dup = {s for s in slugs if slugs.count(s) > 1}
-    if dup:
-        errors.append(f"档位 slug 重复：{', '.join(sorted(dup))}")
-
-    names = [c.get('name') for c in categories]
-    dupn = {n for n in names if names.count(n) > 1}
-    if dupn:
-        warnings.append(f"档位名重复（不影响构建，但搜索筛选会混）：{', '.join(sorted(map(str, dupn)))}")
-
-    orders = [c.get('sort_order') for c in categories]
-    dupo = {o for o in orders if orders.count(o) > 1}
-    if dupo:
-        errors.append(f"档位 sort_order 重复，首页排序会不稳定：{sorted(dupo, key=str)}")
-
-    group_ids = [g.get('id') for g in groups]
-    dupg = {g for g in group_ids if group_ids.count(g) > 1}
-    if dupg:
-        errors.append(f"分段 id 重复：{', '.join(sorted(dupg))}")
-    for c in categories:
-        if groups and c.get('group') not in group_ids:
-            errors.append(f"档位 {c.get('slug')} 的 group「{c.get('group')}」未在 groups 中定义")
-
-    # 未归档兜底档必须在最末（用户约定：「未知/暂存」排在战力等级最后）
-    if categories:
-        ordered = sorted(categories, key=lambda x: x.get('sort_order', 0))
-        tail = [c.get('slug') for c in ordered if c.get('group') == 'unfiled']
-        if tail and [c.get('slug') for c in ordered[-len(tail):]] != tail:
-            errors.append(f"未归档档（{', '.join(tail)}）必须排在最末")
-
-    # 角色引用检查：挂在已废弃/不存在的档位或境界上
-    cat_slugs = set(slugs)
-    realm_names = {r.get('name') for r in realms}
-    for ch in characters:
-        if ch.get('category') and ch['category'] not in cat_slugs:
-            errors.append(f"角色「{ch.get('name')}」挂在不存在的档位 slug「{ch['category']}」上（旧框架档位已废弃，请改挂新档）")
-        if ch.get('realm') and realms and ch['realm'] not in realm_names:
-            warnings.append(f"角色「{ch.get('name')}」的境界「{ch['realm']}」未在 realms.yaml 中定义")
-
-    # 独立页面正文检查
-    for p in pages:
-        cf = p.get('content_file')
-        if cf and not os.path.exists(os.path.join(DATA_DIR, cf)):
-            errors.append(f"页面 {p.get('slug')} 的正文文件 data/{cf} 不存在")
-        if not cf and not p.get('content'):
-            warnings.append(f"页面 {p.get('slug')} 既无 content_file 也无 content")
-
-    # 档位 source 能否在规则页里找到对应小节（找不到只是少一个跳转链接）
-    if _PAGE_ANCHORS.get('rules'):
-        anchors = _PAGE_ANCHORS['rules']
-        for c in categories:
-            src = c.get('source')
-            if src and src not in anchors:
-                warnings.append(f"档位 {c.get('slug')} 的 source「{src}」在 rules.md 中找不到同名小节，已省略原文跳转")
-
-    return errors, warnings
+def esc(val: Any) -> str:
+    return html.escape(str(val if val is not None else ""), quote=True)
 
 
-
-def render_markdown(text):
-    if not text:
-        return ''
-    return markdown.markdown(text, extensions=['extra', 'tables', 'toc'],
-                             extension_configs=TOC_CONFIG)
-
-
-# TOC 配置：用 unicode slugify，中文标题也能得到可读、可外链的锚点
-# （默认 slugify 会把中文全部剥掉，导致 rules.html 的锚点退化成 _1 / _2 / 13 这种
-#   无意义 id，档位页没法精确跳到体系表原文对应小节）
-TOC_CONFIG = {'toc': {'slugify': slugify_unicode, 'toc_depth': '1-3', 'separator': '-'}}
-
-
-def render_markdown_full(text):
-    """返回 (正文 HTML, 目录 HTML, 标题文本->锚点 id 映射)。
-
-    目录由 TOC 扩展生成，与正文标题 id 完全一致；锚点映射供 categories.yaml
-    的 source 字段解析成「跳到规则原文对应小节」的链接。
-    """
-    if not text:
-        return '', '', {}
-    md = markdown.Markdown(extensions=['extra', 'tables', 'toc'],
-                           extension_configs=TOC_CONFIG)
-    body = md.convert(text)
-    toc = md.toc or ''
-    anchors = {}
-
-    def walk(tokens):
-        for t in tokens or []:
-            name = (t.get('name') or '').strip()
-            if name and t.get('id'):
-                anchors.setdefault(name, t['id'])
-            walk(t.get('children'))
-
-    walk(getattr(md, 'toc_tokens', []))
-    # 移除空白 toctitle 容器（title 为空时可能残留 <div class="toctitle"></div>）
-    toc = re.sub(r'<div class="toctitle">.*?</div>', '', toc, flags=re.S)
-    toc = re.sub(r'<span class="toctitle">.*?</span>', '', toc, flags=re.S)
-    return body, toc, anchors
-
-
-# ---------------------- 页面骨架 ----------------------
-def nav_links_html():
-    """全局导航：固定入口 + data/pages.yaml 中的独立页面（改名后自动同步）。"""
-    items = [
-        (url('/index.html'), '首页'),
-        (url('/characters.html'), '角色图鉴'),
-        (url('/realm/index.html'), '境界体系'),
-        (url(f'/page/{TIERS_PAGE_SLUG}.html'), TIERS_PAGE_TITLE),
-    ]
-    for p in _PAGES:
-        items.append((url(f"/page/{p['slug']}.html"), p['title']))
-    items.append((url('/search.html'), '搜索'))
-    return '\n'.join(f'                <a href="{h}">{t}</a>' for h, t in items)
-
-
-def footer_nav_html():
-    items = [
-        (url('/index.html'), '首页'),
-        (url('/characters.html'), '角色图鉴'),
-        (url('/realm/index.html'), '境界体系'),
-        (url(f'/page/{TIERS_PAGE_SLUG}.html'), TIERS_PAGE_TITLE),
-    ]
-    for p in _PAGES:
-        items.append((url(f"/page/{p['slug']}.html"), p['title']))
-    items.append((url('/search.html'), '搜索'))
-    return '\n'.join(f'                <a href="{h}">{t}</a>' for h, t in items)
-
-
-def render_page(title, body, desc=''):
-    meta = f'<meta name="description" content="{desc}">' if desc else ''
-    return f'''<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {meta}
-    <title>{title} - 全作品战力评鉴所</title>
-    <link rel="stylesheet" href="{url('/static/css/style.css')}">
-    <script>{THEME_BOOTSTRAP}</script>
-</head>
-<body>
-    <header class="site-header">
-        <div class="container header-inner">
-            <a href="{url('/index.html')}" class="logo">全作品战力评鉴所</a>
-            <nav class="main-nav">
-{nav_links_html()}
-            </nav>
-            <button type="button" class="theme-toggle" id="theme-toggle"
-                    aria-label="切换深浅色主题" title="切换深浅色主题">
-                <span class="icon-sun" aria-hidden="true">☀</span>
-                <span class="icon-moon" aria-hidden="true">☾</span>
-            </button>
-        </div>
-    </header>
-
-    <main class="main-content" id="main">
-{body}
-    </main>
-
-    <footer class="site-footer">
-        <div class="container footer-inner">
-            <div>
-                <p class="footer-brand">全作品战力评鉴所</p>
-                <p class="footer-note">跨作品角色战力量级评鉴 · 静态资料站</p>
-            </div>
-            <nav class="footer-nav">
-{footer_nav_html()}
-            </nav>
-        </div>
-    </footer>
-
-    <script src="{url('/static/js/main.js')}"></script>
-</body>
-</html>
-'''
-
-
-# ---------------------- 档位（战力量级）渲染 ----------------------
-def html_escape(text, attr=False):
-    """HTML 转义。attr=True 时额外转义引号，用于 title / alt 等属性位。"""
-    if text is None:
-        return ''
-    s = str(text)
-    s = s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-    if attr:
-        s = s.replace('"', '&quot;').replace("'", '&#39;')
+def format_evidence_html(val: str) -> str:
+    s = esc(val)
+    s = s.replace("〔实〕", '<span class="ev-badge ev-confirmed">〔实〕</span>')
+    s = s.replace("〔下〕", '<span class="ev-badge ev-lower">〔下〕</span>')
+    s = s.replace("〔推〕", '<span class="ev-badge ev-inferred">〔推〕</span>')
+    s = s.replace("〔隐〕", '<span class="ev-badge ev-hidden">〔隐〕</span>')
+    s = s.replace("〔缺〕", '<span class="ev-badge ev-missing">〔缺〕</span>')
     return s
 
 
-def ordered_power_categories(categories):
-    """战力档位按 sort_order 由弱到强排序。"""
-    return sorted([c for c in categories if c.get('type', 'power') == 'power'],
-                  key=lambda x: x.get('sort_order', 0))
+# ==============================================================================
+# Custom Zero-Dependency Verbatim Markdown Parser (Preserves Subscripts & Tables)
+# ==============================================================================
+def get_image_dimensions(img_path: Path) -> Optional[Tuple[int, int]]:
+    if not img_path.is_file():
+        return None
+    try:
+        data = img_path.read_bytes()
+    except OSError:
+        return None
+    # PNG
+    if len(data) >= 24 and data[:8] == b"\x89PNG\r\n\x1a\n" and data[12:16] == b"IHDR":
+        w, h = struct.unpack(">II", data[16:24])
+        return (int(w), int(h)) if w > 0 and h > 0 else None
+    # WebP
+    if len(data) >= 30 and data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        chunk = data[12:16]
+        if chunk == b"VP8 " and len(data) >= 30:
+            w, h = struct.unpack("<HH", data[26:30])
+            return (w & 0x3FFF, h & 0x3FFF)
+        if chunk == b"VP8L" and len(data) >= 25:
+            bits = struct.unpack("<I", data[21:25])[0]
+            w = (bits & 0x3FFF) + 1
+            h = ((bits >> 14) & 0x3FFF) + 1
+            return (int(w), int(h))
+        if chunk == b"VP8X" and len(data) >= 30:
+            w = int.from_bytes(data[24:27], "little") + 1
+            h = int.from_bytes(data[27:30], "little") + 1
+            return (int(w), int(h))
+    # JPEG
+    if len(data) >= 4 and data[:2] == b"\xff\xd8":
+        idx = 2
+        n = len(data)
+        sof_markers = {
+            0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7,
+            0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF,
+        }
+        while idx + 4 < n:
+            if data[idx] != 0xFF:
+                idx += 1
+                continue
+            while idx < n and data[idx] == 0xFF:
+                idx += 1
+            if idx >= n:
+                break
+            marker = data[idx]
+            idx += 1
+            if marker in (0xD8, 0xD9) or (0xD0 <= marker <= 0xD7):
+                continue
+            if idx + 2 > n:
+                break
+            seg_len = struct.unpack(">H", data[idx : idx + 2])[0]
+            if seg_len < 2 or idx + seg_len > n:
+                break
+            if marker in sof_markers and idx + 7 <= n:
+                h, w = struct.unpack(">HH", data[idx + 3 : idx + 7])
+                return (int(w), int(h)) if w > 0 and h > 0 else None
+            idx += seg_len
+    return None
 
 
-def group_display(gid):
-    return (_GROUP_MAP.get(gid) or {}).get('name') or gid
+def classify_image_shape(w: int, h: int) -> str:
+    if w <= 0 or h <= 0:
+        return "portrait"
+    ratio = w / float(h)
+    if ratio > 1.22:
+        return "landscape"
+    if ratio < 0.85:
+        return "portrait"
+    return "square"
 
 
-def group_note(gid):
-    return (_GROUP_MAP.get(gid) or {}).get('note') or ''
+def strip_character_doc_front_banner(md_text: str) -> str:
+    lines = md_text.splitlines()
+    idx = 0
+    n = len(lines)
+    while idx < n and not lines[idx].strip():
+        idx += 1
+    if idx < n and re.match(r"^#\s+.+$", lines[idx].strip()):
+        idx += 1
+        while idx < n and not lines[idx].strip():
+            idx += 1
+        if idx < n and lines[idx].strip().startswith(">") and "定级" in lines[idx]:
+            while idx < n and lines[idx].strip().startswith(">"):
+                idx += 1
+            while idx < n and not lines[idx].strip():
+                idx += 1
+        return "\n".join(lines[idx:])
+    return md_text
 
 
-def tier_energy_label(cat):
-    """档位卡片上显示的能量口径；兜底档不在能量轴上。"""
-    e = (cat.get('energy') or '').strip()
-    if e:
-        return e
-    return '兜底档' if cat.get('group') == 'unfiled' else '未定档'
+class VerbatimMarkdownRenderer:
+    def __init__(
+        self,
+        image_map: Dict[str, str] | None = None,
+        base_dir: Path | None = None,
+    ) -> None:
+        self.toc: List[Dict[str, Any]] = []
+        self._slug_counts: Dict[str, int] = {}
+        self.sections_for_index: List[Dict[str, str]] = []
+        self.image_map: Dict[str, str] = dict(image_map or {})
+        self.base_dir: Path = base_dir or ROOT
+
+    def _make_id(self, text: str) -> str:
+        clean = re.sub(r"[`*_~]", "", text).strip()
+        slug = re.sub(r"[^\w\u4e00-\u9fff\-]+", "-", clean).strip("-").lower()
+        if not slug:
+            slug = "sec"
+        slug = f"sec-{slug}"
+        count = self._slug_counts.get(slug, 0)
+        self._slug_counts[slug] = count + 1
+        return slug if count == 0 else f"{slug}-{count + 1}"
+
+    def render_inline(self, text: str) -> str:
+        placeholders: List[str] = []
+
+        def save_span(html_fragment: str) -> str:
+            idx = len(placeholders)
+            placeholders.append(html_fragment)
+            return f"\x00SPAN{idx}\x00"
+
+        def repl_code(m: re.Match[str]) -> str:
+            inner = html.escape(m.group(1), quote=False)
+            return save_span(f"<code>{inner}</code>")
+
+        text = re.sub(r"`([^`]+)`", repl_code, text)
+
+        def repl_escape(m: re.Match[str]) -> str:
+            ch = html.escape(m.group(1), quote=False)
+            return save_span(ch)
+
+        text = re.sub(r"\\([\\`*_{}\[\]()#+\-.!|])", repl_escape, text)
+
+        def repl_img(m: re.Match[str]) -> str:
+            alt_txt = html.escape(m.group(1), quote=True)
+            raw_url = m.group(2).strip()
+            resolved_url = html.escape(self.image_map.get(raw_url, raw_url), quote=True)
+            return save_span(f'<img class="md-inline-img" src="{resolved_url}" alt="{alt_txt}" loading="lazy">')
+
+        text = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", repl_img, text)
+
+        def repl_link(m: re.Match[str]) -> str:
+            label = html.escape(m.group(1), quote=False)
+            url = html.escape(m.group(2), quote=True)
+            return save_span(f'<a href="{url}" target="_blank" rel="noopener">{label}</a>')
+
+        text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", repl_link, text)
+
+        escaped = html.escape(text, quote=False)
+        escaped = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", escaped)
+        escaped = re.sub(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", r"<em>\1</em>", escaped)
+
+        for badge, cls in [
+            ("〔实〕", "ev-confirmed"),
+            ("〔下〕", "ev-lower"),
+            ("〔推〕", "ev-inferred"),
+            ("〔隐〕", "ev-hidden"),
+            ("〔缺〕", "ev-missing"),
+        ]:
+            escaped = escaped.replace(badge, f'<span class="ev-badge {cls}">{badge}</span>')
+
+        for idx, frag in enumerate(placeholders):
+            escaped = escaped.replace(f"\x00SPAN{idx}\x00", frag)
+
+        return escaped
+
+    @staticmethod
+    def _split_table_row(line: str) -> List[str]:
+        s = line.strip()
+        if s.startswith("|"):
+            s = s[1:]
+        if s.endswith("|") and not s.endswith(r"\|"):
+            s = s[:-1]
+        cells = re.split(r"(?<!\\)\|", s)
+        return [c.strip().replace(r"\|", "|") for c in cells]
+
+    @staticmethod
+    def _is_table_sep(line: str) -> bool:
+        s = line.strip()
+        if "|" not in s:
+            return False
+        cells = VerbatimMarkdownRenderer._split_table_row(s)
+        if not cells:
+            return False
+        return all(bool(re.match(r"^:?-{2,}:?$", c.strip())) for c in cells if c.strip() != "")
+
+    def _render_blocks(self, lines: List[str], record_toc: bool) -> str:
+        n = len(lines)
+        i = 0
+        out: List[str] = []
+
+        cur_sec_id = "sec-top"
+        cur_sec_title = "正文导言"
+        cur_sec_buf: List[str] = []
+
+        def flush_section_index() -> None:
+            nonlocal cur_sec_buf
+            if not record_toc:
+                return
+            joined = " ".join(cur_sec_buf).strip()
+            if joined:
+                self.sections_for_index.append(
+                    {"id": cur_sec_id, "title": cur_sec_title, "text": joined}
+                )
+            cur_sec_buf = []
+
+        while i < n:
+            line = lines[i]
+            stripped = line.strip()
+
+            if not stripped:
+                i += 1
+                continue
+
+            if stripped.startswith("```"):
+                lang = stripped[3:].strip()
+                i += 1
+                code_lines: List[str] = []
+                while i < n and not lines[i].strip().startswith("```"):
+                    code_lines.append(lines[i])
+                    if record_toc:
+                        cur_sec_buf.append(lines[i])
+                    i += 1
+                if i < n:
+                    i += 1
+                code_html = html.escape("\n".join(code_lines), quote=False)
+                lang_attr = f' data-lang="{esc(lang)}"' if lang else ""
+                out.append(f"<pre{lang_attr}><code>{code_html}</code></pre>")
+                continue
+
+            m_head = re.match(r"^(#{1,4})\s+(.+?)\s*$", stripped)
+            if m_head:
+                level = len(m_head.group(1))
+                raw_title = m_head.group(2)
+                plain_title = re.sub(r"[`*_]", "", raw_title).replace(r"\*", "*").strip()
+                if record_toc:
+                    flush_section_index()
+                    hid = self._make_id(plain_title)
+                    cur_sec_id = hid
+                    cur_sec_title = plain_title
+                    cur_sec_buf.append(plain_title)
+                    if level in (1, 2, 3):
+                        self.toc.append({"level": level, "id": hid, "title": plain_title})
+                    inline_html = self.render_inline(raw_title)
+                    out.append(
+                        f'<h{level} id="{hid}">{inline_html}'
+                        f'<a class="heading-anchor" href="#{hid}" data-target-id="{hid}" title="复制本节锚点链接">#</a>'
+                        f"</h{level}>"
+                    )
+                else:
+                    out.append(f"<h{level}>{self.render_inline(raw_title)}</h{level}>")
+                i += 1
+                continue
+
+            if re.match(r"^-{3,}\s*$", stripped) or re.match(r"^\*{3,}\s*$", stripped):
+                out.append("<hr>")
+                i += 1
+                continue
+
+            m_img = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)\s*$", stripped)
+            if m_img:
+                alt_raw = m_img.group(1).strip()
+                src_raw = m_img.group(2).strip()
+                resolved_src = self.image_map.get(src_raw, src_raw)
+                if record_toc and alt_raw:
+                    cur_sec_buf.append(alt_raw)
+                dim_attr = ""
+                if not re.match(r"^(https?:)?//", resolved_src):
+                    local_img = (self.base_dir / resolved_src).resolve()
+                    dims = get_image_dimensions(local_img)
+                    if dims:
+                        dim_attr = f' width="{dims[0]}" height="{dims[1]}"'
+                cap_html = (
+                    f'<figcaption class="md-figcaption">{self.render_inline(alt_raw)}</figcaption>'
+                    if alt_raw
+                    else ""
+                )
+                out.append(
+                    f'<figure class="md-figure">'
+                    f'<div class="md-figure-frame">'
+                    f'<a class="md-figure-link" href="{esc(resolved_src)}" target="_blank" rel="noopener" title="点击查看原尺寸图片">'
+                    f'<img class="md-img" src="{esc(resolved_src)}" alt="{esc(alt_raw)}"{dim_attr} loading="lazy">'
+                    f"</a>"
+                    f"</div>"
+                    f"{cap_html}"
+                    f"</figure>"
+                )
+                i += 1
+                continue
+
+            if "|" in stripped and (i + 1 < n) and self._is_table_sep(lines[i + 1]):
+                headers = self._split_table_row(lines[i])
+                align_raw = self._split_table_row(lines[i + 1])
+                aligns: List[str] = []
+                for a in align_raw:
+                    a = a.strip()
+                    if a.startswith(":") and a.endswith(":"):
+                        aligns.append("center")
+                    elif a.endswith(":"):
+                        aligns.append("right")
+                    else:
+                        aligns.append("left")
+                i += 2
+                rows: List[List[str]] = []
+                while i < n and lines[i].strip() and "|" in lines[i]:
+                    if re.match(r"^(#{1,4})\s+", lines[i].strip()):
+                        break
+                    rows.append(self._split_table_row(lines[i]))
+                    if record_toc:
+                        cur_sec_buf.append(lines[i])
+                    i += 1
+
+                th_html = "".join(
+                    f'<th style="text-align:{aligns[idx] if idx < len(aligns) else "left"}">{self.render_inline(h)}</th>'
+                    for idx, h in enumerate(headers)
+                )
+                if record_toc:
+                    cur_sec_buf.append(" ".join(headers))
+                tr_list: List[str] = []
+                for r in rows:
+                    if len(r) < len(headers):
+                        r = r + [""] * (len(headers) - len(r))
+                    elif len(r) > len(headers):
+                        r = r[: len(headers) - 1] + [" | ".join(r[len(headers) - 1 :])]
+                    tds = "".join(
+                        f'<td style="text-align:{aligns[idx] if idx < len(aligns) else "left"}">{self.render_inline(cell)}</td>'
+                        for idx, cell in enumerate(r)
+                    )
+                    tr_list.append(f"<tr>{tds}</tr>")
+                out.append(
+                    f'<div class="md-table-wrap"><table><thead><tr>{th_html}</tr></thead>'
+                    f"<tbody>{''.join(tr_list)}</tbody></table></div>"
+                )
+                continue
+
+            if stripped.startswith(">"):
+                bq_inner_lines: List[str] = []
+                while i < n and lines[i].strip().startswith(">"):
+                    raw_bq = re.sub(r"^\s*>\s?", "", lines[i])
+                    bq_inner_lines.append(raw_bq)
+                    if record_toc:
+                        cur_sec_buf.append(raw_bq)
+                    i += 1
+                inner_html = self._render_blocks(bq_inner_lines, record_toc=False)
+                out.append(f"<blockquote>{inner_html}</blockquote>")
+                continue
+
+            m_ul = re.match(r"^(\s*)[-*+]\s+(.+)$", line)
+            m_ol = re.match(r"^(\s*)(\d+)\.\s+(.+)$", line)
+            if m_ul or m_ol:
+                is_ordered = bool(m_ol)
+                tag = "ol" if is_ordered else "ul"
+                items_html: List[str] = []
+                while i < n:
+                    l_cur = lines[i]
+                    if not l_cur.strip():
+                        break
+                    mu = re.match(r"^(\s*)[-*+]\s+(.+)$", l_cur)
+                    mo = re.match(r"^(\s*)(\d+)\.\s+(.+)$", l_cur)
+                    if is_ordered and mo and len(mo.group(1)) == 0:
+                        item_chunks = [self.render_inline(mo.group(3))]
+                        if record_toc:
+                            cur_sec_buf.append(mo.group(3))
+                        i += 1
+                    elif (not is_ordered) and mu and len(mu.group(1)) == 0:
+                        item_chunks = [self.render_inline(mu.group(2))]
+                        if record_toc:
+                            cur_sec_buf.append(mu.group(2))
+                        i += 1
+                    else:
+                        break
+
+                    sub_items: List[str] = []
+                    while i < n and lines[i].strip():
+                        l_sub = lines[i]
+                        msu = re.match(r"^(\s{2,})[-*+]\s+(.+)$", l_sub)
+                        mso = re.match(r"^(\s{2,})(\d+)\.\s+(.+)$", l_sub)
+                        if msu:
+                            sub_items.append(f"<li>{self.render_inline(msu.group(2))}</li>")
+                            if record_toc:
+                                cur_sec_buf.append(msu.group(2))
+                            i += 1
+                        elif mso:
+                            sub_items.append(f"<li>{self.render_inline(mso.group(3))}</li>")
+                            if record_toc:
+                                cur_sec_buf.append(mso.group(3))
+                            i += 1
+                        elif l_sub.startswith("  ") and not re.match(r"^\s*[-*+\d]", l_sub):
+                            item_chunks.append("<br>" + self.render_inline(l_sub.strip()))
+                            if record_toc:
+                                cur_sec_buf.append(l_sub.strip())
+                            i += 1
+                        else:
+                            break
+                    if sub_items:
+                        item_chunks.append(f"<ul>{''.join(sub_items)}</ul>")
+                    items_html.append(f"<li>{''.join(item_chunks)}</li>")
+
+                out.append(f"<{tag}>{''.join(items_html)}</{tag}>")
+                continue
+
+            para_lines: List[str] = []
+            while i < n:
+                l_p = lines[i]
+                s_p = l_p.strip()
+                if not s_p:
+                    break
+                if (
+                    s_p.startswith("```")
+                    or s_p.startswith(">")
+                    or re.match(r"^(#{1,4})\s+", s_p)
+                    or re.match(r"^-{3,}\s*$", s_p)
+                    or re.match(r"^!\[([^\]]*)\]\(([^)]+)\)\s*$", s_p)
+                    or re.match(r"^(\s*)[-*+]\s+", l_p)
+                    or re.match(r"^(\s*)(\d+)\.\s+", l_p)
+                    or ("|" in s_p and (i + 1 < n) and self._is_table_sep(lines[i + 1]))
+                ):
+                    break
+                para_lines.append(self.render_inline(s_p))
+                if record_toc:
+                    cur_sec_buf.append(s_p)
+                i += 1
+            if para_lines:
+                out.append(f"<p>{'<br>'.join(para_lines)}</p>")
+
+        if record_toc:
+            flush_section_index()
+        return "\n".join(out)
+
+    def render(self, md_text: str) -> str:
+        return self._render_blocks(md_text.splitlines(), record_toc=True)
 
 
-def char_counts(characters):
-    counts = {}
-    for ch in characters:
-        counts[ch.get('category')] = counts.get(ch.get('category'), 0) + 1
-    return counts
+# ==============================================================================
+# Shared Layout Shell
+# ==============================================================================
+def render_shell(
+    *,
+    title: str,
+    page_id: str,
+    active_nav: str,
+    body_html: str,
+    root_prefix: str = "./",
+    has_toc_button: bool = False,
+) -> str:
+    r = root_prefix
 
+    def nav_link(key: str, href: str, label: str, extra_cls: str = "") -> str:
+        base = f"nav-link {extra_cls}".strip()
+        cls = f"{base} active" if active_nav == key else base
+        return f'<a class="{cls}" href="{r}{href}">{label}</a>'
 
-def tier_card_html(cat, count):
-    tip = cat.get('name') or ''
-    if cat.get('parent'):
-        tip += f"｜所属量级：{cat['parent']}"
-    if cat.get('energy'):
-        tip += f"｜{cat['energy']}"
-    href = url(f"/category/{cat['slug']}.html")
-    count_attr = ' data-empty' if count == 0 else ''
-    # 背景图：外链、不入库。主源写在内联 style 里（无 JS 也能看到），
-    # 备源放 data-bg-alt，由 main.js 在主源加载失败时顶上；都失败就撤掉底图。
-    bg_style = ''
-    bg_class = ''
-    bg_attr = ''
-    urls = tier_bg_urls(cat)
-    if urls:
-        bg_class = ' has-bg'
-        bg_style = (
-            f" style=\"--tier-bg:url('{html_escape(urls[0], True)}');"
-            f"--tier-bg-opacity:{_BG_OPACITY}\""
+    def drawer_card(key: str, href: str, label: str, sub: str) -> str:
+        cls = "drawer-card-link active" if active_nav == key else "drawer-card-link"
+        return (
+            f'<a class="{cls}" href="{r}{href}">'
+            f'<span class="drawer-card-title"><span>{label}</span>{SVGS["arrow_up_right"]}</span>'
+            f'<span class="drawer-card-sub">{sub}</span>'
+            f"</a>"
         )
-        bg_attr = f' data-bg="{html_escape(urls[0], True)}"'
-        if len(urls) > 1:
-            bg_attr += f' data-bg-alt="{html_escape(urls[1], True)}"'
-    return (
-        f'                <a href="{href}" class="category-card{bg_class}"{bg_style}{bg_attr}'
-        f' title="{html_escape(tip, True)}">\n'
-        f'                    <span class="cat-name">{html_escape(cat.get("name"))}</span>\n'
-        f'                    <span class="cat-count"{count_attr}>{count}</span>\n'
-        f'                    <span class="cat-energy">{html_escape(tier_energy_label(cat))}</span>\n'
-        f'                </a>\n'
+
+    def drawer_doc(key: str, href: str, label: str) -> str:
+        cls = "drawer-doc-link active" if active_nav == key else "drawer-doc-link"
+        return f'<a class="{cls}" href="{r}{href}"><span>{label}</span><span>→</span></a>'
+
+    toc_dock_html = (
+        f'<button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录" aria-label="展开章节目录">'
+        f'{SVGS["toc"]}</button>'
+        if has_toc_button
+        else ""
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-root="{r}" data-page-id="{esc(page_id)}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{esc(title)} · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <script>
+    (function() {{
+      try {{
+        var t = localStorage.getItem('pw_theme_v2');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      }} catch (e) {{}}
+    }})();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{r}static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
+          {SVGS["menu"]}
+        </button>
+        <a class="brand-link" href="{r}index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-name">衡天 PowerWiki</span>
+        </a>
+      </div>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        {nav_link("home", "index.html", "首页")}
+        {nav_link("tiers", "tiers.html", "量级分类", "nav-cat")}
+        {nav_link("characters", "characters.html", "角色档案", "nav-cat")}
+        <span class="nav-divider" aria-hidden="true"></span>
+        {nav_link("rules", "rules.html", "体系原文", "nav-doc")}
+        {nav_link("materials", "materials.html", "材质原文", "nav-doc")}
+        {nav_link("search", "search.html", "搜索")}
+      </nav>
+
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          {SVGS["search"]}
+          <span class="search-btn-label">检索…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
+          {SVGS["sun"]}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="{r}index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-name">衡天 PowerWiki</span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        {SVGS["close"]}
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">核心分类大库</div>
+        {drawer_card("tiers", "tiers.html", "量级分类大库", "98 档从小到大 · 物理焦耳与集合论标尺")}
+        {drawer_card("characters", "characters.html", "角色战力档案", "首字母 A–Z / 量级从小到大双模式排序")}
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">基准规则原文（全文无删减）</div>
+        {drawer_doc("rules", "rules.html", "卷一 · 衡天量级体系（第四版）")}
+        {drawer_doc("materials", "materials.html", "卷二 · 材质与破坏能量数据库")}
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        {drawer_doc("home", "index.html", "返回首页总览")}
+        {drawer_doc("search", "search.html", "全站即时检索")}
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {{
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {{
+        if (window.__PW_SYNC_LOCK__) {{ window.__PW_SYNC_LOCK__(); return; }}
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }}
+      function closeAll() {{
+        if (window.__PW_CLOSE_ALL__) {{ window.__PW_CLOSE_ALL__(); return; }}
+        drawer.classList.remove('open');
+        sync();
+      }}
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {{
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      }});
+      if (closeBtn) {{ closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }}
+      if (backdrop) {{ backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }}
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {{
+        links[j].addEventListener('click', function() {{ drawer.classList.remove('open'); sync(); }});
+      }}
+      window.addEventListener('pageshow', function() {{ drawer.classList.remove('open'); sync(); }});
+    }})();
+  </script>
+
+  <main>
+    {body_html}
+  </main>
+
+  <div class="floating-dock" aria-label="快捷工具">
+    {toc_dock_html}
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      {SVGS["arrow_up"]}
+    </button>
+  </div>
+
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
+      <div class="search-modal-head">
+        <span class="search-modal-icon">{SVGS["search"]}</span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第四版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="{r}search.html">进入独立搜索页 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第四版基准）</span>
+      </div>
+      <div class="footer-links">
+        <a href="{r}tiers.html">量级天梯</a>
+        <a href="{r}characters.html">角色档案</a>
+        <a href="{r}rules.html">衡天体系全文</a>
+        <a href="{r}materials.html">材质能量库</a>
+        <a href="{r}search.html">全站检索</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{r}static/js/search-index.js"></script>
+  <script src="{r}static/js/app.js"></script>
+</body>
+</html>
+"""
+
+
+def resolve_rel_asset(rel_path: str, prefix: str) -> str:
+    if not rel_path:
+        return ""
+    if re.match(r"^(https?:)?//", rel_path) or rel_path.startswith("/"):
+        return rel_path
+    return f"{prefix}{rel_path.lstrip('./')}"
+
+
+def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, Any]], href_prefix: str) -> str:
+    t = tier_by_slug.get(c.get("tier_slug", ""))
+    t_code = t["code"] if t else "待定"
+    t_name = t["name"] if t else "待定"
+    t_order = f"#{t['order']:02d}" if t and not t.get("unranked") else "待定"
+    initial = esc((c.get("initial") or "#").upper())
+    mod_html = "".join(f'<span class="tag-pill">{esc(m)}</span>' for m in (c.get("modifiers") or []))
+    img_src = resolve_rel_asset(c.get("image_url", ""), href_prefix)
+    origin_text = esc(c.get("series") or "未知出处") + (f" · {esc(c['realm'])}" if c.get("realm") else "")
+
+    if img_src:
+        shape = c.get("image_shape") or "portrait"
+        media_cls = (
+            "has-media media-top"
+            if shape == "landscape"
+            else "has-media media-side media-square"
+            if shape == "square"
+            else "has-media media-side"
+        )
+        size_attrs = (
+            f' width="{int(c["image_w"])}" height="{int(c["image_h"])}"'
+            if c.get("image_w") and c.get("image_h")
+            else ""
+        )
+        return f"""
+    <a class="char-card {media_cls}" href="{href_prefix}character/{esc(c['slug'])}.html">
+      <div class="char-card-media">
+        <img class="char-card-img" src="{esc(img_src)}" alt="{esc(c['name'])}"{size_attrs} loading="lazy">
+      </div>
+      <div class="char-card-body">
+        <div class="char-head">
+          <div class="char-meta">
+            <h3 class="char-name">{esc(c['name'])}</h3>
+            <div class="char-origin">{origin_text}</div>
+          </div>
+          <span class="tier-badge gold mono">⊙ {esc(t_code)}</span>
+        </div>
+        <div class="char-tags">
+          <span class="tag-pill accent">{esc(t_name)} · {t_order}</span>
+          <span class="tag-pill mono">首字母 {initial}</span>
+          {mod_html}
+        </div>
+        <p class="char-summary">{esc(c.get('summary') or '')}</p>
+        <div class="char-foot">
+          <span class="char-cred">{format_evidence_html(c.get('credibility') or '点击查阅定级详情')}</span>
+          <span class="card-link-hint">查看档案 {SVGS["arrow_up_right"]}</span>
+        </div>
+      </div>
+    </a>"""
+
+    return f"""
+    <a class="char-card" href="{href_prefix}character/{esc(c['slug'])}.html">
+      <div class="char-head">
+        <div class="char-identity">
+          <div class="char-monogram">{esc(c["name"][:1])}</div>
+          <div class="char-meta">
+            <h3 class="char-name">{esc(c['name'])}</h3>
+            <div class="char-origin">{origin_text}</div>
+          </div>
+        </div>
+        <span class="tier-badge gold mono">⊙ {esc(t_code)}</span>
+      </div>
+      <div class="char-tags">
+        <span class="tag-pill accent">{esc(t_name)} · {t_order}</span>
+        <span class="tag-pill mono">首字母 {initial}</span>
+        {mod_html}
+      </div>
+      <p class="char-summary">{esc(c.get('summary') or '')}</p>
+      <div class="char-foot">
+        <span class="char-cred">{format_evidence_html(c.get('credibility') or '点击查阅定级详情')}</span>
+        <span class="card-link-hint">查看档案 {SVGS["arrow_up_right"]}</span>
+      </div>
+    </a>"""
+
+
+# ==============================================================================
+# Page Builders
+# ==============================================================================
+def build_home_page(
+    tiers: List[Dict[str, Any]],
+    all_chars: List[Dict[str, Any]],
+    rules_lines: int,
+    materials_lines: int,
+    rules_toc_count: int,
+) -> str:
+    ranked_count = sum(1 for t in tiers if not t.get("unranked"))
+    tier_by_slug = {t["slug"]: t for t in tiers}
+    total_lines = rules_lines + materials_lines
+
+    horizon_nodes = [
+        ("虫 → 表☆", "个体至行星地表阶", "5×10⁻⁵ ～ 10²⁹ J", "var(--dom-terrestrial)", "tiers.html?seg=terrestrial"),
+        ("星▽ → 恒☆", "行星至恒星阶", "10³⁰ ～ 10⁴⁴ J", "var(--dom-stellar)", "tiers.html?seg=stellar"),
+        ("过渡A / 过渡B", "星际过渡带", "恒星系至星团衔接", "var(--dom-transition)", "tiers.html?seg=transition"),
+        ("系▽ → 宇☆", "恒星系至宇宙阶", "40 AU ～ 超宇宙", "var(--dom-cosmic)", "tiers.html?seg=cosmic"),
+        ("广·塔 → 广·顶", "广义无限阶", "快速增长层级 FGH", "var(--dom-fgh)", "tiers.html?seg=fgh"),
+        ("外·门 → 天·最", "论外与论天阶", "ℵ₀ ～ 莱因哈特/贝克莱", "var(--dom-beyond)", "tiers.html?seg=beyond"),
+    ]
+    horizon_html = "".join(
+        f"""
+        <a class="horizon-item" href="{h[4]}" style="--seg-color:{h[3]}">
+          <span class="horizon-code mono">{esc(h[0])}</span>
+          <span class="horizon-name">{esc(h[1])}</span>
+          <span class="horizon-range mono">{esc(h[2])}</span>
+        </a>"""
+        for h in horizon_nodes
+    )
+
+    featured_section = ""
+    if all_chars:
+        featured_cards = [render_char_card_html(c, tier_by_slug, "") for c in all_chars[:6]]
+        featured_section = f"""
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">Featured Dossiers</span>
+            <h2 class="section-title">已收录角色档案</h2>
+          </div>
+          <a class="btn btn-secondary btn-sm" href="characters.html">全部 {len(all_chars)} 位角色 →</a>
+        </div>
+        <div class="char-grid">
+          {"".join(featured_cards)}
+        </div>
+      </section>"""
+
+    third_stat_val = f"{len(all_chars)} 份" if all_chars else "第四版"
+    third_stat_label = (
+        "独立角色档案页（首字母 / 量级双排序）"
+        if all_chars
+        else "2026-10-24 最新修订（含标注图与动图规范）"
+    )
+
+    body = f"""
+    <div class="container home-stack">
+      <section>
+        <div class="hero-banner">
+          <div class="hero-backdrop" aria-hidden="true">
+            <img class="hero-backdrop-img" src="static/img/cosmos-eclipse.jpg" alt="">
+          </div>
+          <div class="hero-body">
+            <div class="eyebrow">
+              <span class="eyebrow-dot"></span>
+              <span>衡天⊙ 多维战力量级体系 · 第四版最新基准</span>
+            </div>
+            <h1 class="hero-heading">多维战力刻度与物理破坏参考百科</h1>
+            <p class="hero-desc">
+              以《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》为唯一标尺。每一量级锚定明确物理焦耳或集合论基数，支持全量级天梯检索、角色归档与双典籍全文查阅。
+            </p>
+            <div class="hero-cta-row">
+              <a class="btn btn-primary" href="tiers.html">浏览量级天梯（从小到大）</a>
+              <a class="btn btn-secondary" href="rules.html">阅读第四版体系全文</a>
+              <button type="button" class="btn btn-ghost js-open-search">{SVGS["search"]} 全站检索</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-strip">
+          <div class="stat-cell">
+            <span class="stat-value mono">{ranked_count} + 1</span>
+            <span class="stat-label">连续量级档位（#01 虫 → #97 天·最）</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-value mono">7 维 × 5 态</span>
+            <span class="stat-label">破控域御速算性 · 证据等级分离</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-value mono">{third_stat_val}</span>
+            <span class="stat-label">{third_stat_label}</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-value mono">{total_lines:,} 行</span>
+            <span class="stat-label">两部基准典籍 100% 完整原文收录</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">Core Categories</span>
+            <h2 class="section-title">两大核心分类目录</h2>
+          </div>
+        </div>
+
+        <div class="portal-grid">
+          <a class="portal-card" href="tiers.html">
+            <div>
+              <div class="portal-top">
+                <span class="portal-num mono">CATEGORY 01 / TIER ATLAS</span>
+                <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
+              </div>
+              <h3 class="portal-title">量级分类大库</h3>
+              <p class="portal-text">严格按能量与数学结构「从小到大」单向递增排列：由昆虫级（5×10⁻⁵ J）经行星、恒星、星系，直至莱因哈特与贝克莱基数。全 98 档均设独立规格页。</p>
+            </div>
+            <div class="portal-footer">
+              <span class="tag-pill accent">↑ 严格从小到大</span>
+              <span class="tag-pill">98 独立规格页</span>
+              <span class="tag-pill">卡片 / 天梯 / 总表三视图</span>
+            </div>
+          </a>
+
+          <a class="portal-card" href="characters.html">
+            <div>
+              <div class="portal-top">
+                <span class="portal-num mono">CATEGORY 02 / CHARACTER ROSTER</span>
+                <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
+              </div>
+              <h3 class="portal-title">角色战力档案库</h3>
+              <p class="portal-text">支持「按量级从小到大」与「按首字母 A–Z」双模式排序；每位角色拥有独立档案页，完整呈现定级结论、七维证据链与原文核对索引。</p>
+            </div>
+            <div class="portal-footer">
+              <span class="tag-pill accent">A–Z 首字母 / ↑ 从小到大</span>
+              <span class="tag-pill">{len(all_chars)} 位已归档角色</span>
+              <span class="tag-pill">自动记忆排序与位置</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">Canonical Reference Texts</span>
+            <h2 class="section-title">基准规则原文典籍（全文无删减）</h2>
+          </div>
+        </div>
+
+        <div class="codex-strip">
+          <a class="codex-volume-card" href="rules.html">
+            <div>
+              <div class="codex-vol-kicker mono">CODEX VOL. I · {rules_lines:,} 行 · {rules_toc_count} 节目录</div>
+              <h3 class="codex-vol-title">《衡天⊙ 多维战力量级体系（第四版）》原文</h3>
+              <p class="codex-vol-desc">完整收录总则、归因与知情度审查、全量级定义、论外双轴、标注图与动图规范及超长篇通读流程。</p>
+            </div>
+            <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
+          </a>
+
+          <a class="codex-volume-card" href="materials.html">
+            <div>
+              <div class="codex-vol-kicker mono">CODEX VOL. II · {materials_lines:,} 行 · 物理破坏比能锚点</div>
+              <h3 class="codex-vol-title">《材质与破坏能量数据库（第二版）》原文</h3>
+              <p class="codex-vol-desc">完整收录岩石与金属力学强度、碎裂/熔化/汽化至核子完全解离的全破坏方式比能（J/cm³）及致密星物质锚点。</p>
+            </div>
+            <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">Scale Spectrum</span>
+            <h2 class="section-title">六大量级跨度速览</h2>
+          </div>
+          <a class="btn btn-secondary btn-sm" href="tiers.html">查看全部 98 档 →</a>
+        </div>
+        <div class="horizon-grid">
+          {horizon_html}
+        </div>
+      </section>
+
+      {featured_section}
+
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">Methodology</span>
+            <h2 class="section-title">七维并列与五态证据规范</h2>
+          </div>
+          <a class="btn btn-secondary btn-sm" href="rules.html">阅读第四版总则 →</a>
+        </div>
+        <div class="principles-grid">
+          <div class="principle-card">
+            <h3 class="principle-title">七维独立计分（缺项不反推）</h3>
+            <p class="principle-desc">
+              除 0.11 条「整体掌控物质与结构可单向推出破坏」外，破坏、防御、速度、算力、场域与特性严格独立记录，原文未涉及之维度一律记为〔缺〕。
+            </p>
+            <div class="pill-cluster">
+              <span class="tag-pill"><strong class="mono">破</strong> 破坏能量</span>
+              <span class="tag-pill"><strong class="mono">控</strong> 整体掌控</span>
+              <span class="tag-pill"><strong class="mono">域</strong> 作用范围</span>
+              <span class="tag-pill"><strong class="mono">御</strong> 防御承受</span>
+              <span class="tag-pill"><strong class="mono">速</strong> 机动速度</span>
+              <span class="tag-pill"><strong class="mono">算</strong> 图灵演算</span>
+              <span class="tag-pill"><strong class="mono">性</strong> 机制特性</span>
+            </div>
+          </div>
+
+          <div class="principle-card">
+            <h3 class="principle-title">五级证据状态标识</h3>
+            <p class="principle-desc">
+              所有定级须经 0.14.2「归因与知情度审查」（在场、知情、记忆可靠、表现一致、无后文推翻、归因准确）及 10.8「标注图与动图处理」核验，并显式标注证据等级。
+            </p>
+            <div class="pill-cluster">
+              <span class="tag-pill"><span class="ev-badge ev-confirmed">〔实〕</span> 已确认表现</span>
+              <span class="tag-pill"><span class="ev-badge ev-lower">〔下〕</span> 保守下限</span>
+              <span class="tag-pill"><span class="ev-badge ev-inferred">〔推〕</span> 规则单向推定</span>
+              <span class="tag-pill"><span class="ev-badge ev-hidden">〔隐〕</span> 隐含结构锚点</span>
+              <span class="tag-pill"><span class="ev-badge ev-missing">〔缺〕</span> 原文未涉及</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    """
+    return render_shell(title="首页", page_id="home", active_nav="home", body_html=body, root_prefix="./")
+
+
+def build_tiers_page(
+    tiers: List[Dict[str, Any]],
+    groups: List[Dict[str, Any]],
+    all_chars: List[Dict[str, Any]],
+) -> str:
+    group_map = {g["id"]: g for g in groups}
+    char_count_by_tier: Dict[str, int] = {}
+    for c in all_chars:
+        ts = c.get("tier_slug")
+        if ts:
+            char_count_by_tier[ts] = char_count_by_tier.get(ts, 0) + 1
+
+    ranked = sorted([t for t in tiers if not t.get("unranked")], key=lambda x: x["order"])
+    unranked = [t for t in tiers if t.get("unranked")]
+    all_ordered = ranked + unranked
+
+    ordered_gids: List[str] = []
+    for t in all_ordered:
+        if t["group_id"] not in ordered_gids:
+            ordered_gids.append(t["group_id"])
+
+    ssr_sections: List[str] = []
+    for gid in ordered_gids:
+        g = group_map.get(gid, {"title": gid, "subtitle": ""})
+        g_items = [t for t in all_ordered if t["group_id"] == gid]
+        cards_html = []
+        for t in g_items:
+            order_str = "待定" if t.get("unranked") else f"#{t['order']:02d}"
+            c_cnt = char_count_by_tier.get(t["slug"], 0)
+            char_pill = f'<span class="tag-pill accent">{c_cnt} 角色</span>' if c_cnt > 0 else ""
+            cards_html.append(
+                f"""
+                <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
+                  <div class="tier-card-top">
+                    <span class="tier-badge mono">⊙ {esc(t['code'])}</span>
+                    <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order_str}</span></span>
+                  </div>
+                  <div class="tier-name-row">
+                    <h3 class="tier-name">{esc(t['name'])}</h3>
+                    <span class="tier-family">{esc(t['family'])}</span>
+                  </div>
+                  <div class="tier-energy mono">{esc(t['energy'])}</div>
+                  <p class="tier-scale">{esc(t['scale'])}</p>
+                  <div class="tier-foot">
+                    <span>{esc(t['model'])}</span>
+                    {SVGS["arrow_up_right"]}
+                  </div>
+                </a>"""
+            )
+        ssr_sections.append(
+            f"""
+            <section class="group-section" id="group-{esc(gid)}">
+              <div class="group-header">
+                <h2 class="group-title">{esc(g['title'])}</h2>
+                <span class="group-sub">{esc(g['subtitle'])} · {len(g_items)} 档</span>
+              </div>
+              <div class="tier-grid">{''.join(cards_html)}</div>
+            </section>"""
+        )
+
+    dom_counts: Dict[str, int] = {}
+    for t in tiers:
+        dom = t.get("domain", "unranked")
+        dom_counts[dom] = dom_counts.get(dom, 0) + 1
+
+    spectrum_defs = [
+        ("terrestrial", "虫 → 表☆", "个体～地表阶", f"{dom_counts.get('terrestrial', 0)} 档 · 5×10⁻⁵～10²⁹ J", "var(--dom-terrestrial)"),
+        ("stellar", "星▽ → 恒☆", "行星～恒星阶", f"{dom_counts.get('stellar', 0)} 档 · 10³⁰～10⁴⁴ J", "var(--dom-stellar)"),
+        ("transition", "衔接与过渡", "街城 / 星际过渡", f"{dom_counts.get('transition', 0)} 档 · 跨尺度衔接", "var(--dom-transition)"),
+        ("cosmic", "系▽ → 宇☆", "恒星系～宇宙阶", f"{dom_counts.get('cosmic', 0)} 档 · 40 AU～10⁹³ J", "var(--dom-cosmic)"),
+        ("fgh", "广·塔 → 广·顶", "广义无限阶", f"{dom_counts.get('fgh', 0)} 档 · FGH 增长层级", "var(--dom-fgh)"),
+        ("beyond", "外·门 → 天·最", "论外与论天阶", f"{dom_counts.get('beyond', 0)} 档 · ℵ₀～大基数", "var(--dom-beyond)"),
+    ]
+    spectrum_html = "".join(
+        f'<button type="button" class="atlas-cell" data-tier-seg="{seg}" style="--cell-color:{col}">'
+        f'<span class="atlas-cell-code mono">{code}</span>'
+        f'<span class="atlas-cell-name">{name}</span>'
+        f'<span class="atlas-cell-meta mono">{meta}</span>'
+        f"</button>"
+        for seg, code, name, meta, col in spectrum_defs
+    )
+
+    body = f"""
+    <div class="container">
+      <section class="category-hub" aria-label="量级分类大库总览">
+        <div class="category-hub-art" aria-hidden="true">
+          <img class="category-hub-img" src="static/img/monolith-scale.jpg" alt="">
+        </div>
+        <div class="category-hub-body">
+          <div class="hub-kicker-row">
+            <span class="hub-kicker-badge mono">⊙ CORE CATEGORY 01 · 量级分类大库</span>
+            <span class="count-badge mono" id="tier-result-count">{len(tiers)} / {len(tiers)} 档</span>
+          </div>
+          <div>
+            <h1 class="page-title">量级分类天梯（从小到大）</h1>
+            <p class="page-desc">
+              全站核心量级目录：严格按<strong>从小到大（#01 昆虫级 → #97 论天最上）</strong>单向递增排列。点击下方任一跨度格可快速筛选区间，点击具体档位卡片进入独立规格页。修饰符遵循 <code>▽ 弱</code> &lt; <code>○ 标准</code> &lt; <code>△ 强</code> &lt; <code>◆ 极</code> &lt; <code>☆ 超</code>。
+            </p>
+          </div>
+          <div class="atlas-spectrum" role="group" aria-label="六大量级跨度快速定位">
+            {spectrum_html}
+          </div>
+        </div>
+      </section>
+
+      <div class="control-panel">
+        <div class="control-row">
+          <div class="control-cluster">
+            <span class="rule-indicator mono">↑ 排列基准：从小到大 (#01 → #97)</span>
+            <div class="seg-group" role="group" aria-label="视图模式">
+              <button type="button" class="seg-btn active" data-tier-view="card">分阶卡片</button>
+              <button type="button" class="seg-btn" data-tier-view="flat">连续天梯</button>
+              <button type="button" class="seg-btn" data-tier-view="table">紧凑总表</button>
+            </div>
+          </div>
+
+          <div class="search-field">
+            <input type="search" class="search-input" id="tier-filter-input" placeholder="筛选代字、名称、能量或参照物（如 宇△、城△、2.24×10³²）…" autocomplete="off">
+            <button type="button" class="clear-input-btn" id="tier-filter-clear">清空</button>
+          </div>
+        </div>
+
+        <div class="control-row divider-top">
+          <div class="chip-rail" role="group" aria-label="量级区间筛选">
+            <button type="button" class="chip-btn active" data-tier-seg="all">全量级 ({len(tiers)})</button>
+            <button type="button" class="chip-btn" data-tier-seg="terrestrial">个体～地表阶 ({dom_counts.get('terrestrial', 0)})</button>
+            <button type="button" class="chip-btn" data-tier-seg="stellar">行星～恒星阶 ({dom_counts.get('stellar', 0)})</button>
+            <button type="button" class="chip-btn" data-tier-seg="transition">衔接与过渡 ({dom_counts.get('transition', 0)})</button>
+            <button type="button" class="chip-btn" data-tier-seg="cosmic">恒星系～宇宙阶 ({dom_counts.get('cosmic', 0)})</button>
+            <button type="button" class="chip-btn" data-tier-seg="fgh">广义无限 FGH ({dom_counts.get('fgh', 0)})</button>
+            <button type="button" class="chip-btn" data-tier-seg="beyond">论外～论天 ({dom_counts.get('beyond', 0)})</button>
+            <button type="button" class="chip-btn" data-tier-seg="unranked">待定 ({dom_counts.get('unranked', 0)})</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section" id="tiers-explorer-mount">
+        {''.join(ssr_sections)}
+      </div>
+    </div>
+    """
+    return render_shell(title="量级分类（从小到大）", page_id="tiers", active_nav="tiers", body_html=body, root_prefix="./")
+
+
+def build_tier_detail_pages(
+    tiers: List[Dict[str, Any]],
+    groups: List[Dict[str, Any]],
+    all_chars: List[Dict[str, Any]],
+    rules_title_to_id: Dict[str, str],
+) -> None:
+    TIER_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    for old in TIER_OUT_DIR.glob("*.html"):
+        old.unlink()
+
+    group_map = {g["id"]: g for g in groups}
+    tier_by_slug = {t["slug"]: t for t in tiers}
+    ranked = sorted([t for t in tiers if not t.get("unranked")], key=lambda x: x["order"])
+
+    for t in tiers:
+        g = group_map.get(t["group_id"], {"title": t["group_id"], "subtitle": ""})
+        is_unranked = bool(t.get("unranked"))
+
+        prev_t = None
+        next_t = None
+        neighbors: List[Dict[str, Any]] = []
+        if not is_unranked:
+            idx = next(i for i, item in enumerate(ranked) if item["slug"] == t["slug"])
+            if idx > 0:
+                prev_t = ranked[idx - 1]
+            if idx + 1 < len(ranked):
+                next_t = ranked[idx + 1]
+            neighbors = ranked[max(0, idx - 2) : min(len(ranked), idx + 3)]
+
+        rule_sec_title = t.get("rule_section", "")
+        rule_anchor = rules_title_to_id.get(rule_sec_title, "")
+        rule_href = f"../rules.html#{rule_anchor}" if rule_anchor else "../rules.html"
+
+        chars_in_tier = [c for c in all_chars if c.get("tier_slug") == t["slug"]]
+        if chars_in_tier:
+            char_list_html = (
+                '<div class="char-grid">'
+                + "".join(render_char_card_html(c, tier_by_slug, "../") for c in chars_in_tier)
+                + "</div>"
+            )
+        else:
+            char_list_html = f"""
+            <div class="empty-notice">
+              <span>当前档位暂无已收录角色档案。</span>
+              <a class="btn btn-secondary btn-sm" href="../characters.html">前往角色分类 →</a>
+            </div>
+            """
+
+        neighbor_section = ""
+        if neighbors:
+            rows = "".join(
+                f'<a class="neighbor-row {"current" if nb["slug"] == t["slug"] else ""}" href="{esc(nb["slug"])}.html">'
+                f'<span class="mono">#{nb["order"]:02d} · ⊙ {esc(nb["code"])}</span>'
+                f'<span>{esc(nb["name"])}</span>'
+                f'<span class="mono">{esc(nb["energy"])}</span>'
+                f"</a>"
+                for nb in neighbors
+            )
+            neighbor_section = f"""
+            <section class="section-block">
+              <div class="section-header">
+                <h2 class="section-title">相邻天梯刻度（从小到大连续上下文）</h2>
+              </div>
+              <div class="neighbor-stack">{rows}</div>
+            </section>
+            """
+
+        prev_html = (
+            f"""<a class="pager-card" href="{esc(prev_t['slug'])}.html">
+                  <span class="pager-dir">← 上一档（更低量级）</span>
+                  <span class="pager-title">#{prev_t['order']:02d} · ⊙ {esc(prev_t['code'])} {esc(prev_t['name'])}</span>
+                  <span class="pager-sub mono">{esc(prev_t['energy'])}</span>
+                </a>"""
+            if prev_t
+            else """<div class="pager-card disabled">
+                      <span class="pager-dir">← 起点档位</span>
+                      <span class="pager-title">已是最低量级（#01 昆虫级）</span>
+                    </div>"""
+        )
+
+        next_html = (
+            f"""<a class="pager-card next" href="{esc(next_t['slug'])}.html">
+                  <span class="pager-dir">下一档（更高量级） →</span>
+                  <span class="pager-title">#{next_t['order']:02d} · ⊙ {esc(next_t['code'])} {esc(next_t['name'])}</span>
+                  <span class="pager-sub mono">{esc(next_t['energy'])}</span>
+                </a>"""
+            if next_t
+            else """<div class="pager-card next disabled">
+                      <span class="pager-dir">顶点档位 →</span>
+                      <span class="pager-title">已是最高量级（#97 论天最上）</span>
+                    </div>"""
+        )
+
+        order_badge = "待定档" if is_unranked else f"序位 #{t['order']:02d} / 97"
+
+        body = f"""
+        <div class="container detail-stack">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="tiers.html" data-fallback-name="量级分类">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回量级分类</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../tiers.html">量级分类</a>
+              <span>/</span>
+              <span>⊙ {esc(t['code'])} {esc(t['name'])}</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img" src="../static/img/monolith-scale.jpg" alt="">
+            </div>
+            <div class="dossier-body">
+              <div class="dossier-top">
+                <div>
+                  <div class="char-tags">
+                    <span class="tier-badge gold mono">⊙ {esc(t['code'])}</span>
+                    <span class="count-badge mono">{order_badge}</span>
+                    <span class="tag-pill">{esc(g.get('short_title') or g['title'])}</span>
+                  </div>
+                  <h1 class="page-title">{esc(t['name'])} · {esc(t['family'])}系</h1>
+                  <p class="page-desc">{esc(t.get('notes', ''))}</p>
+                </div>
+                <a class="btn btn-secondary btn-sm" href="{rule_href}">
+                  查阅《衡天第四版》对应章节 {SVGS["arrow_up_right"]}
+                </a>
+              </div>
+
+              <div class="full-writing-box">
+                <div class="box-kicker">《衡天⊙ 第四版》1.5 完整书写推荐格式（首次出现须写全称与标准）</div>
+                <div>综合量级：<span class="mono">⊙{esc(t['code'])}</span>——{esc(t['name'])}（{esc(t['scale'])}，能量/结构基准 <span class="mono">{esc(t['energy'])}</span>）</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="spec-grid">
+            <div class="spec-card">
+              <div class="spec-label">能量阈值 / 数学定义</div>
+              <div class="spec-val accent mono">{esc(t['energy'])}</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-label">覆盖尺度与典型参照物</div>
+              <div class="spec-val">{esc(t['scale'])}</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-label">物理 / 数学计算模型</div>
+              <div class="spec-val">{esc(t['model'])}</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-label">检索拼音索引</div>
+              <div class="spec-val mono">首字母 {(t.get('initial') or '#').upper()} · {esc(t.get('code_pinyin', ''))} / {esc(t.get('full_pinyin', ''))}</div>
+            </div>
+          </section>
+
+          {neighbor_section}
+
+          <section class="section-block">
+            <div class="section-header">
+              <h2 class="section-title">本档位已收录角色（{len(chars_in_tier)}）</h2>
+            </div>
+            {char_list_html}
+          </section>
+
+          <div class="pager-grid">
+            {prev_html}
+            {next_html}
+          </div>
+        </div>
+        """
+
+        page_html = render_shell(
+            title=f"⊙{t['code']} {t['name']}",
+            page_id=f"tier-{t['slug']}",
+            active_nav="tiers",
+            body_html=body,
+            root_prefix="../",
+        )
+        (TIER_OUT_DIR / f"{t['slug']}.html").write_text(page_html, encoding="utf-8")
+
+
+def build_characters_page(all_chars: List[Dict[str, Any]], tiers: List[Dict[str, Any]]) -> str:
+    tier_by_slug = {t["slug"]: t for t in tiers}
+    sorted_chars = sorted(
+        all_chars,
+        key=lambda c: (
+            tier_by_slug.get(c.get("tier_slug", ""), {}).get("order", 999),
+            c.get("pinyin") or c.get("name") or "",
+        ),
+    )
+
+    all_series = sorted({c["series"] for c in all_chars if c.get("series")})
+    series_options_html = f'<option value="all">全部作品（{len(all_series)}）</option>' + "".join(
+        f'<option value="{esc(s)}">{esc(s)}</option>' for s in all_series
+    )
+
+    if sorted_chars:
+        ssr_cards = [render_char_card_html(c, tier_by_slug, "") for c in sorted_chars]
+        ssr_mount_inner = f"""
+        <section class="group-section" id="char-scale-list">
+          <div class="group-header">
+            <h2 class="group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
+            <span class="group-sub">{len(sorted_chars)} 位角色</span>
+          </div>
+          <div class="char-grid">{"".join(ssr_cards)}</div>
+        </section>"""
+    else:
+        ssr_mount_inner = """
+        <div class="empty-state-box">
+          <h3 class="empty-state-title">当前暂未收录角色档案</h3>
+          <p class="empty-state-sub">角色库已清空待录。后续在 data/characters.json 中录入角色后，将自动生成专属独立页面并支持按量级从小到大与按首字母 A–Z 排序。</p>
+        </div>"""
+
+    if sorted_chars:
+        low_c = sorted_chars[0]
+        high_c = sorted_chars[-1]
+        low_t = tier_by_slug.get(low_c.get("tier_slug", ""), {})
+        high_t = tier_by_slug.get(high_c.get("tier_slug", ""), {})
+        span_text = (
+            f"⊙{low_t.get('code', '待定')}（{low_c['name']}）→ ⊙{high_t.get('code', '待定')}（{high_c['name']}）"
+            if len(sorted_chars) > 1
+            else f"⊙{low_t.get('code', '待定')}（{low_c['name']}）"
+        )
+    else:
+        span_text = "待录入"
+
+    works_text = " · ".join(all_series[:4]) if all_series else "待录入"
+
+    body = f"""
+    <div class="container">
+      <section class="category-hub" aria-label="角色战力档案大库总览">
+        <div class="category-hub-art" aria-hidden="true">
+          <img class="category-hub-img" src="static/img/character-chronicle.jpg" alt="">
+        </div>
+        <div class="category-hub-body">
+          <div class="hub-kicker-row">
+            <span class="hub-kicker-badge mono">⊙ CORE CATEGORY 02 · 角色战力档案库</span>
+            <span class="count-badge mono" id="char-result-count">{len(all_chars)} / {len(all_chars)} 位</span>
+          </div>
+          <div>
+            <h1 class="page-title">角色战力档案目录</h1>
+            <p class="page-desc">
+              全站核心角色目录：支持<strong>按主档量级从小到大</strong>与<strong>按拼音首字母（A–Z）</strong>双模式实时切换；点击任一角色卡片进入专属独立档案页面，返回时自动恢复当前排序与浏览位置。
+            </p>
+          </div>
+          <div class="roster-metrics">
+            <div class="roster-metric-card">
+              <span class="roster-metric-label">已收录角色档案</span>
+              <span class="roster-metric-val mono">{len(all_chars)} 位（100% 独立定级全文页）</span>
+            </div>
+            <div class="roster-metric-card">
+              <span class="roster-metric-label">覆盖作品出处</span>
+              <span class="roster-metric-val">{esc(works_text)}</span>
+            </div>
+            <div class="roster-metric-card">
+              <span class="roster-metric-label">当前收录量级跨度</span>
+              <span class="roster-metric-val mono">{esc(span_text)}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="control-panel">
+        <div class="control-row">
+          <div class="control-cluster">
+            <div class="seg-group" role="group" aria-label="角色排序方式">
+              <button type="button" class="seg-btn active" data-char-sort="asc">↑ 按量级从小到大</button>
+              <button type="button" class="seg-btn" data-char-sort="alpha">A–Z 按首字母排序</button>
+            </div>
+            <select class="select-control" id="char-series-select" aria-label="按作品筛选">
+              {series_options_html}
+            </select>
+          </div>
+
+          <div class="search-field">
+            <input type="search" class="search-input" id="char-filter-input" placeholder="检索角色名、首字母、出处或量级代字…" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="control-row divider-top">
+          <div class="chip-rail" role="group" aria-label="角色所属量级区间">
+            <button type="button" class="chip-btn active" data-char-domain="all">全部区间</button>
+            <button type="button" class="chip-btn" data-char-domain="terrestrial">个体～地表阶</button>
+            <button type="button" class="chip-btn" data-char-domain="stellar">行星～恒星阶</button>
+            <button type="button" class="chip-btn" data-char-domain="transition">衔接与过渡</button>
+            <button type="button" class="chip-btn" data-char-domain="cosmic">恒星系～宇宙阶</button>
+            <button type="button" class="chip-btn" data-char-domain="fgh">广义无限 FGH</button>
+            <button type="button" class="chip-btn" data-char-domain="beyond">论外～论天</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="alpha-bar" id="char-alpha-bar" aria-label="首字母快速定位">
+        <div class="alpha-letters" id="char-alpha-letters"></div>
+      </div>
+
+      <div class="content-section" id="chars-explorer-mount">
+        {ssr_mount_inner}
+      </div>
+    </div>
+    """
+    return render_shell(
+        title="角色分类（首字母 / 从小到大）",
+        page_id="characters",
+        active_nav="characters",
+        body_html=body,
+        root_prefix="./",
     )
 
 
-def tier_groups_html(power_categories, characters):
-    """按体系分段渲染档位网格。
+def build_character_detail_pages(
+    all_chars: List[Dict[str, Any]],
+    tiers: List[Dict[str, Any]],
+    groups: List[Dict[str, Any]],
+    rules_title_to_id: Dict[str, str],
+) -> List[Dict[str, str]]:
+    if CHAR_OUT_DIR.exists():
+        for old in CHAR_OUT_DIR.glob("*.html"):
+            old.unlink()
 
-    严格按 sort_order 由弱到强遍历，分段切换时才插入分段标题——过渡带 A / B
-    因此各自出现在能量轴上的真实位置，而不是被归拢到一起打乱强弱顺序。
-    """
-    counts = char_counts(characters)
-    tiers_href = url(f'/page/{TIERS_PAGE_SLUG}.html')
-    segments = iter_segments(power_categories)
-    out = []
-    for seg in segments:
-        note = group_note(seg['gid'])
-        note_html = (f'\n                <p class="tier-group-note">{html_escape(note)}</p>'
-                     if note else '')
-        out.append(
-            f'            <div class="tier-group" id="group-{seg["key"]}">\n'
-            f'                <div class="tier-group-head">\n'
-            f'                    <h3 class="tier-group-name">{html_escape(seg["label"])}</h3>\n'
-            f'                    <span class="tier-group-meta">{len(seg["members"])} 档 · {html_escape(seg["span"])}</span>\n'
-            f'                    <a class="tier-group-link" href="{tiers_href}#group-{seg["key"]}">体系表</a>\n'
-            f'                </div>{note_html}\n'
-            f'                <div class="category-grid">\n'
-        )
-        for cat in seg['members']:
-            out.append(tier_card_html(cat, counts.get(cat.get('slug'), 0)))
-        out.append('                </div>\n            </div>\n')
-    return ''.join(out)
-
-
-def rules_source_link(cat):
-    """把档位的 source（rules.md 小节标题）解析成规则页深链，返回 (href, 标题)。"""
-    src = (cat.get('source') or '').strip()
-    if not src:
-        return '', ''
-    aid = (_PAGE_ANCHORS.get('rules') or {}).get(src)
-    href = url(f'/page/rules.html#{aid}') if aid else url('/page/rules.html')
-    return href, src
-
-
-def iter_segments(power_categories):
-    """把按强弱排序的档位切成连续分段。
-
-    同一个 group 可能被其它分段（如过渡带 B）从中间切开，切成几段就是几段：
-    每段的 key 形如「cover」「cover-2」，段内档位在能量轴上严格相邻。
-    分段标题因此不会重复、锚点也不会撞 id。
-    """
-    segments, seen = [], {}
-    for cat in power_categories:
-        gid = cat.get('group') or 'misc'
-        if not segments or segments[-1]['gid'] != gid:
-            seen[gid] = seen.get(gid, 0) + 1
-            key = gid if seen[gid] == 1 else f'{gid}-{seen[gid]}'
-            segments.append({'key': key, 'gid': gid, 'members': []})
-        segments[-1]['members'].append(cat)
-    for seg in segments:
-        members = seg['members']
-        if len(members) > 1:
-            seg['span'] = f"{members[0]['name']} → {members[-1]['name']}"
-        else:
-            seg['span'] = members[0]['name']
-        if seg['gid'] in seen and sum(1 for x in segments if x['gid'] == seg['gid']) > 1:
-            idx = [x['key'] for x in segments if x['gid'] == seg['gid']].index(seg['key'])
-            total = sum(1 for x in segments if x['gid'] == seg['gid'])
-            seg['label'] = f"{group_display(seg['gid'])}（{idx + 1}/{total}）"
-        else:
-            seg['label'] = group_display(seg['gid'])
-    return segments
-
-
-def tier_position(power_categories, slug):
-    """返回 (本档序号, 总档数, 上一档, 下一档)。
-
-    强弱轴只包含参与排序的档位；未归档的兜底档（未知/暂存）不在轴上，
-    查询它时返回 (0, 排名档总数, None, None) —— 它既不是最强也不是最弱。
-    """
-    ranked = [c for c in power_categories if c.get('group') != 'unfiled']
-    for i, c in enumerate(ranked):
-        if c.get('slug') == slug:
-            prev_c = ranked[i - 1] if i > 0 else None
-            next_c = ranked[i + 1] if i + 1 < len(ranked) else None
-            return i + 1, len(ranked), prev_c, next_c
-    return 0, len(ranked), None, None
-
-# ---------------------- 各页面构建 ----------------------
-def build_index(categories, groups, realms, characters, pages):
-    power_categories = ordered_power_categories(categories)
-    tiers_href = url(f'/page/{TIERS_PAGE_SLUG}.html')
-    realm_groups = {}
-    for r in realms:
-        realm_groups.setdefault(r.get('series') or '通用', []).append(r)
-    realm_groups = dict(sorted(realm_groups.items()))
-
-    body = f'''    <div class="container">
-        <section class="hero">
-            <div class="hero-inner">
-                <h1>全作品战力评鉴所</h1>
-                <p class="hero-sub">跨作品角色战力量级评鉴 · 境界体系收集与对照</p>
-                <form action="{url('/search.html')}" method="get" class="search-form">
-                    <input type="text" name="q" placeholder="搜索角色、作品、境界、量级...">
-                    <button type="submit">搜索</button>
-                </form>
-                <div class="hero-stats">
-                    <a href="{url('/characters.html')}" class="stat"><b>{len(characters)}</b><span>角色</span></a>
-                    <a href="{url('/realm/index.html')}" class="stat"><b>{len(realms)}</b><span>境界</span></a>
-                    <a href="{tiers_href}" class="stat"><b>{len(power_categories)}</b><span>量级档位</span></a>
-                    <a href="{url('/page/rules.html')}" class="stat"><b>{len(pages)}</b><span>规则页</span></a>
-                </div>
-            </div>
-        </section>
-'''
-
-    if pages or power_categories:
-        # 区块标题：与 data/pages.yaml 中页面性质保持一致
-        # （当前收录《战力评级规则》与《材质与破坏能量数据库》）
-        body += f'''        <section class="panel">
-            <div class="panel-header">
-                <h2>规则与数据库</h2>
-                <span class="panel-note">评级方法论与换算参考</span>
-            </div>
-            <div class="page-list">
-                <a href="{url(f'/page/{TIERS_PAGE_SLUG}.html')}" class="page-tag">{TIERS_PAGE_TITLE} · {len(power_categories)} 档</a>
-'''
-        for page in sorted(pages, key=lambda x: x.get('sort_order', 0)):
-            href = url(f"/page/{page['slug']}.html")
-            body += f'                <a href="{href}" class="page-tag">{page["title"]}</a>\n'
-        body += '''            </div>
-        </section>
-'''
-
-    if characters:
-        shown = characters[:12]
-        body += f'''        <section class="panel">
-            <div class="panel-header">
-                <h2>角色图鉴</h2>
-                <a href="{url('/characters.html')}" class="btn btn-sm">查看全部 {len(characters)} 位</a>
-            </div>
-            <div class="character-grid">
-'''
-        for char in shown:
-            body += character_card_html(char)
-        body += '''            </div>
-        </section>
-'''
-
-    body += f'''        <section class="panel">
-            <div class="panel-header">
-                <h2>战力等级</h2>
-                <a href="{tiers_href}" class="btn btn-sm">量级体系表 · {len(power_categories)} 档</a>
-            </div>
-            <p class="tier-intro">与《战力评级规则》的战力量级体系表同源同步，由弱到强按体系分段排列；每档标注能量区间，点击卡片查看该档角色。</p>
-            <div class="tier-groups">
-{tier_groups_html(power_categories, characters)}            </div>
-        </section>
-'''
-
-    if realm_groups:
-        body += f'''        <section class="panel">
-            <div class="panel-header">
-                <h2>境界体系</h2>
-                <a href="{url('/realm/index.html')}" class="btn btn-sm">体系总览</a>
-            </div>
-            <div class="realm-system-grid">
-'''
-        for i, (sname, rs) in enumerate(realm_groups.items()):
-            rs_sorted = sorted(rs, key=lambda x: x.get('sort_order', 0))
-            ladder = ' → '.join(r['name'] for r in rs_sorted[:7])
-            if len(rs_sorted) > 7:
-                ladder += ' …'
-            total_chars = sum(1 for c in characters if c.get('realm') in [x['name'] for x in rs_sorted])
-            body += f'''                <a href="{url('/realm/index.html')}#sys-{i}" class="system-card">
-                    <div class="system-head">
-                        <span class="system-name">{sname}</span>
-                        <span class="system-count">{len(rs_sorted)} 阶</span>
-                    </div>
-                    <div class="system-ladder">{ladder}</div>
-                    <div class="system-meta">收录 {total_chars} 个角色</div>
-                </a>
-'''
-        body += '''            </div>
-        </section>
-'''
-
-    body += '''    </div>
-'''
-    write('index.html', render_page('首页', body))
-
-
-def character_card_html(char, power_categories=None):
-    href = url('/character/%s.html' % char['slug'])
-    name = html_escape(char.get('name'))
-    if char.get('image_url'):
-        img = '<img src="%s" alt="%s" loading="lazy">' % (html_escape(char['image_url'], True), html_escape(char.get('name'), True))
-    else:
-        img = '<div class="no-image">暂无图片</div>'
-    cat = _CAT_BY_SLUG.get(char.get('category')) or {}
-    cat_name = cat.get('name') or ''
-    cat_tag = ''
-    if cat_name:
-        tip = cat_name
-        if cat.get('energy'):
-            tip += '｜' + cat['energy']
-        cat_tag = ('<span class="tag tag-power" title="%s">%s</span>'
-                   % (html_escape(tip, True), html_escape(cat_name)))
-    realm_tag = ('<span class="tag tag-realm">%s</span>' % html_escape(char['realm'])
-                 if char.get('realm') else '')
-    series_line = ('<p class="char-series">%s</p>' % html_escape(char['series'])
-                   if char.get('series') else '')
-    return (f'                <a href="{href}" class="character-card">\n'
-            f'                    <div class="char-image">{img}</div>\n'
-            f'                    <div class="char-info">\n'
-            f'                        <h3>{name}</h3>\n'
-            f'                        {series_line}\n'
-            f'                        <div class="char-tags">{cat_tag}{realm_tag}</div>\n'
-            f'                    </div>\n'
-            f'                </a>\n')
-
-
-def category_name_for(char):
-    # 占位：实际映射在 build 中通过全局 categories 解析
-    return _CAT_MAP.get(char.get('category'), '')
-
-
-_CAT_MAP = {}
-_CAT_ORDER = {}
-_CAT_BY_SLUG = {}
-# 体系分段（categories.yaml 的 groups），按档位在表中首次出现的顺序展示
-_GROUP_MAP = {}
-_GROUPS_ORDERED = []
-# 独立页面列表（供全局导航使用，改名后导航自动同步）
-_PAGES = []
-# page slug -> {标题文本: 锚点 id}，把档位的 source 解析成规则原文深链
-_PAGE_ANCHORS = {}
-# page slug -> (正文 HTML, 目录 HTML)，避免同一份 Markdown 渲染两遍
-_PAGE_CACHE = {}
-# 档位卡片背景图配置（categories.yaml 的 backgrounds 块）
-_BG_ENABLED = False
-_BG_OPACITY = 0.15
-_BG_URLS = {}   # slug -> [主源 URL, 备源 URL, ...]
-
-
-def load_backgrounds(raw):
-    """解析 categories.yaml 的 backgrounds 块。
-
-    每档一张真实照片，URL 直接写在 images 里（外链，不下载进仓库），
-    按量级语义挑选：昆虫档就是昆虫微距、爆砖档就是砖墙、爆恒星档就是太阳表面。
-    图源挂掉时按顺序退到 fallback，再不行就摘掉底图退回纯色卡片。
-    """
-    global _BG_ENABLED, _BG_OPACITY, _BG_URLS
-    _BG_ENABLED, _BG_OPACITY, _BG_URLS = False, 0.10, {}
-    if not isinstance(raw, dict):
-        raw = {}
-    cfg = raw.get('backgrounds') or {}
-    if not cfg.get('enabled'):
-        return
-    images = cfg.get('images') or {}
-    if not images:
-        return
-    fallback = [str(u) for u in (cfg.get('fallback') or []) if str(u).strip()]
-    try:
-        op = float(cfg.get('opacity'))
-        if not 0 < op <= 1:
-            raise ValueError
-    except (TypeError, ValueError):
-        op = 0.10
-
-    _BG_ENABLED = True
-    _BG_OPACITY = op
-    for slug, url in images.items():
-        if not url:
-            continue
-        _BG_URLS[slug] = [str(url)] + [
-            f.format(slug=slug) for f in fallback
-        ]
-
-
-def tier_bg_urls(cat):
-    """该档位卡片的背景图候选 URL（按优先级）。未启用时返回空列表。"""
-    if not _BG_ENABLED:
+    if not all_chars:
+        if CHAR_OUT_DIR.exists() and not any(CHAR_OUT_DIR.iterdir()):
+            CHAR_OUT_DIR.rmdir()
         return []
-    return _BG_URLS.get(cat.get('slug')) or []
 
-# 主题引导脚本：同步执行，在首屏渲染前定好 data-theme，避免深浅色切换时闪一下白屏。
-# 优先级：用户手动选择（localStorage）> 系统偏好（prefers-color-scheme）> 浅色。
-THEME_BOOTSTRAP = (
-    "document.documentElement.className += ' js';"
-    "try{var t=localStorage.getItem('pw-theme');"
-    "if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}"
-    "document.documentElement.setAttribute('data-theme',t);}catch(e){}"
-)
+    CHAR_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    tier_by_slug = {t["slug"]: t for t in tiers}
+    group_map = {g["id"]: g for g in groups}
+    char_doc_index_entries: List[Dict[str, str]] = []
 
-# 量级体系表页：由 categories.yaml 直接生成，与首页「战力等级」同源同步
-TIERS_PAGE_SLUG = 'tiers'
-TIERS_PAGE_TITLE = '量级体系表'
+    ordered_chars = sorted(
+        all_chars,
+        key=lambda c: (
+            tier_by_slug.get(c.get("tier_slug", ""), {}).get("order", 999),
+            c.get("pinyin") or c.get("name") or "",
+        ),
+    )
 
+    for idx, c in enumerate(ordered_chars):
+        t = tier_by_slug.get(c.get("tier_slug", ""), tier_by_slug.get("pending", tiers[-1]))
+        g = group_map.get(t["group_id"], {"title": t["group_id"], "subtitle": ""})
+        prev_c = ordered_chars[idx - 1] if idx > 0 else None
+        next_c = ordered_chars[idx + 1] if idx + 1 < len(ordered_chars) else None
 
-def build_categories(categories, characters, power_categories=None):
-    """分类（档位）详情页。
+        initial = esc((c.get("initial") or "#").upper())
+        t_order_str = "待定档" if t.get("unranked") else f"#{t['order']:02d}"
 
-    页面内容由 categories.yaml 的字段驱动：所属量级、体系分段、能量区间、
-    覆盖尺度、判定要点、体系内位次（上一档 / 下一档）、规则原文深链。
-    """
-    ordered = power_categories if power_categories is not None else ordered_power_categories(categories)
-    for cat in ordered:
-        slug = cat['slug']
-        chars = [c for c in characters if c.get('category') == slug]
-        chars.sort(key=lambda x: (x.get('series') or '', x.get('name') or ''))
-        pos, total, prev_c, next_c = tier_position(ordered, slug)
-        src_href, src_title = rules_source_link(cat)
+        rule_sec_title = t.get("rule_section", "")
+        rule_anchor = rules_title_to_id.get(rule_sec_title, "")
+        rule_href = f"../rules.html#{rule_anchor}" if rule_anchor else "../rules.html"
 
-        body = f'''    <div class="container">
-        <div class="breadcrumb">
-            <a href="{url('/index.html')}">首页</a>
-            <span>/</span>
-            <a href="{url(f'/page/{TIERS_PAGE_SLUG}.html')}">{TIERS_PAGE_TITLE}</a>
-            <span>/</span>
-            <span>{cat['name']}</span>
-        </div>
+        mod_chips_html = "".join(f'<span class="tag-pill">{esc(m)}</span>' for m in (c.get("modifiers") or []))
+        full_writing = c.get("full_writing") or (
+            f"综合量级：⊙{t['code']}——{t['name']}（{t['scale']}，能量/结构基准 {t['energy']}）。"
+        )
+        group_badge_label = g.get("short_title") or g["title"]
 
-        <section class="panel">
-            <div class="panel-header">
-                <h1>{cat['name']}</h1>
-                <span class="badge">{len(chars)} 个角色</span>
-            </div>
-            <div class="tier-meta">
-'''
-        meta_rows = [
-            ('所属量级', cat.get('parent') or '—'),
-            ('体系分段', group_display(cat.get('group'))),
-            ('能量区间', cat.get('energy') or '—'),
-            ('覆盖尺度', cat.get('scale') or '—'),
-            ('体系位次', (f"第 {pos} / {total} 档" if pos
-                        else f"兜底档 · 不参与强弱排序（共 {total} 档正式量级）")),
-        ]
-        for label, value in meta_rows:
-            body += (f'                <div class="tier-meta-row">'
-                     f'<span class="tier-meta-k">{label}</span>'
-                     f'<span class="tier-meta-v">{html_escape(value)}</span></div>\n')
-        if src_href:
-            body += (f'                <div class="tier-meta-row">'
-                     f'<span class="tier-meta-k">规则原文</span>'
-                     f'<span class="tier-meta-v"><a href="{src_href}">'
-                     f'{html_escape(src_title)} →</a></span></div>\n')
-        body += '''            </div>
-'''
-        if cat.get('note'):
-            body += f'            <p class="category-desc">{html_escape(cat.get("note"))}</p>\n'
+        submeta_parts: List[str] = []
+        if c.get("realm"):
+            submeta_parts.append(f"形态：{esc(c['realm'])}")
+        if c.get("alias"):
+            submeta_parts.append(f"别称：{esc(c['alias'])}")
+        if c.get("doc_date"):
+            submeta_parts.append(f"定级日期：{esc(c['doc_date'])}")
+        if not submeta_parts:
+            submeta_parts.append(f"出处：{esc(c.get('series') or '未标注')}")
+        submeta_html = "<span>·</span>".join(f"<span>{p}</span>" for p in submeta_parts)
 
-        # 上/下一档快捷跳转（强弱轴上的相邻档，不是分段内相邻）
-        if cat.get('group') == 'unfiled':
-            # 兜底档不在强弱轴上，给它「更强/更弱」标签是错的
-            body += ('            <div class="tier-nav tier-nav--flat">\n'
-                     '                <span class="tier-nav-note">本档为体系之外的兜底档，'
-                     '不与正式量级比较强弱；补齐材料后应转出到对应档位。</span>\n'
-                     '            </div>\n')
-        elif prev_c or next_c:
-            body += '            <div class="tier-nav">\n'
-            if prev_c:
-                prev_href = url('/category/%s.html' % prev_c['slug'])
-                body += (f'                <a class="tier-nav-item" href="{prev_href}">'
-                         f'<span class="tier-nav-dir">← 更弱</span>'
-                         f'<span class="tier-nav-name">{html_escape(prev_c["name"])}</span></a>\n')
-            else:
-                body += ('                <span class="tier-nav-item is-edge">'
-                         '<span class="tier-nav-dir">←</span>'
-                         '<span class="tier-nav-name">体系最弱档</span></span>\n')
-            if next_c:
-                next_href = url('/category/%s.html' % next_c['slug'])
-                body += (f'                <a class="tier-nav-item" href="{next_href}">'
-                         f'<span class="tier-nav-dir">更强 →</span>'
-                         f'<span class="tier-nav-name">{html_escape(next_c["name"])}</span></a>\n')
-            else:
-                body += ('                <span class="tier-nav-item is-edge">'
-                         '<span class="tier-nav-dir">→</span>'
-                         '<span class="tier-nav-name">体系最强档</span></span>\n')
-            body += '            </div>\n'
+        floor_val_html = format_evidence_html(c.get("floor_tier") or t["energy"])
+        ceiling_val_html = format_evidence_html(c.get("ceiling_note") or t["scale"])
+        basis_val_html = format_evidence_html(
+            c.get("core_basis") or c.get("credibility") or f"依据《衡天⊙ 第四版》{t['name']}标准评定"
+        )
+        floor_label = "保底量级" if c.get("floor_tier") else "主档能量带"
+        ceiling_label = "上限边界与反证" if c.get("ceiling_note") else "主档覆盖尺度"
 
-        if chars:
-            body += '            <div class="character-grid">\n'
-            for char in chars:
-                body += character_card_html(char, ordered)
-            body += '            </div>\n'
+        portrait_src = resolve_rel_asset(c.get("portrait_url") or c.get("image_url") or "", "../")
+        if portrait_src:
+            portrait_caption = esc(c.get("portrait_caption") or f"{c['name']} 角色立绘")
+            p_shape = c.get("portrait_shape") or c.get("image_shape") or "portrait"
+            body_layout_cls = "has-landscape" if p_shape == "landscape" else "has-portrait"
+            pw = c.get("portrait_w") or c.get("image_w")
+            ph = c.get("portrait_h") or c.get("image_h")
+            p_dim_attrs = f' width="{int(pw)}" height="{int(ph)}"' if pw and ph else ""
+            dossier_body_html = f"""
+            <div class="dossier-body {body_layout_cls}">
+              <div class="dossier-main-col">
+                <div class="char-tags">
+                  <span class="tag-pill accent">{esc(group_badge_label)}</span>
+                  <span class="tag-pill">{esc(c.get('series') or '未标注出处')}</span>
+                  <span class="tag-pill mono">首字母 {initial}</span>
+                  {mod_chips_html}
+                </div>
+
+                <div>
+                  <h1 class="page-title">{esc(c['name'])}</h1>
+                  <div class="dossier-submeta">{submeta_html}</div>
+                </div>
+
+                <p class="page-desc">{esc(c.get('summary') or '')}</p>
+
+                <div class="dossier-kpi-grid">
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">综合主档定级</div>
+                    <div class="kpi-value">
+                      <a class="kpi-tier-link mono" href="../tier/{esc(t['slug'])}.html" title="查看所属主档规格页">
+                        <span>⊙ {esc(t['code'])} · {esc(t['name'])}（{t_order_str}）</span>
+                        {SVGS["arrow_up_right"]}
+                      </a>
+                    </div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">{floor_label}</div>
+                    <div class="kpi-value">{floor_val_html}</div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">{ceiling_label}</div>
+                    <div class="kpi-value">{ceiling_val_html}</div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">主档核心依据</div>
+                    <div class="kpi-value">{basis_val_html}</div>
+                  </div>
+                </div>
+
+                <div class="dossier-actions-row">
+                  <a class="btn btn-secondary btn-sm" href="../tier/{esc(t['slug'])}.html">
+                    进入 ⊙{esc(t['code'])} {esc(t['name'])}规格页 {SVGS["arrow_up_right"]}
+                  </a>
+                  <a class="btn btn-ghost btn-sm" href="{rule_href}">
+                    对照《衡天第四版》标尺条文 →
+                  </a>
+                </div>
+              </div>
+
+              <aside class="char-portrait-stage" aria-label="角色官方立绘">
+                <div class="char-portrait-canvas">
+                  <img class="char-portrait-img" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）官方立绘"{p_dim_attrs}>
+                </div>
+                <div class="char-portrait-caption">{portrait_caption}</div>
+              </aside>
+            </div>"""
         else:
-            body += ('            <div class="empty-state"><div class="empty-icon">◇</div>'
-                     '<h3>暂无角色</h3><p>该量级档位下还没有收录角色。</p></div>\n')
-
-        body += '''        </section>
-    </div>
-'''
-        write(os.path.join('category', f'{slug}.html'), render_page(cat['name'], body))
-
-
-def build_tiers_page(categories, characters):
-    """量级体系表页：categories.yaml 的完整展开版。
-
-    与首页「战力等级」读同一份数据、用同一个渲染函数，只是多出能量区间、
-    覆盖尺度、判定要点、规则原文深链四列，并把兜底档明确标注。
-    """
-    power_categories = ordered_power_categories(categories)
-    counts = char_counts(characters)
-    rules_href = url('/page/rules.html')
-    segments = iter_segments(power_categories)
-    toc_block = toc_block_html(build_tiers_toc(segments))
-
-    body = f'''    <div class="container">
-        <div class="breadcrumb">
-            <a class="back-btn" href="{url('/index.html')}" data-back>返回</a>
-            <a href="{url('/index.html')}">首页</a>
-            <span>/</span>
-            <span aria-current="page">{TIERS_PAGE_TITLE}</span>
-        </div>
-
-        <div class="doc-layout" data-page-slug="{TIERS_PAGE_SLUG}">
-            <article class="detail-panel">
-                <div class="panel-header">
-                    <h1>{TIERS_PAGE_TITLE}</h1>
+            dossier_body_html = f"""
+            <div class="dossier-body">
+              <div class="dossier-top">
+                <div class="dossier-title-block">
+                  <div class="char-monogram lg">{esc(c["name"][:1])}</div>
+                  <div>
+                    <h1 class="page-title">{esc(c['name'])}</h1>
+                    <div class="dossier-submeta">{submeta_html}</div>
+                  </div>
                 </div>
-                <p class="tier-intro">
-                    共 <b>{len(power_categories)}</b> 个量级档位，由弱到强排列。本表与
-                    <a href="{rules_href}">《战力评级规则》</a> 的战力量级体系表一一对应：
-                    档位名取自 1.3 量级表与第三、四部分的定级口径，能量区间与覆盖尺度照抄原文。
-                    每档右侧「规则原文」可跳到《战力评级规则》的对应小节。
-                </p>
-'''
-    for seg in iter_segments(power_categories):
-        note = group_note(seg['gid'])
-        note_html = (f'\n                    <p class="tier-group-note">{html_escape(note)}</p>'
-                     if note else '')
-        body += f"""        <section class="panel tier-section" id="group-{seg['key']}">
-            <div class="panel-header">
-                <h2>{html_escape(seg['label'])}</h2>
-                <span class="badge">{len(seg['members'])} 档</span>
-            </div>{note_html}
-            <table class="tier-table">
-                <thead>
-                    <tr>
-                        <th class="col-pos">#</th>
-                        <th class="col-name">档位</th>
-                        <th class="col-parent">所属量级</th>
-                        <th class="col-energy">能量区间</th>
-                        <th class="col-scale">覆盖尺度 / 参照</th>
-                        <th class="col-count">角色</th>
-                        <th class="col-src">规则原文</th>
-                    </tr>
-                </thead>
-                <tbody>
-"""
-        for cat in seg['members']:
-            pos, total, _, _ = tier_position(power_categories, cat.get('slug'))
-            src_href, src_title = rules_source_link(cat)
-            cnt = counts.get(cat.get('slug'), 0)
-            cat_href = url('/category/%s.html' % cat.get('slug'))
-            name_html = (f'<a href="{cat_href}">'
-                         f'{html_escape(cat.get("name"))}</a>')
-            note_cell = (f'<p class="tier-note">{html_escape(cat.get("note"))}</p>'
-                         if cat.get('note') else '')
-            src_html = (f'<a href="{src_href}" class="tier-src">{html_escape(src_title)}</a>'
-                        if src_href else '<span class="tier-src muted">—</span>')
-            # data-label：移动端隐藏表头后，靠它渲染中文列名
-            cells = [
-                # 兜底档不在强弱轴上，位次列给「—」而不是 0 或 92
-                ('col-pos', '位次', str(pos) if pos else '—'),
-                ('col-name', '档位', name_html + note_cell),
-                ('col-parent', '量级', html_escape(cat.get('parent') or '—')),
-                ('col-energy', '能量', html_escape(tier_energy_label(cat))),
-                ('col-scale', '尺度', html_escape(cat.get('scale') or '—')),
-                ('col-count', '角色', str(cnt)),
-                ('col-src', '原文', src_html),
-            ]
-            body += (f'                    <tr id="tier-{cat.get("slug")}">\n')
-            for cls, label, value in cells:
-                body += (f'                        <td class="{cls}" data-label="{label}">'
-                         f'{value}</td>\n')
-            body += '                    </tr>\n'
-        body += '                </tbody>\n            </table>\n        </section>\n'
 
-    body += f'''
-        <section class="panel">
-            <div class="panel-header">
-                <h2>阅读口径</h2>
-            </div>
-            <div class="markdown-content">
-                <ul>
-                    <li><b>排序</b>：由弱到强，首页与本表共用同一顺序。</li>
-                    <li><b>分段</b>：对应《战力评级规则》的体系分段，按档位在能量轴上的真实位置切分。
-                        因此过渡带 A / B 各自单列，不与相邻量级归拢，避免打乱强弱顺序；
-                        同一分段被过渡带隔开时会标注（1/2）、（2/2）。</li>
-                    <li><b>能量与尺度</b>：能量区间为焦耳，覆盖尺度给出该档的典型参照物；
-                        论外级已不在能量轴上，改按规模与结构标注。</li>
-                    <li><b>兜底档</b>：末尾「未知/暂存」不属于任何体系分段，不参与强弱排序。
-                        <b>未知</b>——信息不足、连区间都圈不出来；
-                        <b>暂存</b>——区间已可圈定、只差坐实（若证明高估则下调至对应正式档）。</li>
-                    <li><b>规则原文</b>：每档末列可跳转到《战力评级规则》中定级该档的小节。</li>
-                </ul>
-            </div>
-        </section>
+                <div class="dossier-seal-col">
+                  <a class="tier-seal-link mono" href="../tier/{esc(t['slug'])}.html" title="查看所属主档规格页">
+                    <span>⊙ {esc(t['code'])}</span>
+                    <span>{esc(t['name'])}</span>
+                    <span>{t_order_str}</span>
+                    {SVGS["arrow_up_right"]}
+                  </a>
+                  <div class="char-tags">
+                    <span class="tag-pill accent">{esc(group_badge_label)}</span>
+                    {mod_chips_html}
+                  </div>
+                </div>
+              </div>
+
+              <p class="page-desc">{esc(c.get('summary') or '')}</p>
+
+              <div class="full-writing-box">
+                <div class="box-kicker">正式完整书写摘要</div>
+                <div>{format_evidence_html(full_writing)}</div>
+                {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
+              </div>
+            </div>"""
+
+        has_full_doc = False
+        center_content_html = ""
+        doc_rel_path = c.get("doc_path")
+        if doc_rel_path and (ROOT / doc_rel_path).exists():
+            has_full_doc = True
+            raw_doc_md = (ROOT / doc_rel_path).read_text(encoding="utf-8")
+            body_doc_md = strip_character_doc_front_banner(raw_doc_md)
+            doc_renderer = VerbatimMarkdownRenderer(image_map=c.get("image_map"), base_dir=CHAR_OUT_DIR)
+            rendered_doc_html = doc_renderer.render(body_doc_md)
+            toc_links_html = "".join(
+                f'<a class="toc-item toc-lvl-{item["level"]}" href="#{esc(item["id"])}">{esc(item["title"])}</a>'
+                for item in doc_renderer.toc
+            )
+            for sec in doc_renderer.sections_for_index:
+                clean_txt = re.sub(r"\s+", " ", sec["text"]).strip()
+                char_doc_index_entries.append(
+                    {
+                        "type": "char",
+                        "code": f"{c.get('initial', '')} ⊙{t['code']}",
+                        "title": f"{c['name']} · {sec['title']}",
+                        "badge": f"角色档案 · ⊙{t['code']}",
+                        "pinyin": c.get("pinyin", ""),
+                        "text": clean_txt,
+                        "url": f"character/{c['slug']}.html#{sec['id']}",
+                    }
+                )
+
+            doc_basis_label = esc(c.get("doc_basis") or "依据《衡天⊙ 多维战力量级体系（第四版）》")
+            center_content_html = f"""
+          <div class="doc-layout">
+            <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
+              <div class="toc-head">
+                <div class="toc-head-row">
+                  <span>档案章节目录</span>
+                  <span class="mono">{len(doc_renderer.toc)} 节</span>
+                </div>
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
+              </div>
+              <nav class="toc-list" id="toc-nav">
+                {toc_links_html}
+              </nav>
+            </aside>
+
+            <article class="doc-panel">
+              <div class="doc-toolbar">
+                <div class="doc-source-info">
+                  <span>定级档案全文</span>
+                  <span>·</span>
+                  <span>{doc_basis_label}</span>
+                </div>
+                <div class="doc-tools">
+                  <div class="doc-find-box">
+                    <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
+                    <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
+                    <span class="doc-find-count mono" id="doc-find-count"></span>
+                  </div>
+                  <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+                  <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
+                  <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
+                </div>
+              </div>
+
+              <div class="markdown-body">
+                {rendered_doc_html}
+              </div>
             </article>
-{toc_block}
-        </div>
-    </div>
-'''
-    write(os.path.join('page', f'{TIERS_PAGE_SLUG}.html'), render_page(TIERS_PAGE_TITLE, body))
-
-def build_characters_index(characters, power_categories=None):
-    cards = []
-    for char in characters:
-        href = url('/character/%s.html' % char['slug'])
-        img = ('<img src="%s" alt="%s" loading="lazy">' % (html_escape(char['image_url'], True), html_escape(char.get('name'), True))
-               if char.get('image_url') else '<div class="no-image">暂无图片</div>')
-        cat = _CAT_BY_SLUG.get(char.get('category')) or {}
-        cat_tag = ('<span class="tag tag-power">%s</span>' % html_escape(cat.get('name'))
-                   if cat.get('name') else '')
-        realm_tag = ('<span class="tag tag-realm">%s</span>' % html_escape(char['realm'])
-                     if char.get('realm') else '')
-        series_line = ('<p class="char-series">%s</p>' % html_escape(char['series'])
-                       if char.get('series') else '')
-        cards.append(f'''                <a href="{href}" class="character-card" data-name="{html_escape(char.get('name'), True)}" data-series="{html_escape(char.get('series') or '', True)}">
-                    <div class="char-image">{img}</div>
-                    <div class="char-info">
-                        <h3>{html_escape(char.get('name'))}</h3>
-                        {series_line}
-                        <div class="char-tags">{cat_tag}{realm_tag}</div>
-                    </div>
-                </a>
-''')
-
-    grid_inner = ''.join(cards) if cards else '            <div class="empty-state"><div class="empty-icon">◇</div><h3>暂无角色</h3><p>角色图鉴正在整理中，尚未收录条目。</p></div>\n'
-
-    body = f'''    <div class="container">
-        <div class="breadcrumb">
-            <a href="{url('/index.html')}">首页</a>
-            <span>/</span>
-            <span>角色图鉴</span>
-        </div>
-
-        <section class="panel">
-            <div class="panel-header">
-                <h1>角色图鉴</h1>
-                <span class="badge">{len(characters)} 位角色</span>
+          </div>"""
+        else:
+            dims = c.get("dims") or {}
+            dim_cards_html: List[str] = []
+            for dim_key, dim_title, dim_desc in DIM_META:
+                raw_val = dims.get(dim_key, "〔缺〕")
+                wide_cls = "wide" if dim_key == "性" else ""
+                dim_cards_html.append(
+                    f"""
+                    <div class="dim-detail-card {wide_cls}">
+                      <div class="dim-detail-head">
+                        <span class="dim-symbol mono">{esc(dim_key)}</span>
+                        <div>
+                          <div class="dim-title">{esc(dim_title)}</div>
+                          <div class="dim-desc">{esc(dim_desc)}</div>
+                        </div>
+                      </div>
+                      <div class="dim-value">{format_evidence_html(raw_val)}</div>
+                    </div>"""
+                )
+            center_content_html = f"""
+          <section class="section-block">
+            <div class="section-header">
+              <div>
+                <span class="section-kicker">Seven-Dimension Assessment</span>
+                <h2 class="section-title">七维战力分项评定</h2>
+              </div>
             </div>
-            <div class="char-toolbar">
-                <input type="text" id="name-filter" placeholder="按名称或作品快速过滤..." class="filter-input">
+            <div class="dim-matrix-grid">
+              {"".join(dim_cards_html)}
             </div>
-            <div class="character-grid" id="char-grid">
-'''
-    body += grid_inner
-    body += '''            </div>
-            <p class="empty" id="no-result" style="display:none">没有匹配的角色</p>
-        </section>
-    </div>
-'''
-    body += CHAR_FILTER_JS
-    write('characters.html', render_page('角色图鉴', body))
+          </section>"""
 
+        prev_html = (
+            f"""<a class="pager-card" href="{esc(prev_c['slug'])}.html">
+                  <span class="pager-dir">← 上一位角色（更低量级）</span>
+                  <span class="pager-title">{esc(prev_c['name'])}</span>
+                  <span class="pager-sub mono">⊙ {esc(tier_by_slug.get(prev_c.get('tier_slug',''), {}).get('code', '待定'))} · 首字母 {esc((prev_c.get('initial') or '#').upper())}</span>
+                </a>"""
+            if prev_c
+            else """<div class="pager-card disabled">
+                      <span class="pager-dir">← 序列起点</span>
+                      <span class="pager-title">已是当前库内最低量级角色</span>
+                    </div>"""
+        )
 
-def build_character_detail(characters, categories, realms):
-    for char in characters:
-        cat = next((c for c in categories if c.get('slug') == char.get('category')), None)
-        realm = next((r for r in realms if r.get('name') == char.get('realm')), None)
-        # 图片、别名、标签一律转义：外链 URL 常带 & 参数，写进 HTML 属性前必须转义
-        img = ('<img src="%s" alt="%s" loading="lazy">'
-               % (html_escape(char['image_url'], True), html_escape(char.get('name'), True))
-               if char.get('image_url') else '<div class="no-image">暂无图片</div>')
-        # 配图说明与来源（可选）：明确标注素材出处，避免把漫画宣传图误当小说原设
-        img_note = ''
-        if char.get('image_note'):
-            source_link = ''
-            if char.get('image_source_url'):
-                source_link = ' · <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>' % (
-                    html_escape(char['image_source_url'], True),
-                    html_escape(char.get('image_source_name') or '查看图源'))
-            img_note = '<p class="img-note">%s%s</p>' % (
-                html_escape(char['image_note']), source_link)
-        alias = ('<p class="alias">别名：%s</p>' % html_escape(char['alias'])
-                 if char.get('alias') else '')
-        cat_href = url(f"/category/{cat['slug']}.html") if cat else ''
-        cat_tag = ('<a href="%s" class="tag">%s</a>' % (cat_href, html_escape(cat['name']))
-                   if cat else '')
-        realm_href = url(f"/realm/{realm['slug']}.html") if realm else ''
-        # 境界名始终显示；只有在 realms.yaml 里定义过才生成境界页链接
-        realm_tag = ('<a href="%s" class="tag tag-realm">%s</a>'
-                     % (realm_href, html_escape(realm['name'])) if realm
-                     else ('<span class="tag tag-realm">%s</span>' % html_escape(char['realm'])
-                           if char.get('realm') else ''))
-        series_tag = ('<span class="tag tag-series">%s</span>' % html_escape(char['series'])
-                      if char.get('series') else '')
-        name_esc = html_escape(char['name'])
+        next_html = (
+            f"""<a class="pager-card next" href="{esc(next_c['slug'])}.html">
+                  <span class="pager-dir">下一位角色（更高量级） →</span>
+                  <span class="pager-title">{esc(next_c['name'])}</span>
+                  <span class="pager-sub mono">⊙ {esc(tier_by_slug.get(next_c.get('tier_slug',''), {}).get('code', '待定'))} · 首字母 {esc((next_c.get('initial') or '#').upper())}</span>
+                </a>"""
+            if next_c
+            else """<div class="pager-card next disabled">
+                      <span class="pager-dir">序列顶点 →</span>
+                      <span class="pager-title">已是当前库内最高量级角色</span>
+                    </div>"""
+        )
 
-        desc_html = render_markdown(char.get('description'))
-        power_html = render_markdown(char.get('power_description'))
-
-        body = f'''    <div class="container">
-        <div class="breadcrumb">
-            <a href="{url('/index.html')}">首页</a>
-            <span>/</span>
-'''
-        if cat:
-            body += f'''            <a href="{url(f"/category/{cat['slug']}.html")}">{cat['name']}</a>
-            <span>/</span>
-'''
-        body += f'''            <span>{name_esc}</span>
-        </div>
-
-        <article class="detail-panel">
-            <div class="detail-header">
-                <div class="detail-image">{img}{img_note}</div>
-                <div class="detail-meta">
-                    <h1>{name_esc}</h1>
-                    {alias}
-                    <div class="meta-tags">
-                        {cat_tag}
-                        {realm_tag}
-                        {series_tag}
-                    </div>
+        tier_anchor_section = (
+            ""
+            if has_full_doc
+            else f"""
+          <section class="section-block">
+            <div class="section-header">
+              <div>
+                <span class="section-kicker">Tier Anchor</span>
+                <h2 class="section-title">所属主档物理 / 数学基准对照</h2>
+              </div>
+              <a class="btn btn-secondary btn-sm" href="../tier/{esc(t['slug'])}.html">
+                进入 ⊙{esc(t['code'])} 量级页 {SVGS["arrow_up_right"]}
+              </a>
+            </div>
+            <div class="spec-grid">
+              <div class="spec-card">
+                <div class="spec-label">主档代字与序位</div>
+                <div class="spec-val accent mono">⊙ {esc(t['code'])} · {esc(t['name'])}（{t_order_str}）</div>
+              </div>
+              <div class="spec-card">
+                <div class="spec-label">能量阈值 / 超限基数</div>
+                <div class="spec-val mono">{esc(t['energy'])}</div>
+              </div>
+              <div class="spec-card">
+                <div class="spec-label">覆盖尺度与典型参照</div>
+                <div class="spec-val">{esc(t['scale'])}</div>
+              </div>
+              <div class="spec-card">
+                <div class="spec-label">对应《衡天第四版》章节</div>
+                <div class="spec-val">
+                  <a class="table-primary-link" href="{rule_href}">{esc(rule_sec_title or '查阅第四版规范原文')} →</a>
                 </div>
+              </div>
             </div>
+          </section>"""
+        )
 
-            <div class="detail-body">
-'''
-        if desc_html:
-            body += '''                <section class="detail-section">
-                    <h2>角色介绍 / 战绩</h2>
-                    <div class="markdown-content">{desc_html}</div>
-                </section>
-'''.replace('{desc_html}', desc_html)
-        if power_html:
-            body += '''                <section class="detail-section">
-                    <h2>能力说明</h2>
-                    <div class="markdown-content">{power_html}</div>
-                </section>
-'''.replace('{power_html}', power_html)
-        body += '''            </div>
+        body = f"""
+        <div class="container detail-stack">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>{esc(c['name'])}</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img" src="../static/img/character-chronicle.jpg" alt="">
+            </div>
+            {dossier_body_html}
+          </section>
+
+          {center_content_html}
+          {tier_anchor_section}
+
+          <div class="pager-grid">
+            {prev_html}
+            {next_html}
+          </div>
+        </div>
+        """
+
+        page_html = render_shell(
+            title=f"{c['name']} · 角色战力档案",
+            page_id=f"char-{c['slug']}",
+            active_nav="characters",
+            body_html=body,
+            root_prefix="../",
+            has_toc_button=has_full_doc,
+        )
+        (CHAR_OUT_DIR / f"{c['slug']}.html").write_text(page_html, encoding="utf-8")
+
+    return char_doc_index_entries
+
+
+def build_fulltext_doc_page(
+    *,
+    page_id: str,
+    active_nav: str,
+    title: str,
+    subtitle: str,
+    source_filename: str,
+    masthead_img: str,
+    md_text: str,
+    other_doc_link: Tuple[str, str],
+) -> Tuple[str, List[Dict[str, str]], Dict[str, str]]:
+    renderer = VerbatimMarkdownRenderer()
+    rendered_html = renderer.render(md_text)
+    line_count = len(md_text.splitlines())
+    char_count = len(md_text)
+
+    toc_links: List[str] = []
+    title_to_id: Dict[str, str] = {}
+    for item in renderer.toc:
+        lvl = item["level"]
+        hid = item["id"]
+        htitle = item["title"]
+        title_to_id[htitle] = hid
+        toc_links.append(f'<a class="toc-item toc-lvl-{lvl}" href="#{esc(hid)}">{esc(htitle)}</a>')
+
+    rules_tab_cls = "codex-tab active" if active_nav == "rules" else "codex-tab"
+    mat_tab_cls = "codex-tab active" if active_nav == "materials" else "codex-tab"
+    vol_code = "CODEX VOL. I · 基准规则原文" if active_nav == "rules" else "CODEX VOL. II · 物理能量原文"
+
+    body = f"""
+    <div class="container">
+      <header class="codex-header" aria-label="基准原文典籍页头">
+        <div class="codex-tabs" role="tablist" aria-label="基准原文双卷切换">
+          <a class="{rules_tab_cls}" href="rules.html">卷一：《衡天⊙ 多维战力量级体系（第四版）》原文</a>
+          <a class="{mat_tab_cls}" href="materials.html">卷二：《材质与破坏能量数据库（第二版）》原文</a>
+        </div>
+
+        <div class="codex-folio">
+          <div class="codex-folio-kicker">
+            <span class="codex-folio-badge mono">{vol_code}</span>
+            <span class="mono">全文无删减收录 · {line_count:,} 行 · {char_count:,} 字 · {len(renderer.toc)} 节</span>
+          </div>
+          <h1 class="codex-folio-title">{esc(title)}</h1>
+          <p class="codex-folio-desc">{esc(subtitle)}</p>
+          <div class="codex-folio-meta">
+            <span>定级标尺参考文本（区别于动态分类目录，完整保留 Markdown 原貌与表格数据）</span>
+            <div>
+              <a class="table-primary-link" href="tiers.html">前往「量级分类」大库 →</a>
+              <span> · </span>
+              <a class="table-primary-link" href="characters.html">前往「角色档案」大库 →</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="doc-layout">
+        <aside class="doc-sidebar" id="doc-sidebar" aria-label="全文目录">
+          <div class="toc-head">
+            <div class="toc-head-row">
+              <span>原文目录大纲</span>
+              <span class="mono">{len(renderer.toc)} 节</span>
+            </div>
+            <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选目录章节…" autocomplete="off">
+          </div>
+          <nav class="toc-list" id="toc-nav">
+            {''.join(toc_links)}
+          </nav>
+        </aside>
+
+        <article class="doc-panel">
+          <div class="doc-toolbar">
+            <div class="doc-source-info">
+              <span>基准原文全文</span>
+              <span>·</span>
+              <code class="mono">{esc(source_filename)}</code>
+            </div>
+            <div class="doc-tools">
+              <div class="doc-find-box">
+                <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
+                <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
+                <span class="doc-find-count mono" id="doc-find-count"></span>
+              </div>
+              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+              <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
+              <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
+            </div>
+          </div>
+
+          <div class="markdown-body">
+            {rendered_html}
+          </div>
         </article>
+      </div>
     </div>
-'''
-        write(os.path.join('character', f'{char["slug"]}.html'), render_page(char['name'], body))
-
-
-def build_realm_index(realms, characters):
-    groups = {}
-    for r in realms:
-        groups.setdefault(r.get('series') or '通用', []).append(r)
-    groups = dict(sorted(groups.items()))
-
-    body = f'''    <div class="container">
-        <div class="breadcrumb">
-            <a href="{url('/index.html')}">首页</a>
-            <span>/</span>
-            <span>境界体系</span>
-        </div>
-
-        <section class="panel">
-            <div class="panel-header">
-                <h1>境界体系总览</h1>
-                <span class="badge">{len(groups)} 个作品体系 · 共 {len(realms)} 阶</span>
-            </div>
-            <p class="category-desc">不同作品有各自特有的境界划分。这里按作品分别收集其境界阶梯，便于跨作品对照与量级分析。</p>
-        </section>
-'''
-    if not groups:
-        body += '''        <div class="empty-state"><div class="empty-icon">◇</div><h3>暂无境界体系</h3><p>尚未收录任何作品的境界体系。境界阶梯按作品分组展示，便于跨作品对照与量级分析。</p></div>
-'''
-    else:
-        for i, (sname, rs) in enumerate(groups.items()):
-            rs_sorted = sorted(rs, key=lambda x: x.get('sort_order', 0))
-            total = sum(1 for c in characters if c.get('realm') in [x['name'] for x in rs_sorted])
-            body += f'''        <section class="panel" id="sys-{i}">
-            <div class="panel-header">
-                <h2>{sname}</h2>
-                <span class="badge">{len(rs_sorted)} 阶 · {total} 个角色</span>
-            </div>
-            <ol class="realm-ladder">
-'''
-            for r in rs_sorted:
-                cnt = sum(1 for c in characters if c.get('realm') == r['name'])
-                desc = r.get('description') or ''
-                body += f'''                <li class="ladder-step">
-                    <span class="step-order">{r.get('sort_order', 0)}</span>
-                    <div class="step-body">
-                        <a href="{url(f"/realm/{r['slug']}.html")}" class="step-name">{r['name']}</a>
-                        <span class="step-desc">{desc}</span>
-                    </div>
-                    <span class="step-count">{cnt}</span>
-                </li>
-'''
-            body += '''            </ol>
-        </section>
-'''
-    body += '''    </div>
-'''
-    write(os.path.join('realm', 'index.html'), render_page('境界体系', body))
-
-
-def build_realm_detail(realms, characters):
-    for realm in realms:
-        chars = [c for c in characters if c.get('realm') == realm.get('name')]
-        chars.sort(key=lambda x: (x.get('series') or '', x.get('name') or ''))
-        sname = realm.get('series') or '通用'
-        body = f'''    <div class="container">
-        <div class="breadcrumb">
-            <a href="{url('/index.html')}">首页</a>
-            <span>/</span>
-            <a href="{url('/realm/index.html')}">境界体系</a>
-            <span>/</span>
-            <span>{sname}</span>
-            <span>/</span>
-            <span>{realm['name']}</span>
-        </div>
-
-        <section class="panel">
-            <div class="panel-header">
-                <h1>{realm['name']}</h1>
-                <span class="badge">{len(chars)} 个角色</span>
-            </div>
-            <p class="realm-meta">
-                <span class="tag tag-realm">所属体系：{sname}</span>
-                <span class="tag tag-power">阶梯序位 {realm.get('sort_order', 0)}</span>
-            </p>
-'''
-        if realm.get('description'):
-            body += f'            <p class="category-desc">{realm["description"]}</p>\n'
-
-        if chars:
-            body += '            <div class="character-grid">\n'
-            for char in chars:
-                body += character_card_html(char)
-            body += '            </div>\n'
-        else:
-            body += '            <div class="empty-state"><div class="empty-icon">◇</div><h3>暂无角色</h3><p>该境界下还没有收录角色。</p></div>\n'
-
-        body += '''        </section>
-    </div>
-'''
-        write(os.path.join('realm', f'{realm["slug"]}.html'), render_page(realm['name'], body))
-
-
-def resolve_page_content(page):
-    """优先读取 content_file 指向的独立 Markdown 文件（相对 data 目录），
-    否则回退到内联 content。文件缺失时给出明确提示而非崩溃。"""
-    cf = page.get('content_file')
-    if cf:
-        p = os.path.join(DATA_DIR, cf)
-        if os.path.exists(p):
-            with open(p, 'r', encoding='utf-8') as f:
-                return f.read()
-        return (f'> **内容待补充**：未在 `data/{cf}` 找到内容文件。\n>\n'
-                f'> 请将对应 Markdown 放入 `data/{cf}` 后重新构建。')
-    return page.get('content') or ''
-
-
-def render_page_content(page):
-    """渲染独立页正文，结果缓存，并把标题锚点登记到 _PAGE_ANCHORS。
-
-    档位的 source 字段靠这份映射解析成「跳到规则原文对应小节」的深链。
     """
-    key = page.get('slug')
-    if key in _PAGE_CACHE:
-        return _PAGE_CACHE[key]
-    text = resolve_page_content(page)
-    html_body, toc, anchors = render_markdown_full(text)
-    if key:
-        _PAGE_ANCHORS.setdefault(key, {}).update(anchors)
-    _PAGE_CACHE[key] = (html_body, toc)
-    return _PAGE_CACHE[key]
+
+    full_html = render_shell(
+        title=title,
+        page_id=page_id,
+        active_nav=active_nav,
+        body_html=body,
+        root_prefix="./",
+        has_toc_button=True,
+    )
+    return full_html, renderer.sections_for_index, title_to_id
 
 
-def toc_block_html(toc_inner):
-    """目录侧栏。移动端由 main.js 把整块搬进底部抽屉，桌面端保持右侧吸附。"""
-    if not (toc_inner or '').strip():
-        return ''
-    return f"""            <aside class="doc-toc" id="doc-toc">
-                <p class="doc-toc-title">目录</p>
-                <div class="doc-toc-body">
-{toc_inner}
-                </div>
-            </aside>"""
+def build_search_page() -> str:
+    hot_queries = [
+        "御兔",
+        "城△",
+        "宇◆",
+        "标注图与动图",
+        "完整书写",
+        "归因与知情度",
+        "超长篇",
+        "外·门",
+        "中子星外壳",
+        "花岗岩",
+        "莱因哈特",
+    ]
+    hot_chips = "".join(
+        f'<button type="button" class="chip-btn" data-hot-query="{esc(q)}">{esc(q)}</button>'
+        for q in hot_queries
+    )
 
+    body = f"""
+    <div class="container">
+      <div class="page-header">
+        <div class="page-header-art" aria-hidden="true">
+          <img class="page-header-img" src="static/img/cosmos-eclipse.jpg" alt="">
+        </div>
+        <div class="page-header-body">
+          <div class="nav-crumb-row">
+            <button type="button" class="back-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回首页</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="index.html">首页</a>
+              <span>/</span>
+              <span>全站搜索</span>
+            </nav>
+          </div>
+          <div class="page-title-row">
+            <div>
+              <h1 class="page-title">全站即时检索引擎</h1>
+              <p class="page-desc">
+                跨<strong>98 个量级档位</strong>、<strong>角色档案</strong>、《衡天量级体系（第四版）》全文与《材质与破坏能量数据库（第二版）》全文毫秒级检索。
+              </p>
+            </div>
+            <span class="count-badge mono" id="dedicated-search-count">准备就绪</span>
+          </div>
+        </div>
+      </div>
 
-def build_tiers_toc(segments):
-    """量级体系表页的目录：分段为一级，档位为二级。"""
-    out = ['<div class="toc">', '  <ul>']
-    for seg in segments:
-        out.append(f'    <li><a href="#group-{seg["key"]}">{html_escape(seg["label"])}</a>')
-        out.append('      <ul>')
-        for cat in seg['members']:
-            out.append(f'        <li><a href="#tier-{cat.get("slug")}">'
-                       f'{html_escape(cat.get("name"))}</a></li>')
-        out.append('      </ul>')
-        out.append('    </li>')
-    out.append('  </ul>')
-    out.append('</div>')
-    return '\n'.join(out)
-
-
-def build_pages(pages):
-    for page in sorted(pages, key=lambda x: x.get('sort_order', 0)):
-        content_html, toc_html = render_page_content(page)
-        toc_block = toc_block_html(toc_html)
-        body = f'''    <div class="container">
-        <div class="breadcrumb">
-            <a class="back-btn" href="{url('/index.html')}" data-back>返回</a>
-            <a href="{url('/index.html')}">首页</a>
-            <span>/</span>
-            <span aria-current="page">{page['title']}</span>
+      <div class="control-panel">
+        <div class="search-field full">
+          <input type="search" class="search-input lg" id="dedicated-search-input" placeholder="输入关键词（支持空格分词组合检索，如：星○ 2.24、标注图 帧号、归因 审查、花岗岩 粉碎）…" autofocus>
         </div>
 
-        <div class="doc-layout" data-page-slug="{page['slug']}">
-            <article class="detail-panel">
-                <div class="panel-header">
-                    <h1>{page['title']}</h1>
-                </div>
-                <div class="detail-body">
-                    <div class="markdown-content">{content_html}</div>
-                </div>
-            </article>
-{toc_block}
-        </div>
-    </div>
-'''
-        write(os.path.join('page', f'{page["slug"]}.html'), render_page(page['title'], body))
-
-
-def build_search(characters, categories, realms):
-    index_data = []
-    for c in characters:
-        index_data.append({
-            'slug': c['slug'],
-            'name': c.get('name', ''),
-            'alias': c.get('alias', ''),
-            'series': c.get('series', ''),
-            'category': _CAT_MAP.get(c.get('category'), ''),
-            'catOrder': _CAT_ORDER.get(c.get('category'), 0),
-            'realm': c.get('realm', ''),
-            'realmSeries': next((r.get('series') for r in realms if r.get('name') == c.get('realm')), '') or '',
-            'realmOrder': next((r.get('sort_order', 0) for r in realms if r.get('name') == c.get('realm')), 0),
-            'desc': (c.get('description') or '')[:400],
-            'power': (c.get('power_description') or '')[:400],
-            'image': c.get('image_url', ''),
-        })
-    index_json = json.dumps(index_data, ensure_ascii=False)
-    base = BASE
-    no_result_text = '暂无角色数据，稍后会陆续补充' if not characters else '没有匹配的角色，试试放宽条件'
-
-    body = f'''    <div class="container">
-        <div class="breadcrumb">
-            <a href="{url('/index.html')}">首页</a>
-            <span>/</span>
-            <span>搜索</span>
+        <div class="control-row">
+          <div class="chip-rail">
+            <span class="rail-label">范围：</span>
+            <button type="button" class="chip-btn active" data-page-search-type="all">全部类别</button>
+            <button type="button" class="chip-btn" data-page-search-type="tier">量级分类 (98)</button>
+            <button type="button" class="chip-btn" data-page-search-type="char">角色档案</button>
+            <button type="button" class="chip-btn" data-page-search-type="rules">衡天第四版全文</button>
+            <button type="button" class="chip-btn" data-page-search-type="materials">材质能量库全文</button>
+          </div>
         </div>
 
-        <section class="panel">
-            <div class="panel-header">
-                <h1>搜索</h1>
-            </div>
-            <form class="search-form inline" id="search-form">
-                <input type="text" id="search-input" placeholder="角色名 / 别名 / 作品 / 境界 / 量级 / 简介关键词">
-                <button type="submit">搜索</button>
-            </form>
+        <div class="control-row divider-top">
+          <div class="chip-rail">
+            <span class="rail-label">热词：</span>
+            {hot_chips}
+          </div>
+        </div>
+      </div>
 
-            <div class="filter-bar">
-                <label>作品<select id="f-series"></select></label>
-                <label>量级<select id="f-category"></select></label>
-                <label>境界体系<select id="f-rseries"></select></label>
-                <label>境界<select id="f-realm"></select></label>
-                <label>排序
-                    <select id="f-sort">
-                        <option value="name">按名称</option>
-                        <option value="cat">按量级高低</option>
-                        <option value="realm">按境界阶序</option>
-                    </select>
-                </label>
-                <button type="button" id="f-reset" class="btn btn-sm">重置</button>
-            </div>
-
-            <div id="active-filters" class="active-filters"></div>
-            <p class="search-tip" id="search-tip"></p>
-            <div id="search-results" class="character-grid"></div>
-            <p class="empty" id="no-result" style="display:none">{no_result_text}</p>
-        </section>
+      <div class="content-section" id="dedicated-search-results"></div>
     </div>
-'''
-    js = SEARCH_JS_TEMPLATE.replace('/*INDEXDATA*/', index_json).replace('/*BASE*/', base)
-    body += js
-    write('search.html', render_page('搜索', body))
+    """
+    return render_shell(title="全站搜索", page_id="search", active_nav="search", body_html=body, root_prefix="./")
 
 
-def build_404():
-    body = f'''    <div class="container">
-        <section class="panel">
-            <div class="panel-header">
-                <h1>页面不存在</h1>
-            </div>
-            <p class="empty">你访问的页面不存在，<a href="{url('/index.html')}">返回首页</a></p>
-        </section>
-    </div>
-'''
-    write('404.html', render_page('404', body))
+def build_search_index_bundle(
+    *,
+    tiers_payload: Dict[str, Any],
+    all_chars: List[Dict[str, Any]],
+    char_doc_sections: List[Dict[str, str]],
+    rules_sections: List[Dict[str, str]],
+    materials_sections: List[Dict[str, str]],
+) -> str:
+    index_entries: List[Dict[str, str]] = []
+    tiers = tiers_payload["tiers"]
+    tier_by_slug = {t["slug"]: t for t in tiers}
 
-
-# ---------------------- 脚本模板（用 token 替换避免花括号转义） ----------------------
-CHAR_FILTER_JS = '''
-    <script>
-        (function() {
-            var input = document.getElementById('name-filter');
-            var cards = document.querySelectorAll('#char-grid .character-card');
-            var noResult = document.getElementById('no-result');
-            if (!input) return;
-            input.addEventListener('input', function() {
-                var q = this.value.trim().toLowerCase();
-                var shown = 0;
-                cards.forEach(function(c) {
-                    var hay = (c.dataset.name + ' ' + c.dataset.series).toLowerCase();
-                    var ok = !q || hay.indexOf(q) !== -1;
-                    c.style.display = ok ? '' : 'none';
-                    if (ok) shown++;
-                });
-                noResult.style.display = shown === 0 ? '' : 'none';
-            });
-        })();
-    </script>
-'''
-
-SEARCH_JS_TEMPLATE = '''
-    <script>
-        var indexData = /*INDEXDATA*/;
-        var BASE = "/*BASE*/";
-
-        var el = function(id){ return document.getElementById(id); };
-        var qEl = el('search-input'), fSeries = el('f-series'), fCat = el('f-category'),
-            fRS = el('f-rseries'), fRealm = el('f-realm'), fSort = el('f-sort'),
-            resultsEl = el('search-results'), tipEl = el('search-tip'),
-            noRes = el('no-result'), activeBox = el('active-filters');
-
-        var uniq = function(arr){ return Array.from(new Set(arr.filter(Boolean))).sort(function(a,b){return String(a).localeCompare(String(b),'zh');}); };
-
-        function fillOptions(sel, values, keep) {
-            sel.innerHTML = '<option value="">全部</option>' + values.map(function(v){
-                return '<option value="'+v+'"'+(v===keep?' selected':'')+'>'+v+'</option>';
-            }).join('');
-        }
-
-        function refreshOptions() {
-            var sub = indexData.filter(function(c){
-                return (!fSeries.value || c.series === fSeries.value) &&
-                       (!fRS.value || c.realmSeries === fRS.value);
-            });
-            fillOptions(fSeries, uniq(indexData.map(function(c){return c.series;})), fSeries.value);
-            fillOptions(fRS, uniq(indexData.map(function(c){return c.realmSeries;})), fRS.value);
-            fillOptions(fCat, uniq(sub.map(function(c){return c.category;})), fCat.value);
-            fillOptions(fRealm, uniq(sub.map(function(c){return c.realm;})), fRealm.value);
-        }
-
-        function match(c) {
-            var kw = qEl.value.trim().toLowerCase();
-            if (kw) {
-                var hay = [c.name, c.alias, c.series, c.category, c.realm, c.realmSeries, c.desc, c.power].join(' ').toLowerCase();
-                if (hay.indexOf(kw) === -1) return false;
+    for t in tiers:
+        order_tag = "待定" if t.get("unranked") else f"#{t['order']:02d}"
+        index_entries.append(
+            {
+                "type": "tier",
+                "code": f"⊙{t['code']} {t['code']}",
+                "title": f"⊙{t['code']} · {t['name']}（{order_tag}）",
+                "badge": f"量级 {order_tag}",
+                "pinyin": f"{t.get('code_pinyin', '')} {t.get('full_pinyin', '')}",
+                "text": f"能量/数学刻度：{t['energy']} ｜ 覆盖尺度：{t['scale']} ｜ 模型：{t['model']} ｜ {t.get('notes', '')}",
+                "url": f"tier/{t['slug']}.html",
             }
-            if (fSeries.value && c.series !== fSeries.value) return false;
-            if (fCat.value && c.category !== fCat.value) return false;
-            if (fRS.value && c.realmSeries !== fRS.value) return false;
-            if (fRealm.value && c.realm !== fRealm.value) return false;
-            return true;
-        }
+        )
 
-        function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    for c in all_chars:
+        t = tier_by_slug.get(c.get("tier_slug", ""))
+        t_code = t["code"] if t else "待定"
+        t_name = t["name"] if t else "待定"
+        dims_str = " ".join(f"{k}:{v}" for k, v in (c.get("dims") or {}).items())
+        index_entries.append(
+            {
+                "type": "char",
+                "code": f"{c.get('initial', '')} ⊙{t_code} {c.get('alias', '')}",
+                "title": f"{c['name']}（{c.get('series', '未知出处')}）",
+                "badge": f"角色 · ⊙{t_code} {t_name}",
+                "pinyin": c.get("pinyin", ""),
+                "text": f"{c.get('summary', '')} ｜ {c.get('full_writing', '')} ｜ {dims_str}",
+                "url": f"character/{c['slug']}.html",
+            }
+        )
 
-        function render() {
-            var list = indexData.filter(match);
-            var s = fSort.value;
-            if (s === 'cat') list.sort(function(a,b){return b.catOrder-a.catOrder;});
-            else if (s === 'realm') list.sort(function(a,b){return b.realmOrder-a.realmOrder;});
-            else list.sort(function(a,b){return String(a.name).localeCompare(String(b.name),'zh');});
+    index_entries.extend(char_doc_sections)
 
-            resultsEl.innerHTML = list.map(function(c){
-                var img = c.image ? '<img src="'+esc(c.image)+'" alt="'+esc(c.name)+'" loading="lazy">' : '<div class="no-image">暂无图片</div>';
-                return '<a href="'+BASE+'/character/'+c.slug+'.html" class="character-card">'+
-                    '<div class="char-image">'+img+'</div>'+
-                    '<div class="char-info"><h3>'+esc(c.name)+'</h3>'+
-                    (c.series?'<p class="char-series">'+esc(c.series)+'</p>':'')+
-                    '<div class="char-tags">'+
-                    (c.category?'<span class="tag tag-power">'+esc(c.category)+'</span>':'')+
-                    (c.realm?'<span class="tag tag-realm">'+esc(c.realm)+'</span>':'')+
-                    '</div></div></a>';
-            }).join('');
+    for sec in rules_sections:
+        clean_txt = re.sub(r"\s+", " ", sec["text"]).strip()
+        index_entries.append(
+            {
+                "type": "rules",
+                "code": "",
+                "title": f"衡天第四版 · {sec['title']}",
+                "badge": "衡天第四版",
+                "pinyin": "",
+                "text": clean_txt,
+                "url": f"rules.html#{sec['id']}",
+            }
+        )
 
-            noRes.style.display = list.length ? 'none' : '';
-            tipEl.textContent = '匹配 ' + list.length + ' / ' + indexData.length + ' 位角色';
-            renderActive();
-            syncURL();
-        }
+    for sec in materials_sections:
+        clean_txt = re.sub(r"\s+", " ", sec["text"]).strip()
+        index_entries.append(
+            {
+                "type": "materials",
+                "code": "",
+                "title": f"材质库 · {sec['title']}",
+                "badge": "材质能量库",
+                "pinyin": "",
+                "text": clean_txt,
+                "url": f"materials.html#{sec['id']}",
+            }
+        )
 
-        function renderActive() {
-            var chips = [];
-            var add = function(label, value, key){
-                chips.push('<span class="chip">'+label+'：'+esc(value)+'<button type="button" data-clear="'+key+'">&times;</button></span>');
-            };
-            if (qEl.value.trim()) add('关键词', qEl.value.trim(), 'q');
-            if (fSeries.value) add('作品', fSeries.value, 'series');
-            if (fCat.value) add('量级', fCat.value, 'category');
-            if (fRS.value) add('体系', fRS.value, 'rseries');
-            if (fRealm.value) add('境界', fRealm.value, 'realm');
-            activeBox.innerHTML = chips.join('');
-            activeBox.querySelectorAll('button[data-clear]').forEach(function(btn){
-                btn.addEventListener('click', function(){
-                    var t = btn.dataset.clear;
-                    if (t==='q') qEl.value='';
-                    else if (t==='series') fSeries.value='';
-                    else if (t==='category') fCat.value='';
-                    else if (t==='rseries') fRS.value='';
-                    else if (t==='realm') fRealm.value='';
-                    refreshOptions(); render();
-                });
-            });
-        }
+    client_data = {
+        "groups": tiers_payload["groups"],
+        "tiers": tiers_payload["tiers"],
+        "allCharacters": all_chars,
+    }
 
-        function syncURL() {
-            var p = new URLSearchParams();
-            if (qEl.value.trim()) p.set('q', qEl.value.trim());
-            if (fSeries.value) p.set('series', fSeries.value);
-            if (fCat.value) p.set('category', fCat.value);
-            if (fRS.value) p.set('rseries', fRS.value);
-            if (fRealm.value) p.set('realm', fRealm.value);
-            var qs = p.toString();
-            history.replaceState(null, '', qs ? ('?'+qs) : location.pathname);
-        }
-
-        function readURL() {
-            var p = new URLSearchParams(location.search);
-            qEl.value = p.get('q') || '';
-            fSeries.value = p.get('series') || '';
-            fRS.value = p.get('rseries') || '';
-            fCat.value = p.get('category') || '';
-            fRealm.value = p.get('realm') || '';
-        }
-
-        el('search-form').addEventListener('submit', function(e){ e.preventDefault(); render(); });
-        qEl.addEventListener('input', render);
-        [fSeries, fCat, fRS, fRealm, fSort].forEach(function(sel){
-            sel.addEventListener('change', function(){ refreshOptions(); render(); });
-        });
-        el('f-reset').addEventListener('click', function(){
-            qEl.value=''; fSeries.value=''; fCat.value=''; fRS.value=''; fRealm.value=''; fSort.value='name';
-            refreshOptions(); render();
-        });
-
-        readURL();
-        refreshOptions();
-        render();
-    </script>
-'''
+    return (
+        "/* Auto-generated by build_site.py v6.3 — DO NOT EDIT MANUALLY */\n"
+        f"window.__POWERWIKI_DATA__ = {json.dumps(client_data, ensure_ascii=False, separators=(',', ':'))};\n"
+        f"window.__POWERWIKI_INDEX__ = {json.dumps(index_entries, ensure_ascii=False, separators=(',', ':'))};\n"
+    )
 
 
-# ---------------------- 输出 ----------------------
-def write(rel, content):
-    """写盘并登记到清单（清单用于下次构建清理孤儿文件）。"""
-    rel = rel.replace(os.sep, '/')
-    if CHECK_ONLY:
-        _MANIFEST.append(rel)
-        return
-    path = os.path.join(OUT_DIR, rel)
-    os.makedirs(os.path.dirname(path) or OUT_DIR, exist_ok=True)
-    with open(path, 'w', encoding='utf-8') as f:
-        f.write(content)
-    _MANIFEST.append(rel)
+def enrich_character_media_dimensions(all_chars: List[Dict[str, Any]]) -> None:
+    for c in all_chars:
+        img_rel = c.get("image_url") or ""
+        if img_rel and not re.match(r"^(https?:)?//", img_rel):
+            dims = get_image_dimensions((ROOT / img_rel.lstrip("./")).resolve())
+            if dims:
+                c["image_w"], c["image_h"] = dims[0], dims[1]
+                c["image_shape"] = classify_image_shape(dims[0], dims[1])
+        port_rel = c.get("portrait_url") or img_rel
+        if port_rel and not re.match(r"^(https?:)?//", port_rel):
+            p_dims = get_image_dimensions((ROOT / port_rel.lstrip("./")).resolve())
+            if p_dims:
+                c["portrait_w"], c["portrait_h"] = p_dims[0], p_dims[1]
+                c["portrait_shape"] = classify_image_shape(p_dims[0], p_dims[1])
 
 
-def copy_static():
-    if CHECK_ONLY:
-        return
-    os.makedirs(os.path.join(OUT_DIR, 'static', 'css'), exist_ok=True)
-    os.makedirs(os.path.join(OUT_DIR, 'static', 'js'), exist_ok=True)
-    css_src = os.path.join(STATIC_SRC, 'css', 'style.css')
-    if os.path.exists(css_src):
-        shutil.copy2(css_src, os.path.join(OUT_DIR, 'static', 'css', 'style.css'))
-        _MANIFEST.append('static/css/style.css')
-    js_src = os.path.join(STATIC_SRC, 'js', 'main.js')
-    if os.path.exists(js_src):
-        shutil.copy2(js_src, os.path.join(OUT_DIR, 'static', 'js', 'main.js'))
-        _MANIFEST.append('static/js/main.js')
-    uploads_src = os.path.join(STATIC_SRC, 'uploads')
-    if os.path.exists(uploads_src):
-        shutil.copytree(uploads_src, os.path.join(OUT_DIR, 'static', 'uploads'), dirs_exist_ok=True)
-    for root, _dirs, files in os.walk(os.path.join(OUT_DIR, 'static', 'uploads')):
-        for fn in files:
-            _MANIFEST.append(os.path.relpath(os.path.join(root, fn), OUT_DIR).replace(os.sep, '/'))
-    nojekyll = os.path.join(OUT_DIR, '.nojekyll')
-    with open(nojekyll, 'w') as f:
-        f.write('')
-    _MANIFEST.append('.nojekyll')
+def main() -> None:
+    tiers_payload = json.loads((DATA_DIR / "tiers.json").read_text(encoding="utf-8"))
+    chars_payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
+
+    by_slug: Dict[str, Dict[str, Any]] = {}
+    for entry in chars_payload.get("demo_archetypes", []):
+        by_slug[entry["slug"]] = entry
+    for entry in chars_payload.get("characters", []):
+        by_slug[entry["slug"]] = entry
+    all_chars = list(by_slug.values())
+    enrich_character_media_dimensions(all_chars)
+
+    rules_md = RULES_MD_PATH.read_text(encoding="utf-8")
+    materials_md = MATERIALS_MD_PATH.read_text(encoding="utf-8")
+
+    rules_html, rules_sections, rules_title_to_id = build_fulltext_doc_page(
+        page_id="rules",
+        active_nav="rules",
+        title="衡天⊙ 多维战力量级体系（第四版·全文）",
+        subtitle="完整收录总则、常见违规与归因审查、1.5 完整书写规范、全量级定义、论外基数序数双轴、10.8 标注图与动图处理及超长篇自行通读流程。",
+        source_filename="衡天量级体系【第四版·最新】.md",
+        masthead_img="static/img/cosmos-eclipse.jpg",
+        md_text=rules_md,
+        other_doc_link=("materials.html", "材质与破坏能量数据库"),
+    )
+    (ROOT / "rules.html").write_text(rules_html, encoding="utf-8")
+
+    materials_html, materials_sections, _ = build_fulltext_doc_page(
+        page_id="materials",
+        active_nav="materials",
+        title="材质与破坏能量数据库（第二版·全文）",
+        subtitle="完整收录岩石/金属/生物力学强度、碎裂至核子解离破坏方式比能（J/cm³）、天体结合能与致密星物质锚点。",
+        source_filename="材质与破坏能量数据库（新）.md",
+        masthead_img="static/img/physics-lattice.jpg",
+        md_text=materials_md,
+        other_doc_link=("rules.html", "衡天量级体系（第四版）"),
+    )
+    (ROOT / "materials.html").write_text(materials_html, encoding="utf-8")
+
+    tiers = tiers_payload["tiers"]
+    groups = tiers_payload["groups"]
+
+    (ROOT / "index.html").write_text(
+        build_home_page(
+            tiers,
+            all_chars,
+            rules_lines=len(rules_md.splitlines()),
+            materials_lines=len(materials_md.splitlines()),
+            rules_toc_count=len(rules_sections),
+        ),
+        encoding="utf-8",
+    )
+    (ROOT / "tiers.html").write_text(build_tiers_page(tiers, groups, all_chars), encoding="utf-8")
+    build_tier_detail_pages(tiers, groups, all_chars, rules_title_to_id)
+
+    (ROOT / "characters.html").write_text(build_characters_page(all_chars, tiers), encoding="utf-8")
+    char_doc_sections = build_character_detail_pages(all_chars, tiers, groups, rules_title_to_id)
+
+    (ROOT / "search.html").write_text(build_search_page(), encoding="utf-8")
+
+    JS_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    bundle_js = build_search_index_bundle(
+        tiers_payload=tiers_payload,
+        all_chars=all_chars,
+        char_doc_sections=char_doc_sections,
+        rules_sections=rules_sections,
+        materials_sections=materials_sections,
+    )
+    (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
+
+    print(
+        f"[OK] PowerWiki v6.3 built successfully:\n"
+        f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
+        f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
+        f"  - Standalone Character pages: {len(all_chars)} files in character/*.html ({len(char_doc_sections)} full-text sections indexed)\n"
+        f"  - Rules v4 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections"
+    )
 
 
-def clean_orphans(previous, target=None):
-    """删除上一次构建留下、这一轮已不存在的产物文件。
-
-    典型场景：档位改名或废弃后，旧的 category/xxx.html 会一直挂在仓库根目录上，
-    手动删容易漏、也容易误删源码。清单之外的文件一律不动。
-    """
-    target = target or OUT_DIR
-    current = set(_MANIFEST)
-    removed = 0
-    for rel in sorted(previous - current):
-        path = os.path.join(target, rel)
-        if os.path.isfile(path):
-            os.remove(path)
-            removed += 1
-            print('    清理孤儿文件：' + rel)
-    return removed
-
-
-def save_manifest():
-    if CHECK_ONLY:
-        return
-    with open(os.path.join(OUT_DIR, MANIFEST_NAME), 'w', encoding='utf-8') as f:
-        json.dump({'files': sorted(set(_MANIFEST))}, f, ensure_ascii=False, indent=1)
-
-
-def sync_to_root():
-    """把 dist/ 内容同步到仓库根目录（GitHub Pages 直接读根目录）。"""
-    for root, _dirs, files in os.walk(DIST_DIR):
-        rel_dir = os.path.relpath(root, DIST_DIR)
-        if rel_dir == '.':
-            target_dir = BASE_DIR
-        else:
-            target_dir = os.path.join(BASE_DIR, rel_dir)
-        os.makedirs(target_dir, exist_ok=True)
-        for fn in files:
-            src = os.path.join(root, fn)
-            dst = os.path.join(target_dir, fn)
-            shutil.copy2(src, dst)
-
-
-def main():
-    global BASE, OUT_DIR, CHECK_ONLY
-    global _CAT_MAP, _CAT_ORDER, _CAT_BY_SLUG, _GROUP_MAP, _GROUPS_ORDERED, _PAGES
-
-    if '--base' in sys.argv:
-        idx = sys.argv.index('--base')
-        if idx + 1 < len(sys.argv):
-            BASE = sys.argv[idx + 1].strip().rstrip('/')
-    elif os.environ.get('SITE_BASE') is not None:
-        BASE = os.environ.get('SITE_BASE').strip().rstrip('/')
-
-    CHECK_ONLY = '--check' in sys.argv
-    deploy_root = '--deploy-root' in sys.argv
-    # OUT_DIR 恒为 dist/：始终先构建到独立目录，再由 sync_to_root() 同步到仓库根。
-    # 若直接把仓库根当输出目录，static 源目录会与目标同路径，copy 会撞 SameFileError。
-    OUT_DIR = DIST_DIR
-
-    categories, groups, realms, characters, pages = load_data()
-
-    # 档位映射：slug -> 名称 / 排序值 / 完整档位对象（卡片与搜索共用）
-    _CAT_MAP = {c['slug']: c['name'] for c in categories}
-    _CAT_ORDER = {c['slug']: c.get('sort_order', 0) for c in categories}
-    _CAT_BY_SLUG = {c.get('slug'): c for c in categories}
-    # 体系分段（按档位在轴上首次出现的顺序展示）
-    _GROUP_MAP = {g.get('id'): g for g in groups}
-    power_categories = ordered_power_categories(categories)
-    _GROUPS_ORDERED = list(dict.fromkeys((c.get('group') or 'misc') for c in power_categories))
-    # 供全局导航渲染（按 sort_order 排序）
-    _PAGES = sorted(pages, key=lambda x: x.get('sort_order', 0))
-
-    print('=' * 58)
-    print('生成静态站点（文件式，无后端）...')
-    print(f'站点路径：{BASE if BASE else "/（根路径）"}')
-    print(f'输出目录：{OUT_DIR}'
-          + ('（仅校验，不写文件）' if CHECK_ONLY else ''))
-    print(f'数据：档位 {len(power_categories)} · 分段 {len(_GROUPS_ORDERED)} '
-          f'· 境界 {len(realms)} · 角色 {len(characters)} · 页面 {len(pages) + 1}')
-    print('=' * 58)
-
-    # ---- 准备输出目录（必须先于任何写盘，否则产物会被随后的清理误删）----
-    # 上一轮产物的清单：deploy-root 模式靠它识别「这一轮不再生成」的失效文件
-    previous_manifest = set()
-    if not CHECK_ONLY and deploy_root:
-        mf_path = os.path.join(BASE_DIR, MANIFEST_NAME)
-        if os.path.exists(mf_path):
-            try:
-                with open(mf_path, 'r', encoding='utf-8') as f:
-                    previous_manifest = set(json.load(f).get('files') or [])
-            except (ValueError, OSError):
-                previous_manifest = set()
-
-    if not CHECK_ONLY:
-        if os.path.exists(DIST_DIR):
-            shutil.rmtree(DIST_DIR)
-        for sub in ['character', 'category', 'realm', 'page', 'static/css', 'static/js']:
-            os.makedirs(os.path.join(OUT_DIR, sub), exist_ok=True)
-
-    # ---- 先渲染规则页：档位的 source 要靠它解析成原文深链 ----
-    build_pages(pages)
-
-    # ---- 构建前自检 ----
-    print('\n[1/9] 数据一致性自检...')
-    errors, warnings = validate_data(categories, groups, realms, characters, pages)
-    for w in warnings:
-        print('    [warn] ' + w)
-    if errors:
-        for e in errors:
-            print('    [ERROR] ' + e)
-        print('\n数据校验未通过，已中止构建。请修正 data/*.yaml 后重试。')
-        sys.exit(1)
-    print(f'    通过（{len(warnings)} 条提示）')
-
-    print('[2/9] 复制静态资源...')
-    copy_static()
-
-    print('[3/9] 生成首页（战力等级按体系分段）...')
-    build_index(categories, groups, realms, characters, pages)
-
-    print('[4/9] 生成量级体系表页...')
-    build_tiers_page(categories, characters)
-
-    print('[5/9] 生成各档位详情页...')
-    build_categories(categories, characters, power_categories)
-
-    print('[6/9] 生成角色页...')
-    build_characters_index(characters, power_categories)
-    build_character_detail(characters, categories, realms)
-
-    print('[7/9] 生成境界页...')
-    build_realm_index(realms, characters)
-    build_realm_detail(realms, characters)
-
-    print('[8/9] 生成搜索页...')
-    build_search(characters, categories, realms)
-
-    print('[9/9] 生成 404...')
-    build_404()
-
-    if CHECK_ONLY:
-        print('\n' + '=' * 58)
-        print('校验完成，未写入任何文件。')
-        print('=' * 58)
-        return
-
-    save_manifest()
-
-    if deploy_root:
-        print('\n同步产物到仓库根目录...')
-        sync_to_root()
-        print(f'    已写入 {len(set(_MANIFEST))} 个文件')
-        shutil.copy2(os.path.join(DIST_DIR, MANIFEST_NAME),
-                     os.path.join(BASE_DIR, MANIFEST_NAME))
-        # 孤儿清理放在同步之后：拿本轮清单与上一轮清单比对，只删真正失效的产物
-        if previous_manifest:
-            print('\n清理上一轮遗留的失效产物...')
-            removed = clean_orphans(previous_manifest, BASE_DIR)
-            print(f'    清理 {removed} 个文件')
-
-    print('\n' + '=' * 58)
-    print('导出完成！输出目录：', OUT_DIR)
-    if deploy_root:
-        print('产物已同步到仓库根目录，提交推送后 GitHub Pages 即生效。')
-    else:
-        print('把 dist 目录内容推到 GitHub Pages 仓库即可。')
-    print('=' * 58)
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
