@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-衡天⊙ PowerWiki Static Site Builder v6.0
-100% Unified Class Architecture with static/css/style.css & static/js/app.js
+衡天⊙ PowerWiki Static Site Builder v6.1
+Updated for 《衡天⊙ 多维战力量级体系（第四版）》 & Clean Empty Character Archive
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ TIER_OUT_DIR = ROOT / "tier"
 CHAR_OUT_DIR = ROOT / "character"
 JS_OUT_DIR = ROOT / "static" / "js"
 
-RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第三版·最新】.md"
+RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第四版·最新】.md"
 MATERIALS_MD_PATH = DOCS_DIR / "材质与破坏能量数据库（新）.md"
 
 SVGS = {
@@ -389,7 +389,7 @@ def render_shell(
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{esc(title)} · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {{
       try {{
@@ -455,14 +455,14 @@ def render_shell(
     <div class="modal-panel">
       <div class="search-modal-head">
         <span class="search-modal-icon">{SVGS["search"]}</span>
-        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、角色名、材质或规则关键词…" autocomplete="off">
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
         <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
-        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
         <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天第三版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第四版全文</button>
         <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
@@ -477,7 +477,7 @@ def render_shell(
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="brand-mark">⊙</span>
-        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第三版基准）</span>
+        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第四版基准）</span>
       </div>
       <div class="footer-links">
         <a href="{r}tiers.html">量级天梯</a>
@@ -538,9 +538,16 @@ def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, A
 # ==============================================================================
 # Page Builders
 # ==============================================================================
-def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]) -> str:
+def build_home_page(
+    tiers: List[Dict[str, Any]],
+    all_chars: List[Dict[str, Any]],
+    rules_lines: int,
+    materials_lines: int,
+    rules_toc_count: int,
+) -> str:
     ranked_count = sum(1 for t in tiers if not t.get("unranked"))
     tier_by_slug = {t["slug"]: t for t in tiers}
+    total_lines = rules_lines + materials_lines
 
     horizon_nodes = [
         ("虫 → 星☆", "个体与行星阶", "5×10⁻⁵ ～ 10³⁶ J", "var(--dom-terrestrial)", "tiers.html?seg=terrestrial"),
@@ -560,13 +567,29 @@ def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]
         for h in horizon_nodes
     )
 
-    featured_slugs = ["demo-alpha", "demo-cangqiong", "demo-yuanxu"]
-    featured_cards = [
-        render_char_card_html(c, tier_by_slug, "")
-        for slug in featured_slugs
-        for c in all_chars
-        if c["slug"] == slug
-    ]
+    featured_section = ""
+    if all_chars:
+        featured_cards = [render_char_card_html(c, tier_by_slug, "") for c in all_chars[:6]]
+        featured_section = f"""
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <span class="section-kicker">Featured Dossiers</span>
+            <h2 class="section-title">已收录角色档案</h2>
+          </div>
+          <a class="btn btn-secondary btn-sm" href="characters.html">全部 {len(all_chars)} 位角色 →</a>
+        </div>
+        <div class="char-grid">
+          {"".join(featured_cards)}
+        </div>
+      </section>"""
+
+    third_stat_val = f"{len(all_chars)} 份" if all_chars else "第四版"
+    third_stat_label = (
+        "独立角色档案页（首字母 / 量级双排序）"
+        if all_chars
+        else "2026-10-24 最新修订（含标注图与动图规范）"
+    )
 
     body = f"""
     <div class="container home-stack">
@@ -578,15 +601,15 @@ def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]
           <div class="hero-body">
             <div class="eyebrow">
               <span class="eyebrow-dot"></span>
-              <span>衡天⊙ 多维战力量级体系 · 第三版基准</span>
+              <span>衡天⊙ 多维战力量级体系 · 第四版最新基准</span>
             </div>
-            <h1 class="hero-heading">多维战力刻度与实证角色百科</h1>
+            <h1 class="hero-heading">多维战力刻度与物理破坏参考百科</h1>
             <p class="hero-desc">
-              以《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》为唯一标尺。每一量级锚定明确物理焦耳或集合论基数，每一位角色配有独立七维实证档案页。
+              以《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》为唯一标尺。每一量级锚定明确物理焦耳或集合论基数，支持全量级天梯检索、角色归档与双典籍全文查阅。
             </p>
             <div class="hero-cta-row">
               <a class="btn btn-primary" href="tiers.html">浏览量级天梯（从小到大）</a>
-              <a class="btn btn-secondary" href="characters.html">查阅角色档案库</a>
+              <a class="btn btn-secondary" href="rules.html">阅读第四版体系全文</a>
               <button type="button" class="btn btn-ghost js-open-search">{SVGS["search"]} 全站检索</button>
             </div>
           </div>
@@ -602,11 +625,11 @@ def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]
             <span class="stat-label">破控域御速算性 · 证据等级分离</span>
           </div>
           <div class="stat-cell">
-            <span class="stat-value mono">{len(all_chars)} 份</span>
-            <span class="stat-label">独立角色档案页（首字母 / 量级双排序）</span>
+            <span class="stat-value mono">{third_stat_val}</span>
+            <span class="stat-label">{third_stat_label}</span>
           </div>
           <div class="stat-cell">
-            <span class="stat-value mono">1,861 行</span>
+            <span class="stat-value mono">{total_lines:,} 行</span>
             <span class="stat-label">两部基准典籍 100% 完整原文收录</span>
           </div>
         </div>
@@ -644,7 +667,7 @@ def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]
                 <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
               </div>
               <h3 class="portal-title">角色战力档案</h3>
-              <p class="portal-text">支持「按量级从小到大」与「按首字母 A–Z」双模式排序；点击任意角色直接进入专属独立档案页面，展示第三版完整书写结论与七维证据链。</p>
+              <p class="portal-text">支持「按量级从小到大」与「按首字母 A–Z」双模式排序；录入角色后自动生成专属独立档案页面，展示完整书写结论与七维证据链。</p>
             </div>
             <div class="portal-footer">
               <span class="tag-pill accent">A–Z 首字母 / ↑ 从小到大</span>
@@ -656,15 +679,15 @@ def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]
           <a class="portal-card" href="rules.html">
             <div>
               <div class="portal-top">
-                <span class="portal-num mono">03 / CANONICAL STANDARD V3</span>
+                <span class="portal-num mono">03 / CANONICAL STANDARD V4</span>
                 <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
               </div>
-              <h3 class="portal-title">衡天多维战力量级体系（第三版）</h3>
-              <p class="portal-text">无删减全文展示：涵盖总则与常见违规审查、0.14.2 归因与知情度审查、1.5 完整书写规范、全量级定义、论外基数序数双轴及超长篇通读流程。</p>
+              <h3 class="portal-title">衡天多维战力量级体系（第四版）</h3>
+              <p class="portal-text">无删减全文展示：涵盖总则与违规审查、0.14.2 归因审查、1.5 完整书写规范、全量级定义、论外基数序数双轴、10.8 标注图与动图处理及超长篇通读流程。</p>
             </div>
             <div class="portal-footer">
-              <span class="tag-pill accent">1,445 行完整原文</span>
-              <span class="tag-pill">127 节目录实时联动</span>
+              <span class="tag-pill accent">{rules_lines:,} 行完整原文</span>
+              <span class="tag-pill">{rules_toc_count} 节目录实时联动</span>
             </div>
           </a>
 
@@ -678,7 +701,7 @@ def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]
               <p class="portal-text">完整收录常规岩石与金属力学强度、碎裂/粉碎/熔化/汽化至核子完全解离的全破坏方式比能（J/cm³），以及白矮星与中子星外壳极端物理锚点。</p>
             </div>
             <div class="portal-footer">
-              <span class="tag-pill accent">416 行完整原文</span>
+              <span class="tag-pill accent">{materials_lines:,} 行完整原文</span>
               <span class="tag-pill">破坏比能速查表</span>
             </div>
           </a>
@@ -698,18 +721,7 @@ def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]
         </div>
       </section>
 
-      <section class="section-block">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">Featured Dossiers</span>
-            <h2 class="section-title">代表性角色独立档案</h2>
-          </div>
-          <a class="btn btn-secondary btn-sm" href="characters.html">全部 {len(all_chars)} 位角色 →</a>
-        </div>
-        <div class="char-grid">
-          {"".join(featured_cards)}
-        </div>
-      </section>
+      {featured_section}
 
       <section class="section-block">
         <div class="section-header">
@@ -717,7 +729,7 @@ def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]
             <span class="section-kicker">Methodology</span>
             <h2 class="section-title">七维并列与五态证据规范</h2>
           </div>
-          <a class="btn btn-secondary btn-sm" href="rules.html">阅读第三版总则 →</a>
+          <a class="btn btn-secondary btn-sm" href="rules.html">阅读第四版总则 →</a>
         </div>
         <div class="principles-grid">
           <div class="principle-card">
@@ -739,7 +751,7 @@ def build_home_page(tiers: List[Dict[str, Any]], all_chars: List[Dict[str, Any]]
           <div class="principle-card">
             <h3 class="principle-title">五级证据状态标识</h3>
             <p class="principle-desc">
-              所有定级须经 0.14.2「归因与知情度审查」（在场、知情、记忆可靠、表现一致、无后文推翻、归因准确），并在数值后显式标注证据可信度。
+              所有定级须经 0.14.2「归因与知情度审查」（在场、知情、记忆可靠、表现一致、无后文推翻、归因准确）及 10.8「标注图与动图处理」核验，并显式标注证据等级。
             </p>
             <div class="pill-cluster">
               <span class="tag-pill"><span class="ev-badge ev-confirmed">〔实〕</span> 已确认表现</span>
@@ -825,7 +837,7 @@ def build_tiers_page(tiers: List[Dict[str, Any]], groups: List[Dict[str, Any]]) 
             <div>
               <h1 class="page-title">量级分类天梯（从小到大）</h1>
               <p class="page-desc">
-                依据《衡天⊙ 多维战力量级体系（第三版）》严格按<strong>从小到大（#01 昆虫级 → #97 论天最上）</strong>单向递增排列。修饰符遵循 <code>▽ 弱</code> &lt; <code>○ 标准</code> &lt; <code>△ 强</code> &lt; <code>◆ 极</code> &lt; <code>☆ 超</code>。
+                依据《衡天⊙ 多维战力量级体系（第四版）》严格按<strong>从小到大（#01 昆虫级 → #97 论天最上）</strong>单向递增排列。修饰符遵循 <code>▽ 弱</code> &lt; <code>○ 标准</code> &lt; <code>△ 强</code> &lt; <code>◆ 极</code> &lt; <code>☆ 超</code>。
               </p>
             </div>
             <span class="count-badge mono" id="tier-result-count">{len(tiers)} / {len(tiers)} 档</span>
@@ -915,8 +927,8 @@ def build_tier_detail_pages(
         else:
             char_list_html = f"""
             <div class="empty-notice">
-              <span>当前档位暂无已收录角色档案。在 <code>data/characters.json</code> 中填入 <code>"tier_slug": "{esc(t['slug'])}"</code> 并构建即可自动生成独立角色页并关联至此。</span>
-              <a class="btn btn-secondary btn-sm" href="../characters.html">前往角色档案库 →</a>
+              <span>当前档位暂无已收录角色档案。</span>
+              <a class="btn btn-secondary btn-sm" href="../characters.html">前往角色分类 →</a>
             </div>
             """
 
@@ -998,12 +1010,12 @@ def build_tier_detail_pages(
                   <p class="page-desc">{esc(t.get('notes', ''))}</p>
                 </div>
                 <a class="btn btn-secondary btn-sm" href="{rule_href}">
-                  查阅《衡天第三版》对应章节 {SVGS["arrow_up_right"]}
+                  查阅《衡天第四版》对应章节 {SVGS["arrow_up_right"]}
                 </a>
               </div>
 
               <div class="full-writing-box">
-                <div class="box-kicker">《衡天⊙ 第三版》1.5 完整书写推荐格式（首次出现须写全称与标准）</div>
+                <div class="box-kicker">《衡天⊙ 第四版》1.5 完整书写推荐格式（首次出现须写全称与标准）</div>
                 <div>综合量级：<span class="mono">⊙{esc(t['code'])}</span>——{esc(t['name'])}（{esc(t['scale'])}，能量/结构基准 <span class="mono">{esc(t['energy'])}</span>）</div>
               </div>
             </div>
@@ -1063,7 +1075,23 @@ def build_characters_page(all_chars: List[Dict[str, Any]], tiers: List[Dict[str,
             c.get("pinyin") or c.get("name") or "",
         ),
     )
-    ssr_cards = [render_char_card_html(c, tier_by_slug, "") for c in sorted_chars]
+
+    if sorted_chars:
+        ssr_cards = [render_char_card_html(c, tier_by_slug, "") for c in sorted_chars]
+        ssr_mount_inner = f"""
+        <section class="group-section" id="char-scale-list">
+          <div class="group-header">
+            <h2 class="group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
+            <span class="group-sub">{len(sorted_chars)} 位角色</span>
+          </div>
+          <div class="char-grid">{"".join(ssr_cards)}</div>
+        </section>"""
+    else:
+        ssr_mount_inner = """
+        <div class="empty-state-box">
+          <h3 class="empty-state-title">当前暂未收录角色档案</h3>
+          <p class="empty-state-sub">角色库已清空待录。后续在 data/characters.json 中录入角色后，将自动生成专属独立页面并支持按量级从小到大与按首字母 A–Z 排序。</p>
+        </div>"""
 
     body = f"""
     <div class="container">
@@ -1086,7 +1114,7 @@ def build_characters_page(all_chars: List[Dict[str, Any]], tiers: List[Dict[str,
             <div>
               <h1 class="page-title">角色战力档案库</h1>
               <p class="page-desc">
-                支持<strong>按主档量级从小到大</strong>与<strong>按拼音首字母（A–Z）</strong>双模式切换；点击任意角色卡片直接进入<strong>独立角色档案页面</strong>，返回时自动恢复当前排序与浏览位置。
+                支持<strong>按主档量级从小到大</strong>与<strong>按拼音首字母（A–Z）</strong>双模式切换；点击角色卡片直接进入<strong>独立角色档案页面</strong>，返回时自动恢复当前排序与浏览位置。
               </p>
             </div>
             <span class="count-badge mono" id="char-result-count">{len(all_chars)} / {len(all_chars)} 位</span>
@@ -1102,7 +1130,7 @@ def build_characters_page(all_chars: List[Dict[str, Any]], tiers: List[Dict[str,
               <button type="button" class="seg-btn" data-char-sort="alpha">A–Z 按首字母排序</button>
             </div>
             <select class="select-control" id="char-series-select" aria-label="按作品筛选">
-              <option value="all">全部作品</option>
+              <option value="all">全部作品（0）</option>
             </select>
           </div>
 
@@ -1129,13 +1157,7 @@ def build_characters_page(all_chars: List[Dict[str, Any]], tiers: List[Dict[str,
       </div>
 
       <div class="content-section" id="chars-explorer-mount">
-        <section class="group-section" id="char-scale-list">
-          <div class="group-header">
-            <h2 class="group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
-            <span class="group-sub">{len(sorted_chars)} 位角色</span>
-          </div>
-          <div class="char-grid">{"".join(ssr_cards)}</div>
-        </section>
+        {ssr_mount_inner}
       </div>
     </div>
     """
@@ -1154,13 +1176,16 @@ def build_character_detail_pages(
     groups: List[Dict[str, Any]],
     rules_title_to_id: Dict[str, str],
 ) -> None:
-    CHAR_OUT_DIR.mkdir(parents=True, exist_ok=True)
-    for old in CHAR_OUT_DIR.glob("*.html"):
-        old.unlink()
+    if CHAR_OUT_DIR.exists():
+        for old in CHAR_OUT_DIR.glob("*.html"):
+            old.unlink()
 
     if not all_chars:
+        if CHAR_OUT_DIR.exists() and not any(CHAR_OUT_DIR.iterdir()):
+            CHAR_OUT_DIR.rmdir()
         return
 
+    CHAR_OUT_DIR.mkdir(parents=True, exist_ok=True)
     tier_by_slug = {t["slug"]: t for t in tiers}
     group_map = {g["id"]: g for g in groups}
 
@@ -1294,7 +1319,7 @@ def build_character_detail_pages(
               <p class="page-desc">{esc(c.get('summary') or '')}</p>
 
               <div class="full-writing-box">
-                <div class="box-kicker">《衡天⊙ 第三版》1.5 正式完整书写（首次出现展开全称、标准与能量）</div>
+                <div class="box-kicker">《衡天⊙ 第四版》1.5 正式完整书写（首次出现展开全称、标准与能量）</div>
                 <div>{format_evidence_html(full_writing)}</div>
                 {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
               </div>
@@ -1337,9 +1362,9 @@ def build_character_detail_pages(
                 <div class="spec-val">{esc(t['scale'])}</div>
               </div>
               <div class="spec-card">
-                <div class="spec-label">对应《衡天第三版》章节</div>
+                <div class="spec-label">对应《衡天第四版》章节</div>
                 <div class="spec-val">
-                  <a class="table-primary-link" href="{rule_href}">{esc(rule_sec_title or '查阅第三版规范原文')} →</a>
+                  <a class="table-primary-link" href="{rule_href}">{esc(rule_sec_title or '查阅第四版规范原文')} →</a>
                 </div>
               </div>
             </div>
@@ -1410,7 +1435,7 @@ def build_fulltext_doc_page(
               <p class="page-desc">{esc(subtitle)}</p>
             </div>
             <div class="header-side-actions">
-              <span class="count-badge mono">全文无删减 · {line_count} 行 · {char_count:,} 字</span>
+              <span class="count-badge mono">全文无删减 · {line_count:,} 行 · {char_count:,} 字</span>
               <a class="btn btn-secondary btn-sm" href="{esc(other_doc_link[0])}">{esc(other_doc_link[1])} →</a>
             </div>
           </div>
@@ -1472,6 +1497,7 @@ def build_fulltext_doc_page(
 def build_search_page() -> str:
     hot_queries = [
         "宇◆",
+        "标注图与动图",
         "完整书写",
         "归因与知情度",
         "超长篇",
@@ -1479,7 +1505,6 @@ def build_search_page() -> str:
         "中子星外壳",
         "花岗岩",
         "0′",
-        "攻防双满",
         "莱因哈特",
     ]
     hot_chips = "".join(
@@ -1508,7 +1533,7 @@ def build_search_page() -> str:
             <div>
               <h1 class="page-title">全站即时检索引擎</h1>
               <p class="page-desc">
-                跨<strong>角色独立档案</strong>、<strong>98 个量级档位</strong>、《衡天量级体系（第三版）》全文与《材质与破坏能量数据库（第二版）》全文毫秒级检索。
+                跨<strong>98 个量级档位</strong>、<strong>角色档案</strong>、《衡天量级体系（第四版）》全文与《材质与破坏能量数据库（第二版）》全文毫秒级检索。
               </p>
             </div>
             <span class="count-badge mono" id="dedicated-search-count">准备就绪</span>
@@ -1518,16 +1543,16 @@ def build_search_page() -> str:
 
       <div class="control-panel">
         <div class="search-field full">
-          <input type="search" class="search-input lg" id="dedicated-search-input" placeholder="输入关键词（支持空格分词组合检索，如：星○ 2.24、归因 审查、花岗岩 粉碎、虚空观测者）…" autofocus>
+          <input type="search" class="search-input lg" id="dedicated-search-input" placeholder="输入关键词（支持空格分词组合检索，如：星○ 2.24、标注图 帧号、归因 审查、花岗岩 粉碎）…" autofocus>
         </div>
 
         <div class="control-row">
           <div class="chip-rail">
             <span class="rail-label">范围：</span>
             <button type="button" class="chip-btn active" data-page-search-type="all">全部类别</button>
-            <button type="button" class="chip-btn" data-page-search-type="char">角色独立档案</button>
             <button type="button" class="chip-btn" data-page-search-type="tier">量级分类 (98)</button>
-            <button type="button" class="chip-btn" data-page-search-type="rules">衡天第三版全文</button>
+            <button type="button" class="chip-btn" data-page-search-type="char">角色档案</button>
+            <button type="button" class="chip-btn" data-page-search-type="rules">衡天第四版全文</button>
             <button type="button" class="chip-btn" data-page-search-type="materials">材质能量库全文</button>
           </div>
         </div>
@@ -1594,8 +1619,8 @@ def build_search_index_bundle(
             {
                 "type": "rules",
                 "code": "",
-                "title": f"衡天第三版 · {sec['title']}",
-                "badge": "衡天第三版",
+                "title": f"衡天第四版 · {sec['title']}",
+                "badge": "衡天第四版",
                 "pinyin": "",
                 "text": clean_txt[:900],
                 "url": f"rules.html#{sec['id']}",
@@ -1623,7 +1648,7 @@ def build_search_index_bundle(
     }
 
     return (
-        "/* Auto-generated by build_site.py v6.0 — DO NOT EDIT MANUALLY */\n"
+        "/* Auto-generated by build_site.py v6.1 — DO NOT EDIT MANUALLY */\n"
         f"window.__POWERWIKI_DATA__ = {json.dumps(client_data, ensure_ascii=False, separators=(',', ':'))};\n"
         f"window.__POWERWIKI_INDEX__ = {json.dumps(index_entries, ensure_ascii=False, separators=(',', ':'))};\n"
     )
@@ -1646,9 +1671,9 @@ def main() -> None:
     rules_html, rules_sections, rules_title_to_id = build_fulltext_doc_page(
         page_id="rules",
         active_nav="rules",
-        title="衡天⊙ 多维战力量级体系（第三版·全文）",
-        subtitle="完整收录总则、常见违规与归因审查、1.5 完整书写规范、全量级定义、论外基数序数双轴及超长篇自行通读流程。",
-        source_filename="衡天量级体系【第三版·最新】.md",
+        title="衡天⊙ 多维战力量级体系（第四版·全文）",
+        subtitle="完整收录总则、常见违规与归因审查、1.5 完整书写规范、全量级定义、论外基数序数双轴、10.8 标注图与动图处理及超长篇自行通读流程。",
+        source_filename="衡天量级体系【第四版·最新】.md",
         masthead_img="static/img/cosmos-eclipse.jpg",
         md_text=rules_md,
         other_doc_link=("materials.html", "材质与破坏能量数据库"),
@@ -1663,14 +1688,23 @@ def main() -> None:
         source_filename="材质与破坏能量数据库（新）.md",
         masthead_img="static/img/physics-lattice.jpg",
         md_text=materials_md,
-        other_doc_link=("rules.html", "衡天量级体系（第三版）"),
+        other_doc_link=("rules.html", "衡天量级体系（第四版）"),
     )
     (ROOT / "materials.html").write_text(materials_html, encoding="utf-8")
 
     tiers = tiers_payload["tiers"]
     groups = tiers_payload["groups"]
 
-    (ROOT / "index.html").write_text(build_home_page(tiers, all_chars), encoding="utf-8")
+    (ROOT / "index.html").write_text(
+        build_home_page(
+            tiers,
+            all_chars,
+            rules_lines=len(rules_md.splitlines()),
+            materials_lines=len(materials_md.splitlines()),
+            rules_toc_count=len(rules_sections),
+        ),
+        encoding="utf-8",
+    )
     (ROOT / "tiers.html").write_text(build_tiers_page(tiers, groups), encoding="utf-8")
     build_tier_detail_pages(tiers, groups, all_chars, rules_title_to_id)
 
@@ -1689,11 +1723,11 @@ def main() -> None:
     (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
 
     print(
-        f"[OK] PowerWiki v6.0 built successfully:\n"
+        f"[OK] PowerWiki v6.1 built successfully:\n"
         f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
         f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
-        f"  - Standalone Character pages: {len(all_chars)} files in character/*.html\n"
-        f"  - Rules TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections"
+        f"  - Standalone Character pages: {len(all_chars)} files\n"
+        f"  - Rules v4 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections"
     )
 
 

@@ -868,12 +868,22 @@
         countBadge.textContent = `${filtered.length} / ${pool.length} 位`;
       }
 
+      if (pool.length === 0) {
+        if (alphaBar) alphaBar.classList.remove("visible");
+        mount.innerHTML = `
+          <div class="empty-state-box">
+            <h3 class="empty-state-title">当前暂未收录角色档案</h3>
+            <p class="empty-state-sub">角色库已清空待录。后续在 data/characters.json 中录入角色后，将自动生成专属独立页面并支持按量级从小到大与按首字母 A–Z 排序。</p>
+          </div>`;
+        return;
+      }
+
       if (filtered.length === 0) {
         if (alphaBar) alphaBar.classList.remove("visible");
         mount.innerHTML = `
           <div class="empty-state-box">
             <h3 class="empty-state-title">没有符合筛选条件的角色</h3>
-            <p class="empty-state-sub">当前区间或检索词下暂无收录角色，可重置筛选查看全部角色。</p>
+            <p class="empty-state-sub">当前区间或检索词下暂无匹配角色，可重置筛选查看全部角色。</p>
             <button type="button" class="btn btn-secondary btn-sm" id="reset-char-filters">重置筛选条件</button>
           </div>`;
         const resetBtn = document.getElementById("reset-char-filters");
@@ -1063,7 +1073,7 @@
   const TYPE_LABELS = {
     tier: "量级分类",
     char: "角色档案",
-    rules: "衡天第三版",
+    rules: "衡天第四版",
     materials: "材质能量库"
   };
 
@@ -1192,7 +1202,7 @@
         mount.innerHTML = `
           <div class="empty-state-box">
             <h3 class="empty-state-title">没有找到匹配内容</h3>
-            <p class="empty-state-sub">试试检索代字（如 恒○、宇◆、外·门）、第三版新规则（如 归因与知情度审查、完整书写）或材质名称（如 中子星、花岗岩）。</p>
+            <p class="empty-state-sub">试试检索代字（如 恒○、宇◆、外·门）、第四版规则（如 标注图与动图、归因与知情度审查、完整书写）或材质名称（如 中子星、花岗岩）。</p>
           </div>`;
         return;
       }

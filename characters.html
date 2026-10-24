@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>角色分类（首字母 / 从小到大） · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第三版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {
       try {
@@ -77,10 +77,10 @@
             <div>
               <h1 class="page-title">角色战力档案库</h1>
               <p class="page-desc">
-                支持<strong>按主档量级从小到大</strong>与<strong>按拼音首字母（A–Z）</strong>双模式切换；点击任意角色卡片直接进入<strong>独立角色档案页面</strong>，返回时自动恢复当前排序与浏览位置。
+                支持<strong>按主档量级从小到大</strong>与<strong>按拼音首字母（A–Z）</strong>双模式切换；点击角色卡片直接进入<strong>独立角色档案页面</strong>，返回时自动恢复当前排序与浏览位置。
               </p>
             </div>
-            <span class="count-badge mono" id="char-result-count">6 / 6 位</span>
+            <span class="count-badge mono" id="char-result-count">0 / 0 位</span>
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@
               <button type="button" class="seg-btn" data-char-sort="alpha">A–Z 按首字母排序</button>
             </div>
             <select class="select-control" id="char-series-select" aria-label="按作品筛选">
-              <option value="all">全部作品</option>
+              <option value="all">全部作品（0）</option>
             </select>
           </div>
 
@@ -120,145 +120,11 @@
       </div>
 
       <div class="content-section" id="chars-explorer-mount">
-        <section class="group-section" id="char-scale-list">
-          <div class="group-header">
-            <h2 class="group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
-            <span class="group-sub">6 位角色</span>
-          </div>
-          <div class="char-grid">
-    <a class="char-card" href="character/demo-alpha.html">
-      <div class="char-head">
-        <div class="char-identity">
-          <div class="char-monogram">阿</div>
-          <div class="char-meta">
-            <h3 class="char-name">阿尔法战术体（示例）</h3>
-            <div class="char-origin">衡天⊙ 第三版书写示例 · 战术义体 · 第四代</div>
-          </div>
-        </div>
-        <span class="tier-badge gold mono">⊙ 墙☆</span>
-      </div>
-      <div class="char-tags">
-        <span class="tag-pill accent">超爆墙 · #13</span>
-        <span class="tag-pill mono">首字母 A</span>
-        <span class="tag-pill">攻防双满</span>
-      </div>
-      <p class="char-summary">演示继承区低段「目标式·碎块标定」与第三版 1.5 节「完整书写 + 攻防双满」标注格式的示例角色卡。</p>
-      <div class="char-foot">
-        <span class="char-cred">破<span class="ev-badge ev-confirmed">〔实〕</span>（已确认）、御<span class="ev-badge ev-confirmed">〔实〕</span>（已确认）</span>
-        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-      </div>
-    </a>
-    <a class="char-card" href="character/demo-suixing.html">
-      <div class="char-head">
-        <div class="char-identity">
-          <div class="char-monogram">碎</div>
-          <div class="char-meta">
-            <h3 class="char-name">碎星铁卫（示例）</h3>
-            <div class="char-origin">衡天⊙ 第三版书写示例 · 简并态战躯</div>
-          </div>
-        </div>
-        <span class="tier-badge gold mono">⊙ 星○</span>
-      </div>
-      <div class="char-tags">
-        <span class="tag-pill accent">标准爆行星 · #45</span>
-        <span class="tag-pill mono">首字母 S</span>
         
-      </div>
-      <p class="char-summary">演示《材质与破坏能量数据库》2.2「中子星外壳材质锚点」与第三版 0.6「体量与组成不等于破坏」规则。</p>
-      <div class="char-foot">
-        <span class="char-cred">破<span class="ev-badge ev-confirmed">〔实〕</span>、御<span class="ev-badge ev-confirmed">〔实〕</span></span>
-        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-      </div>
-    </a>
-    <a class="char-card" href="character/demo-cangqiong.html">
-      <div class="char-head">
-        <div class="char-identity">
-          <div class="char-monogram">苍</div>
-          <div class="char-meta">
-            <h3 class="char-name">苍穹司辰（示例）</h3>
-            <div class="char-origin">衡天⊙ 第三版书写示例 · 司辰阶</div>
-          </div>
+        <div class="empty-state-box">
+          <h3 class="empty-state-title">当前暂未收录角色档案</h3>
+          <p class="empty-state-sub">角色库已清空待录。后续在 data/characters.json 中录入角色后，将自动生成专属独立页面并支持按量级从小到大与按首字母 A–Z 排序。</p>
         </div>
-        <span class="tier-badge gold mono">⊙ 恒○</span>
-      </div>
-      <div class="char-tags">
-        <span class="tag-pill accent">标准爆恒星 · #53</span>
-        <span class="tag-pill mono">首字母 C</span>
-        
-      </div>
-      <p class="char-summary">对应《衡天⊙ 第三版》1.5 节「示例二：数据缺失」——展示缺项不反推原则（破达恒○不自动推出御或控）。</p>
-      <div class="char-foot">
-        <span class="char-cred">破<span class="ev-badge ev-confirmed">〔实〕</span>（单一已确认战绩）</span>
-        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-      </div>
-    </a>
-    <a class="char-card" href="character/demo-lingxiao.html">
-      <div class="char-head">
-        <div class="char-identity">
-          <div class="char-monogram">凌</div>
-          <div class="char-meta">
-            <h3 class="char-name">凌霄巡星者（示例）</h3>
-            <div class="char-origin">衡天⊙ 第三版书写示例 · 星河境</div>
-          </div>
-        </div>
-        <span class="tier-badge gold mono">⊙ 河○</span>
-      </div>
-      <div class="char-tags">
-        <span class="tag-pill accent">标准星系 · #67</span>
-        <span class="tag-pill mono">首字母 L</span>
-        <span class="tag-pill">掌控式</span>
-      </div>
-      <p class="char-summary">演示第四部分「星系级盘面适配模型（πD²/4 × F*）」与 0.11「掌控单向推出毁灭」规则。</p>
-      <div class="char-foot">
-        <span class="char-cred">控<span class="ev-badge ev-confirmed">〔实〕</span>（整体掌控已确认）</span>
-        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-      </div>
-    </a>
-    <a class="char-card" href="character/demo-xukong.html">
-      <div class="char-head">
-        <div class="char-identity">
-          <div class="char-monogram">虚</div>
-          <div class="char-meta">
-            <h3 class="char-name">虚空观测者（示例）</h3>
-            <div class="char-origin">衡天⊙ 第三版书写示例 · 多元锚点</div>
-          </div>
-        </div>
-        <span class="tier-badge gold mono">⊙ 宇△</span>
-      </div>
-      <div class="char-tags">
-        <span class="tag-pill accent">强宇宙 · #80</span>
-        <span class="tag-pill mono">首字母 X</span>
-        <span class="tag-pill">掌控式</span><span class="tag-pill">攻防双满</span>
-      </div>
-      <p class="char-summary">直接取自《衡天⊙ 第三版》1.5 节「完整书写（正式输出用）」示范条目，完整展开代字、标准、能量与证据状态。</p>
-      <div class="char-foot">
-        <span class="char-cred">控<span class="ev-badge ev-confirmed">〔实〕</span>（整体掌控已确认）、御<span class="ev-badge ev-confirmed">〔实〕</span>（防御已确认）</span>
-        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-      </div>
-    </a>
-    <a class="char-card" href="character/demo-yuanxu.html">
-      <div class="char-head">
-        <div class="char-identity">
-          <div class="char-monogram">渊</div>
-          <div class="char-meta">
-            <h3 class="char-name">渊序构筑者（示例）</h3>
-            <div class="char-origin">衡天⊙ 第三版书写示例 · 论外门槛</div>
-          </div>
-        </div>
-        <span class="tier-badge gold mono">⊙ 外·门</span>
-      </div>
-      <div class="char-tags">
-        <span class="tag-pill accent">论外门槛 · #90</span>
-        <span class="tag-pill mono">首字母 Y</span>
-        <span class="tag-pill">计数 ℵ₀ · 结构 ε₀ 层超脱</span>
-      </div>
-      <p class="char-summary">演示第八部分 8.3「序数比结构、基数比规模」双标注规范：ε₀ 层超脱区分结构复杂度，计数基数仍为 ℵ₀。</p>
-      <div class="char-foot">
-        <span class="char-cred">破<span class="ev-badge ev-confirmed">〔实〕</span>（完成态结构性证明）</span>
-        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-      </div>
-    </a></div>
-        </section>
       </div>
     </div>
     
@@ -275,14 +141,14 @@
     <div class="modal-panel">
       <div class="search-modal-head">
         <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
-        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、角色名、材质或规则关键词…" autocomplete="off">
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
         <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
       </div>
       <div class="search-modal-tabs">
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
-        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
         <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天第三版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第四版全文</button>
         <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
@@ -297,7 +163,7 @@
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="brand-mark">⊙</span>
-        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第三版基准）</span>
+        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第四版基准）</span>
       </div>
       <div class="footer-links">
         <a href="./tiers.html">量级天梯</a>
