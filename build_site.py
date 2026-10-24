@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-衡天⊙ PowerWiki Static Site Builder v6.1
-Updated for 《衡天⊙ 多维战力量级体系（第四版）》 & Clean Empty Character Archive
+衡天⊙ PowerWiki Static Site Builder v6.2
+Updated for 《衡天⊙ 多维战力量级体系（第四版）》 & Full-Text Character Dossiers
 """
 
 from __future__ import annotations
@@ -62,10 +62,11 @@ def format_evidence_html(val: str) -> str:
 # Custom Zero-Dependency Verbatim Markdown Parser (Preserves Subscripts & Tables)
 # ==============================================================================
 class VerbatimMarkdownRenderer:
-    def __init__(self) -> None:
+    def __init__(self, image_map: Dict[str, str] | None = None) -> None:
         self.toc: List[Dict[str, Any]] = []
         self._slug_counts: Dict[str, int] = {}
         self.sections_for_index: List[Dict[str, str]] = []
+        self.image_map: Dict[str, str] = dict(image_map or {})
 
     def _make_id(self, text: str) -> str:
         clean = re.sub(r"[`*_~]", "", text).strip()
@@ -77,8 +78,7 @@ class VerbatimMarkdownRenderer:
         self._slug_counts[slug] = count + 1
         return slug if count == 0 else f"{slug}-{count + 1}"
 
-    @staticmethod
-    def render_inline(text: str) -> str:
+    def render_inline(self, text: str) -> str:
         placeholders: List[str] = []
 
         def save_span(html_fragment: str) -> str:
@@ -97,6 +97,14 @@ class VerbatimMarkdownRenderer:
             return save_span(ch)
 
         text = re.sub(r"\\([\\`*_{}\[\]()#+\-.!|])", repl_escape, text)
+
+        def repl_img(m: re.Match[str]) -> str:
+            alt_txt = html.escape(m.group(1), quote=True)
+            raw_url = m.group(2).strip()
+            resolved_url = html.escape(self.image_map.get(raw_url, raw_url), quote=True)
+            return save_span(f'<img class="md-inline-img" src="{resolved_url}" alt="{alt_txt}" loading="lazy">')
+
+        text = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", repl_img, text)
 
         def repl_link(m: re.Match[str]) -> str:
             label = html.escape(m.group(1), quote=False)
@@ -213,6 +221,31 @@ class VerbatimMarkdownRenderer:
 
             if re.match(r"^-{3,}\s*$", stripped) or re.match(r"^\*{3,}\s*$", stripped):
                 out.append("<hr>")
+                i += 1
+                continue
+
+            m_img = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)\s*$", stripped)
+            if m_img:
+                alt_raw = m_img.group(1).strip()
+                src_raw = m_img.group(2).strip()
+                resolved_src = self.image_map.get(src_raw, src_raw)
+                if record_toc and alt_raw:
+                    cur_sec_buf.append(alt_raw)
+                cap_html = (
+                    f'<figcaption class="md-figcaption">{self.render_inline(alt_raw)}</figcaption>'
+                    if alt_raw
+                    else ""
+                )
+                out.append(
+                    f'<figure class="md-figure">'
+                    f'<div class="md-figure-frame">'
+                    f'<a class="md-figure-link" href="{esc(resolved_src)}" target="_blank" rel="noopener" title="点击查看原尺寸图片">'
+                    f'<img class="md-img" src="{esc(resolved_src)}" alt="{esc(alt_raw)}" loading="lazy">'
+                    f"</a>"
+                    f"</div>"
+                    f"{cap_html}"
+                    f"</figure>"
+                )
                 i += 1
                 continue
 
@@ -338,6 +371,7 @@ class VerbatimMarkdownRenderer:
                     or s_p.startswith(">")
                     or re.match(r"^(#{1,4})\s+", s_p)
                     or re.match(r"^-{3,}\s*$", s_p)
+                    or re.match(r"^!\[([^\]]*)\]\(([^)]+)\)\s*$", s_p)
                     or re.match(r"^(\s*)[-*+]\s+", l_p)
                     or re.match(r"^(\s*)(\d+)\.\s+", l_p)
                     or ("|" in s_p and (i + 1 < n) and self._is_table_sep(lines[i + 1]))
@@ -496,6 +530,14 @@ def render_shell(
 """
 
 
+def resolve_rel_asset(rel_path: str, prefix: str) -> str:
+    if not rel_path:
+        return ""
+    if re.match(r"^(https?:)?//", rel_path) or rel_path.startswith("/"):
+        return rel_path
+    return f"{prefix}{rel_path.lstrip('./')}"
+
+
 def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, Any]], href_prefix: str) -> str:
     t = tier_by_slug.get(c.get("tier_slug", ""))
     t_code = t["code"] if t else "待定"
@@ -503,9 +545,10 @@ def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, A
     t_order = f"#{t['order']:02d}" if t and not t.get("unranked") else "待定"
     initial = esc((c.get("initial") or "#").upper())
     mod_html = "".join(f'<span class="tag-pill">{esc(m)}</span>' for m in (c.get("modifiers") or []))
+    img_src = resolve_rel_asset(c.get("image_url", ""), href_prefix)
     monogram_inner = (
-        f'<img src="{esc(c["image_url"])}" alt="{esc(c["name"])}" loading="lazy">'
-        if c.get("image_url")
+        f'<img src="{esc(img_src)}" alt="{esc(c["name"])}" loading="lazy">'
+        if img_src
         else esc(c["name"][:1])
     )
     origin_text = esc(c.get("series") or "未知出处") + (f" · {esc(c['realm'])}" if c.get("realm") else "")
@@ -768,8 +811,18 @@ def build_home_page(
     return render_shell(title="首页", page_id="home", active_nav="home", body_html=body, root_prefix="./")
 
 
-def build_tiers_page(tiers: List[Dict[str, Any]], groups: List[Dict[str, Any]]) -> str:
+def build_tiers_page(
+    tiers: List[Dict[str, Any]],
+    groups: List[Dict[str, Any]],
+    all_chars: List[Dict[str, Any]],
+) -> str:
     group_map = {g["id"]: g for g in groups}
+    char_count_by_tier: Dict[str, int] = {}
+    for c in all_chars:
+        ts = c.get("tier_slug")
+        if ts:
+            char_count_by_tier[ts] = char_count_by_tier.get(ts, 0) + 1
+
     ranked = sorted([t for t in tiers if not t.get("unranked")], key=lambda x: x["order"])
     unranked = [t for t in tiers if t.get("unranked")]
     all_ordered = ranked + unranked
@@ -786,12 +839,14 @@ def build_tiers_page(tiers: List[Dict[str, Any]], groups: List[Dict[str, Any]]) 
         cards_html = []
         for t in g_items:
             order_str = "待定" if t.get("unranked") else f"#{t['order']:02d}"
+            c_cnt = char_count_by_tier.get(t["slug"], 0)
+            char_pill = f'<span class="tag-pill accent">{c_cnt} 角色</span>' if c_cnt > 0 else ""
             cards_html.append(
                 f"""
                 <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
                   <div class="tier-card-top">
                     <span class="tier-badge mono">⊙ {esc(t['code'])}</span>
-                    <span class="tier-seq mono">{order_str}</span>
+                    <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order_str}</span></span>
                   </div>
                   <div class="tier-name-row">
                     <h3 class="tier-name">{esc(t['name'])}</h3>
@@ -1076,6 +1131,11 @@ def build_characters_page(all_chars: List[Dict[str, Any]], tiers: List[Dict[str,
         ),
     )
 
+    all_series = sorted({c["series"] for c in all_chars if c.get("series")})
+    series_options_html = f'<option value="all">全部作品（{len(all_series)}）</option>' + "".join(
+        f'<option value="{esc(s)}">{esc(s)}</option>' for s in all_series
+    )
+
     if sorted_chars:
         ssr_cards = [render_char_card_html(c, tier_by_slug, "") for c in sorted_chars]
         ssr_mount_inner = f"""
@@ -1130,7 +1190,7 @@ def build_characters_page(all_chars: List[Dict[str, Any]], tiers: List[Dict[str,
               <button type="button" class="seg-btn" data-char-sort="alpha">A–Z 按首字母排序</button>
             </div>
             <select class="select-control" id="char-series-select" aria-label="按作品筛选">
-              <option value="all">全部作品（0）</option>
+              {series_options_html}
             </select>
           </div>
 
@@ -1175,7 +1235,7 @@ def build_character_detail_pages(
     tiers: List[Dict[str, Any]],
     groups: List[Dict[str, Any]],
     rules_title_to_id: Dict[str, str],
-) -> None:
+) -> List[Dict[str, str]]:
     if CHAR_OUT_DIR.exists():
         for old in CHAR_OUT_DIR.glob("*.html"):
             old.unlink()
@@ -1183,11 +1243,12 @@ def build_character_detail_pages(
     if not all_chars:
         if CHAR_OUT_DIR.exists() and not any(CHAR_OUT_DIR.iterdir()):
             CHAR_OUT_DIR.rmdir()
-        return
+        return []
 
     CHAR_OUT_DIR.mkdir(parents=True, exist_ok=True)
     tier_by_slug = {t["slug"]: t for t in tiers}
     group_map = {g["id"]: g for g in groups}
+    char_doc_index_entries: List[Dict[str, str]] = []
 
     ordered_chars = sorted(
         all_chars,
@@ -1210,42 +1271,217 @@ def build_character_detail_pages(
         rule_anchor = rules_title_to_id.get(rule_sec_title, "")
         rule_href = f"../rules.html#{rule_anchor}" if rule_anchor else "../rules.html"
 
-        dims = c.get("dims") or {}
-        dim_cards_html: List[str] = []
-        for dim_key, dim_title, dim_desc in DIM_META:
-            raw_val = dims.get(dim_key, "〔缺〕")
-            wide_cls = "wide" if dim_key == "性" else ""
-            dim_cards_html.append(
-                f"""
-                <div class="dim-detail-card {wide_cls}">
-                  <div class="dim-detail-head">
-                    <span class="dim-symbol mono">{esc(dim_key)}</span>
-                    <div>
-                      <div class="dim-title">{esc(dim_title)}</div>
-                      <div class="dim-desc">{esc(dim_desc)}</div>
-                    </div>
-                  </div>
-                  <div class="dim-value">{format_evidence_html(raw_val)}</div>
-                </div>"""
-            )
-
         mod_chips_html = "".join(f'<span class="tag-pill">{esc(m)}</span>' for m in (c.get("modifiers") or []))
         full_writing = c.get("full_writing") or (
             f"综合量级：⊙{t['code']}——{t['name']}（{t['scale']}，能量/结构基准 {t['energy']}）。"
         )
 
+        avatar_src = resolve_rel_asset(c.get("image_url", ""), "../")
         monogram_inner = (
-            f'<img src="{esc(c["image_url"])}" alt="{esc(c["name"])}">'
-            if c.get("image_url")
+            f'<img src="{esc(avatar_src)}" alt="{esc(c["name"])}">'
+            if avatar_src
             else esc(c["name"][:1])
         )
 
         submeta_parts = [f"出处：{esc(c.get('series') or '未标注')}", f"拼音首字母：{initial}"]
         if c.get("realm"):
-            submeta_parts.append(f"境界/形态：{esc(c['realm'])}")
+            submeta_parts.append(f"形态：{esc(c['realm'])}")
         if c.get("alias"):
-            submeta_parts.append(f"称号：{esc(c['alias'])}")
+            submeta_parts.append(f"别称：{esc(c['alias'])}")
+        if c.get("doc_date"):
+            submeta_parts.append(f"定级版本：{esc(c['doc_date'])}")
         submeta_html = "<span>·</span>".join(f"<span>{p}</span>" for p in submeta_parts)
+
+        portrait_src = resolve_rel_asset(c.get("portrait_url", ""), "../")
+        if portrait_src:
+            portrait_caption = esc(c.get("portrait_caption") or f"{c['name']} 官方角色图")
+            dossier_body_html = f"""
+            <div class="dossier-body has-portrait">
+              <div class="dossier-main-col">
+                <div class="dossier-top">
+                  <div class="dossier-title-block">
+                    <div class="char-monogram lg">{monogram_inner}</div>
+                    <div>
+                      <h1 class="page-title">{esc(c['name'])}</h1>
+                      <div class="dossier-submeta">{submeta_html}</div>
+                    </div>
+                  </div>
+
+                  <div class="dossier-seal-col">
+                    <a class="tier-seal-link mono" href="../tier/{esc(t['slug'])}.html" title="查看所属主档规格页">
+                      <span>⊙ {esc(t['code'])}</span>
+                      <span>{esc(t['name'])}</span>
+                      <span>{t_order_str}</span>
+                      {SVGS["arrow_up_right"]}
+                    </a>
+                    <div class="char-tags">
+                      <span class="tag-pill accent">{esc(g['title'])}</span>
+                      {mod_chips_html}
+                    </div>
+                  </div>
+                </div>
+
+                <p class="page-desc">{esc(c.get('summary') or '')}</p>
+
+                <div class="full-writing-box">
+                  <div class="box-kicker">《衡天⊙ 第四版》1.5 正式完整书写摘要</div>
+                  <div>{format_evidence_html(full_writing)}</div>
+                  {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
+                </div>
+
+                <div class="dossier-actions-row">
+                  <a class="btn btn-secondary btn-sm" href="../tier/{esc(t['slug'])}.html">
+                    所属主档：⊙{esc(t['code'])} {esc(t['name'])}（{t_order_str}） {SVGS["arrow_up_right"]}
+                  </a>
+                  <a class="btn btn-ghost btn-sm" href="{rule_href}">
+                    对照《衡天第四版》{esc(rule_sec_title or '基准条文')} →
+                  </a>
+                </div>
+              </div>
+
+              <aside class="char-portrait-stage" aria-label="角色官方立绘">
+                <div class="char-portrait-canvas">
+                  <img class="char-portrait-img" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）官方立绘">
+                </div>
+                <div class="char-portrait-caption">{portrait_caption}</div>
+              </aside>
+            </div>"""
+        else:
+            dossier_body_html = f"""
+            <div class="dossier-body">
+              <div class="dossier-top">
+                <div class="dossier-title-block">
+                  <div class="char-monogram lg">{monogram_inner}</div>
+                  <div>
+                    <h1 class="page-title">{esc(c['name'])}</h1>
+                    <div class="dossier-submeta">{submeta_html}</div>
+                  </div>
+                </div>
+
+                <div class="dossier-seal-col">
+                  <a class="tier-seal-link mono" href="../tier/{esc(t['slug'])}.html" title="查看所属主档规格页">
+                    <span>⊙ {esc(t['code'])}</span>
+                    <span>{esc(t['name'])}</span>
+                    <span>{t_order_str}</span>
+                    {SVGS["arrow_up_right"]}
+                  </a>
+                  <div class="char-tags">
+                    <span class="tag-pill accent">{esc(g['title'])}</span>
+                    {mod_chips_html}
+                  </div>
+                </div>
+              </div>
+
+              <p class="page-desc">{esc(c.get('summary') or '')}</p>
+
+              <div class="full-writing-box">
+                <div class="box-kicker">《衡天⊙ 第四版》1.5 正式完整书写（首次出现展开全称、标准与能量）</div>
+                <div>{format_evidence_html(full_writing)}</div>
+                {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
+              </div>
+            </div>"""
+
+        has_full_doc = False
+        center_content_html = ""
+        doc_rel_path = c.get("doc_path")
+        if doc_rel_path and (ROOT / doc_rel_path).exists():
+            has_full_doc = True
+            raw_doc_md = (ROOT / doc_rel_path).read_text(encoding="utf-8")
+            doc_filename = Path(doc_rel_path).name
+            doc_renderer = VerbatimMarkdownRenderer(image_map=c.get("image_map"))
+            rendered_doc_html = doc_renderer.render(raw_doc_md)
+            doc_lines = len(raw_doc_md.splitlines())
+            doc_chars = len(raw_doc_md)
+            toc_links_html = "".join(
+                f'<a class="toc-item toc-lvl-{item["level"]}" href="#{esc(item["id"])}">{esc(item["title"])}</a>'
+                for item in doc_renderer.toc
+            )
+            for sec in doc_renderer.sections_for_index:
+                clean_txt = re.sub(r"\s+", " ", sec["text"]).strip()
+                char_doc_index_entries.append(
+                    {
+                        "type": "char",
+                        "code": f"{c.get('initial', '')} ⊙{t['code']}",
+                        "title": f"{c['name']} · {sec['title']}",
+                        "badge": f"角色原文 · ⊙{t['code']}",
+                        "pinyin": c.get("pinyin", ""),
+                        "text": clean_txt,
+                        "url": f"character/{c['slug']}.html#{sec['id']}",
+                    }
+                )
+
+            center_content_html = f"""
+          <div class="doc-layout">
+            <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
+              <div class="toc-head">
+                <div class="toc-head-row">
+                  <span>定级全文目录</span>
+                  <span class="mono">{len(doc_renderer.toc)} 节</span>
+                </div>
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选条目章节…" autocomplete="off">
+              </div>
+              <nav class="toc-list" id="toc-nav">
+                {toc_links_html}
+              </nav>
+            </aside>
+
+            <article class="doc-panel">
+              <div class="doc-toolbar">
+                <div class="doc-source-info">
+                  <span>源文件：<code class="mono">{esc(doc_filename)}</code></span>
+                  <span>·</span>
+                  <span class="mono">{doc_lines:,} 行 / {doc_chars:,} 字</span>
+                  <span>·</span>
+                  <span class="ev-badge ev-confirmed">100% 完整原文无删减</span>
+                </div>
+                <div class="doc-tools">
+                  <div class="doc-find-box">
+                    <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
+                    <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
+                    <span class="doc-find-count mono" id="doc-find-count"></span>
+                  </div>
+                  <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+                  <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
+                  <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
+                </div>
+              </div>
+
+              <div class="markdown-body">
+                {rendered_doc_html}
+              </div>
+            </article>
+          </div>"""
+        else:
+            dims = c.get("dims") or {}
+            dim_cards_html: List[str] = []
+            for dim_key, dim_title, dim_desc in DIM_META:
+                raw_val = dims.get(dim_key, "〔缺〕")
+                wide_cls = "wide" if dim_key == "性" else ""
+                dim_cards_html.append(
+                    f"""
+                    <div class="dim-detail-card {wide_cls}">
+                      <div class="dim-detail-head">
+                        <span class="dim-symbol mono">{esc(dim_key)}</span>
+                        <div>
+                          <div class="dim-title">{esc(dim_title)}</div>
+                          <div class="dim-desc">{esc(dim_desc)}</div>
+                        </div>
+                      </div>
+                      <div class="dim-value">{format_evidence_html(raw_val)}</div>
+                    </div>"""
+                )
+            center_content_html = f"""
+          <section class="section-block">
+            <div class="section-header">
+              <div>
+                <span class="section-kicker">Seven-Dimension Assessment</span>
+                <h2 class="section-title">七维战力分项评定</h2>
+              </div>
+            </div>
+            <div class="dim-matrix-grid">
+              {"".join(dim_cards_html)}
+            </div>
+          </section>"""
 
         prev_html = (
             f"""<a class="pager-card" href="{esc(prev_c['slug'])}.html">
@@ -1292,51 +1528,10 @@ def build_character_detail_pages(
             <div class="page-header-art" aria-hidden="true">
               <img class="page-header-img" src="../static/img/character-chronicle.jpg" alt="">
             </div>
-            <div class="dossier-body">
-              <div class="dossier-top">
-                <div class="dossier-title-block">
-                  <div class="char-monogram lg">{monogram_inner}</div>
-                  <div>
-                    <h1 class="page-title">{esc(c['name'])}</h1>
-                    <div class="dossier-submeta">{submeta_html}</div>
-                  </div>
-                </div>
-
-                <div class="dossier-seal-col">
-                  <a class="tier-seal-link mono" href="../tier/{esc(t['slug'])}.html" title="查看所属主档规格页">
-                    <span>⊙ {esc(t['code'])}</span>
-                    <span>{esc(t['name'])}</span>
-                    <span>{t_order_str}</span>
-                    {SVGS["arrow_up_right"]}
-                  </a>
-                  <div class="char-tags">
-                    <span class="tag-pill accent">{esc(g['title'])}</span>
-                    {mod_chips_html}
-                  </div>
-                </div>
-              </div>
-
-              <p class="page-desc">{esc(c.get('summary') or '')}</p>
-
-              <div class="full-writing-box">
-                <div class="box-kicker">《衡天⊙ 第四版》1.5 正式完整书写（首次出现展开全称、标准与能量）</div>
-                <div>{format_evidence_html(full_writing)}</div>
-                {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
-              </div>
-            </div>
+            {dossier_body_html}
           </section>
 
-          <section class="section-block">
-            <div class="section-header">
-              <div>
-                <span class="section-kicker">Seven-Dimension Assessment</span>
-                <h2 class="section-title">七维战力分项评定</h2>
-              </div>
-            </div>
-            <div class="dim-matrix-grid">
-              {"".join(dim_cards_html)}
-            </div>
-          </section>
+          {center_content_html}
 
           <section class="section-block">
             <div class="section-header">
@@ -1383,8 +1578,11 @@ def build_character_detail_pages(
             active_nav="characters",
             body_html=body,
             root_prefix="../",
+            has_toc_button=has_full_doc,
         )
         (CHAR_OUT_DIR / f"{c['slug']}.html").write_text(page_html, encoding="utf-8")
+
+    return char_doc_index_entries
 
 
 def build_fulltext_doc_page(
@@ -1496,6 +1694,8 @@ def build_fulltext_doc_page(
 
 def build_search_page() -> str:
     hot_queries = [
+        "御兔",
+        "城△",
         "宇◆",
         "标注图与动图",
         "完整书写",
@@ -1504,7 +1704,6 @@ def build_search_page() -> str:
         "外·门",
         "中子星外壳",
         "花岗岩",
-        "0′",
         "莱因哈特",
     ]
     hot_chips = "".join(
@@ -1575,6 +1774,7 @@ def build_search_index_bundle(
     *,
     tiers_payload: Dict[str, Any],
     all_chars: List[Dict[str, Any]],
+    char_doc_sections: List[Dict[str, str]],
     rules_sections: List[Dict[str, str]],
     materials_sections: List[Dict[str, str]],
 ) -> str:
@@ -1604,7 +1804,7 @@ def build_search_index_bundle(
         index_entries.append(
             {
                 "type": "char",
-                "code": f"{c.get('initial', '')} ⊙{t_code}",
+                "code": f"{c.get('initial', '')} ⊙{t_code} {c.get('alias', '')}",
                 "title": f"{c['name']}（{c.get('series', '未知出处')}）",
                 "badge": f"角色 · ⊙{t_code} {t_name}",
                 "pinyin": c.get("pinyin", ""),
@@ -1612,6 +1812,8 @@ def build_search_index_bundle(
                 "url": f"character/{c['slug']}.html",
             }
         )
+
+    index_entries.extend(char_doc_sections)
 
     for sec in rules_sections:
         clean_txt = re.sub(r"\s+", " ", sec["text"]).strip()
@@ -1622,7 +1824,7 @@ def build_search_index_bundle(
                 "title": f"衡天第四版 · {sec['title']}",
                 "badge": "衡天第四版",
                 "pinyin": "",
-                "text": clean_txt[:900],
+                "text": clean_txt,
                 "url": f"rules.html#{sec['id']}",
             }
         )
@@ -1636,7 +1838,7 @@ def build_search_index_bundle(
                 "title": f"材质库 · {sec['title']}",
                 "badge": "材质能量库",
                 "pinyin": "",
-                "text": clean_txt[:900],
+                "text": clean_txt,
                 "url": f"materials.html#{sec['id']}",
             }
         )
@@ -1648,7 +1850,7 @@ def build_search_index_bundle(
     }
 
     return (
-        "/* Auto-generated by build_site.py v6.1 — DO NOT EDIT MANUALLY */\n"
+        "/* Auto-generated by build_site.py v6.2 — DO NOT EDIT MANUALLY */\n"
         f"window.__POWERWIKI_DATA__ = {json.dumps(client_data, ensure_ascii=False, separators=(',', ':'))};\n"
         f"window.__POWERWIKI_INDEX__ = {json.dumps(index_entries, ensure_ascii=False, separators=(',', ':'))};\n"
     )
@@ -1705,11 +1907,11 @@ def main() -> None:
         ),
         encoding="utf-8",
     )
-    (ROOT / "tiers.html").write_text(build_tiers_page(tiers, groups), encoding="utf-8")
+    (ROOT / "tiers.html").write_text(build_tiers_page(tiers, groups, all_chars), encoding="utf-8")
     build_tier_detail_pages(tiers, groups, all_chars, rules_title_to_id)
 
     (ROOT / "characters.html").write_text(build_characters_page(all_chars, tiers), encoding="utf-8")
-    build_character_detail_pages(all_chars, tiers, groups, rules_title_to_id)
+    char_doc_sections = build_character_detail_pages(all_chars, tiers, groups, rules_title_to_id)
 
     (ROOT / "search.html").write_text(build_search_page(), encoding="utf-8")
 
@@ -1717,16 +1919,17 @@ def main() -> None:
     bundle_js = build_search_index_bundle(
         tiers_payload=tiers_payload,
         all_chars=all_chars,
+        char_doc_sections=char_doc_sections,
         rules_sections=rules_sections,
         materials_sections=materials_sections,
     )
     (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
 
     print(
-        f"[OK] PowerWiki v6.1 built successfully:\n"
+        f"[OK] PowerWiki v6.2 built successfully:\n"
         f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
         f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
-        f"  - Standalone Character pages: {len(all_chars)} files\n"
+        f"  - Standalone Character pages: {len(all_chars)} files in character/*.html ({len(char_doc_sections)} full-text sections indexed)\n"
         f"  - Rules v4 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections"
     )
 

@@ -324,7 +324,7 @@
         if (findCountEl) findCountEl.textContent = "";
         return;
       }
-      const blocks = Array.from(mdBody.querySelectorAll("h1, h2, h3, p, li, tr"));
+      const blocks = Array.from(mdBody.querySelectorAll("h1, h2, h3, p, li, tr, figcaption"));
       findMatches = blocks.filter((el) => el.textContent.toLowerCase().includes(q));
       if (findMatches.length === 0) {
         if (findCountEl) findCountEl.textContent = "0 处";
@@ -490,9 +490,15 @@
     const mount = document.getElementById("tiers-explorer-mount");
     if (!mount || !window.__POWERWIKI_DATA__ || !window.__POWERWIKI_DATA__.tiers) return;
 
-    const { groups, tiers } = window.__POWERWIKI_DATA__;
+    const { groups, tiers, allCharacters } = window.__POWERWIKI_DATA__;
     const groupMap = {};
     groups.forEach((g) => (groupMap[g.id] = g));
+    const charCountByTier = {};
+    (allCharacters || []).forEach((c) => {
+      if (c && c.tier_slug) {
+        charCountByTier[c.tier_slug] = (charCountByTier[c.tier_slug] || 0) + 1;
+      }
+    });
 
     const savedPrefs =
       safeGetJSON(sessionStorage, STORAGE_KEYS.tierPrefs, null) ||
@@ -552,11 +558,13 @@
 
     function renderCard(t) {
       const orderText = t.unranked ? "待定" : `#${String(t.order).padStart(2, "0")}`;
+      const cCount = charCountByTier[t.slug] || 0;
+      const charPill = cCount > 0 ? `<span class="tag-pill accent">${cCount} 角色</span>` : "";
       return `
         <a class="tier-card" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
           <div class="tier-card-top">
             <span class="tier-badge mono">⊙ ${escapeHTML(t.code)}</span>
-            <span class="tier-seq mono">${orderText}</span>
+            <span class="tier-top-right">${charPill}<span class="tier-seq mono">${orderText}</span></span>
           </div>
           <div class="tier-name-row">
             <h3 class="tier-name">${escapeHTML(t.name)}</h3>
@@ -812,7 +820,7 @@
             <div class="char-identity">
               <div class="char-monogram">${
                 c.image_url
-                  ? `<img src="${escapeHTML(c.image_url)}" alt="${escapeHTML(c.name)}" loading="lazy">`
+                  ? `<img src="${escapeHTML(resolveUrl(c.image_url))}" alt="${escapeHTML(c.name)}" loading="lazy">`
                   : escapeHTML(c.name.slice(0, 1))
               }</div>
               <div class="char-meta">
@@ -1257,7 +1265,7 @@
   /* --------------------------------------------------------------------------
      Boot — Render synchronous DOM lists FIRST, then restore cached scrollY
      -------------------------------------------------------------------------- */
-  document.addEventListener("DOMContentLoaded", () => {
+  function bootAll() {
     initTheme();
     initMobileNav();
     initTiersExplorer();
@@ -1267,5 +1275,11 @@
     initBrowsingCacheAndBack();
     initGlobalSearchModal();
     initHorizontalRails();
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootAll);
+  } else {
+    bootAll();
+  }
 })();

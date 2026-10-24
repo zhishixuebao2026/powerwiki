@@ -80,7 +80,7 @@
                 支持<strong>按主档量级从小到大</strong>与<strong>按拼音首字母（A–Z）</strong>双模式切换；点击角色卡片直接进入<strong>独立角色档案页面</strong>，返回时自动恢复当前排序与浏览位置。
               </p>
             </div>
-            <span class="count-badge mono" id="char-result-count">0 / 0 位</span>
+            <span class="count-badge mono" id="char-result-count">1 / 1 位</span>
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@
               <button type="button" class="seg-btn" data-char-sort="alpha">A–Z 按首字母排序</button>
             </div>
             <select class="select-control" id="char-series-select" aria-label="按作品筛选">
-              <option value="all">全部作品（0）</option>
+              <option value="all">全部作品（1）</option><option value="《非人学园》">《非人学园》</option>
             </select>
           </div>
 
@@ -121,10 +121,35 @@
 
       <div class="content-section" id="chars-explorer-mount">
         
-        <div class="empty-state-box">
-          <h3 class="empty-state-title">当前暂未收录角色档案</h3>
-          <p class="empty-state-sub">角色库已清空待录。后续在 data/characters.json 中录入角色后，将自动生成专属独立页面并支持按量级从小到大与按首字母 A–Z 排序。</p>
+        <section class="group-section" id="char-scale-list">
+          <div class="group-header">
+            <h2 class="group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
+            <span class="group-sub">1 位角色</span>
+          </div>
+          <div class="char-grid">
+    <a class="char-card" href="character/yutu.html">
+      <div class="char-head">
+        <div class="char-identity">
+          <div class="char-monogram"><img src="static/img/characters/yutu/avatar.png" alt="御兔" loading="lazy"></div>
+          <div class="char-meta">
+            <h3 class="char-name">御兔</h3>
+            <div class="char-origin">《非人学园》 · 玩偶形态 / 筋肉兄贵变身</div>
+          </div>
         </div>
+        <span class="tier-badge gold mono">⊙ 城△</span>
+      </div>
+      <div class="char-tags">
+        <span class="tag-pill accent">强爆城 · #30</span>
+        <span class="tag-pill mono">首字母 Y</span>
+        <span class="tag-pill">保底 ⊙城○～城△〔实〕</span><span class="tag-pill">存疑上限 国△</span><span class="tag-pill">投送 0.23～0.27c〔推〕</span>
+      </div>
+      <p class="char-summary">《非人学园》中嫦娥的兔子，平时为玩偶，暴走后化为肌肉发达的人形兔子（官方宣传语“吃着萝卜就把人打上月球的筋肉兄贵御兔”）。剧情 PV 中一拳将律师虎力打上月球，按地月距离与 5 秒赋予约四分之一光速计算，动能约 1.8×10¹⁷～3.4×10¹⁷ J，落在强爆城级（⊙城△〔实〕）。</p>
+      <div class="char-foot">
+        <span class="char-cred">主档 ⊙城△<span class="ev-badge ev-confirmed">〔实〕</span>（击飞动能） · 保底 ⊙城○～城△<span class="ev-badge ev-confirmed">〔实〕</span> · 存疑上限 国△</span>
+        <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+      </div>
+    </a></div>
+        </section>
       </div>
     </div>
     

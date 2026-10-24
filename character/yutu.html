@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-root="../" data-page-id="char-yutu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>御兔 · 角色战力档案 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('pw_theme_v2');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
+        <a class="brand-link" href="../index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-name">衡天 PowerWiki</span>
+        </a>
+      </div>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link" href="../index.html">首页</a>
+        <a class="nav-link" href="../tiers.html">量级</a>
+        <a class="nav-link active" href="../characters.html">角色</a>
+        <a class="nav-link" href="../rules.html">体系全文</a>
+        <a class="nav-link" href="../materials.html">材质库</a>
+        <a class="nav-link" href="../search.html">搜索</a>
+      </nav>
+
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="search-btn-label">检索…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+  <main>
+    
+        <div class="container detail-stack">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>御兔</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img" src="../static/img/character-chronicle.jpg" alt="">
+            </div>
+            
+            <div class="dossier-body has-portrait">
+              <div class="dossier-main-col">
+                <div class="dossier-top">
+                  <div class="dossier-title-block">
+                    <div class="char-monogram lg"><img src="../static/img/characters/yutu/avatar.png" alt="御兔"></div>
+                    <div>
+                      <h1 class="page-title">御兔</h1>
+                      <div class="dossier-submeta"><span>出处：《非人学园》</span><span>·</span><span>拼音首字母：Y</span><span>·</span><span>形态：玩偶形态 / 筋肉兄贵变身</span><span>·</span><span>别称：兔兔 / 筋肉兄贵御兔</span><span>·</span><span>定级版本：2026-10-24</span></div>
+                    </div>
+                  </div>
+
+                  <div class="dossier-seal-col">
+                    <a class="tier-seal-link mono" href="../tier/city-strong.html" title="查看所属主档规格页">
+                      <span>⊙ 城△</span>
+                      <span>强爆城</span>
+                      <span>#30</span>
+                      <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                    </a>
+                    <div class="char-tags">
+                      <span class="tag-pill accent">第二部分 · 有限能量轴 · 继承区</span>
+                      <span class="tag-pill">保底 ⊙城○～城△〔实〕</span><span class="tag-pill">存疑上限 国△</span><span class="tag-pill">投送 0.23～0.27c〔推〕</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="page-desc">《非人学园》中嫦娥的兔子，平时为玩偶，暴走后化为肌肉发达的人形兔子（官方宣传语“吃着萝卜就把人打上月球的筋肉兄贵御兔”）。剧情 PV 中一拳将律师虎力打上月球，按地月距离与 5 秒赋予约四分之一光速计算，动能约 1.8×10¹⁷～3.4×10¹⁷ J，落在强爆城级（⊙城△〔实〕）。</p>
+
+                <div class="full-writing-box">
+                  <div class="box-kicker">《衡天⊙ 第四版》1.5 正式完整书写摘要</div>
+                  <div>御兔（《非人学园》）的综合量级为 ⊙城△——强爆城级（参照纽约 1214 平方公里，1.46×10¹⁷ J 起，至超爆城 4.18×10¹⁸ J 之下）<span class="ev-badge ev-confirmed">〔实〕</span>：来自把虎力一拳打上月球所赋予的动能，计算值约 1.8×10¹⁷～3.4×10¹⁷ J；保底量级 ⊙城○～城△<span class="ev-badge ev-confirmed">〔实〕</span>（放宽到 8 秒、70 公斤时约 6.7×10¹⁶ J）；终局对冲轨道视角火球（直径约 1800～2400 公里，折算国△）因与事后完好的草地树林矛盾，列为存疑上限，不进入主档。</div>
+                  <div class="box-subnote">证据链核验摘要：主档 ⊙城△<span class="ev-badge ev-confirmed">〔实〕</span>（击飞动能） · 保底 ⊙城○～城△<span class="ev-badge ev-confirmed">〔实〕</span> · 存疑上限 国△</div>
+                </div>
+
+                <div class="dossier-actions-row">
+                  <a class="btn btn-secondary btn-sm" href="../tier/city-strong.html">
+                    所属主档：⊙城△ 强爆城（#30） <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                  </a>
+                  <a class="btn btn-ghost btn-sm" href="../rules.html#sec-2-3-量级表-昆虫-爆恒星">
+                    对照《衡天第四版》2.3 量级表（昆虫～爆恒星） →
+                  </a>
+                </div>
+              </div>
+
+              <aside class="char-portrait-stage" aria-label="角色官方立绘">
+                <div class="char-portrait-canvas">
+                  <img class="char-portrait-img" src="../static/img/characters/yutu/official-portrait.png" alt="御兔（《非人学园》）官方立绘">
+                </div>
+                <div class="char-portrait-caption">官方立绘 · 嫦娥 &amp; 御兔（玩偶 / 筋肉兄贵双形态）</div>
+              </aside>
+            </div>
+          </section>
+
+          
+          <div class="doc-layout">
+            <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
+              <div class="toc-head">
+                <div class="toc-head-row">
+                  <span>定级全文目录</span>
+                  <span class="mono">33 节</span>
+                </div>
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选条目章节…" autocomplete="off">
+              </div>
+              <nav class="toc-list" id="toc-nav">
+                <a class="toc-item toc-lvl-1" href="#sec-御兔-非人学园">御兔（《非人学园》）</a><a class="toc-item toc-lvl-2" href="#sec-作品信息">作品信息</a><a class="toc-item toc-lvl-2" href="#sec-角色信息">角色信息</a><a class="toc-item toc-lvl-2" href="#sec-量级栏">量级栏</a><a class="toc-item toc-lvl-3" href="#sec-量级栏用语说明">量级栏用语说明</a><a class="toc-item toc-lvl-2" href="#sec-概述">概述</a><a class="toc-item toc-lvl-2" href="#sec-一-定级方法">一、定级方法</a><a class="toc-item toc-lvl-2" href="#sec-二-世界观背景">二、世界观背景</a><a class="toc-item toc-lvl-2" href="#sec-三-基本事实">三、基本事实</a><a class="toc-item toc-lvl-3" href="#sec-1-把虎力打上月球">1. 把虎力打上月球</a><a class="toc-item toc-lvl-3" href="#sec-2-终局对冲">2. 终局对冲</a><a class="toc-item toc-lvl-3" href="#sec-3-白骨精相关场景">3. 白骨精相关场景</a><a class="toc-item toc-lvl-2" href="#sec-四-分维度分析">四、分维度分析</a><a class="toc-item toc-lvl-3" href="#sec-破-破坏力">破（破坏力）</a><a class="toc-item toc-lvl-3" href="#sec-控-整体掌控">控（整体掌控）</a><a class="toc-item toc-lvl-3" href="#sec-域-影响范围-可突破强度上限">域（影响范围 × 可突破强度上限）</a><a class="toc-item toc-lvl-3" href="#sec-御-防御">御（防御）</a><a class="toc-item toc-lvl-3" href="#sec-速-速度">速（速度）</a><a class="toc-item toc-lvl-3" href="#sec-算-计算层级">算（计算层级）</a><a class="toc-item toc-lvl-3" href="#sec-性-特性">性（特性）</a><a class="toc-item toc-lvl-3" href="#sec-层级轴">层级轴</a><a class="toc-item toc-lvl-2" href="#sec-五-综合定级">五、综合定级</a><a class="toc-item toc-lvl-3" href="#sec-主档的来源">主档的来源</a><a class="toc-item toc-lvl-3" href="#sec-为什么不到爆国或爆行星">为什么不到爆国或爆行星</a><a class="toc-item toc-lvl-3" href="#sec-证伪核对">证伪核对</a><a class="toc-item toc-lvl-3" href="#sec-结论的风险点">结论的风险点</a><a class="toc-item toc-lvl-2" href="#sec-六-横向比较">六、横向比较</a><a class="toc-item toc-lvl-2" href="#sec-七-不采纳的说法">七、不采纳的说法</a><a class="toc-item toc-lvl-3" href="#sec-常见误读">常见误读</a><a class="toc-item toc-lvl-3" href="#sec-不采用的计算口径">不采用的计算口径</a><a class="toc-item toc-lvl-2" href="#sec-八-存疑与作者矛盾">八、存疑与作者矛盾</a><a class="toc-item toc-lvl-2" href="#sec-九-关键章节索引">九、关键章节索引</a><a class="toc-item toc-lvl-2" href="#sec-参考资料">参考资料</a>
+              </nav>
+            </aside>
+
+            <article class="doc-panel">
+              <div class="doc-toolbar">
+                <div class="doc-source-info">
+                  <span>源文件：<code class="mono">御兔（非人学园）衡天定级.md</code></span>
+                  <span>·</span>
+                  <span class="mono">272 行 / 8,536 字</span>
+                  <span>·</span>
+                  <span class="ev-badge ev-confirmed">100% 完整原文无删减</span>
+                </div>
+                <div class="doc-tools">
+                  <div class="doc-find-box">
+                    <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
+                    <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
+                    <span class="doc-find-count mono" id="doc-find-count"></span>
+                  </div>
+                  <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+                  <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
+                  <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
+                </div>
+              </div>
+
+              <div class="markdown-body">
+                <h1 id="sec-御兔-非人学园">御兔（《非人学园》）<a class="heading-anchor" href="#sec-御兔-非人学园" data-target-id="sec-御兔-非人学园" title="复制本节锚点链接">#</a></h1>
+<blockquote><p>衡天⊙定级条目 · 定级依据：《衡天⊙多维战力量级体系（第四版）》 · 条目版本：2026-10-24</p></blockquote>
+<h2 id="sec-作品信息">作品信息<a class="heading-anchor" href="#sec-作品信息" data-target-id="sec-作品信息" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">作品</td><td style="text-align:left">《非人学园》</td></tr><tr><td style="text-align:left">开发与运营</td><td style="text-align:left">网易游戏</td></tr><tr><td style="text-align:left">类型</td><td style="text-align:left">5V5 多人在线战术竞技手游，"无厘头漫画风"，角色多取自神话传说，舞台为科技与仙术并存的城市"非都"</td></tr><tr><td style="text-align:left">上线时间</td><td style="text-align:left">2018 年 6 月 22 日 App Store 独家首发，6 月 26 日全平台公测</td></tr><tr><td style="text-align:left">运营状态</td><td style="text-align:left">2025 年 8 月 18 日起停止新内容开发，关闭部分服务器</td></tr><tr><td style="text-align:left">相关动画</td><td style="text-align:left">《非人学园》剧情 PV，2018 年 6 月公开：嫦娥委托律师虎力，虎力与暴走的御兔在非都各处大战，"从黄昏到日暮"</td></tr><tr><td style="text-align:left">原定级页面</td><td style="text-align:left"><a href="https://baike.zjhengde.com/index/index/detail.html?id=13500" target="_blank" rel="noopener">战力百科 · 御兔（id=13500）</a></td></tr></tbody></table></div>
+<h2 id="sec-角色信息">角色信息<a class="heading-anchor" href="#sec-角色信息" data-target-id="sec-角色信息" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">名称</td><td style="text-align:left">御兔（剧情 PV 中也被称为"兔兔"）</td></tr><tr><td style="text-align:left">原型</td><td style="text-align:left">月宫玉兔</td></tr><tr><td style="text-align:left">形态</td><td style="text-align:left">平时为兔子玩偶；暴走时为肌肉发达的人形兔子，官方宣传语称其为"吃着萝卜就把人打上月球的筋肉兄贵御兔"</td></tr><tr><td style="text-align:left">游戏中</td><td style="text-align:left">嫦娥的大招变身形态，变身后以百裂拳攻击</td></tr><tr><td style="text-align:left">关键关系</td><td style="text-align:left">嫦娥（主人，剧情 PV 的委托人）；虎力（剧情 PV 中的对手，"非著名大律师"）</td></tr><tr><td style="text-align:left">关键出场</td><td style="text-align:left">剧情 PV：将虎力一拳打上月球；与虎力的终局对冲在地球夜侧造成巨大火球；最终被打回玩偶，被少女抱回（"兔兔回来了"）</td></tr><tr><td style="text-align:left">结局</td><td style="text-align:left">变回玩偶，回到主人身边</td></tr></tbody></table></div>
+<h2 id="sec-量级栏">量级栏<a class="heading-anchor" href="#sec-量级栏" data-target-id="sec-量级栏" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>⊙城△<span class="ev-badge ev-confirmed">〔实〕</span></strong>——强爆城级（参照纽约 1214 平方公里，1.46×10¹⁷ J 起，至超爆城 4.18×10¹⁸ J 之下）；来自把虎力一拳打上月球所赋予的动能，计算值约 1.8×10¹⁷～3.4×10¹⁷ J，证据已确认</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left"><strong>⊙城○～城△<span class="ev-badge ev-confirmed">〔实〕</span></strong>——把时间放宽到 8 秒、体重取 70 公斤时下探至约 6.7×10¹⁶ J（标准爆城级，横滨 437 平方公里，3.03×10¹⁶ J 起）</td></tr><tr><td style="text-align:left">存疑上限</td><td style="text-align:left">国△（强爆国级，参照埃及 100 万平方公里，9.41×10²¹ J 起）：终局对冲的轨道视角火球若按覆盖面积计入破坏，二人各约 1.8×10²²～4.7×10²² J；因事后场景与之矛盾，不进入主档</td></tr><tr><td style="text-align:left">可信度</td><td style="text-align:left">主档依据：击飞动能（剧情 PV 画面与官方宣传语互证；时间取原页面按帧数统计的 5 秒）</td></tr><tr><td style="text-align:left">破（破坏力）</td><td style="text-align:left">城△<span class="ev-badge ev-confirmed">〔实〕</span>：击飞动能约 1.8×10¹⁷～3.4×10¹⁷ J；国△（存疑，不进主档）：终局火球</td></tr><tr><td style="text-align:left">控（整体掌控）</td><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">域（影响）</td><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">御（防御）</td><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span>：经历终局对冲后被打回玩偶，承受的能量无法确定；原页面"弱行星"的推导不成立</td></tr><tr><td style="text-align:left">速（速度）</td><td style="text-align:left">投送速度约 0.23～0.27 倍光速<span class="ev-badge ev-inferred">〔推〕</span>（由击飞距离与时间推出）；自身移动与反应<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">算（计算层级）</td><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">玩偶与筋肉形态之间的变身<span class="ev-badge ev-confirmed">〔实〕</span>；吃萝卜强化（官方宣传语）<span class="ev-badge ev-confirmed">〔实〕</span>；被击败后变回玩偶、未被摧毁<span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">层级轴</td><td style="text-align:left">不涉及</td></tr><tr><td style="text-align:left">数量轴</td><td style="text-align:left">不涉及</td></tr><tr><td style="text-align:left">横向位置</td><td style="text-align:left">与虎力大致同档：终局对冲后虎力被炸黑倒地、御兔被打回玩偶，两败</td></tr></tbody></table></div>
+<h3 id="sec-量级栏用语说明">量级栏用语说明<a class="heading-anchor" href="#sec-量级栏用语说明" data-target-id="sec-量级栏用语说明" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">代字或标签</th><th style="text-align:left">全称与含义</th></tr></thead><tbody><tr><td style="text-align:left">⊙</td><td style="text-align:left">衡天综合量级的前缀</td></tr><tr><td style="text-align:left">城○</td><td style="text-align:left">标准爆城级：摧毁横滨（行政区 437 平方公里），725 万吨 TNT，3.03×10¹⁶ J</td></tr><tr><td style="text-align:left">城△</td><td style="text-align:left">强爆城级：摧毁纽约（1214 平方公里），3500 万吨 TNT，1.46×10¹⁷ J</td></tr><tr><td style="text-align:left">城☆</td><td style="text-align:left">超爆城级：摧毁上海（行政区 6340 平方公里），10 亿吨 TNT，4.18×10¹⁸ J</td></tr><tr><td style="text-align:left">国△</td><td style="text-align:left">强爆国级：摧毁埃及（100 万平方公里），9.41×10²¹ J</td></tr><tr><td style="text-align:left">国☆</td><td style="text-align:left">超爆国级：摧毁印度（300 万平方公里），4.81×10²² J</td></tr><tr><td style="text-align:left">星▽</td><td style="text-align:left">弱爆行星级：打爆火星，4.87×10³⁰ J</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td><td style="text-align:left">已确认：作品直接展示了该表现</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-inferred">〔推〕</span></td><td style="text-align:left">推定：由其他已确认的表现按允许的单步规则推出</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td><td style="text-align:left">缺：作品没有可用的表现</td></tr></tbody></table></div>
+<h2 id="sec-概述">概述<a class="heading-anchor" href="#sec-概述" data-target-id="sec-概述" title="复制本节锚点链接">#</a></h2>
+<p>御兔是《非人学园》中嫦娥的兔子，平时是玩偶，暴走后化为肌肉发达的人形兔子。官方宣传语称其为"吃着萝卜就把人打上月球的筋肉兄贵御兔"，剧情 PV 中它确实一拳把律师虎力打上了月球。</p>
+<p>本条目的定级依据是这一拳。以地月距离和原页面按帧数统计的 5 秒计算，虎力被赋予约四分之一光速的速度，动能约 1.8×10¹⁷～3.4×10¹⁷ J，落在城△（强爆城级）。把时间放宽到 8 秒或收紧到 3 秒，结果都在城○到城△之间，结论稳定。</p>
+<p>终局与虎力的对冲在地球夜侧产生了直径约 1800～2400 公里的火球。若把火球覆盖范围当作破坏范围，每人约在国△（强爆国级）。但火球的视觉规模不等于破坏（衡天 0.6），而且随后的事后场景只是草地、树林与碎石，与千公里级的地表毁灭矛盾，所以这一项只作存疑上限，不进入主档。原页面的"弱爆行星"来自与白骨精相关的防御推导，现有素材中看不到御兔承受该攻击，不予采纳。</p>
+<h2 id="sec-一-定级方法">一、定级方法<a class="heading-anchor" href="#sec-一-定级方法" data-target-id="sec-一-定级方法" title="复制本节锚点链接">#</a></h2>
+<p><strong>素材</strong>：原定级页面的文字；角色立绘 1 张；剧情 PV 动图 5 段（原页面编号 02～08）；原页面的测量截图 2 张（火球局部图、火球叠加于地球全图的面积测量图）。</p>
+<p><strong>处理方式</strong>：动图逐帧拆开，按帧号引用（如"动图一第 48 帧"）；在轨道视角帧中用地球边缘弧线拟合圆作比例尺，测量火球直径；速度与动能按地月距离计算。</p>
+<p><strong>补充检索</strong>：游民星空、游侠网、爱范儿、GameRes、IT之家关于《非人学园》上线、剧情 PV、角色与停运的报道。</p>
+<p><strong>证据分级</strong>：画面直接呈现的事件记<span class="ev-badge ev-confirmed">〔实〕</span>；依赖时间测量的数值给出敏感性区间；原页面中依赖其他条目量级的推导（白骨精）不采用。</p>
+<h2 id="sec-二-世界观背景">二、世界观背景<a class="heading-anchor" href="#sec-二-世界观背景" data-target-id="sec-二-世界观背景" title="复制本节锚点链接">#</a></h2>
+<p>《非人学园》的舞台是科技与仙术并存的城市"非都"，角色多取自《西游记》等神话传说，整体为夸张的漫画式喜剧风格。剧情 PV 的故事是：嫦娥委托律师虎力找回暴走的御兔，虎力与御兔在非都各处交战，战斗从白天的城市一路打到夜晚，最后在地球夜侧以一次巨大的对冲收尾。</p>
+<p>作品中的地球与月球按现实天体处理（画面中出现地球轨道视角、带地表灯光的夜侧大陆与月球），材质强度取现实 1 倍（衡天 0.1、0.7）。</p>
+<h2 id="sec-三-基本事实">三、基本事实<a class="heading-anchor" href="#sec-三-基本事实" data-target-id="sec-三-基本事实" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-1-把虎力打上月球">1. 把虎力打上月球<a class="heading-anchor" href="#sec-1-把虎力打上月球" data-target-id="sec-1-把虎力打上月球" title="复制本节锚点链接">#</a></h3>
+<p>动图四第 26～34 帧：御兔一拳打在虎力脸上，字幕"滚到月球去吧"，虎力被打飞；第 36～48 帧为城市俯视画面，打击点周围出现圆形冲击云墙。动图三第 4～18 帧：身穿虎纹外套的虎力出现在画着兔子脸的月球旁，随后折返（第 16～18 帧拖出光迹），第 20 帧闪白，第 25 帧城市被撞毁。</p>
+<p>官方宣传语"吃着萝卜就把人打上月球的筋肉兄贵御兔"与画面互证，确认出拳者是御兔、被打上月球的是虎力。动图四第 55 帧可以看到御兔手持萝卜。</p>
+<h3 id="sec-2-终局对冲">2. 终局对冲<a class="heading-anchor" href="#sec-2-终局对冲" data-target-id="sec-2-终局对冲" title="复制本节锚点链接">#</a></h3>
+<p>动图一第 0～30 帧：虎力与御兔在虚空般的网格空间中交手，双方能量光束交汇；第 34～38 帧爆发强光；第 40 帧切换到地球轨道视角，夜侧大陆上出现起爆点；第 44～56 帧起爆点膨胀为发光火球，并带有球体明暗；之后画面全白。</p>
+<p>动图二为事后场景：夜晚的草地与树林，远处有数道烟柱，少女抱回变回玩偶的御兔（字幕"兔兔回来了"），虎力倒在碎石中，脸部被炸黑。</p>
+<h3 id="sec-3-白骨精相关场景">3. 白骨精相关场景<a class="heading-anchor" href="#sec-3-白骨精相关场景" data-target-id="sec-3-白骨精相关场景" title="复制本节锚点链接">#</a></h3>
+<p>动图五为一名白发持刀角色在猫形石像群中挥刀，画面中布满红色斩击轨迹。原页面称此为"白骨精对御兔的手臂无法划破防"，但这 11 帧中看不到御兔，也看不到斩击命中的对象。</p>
+<h2 id="sec-四-分维度分析">四、分维度分析<a class="heading-anchor" href="#sec-四-分维度分析" data-target-id="sec-四-分维度分析" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-破-破坏力">破（破坏力）<a class="heading-anchor" href="#sec-破-破坏力" data-target-id="sec-破-破坏力" title="复制本节锚点链接">#</a></h3>
+<p><strong>1. 击飞动能（主档依据）</strong></p>
+<ul><li><strong>距离</strong>：地月距离近地点 356400 公里、远地点 406700 公里，扣除地球半径 6371 公里与月球半径 1737 公里，地表到月面约 348300～398600 公里。</li><li><strong>时间</strong>：原页面按帧数统计，打上月球与从月球返回"各 5 秒"。动图本身经过剪辑与抽帧，无法复核这一数字；按动图的帧间隔，动图四第 34 帧到动图三第 4 帧约 2 秒（两段动图是否首尾相接无法确定），说明 5 秒不偏短，作为保守值采用。</li><li><strong>速度</strong>：348300 公里 ÷ 5 秒 ≈ 6.97×10⁷ 米每秒（约 0.232 倍光速）；398600 公里 ÷ 5 秒 ≈ 7.97×10⁷ 米每秒（约 0.266 倍光速）。</li><li><strong>质量</strong>：虎力为成年男性体型，取 70～100 公斤（按一般成年人体估计，衡天 10.2 标为推定）。</li><li><strong>动能</strong>：速度已达光速的两成以上，按相对论动能 E = (γ − 1)mc² 计算：</li></ul>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">条件</th><th style="text-align:left">速度</th><th style="text-align:left">70 公斤</th><th style="text-align:left">80 公斤</th><th style="text-align:left">100 公斤</th></tr></thead><tbody><tr><td style="text-align:left">近地点，5 秒</td><td style="text-align:left">0.232 倍光速</td><td style="text-align:left">1.77×10¹⁷ J</td><td style="text-align:left">2.02×10¹⁷ J</td><td style="text-align:left">2.53×10¹⁷ J</td></tr><tr><td style="text-align:left">远地点，5 秒</td><td style="text-align:left">0.266 倍光速</td><td style="text-align:left">2.35×10¹⁷ J</td><td style="text-align:left">2.69×10¹⁷ J</td><td style="text-align:left">3.36×10¹⁷ J</td></tr></tbody></table></div>
+<ul><li><strong>敏感性</strong>：时间取 3 秒时为 5.3×10¹⁷～1.04×10¹⁸ J，取 8 秒时为 6.7×10¹⁶～1.27×10¹⁷ J。逃离地球引力所需能量约每公斤 6.3×10⁷ J，相对可忽略。</li><li><strong>性质</strong>：这只是虎力获得的动能，出拳时的冲击云墙与城市破坏未计入，因此是该拳输出的下限。</li></ul>
+<p><strong>落档</strong>：主值 1.8×10¹⁷～3.4×10¹⁷ J，位于城△（1.46×10¹⁷ J）与城☆（4.18×10¹⁸ J）之间，记<strong>城△（强爆城级）<span class="ev-badge ev-confirmed">〔实〕</span></strong>；放宽到 8 秒时下探到城○（3.03×10¹⁶ J）以上。</p>
+<p><strong>2. 终局火球（存疑，不进主档）</strong></p>
+<p><strong>测量方法</strong>：在动图一第 40 帧（起爆）与第 48 帧（火球成形）中，镜头缩放基本一致。沿地球边缘的大气亮带读取五个点（原帧 480×270 像素坐标：(300, 22)、(350, 40)、(400, 65)、(450, 95)、(478, 113)），拟合出地球轮廓圆，半径约 620～650 像素，圆心在画面左下方外侧。火球在第 48～52 帧的横向宽度约 180～190 像素。考虑到五点只覆盖一段短弧，把半径的下限放宽到 500 像素。</p>
+<figure class="md-figure"><div class="md-figure-frame"><a class="md-figure-link" href="../static/img/characters/yutu/IMG_0744.webp" target="_blank" rel="noopener" title="点击查看原尺寸图片"><img class="md-img" src="../static/img/characters/yutu/IMG_0744.webp" alt="轨道视角起爆点与地球边缘拟合" loading="lazy"></a></div><figcaption class="md-figcaption">轨道视角起爆点与地球边缘拟合</figcaption></figure>
+<figure class="md-figure"><div class="md-figure-frame"><a class="md-figure-link" href="../static/img/characters/yutu/IMG_0745.webp" target="_blank" rel="noopener" title="点击查看原尺寸图片"><img class="md-img" src="../static/img/characters/yutu/IMG_0745.webp" alt="火球宽度测量" loading="lazy"></a></div><figcaption class="md-figcaption">火球宽度测量</figcaption></figure>
+<p><strong>换算</strong>：火球直径 ≈ 火球宽度 ÷ 地球轮廓直径 × 12742 公里。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">地球轮廓半径</th><th style="text-align:left">火球宽 180 像素</th><th style="text-align:left">火球宽 190 像素</th></tr></thead><tbody><tr><td style="text-align:left">650 像素</td><td style="text-align:left">1764 公里</td><td style="text-align:left">1862 公里</td></tr><tr><td style="text-align:left">620 像素</td><td style="text-align:left">1850 公里</td><td style="text-align:left">1952 公里</td></tr><tr><td style="text-align:left">500 像素</td><td style="text-align:left">2294 公里</td><td style="text-align:left">2421 公里</td></tr></tbody></table></div>
+<p>火球直径约 1800～2400 公里，覆盖面积约 2.4×10⁶～4.6×10⁶ 平方公里。原页面把火球局部图叠加在一张地球全图上测得面积约 506 万平方公里（直径约 2540 公里），与本条目的上限接近；但那张全图与动画镜头的透视不同，以画面内的地球边缘作比例尺更一致。镜头离地球较近时，位于边缘内侧的火球离镜头比边缘更近，看起来偏大，所以上述直径偏向上限。</p>
+<p><strong>若计入破坏</strong>：按衡天 2.3 面积对数插值，2.4×10⁶ 平方公里约 3.5×10²² J，4.6×10⁶ 平方公里约 9.4×10²² J；按两人对冲、平均分担计，每人约 1.8×10²²～4.7×10²² J，位于国△（9.41×10²¹ J）与国☆（4.81×10²² J）之间，即<strong>国△（强爆国级）</strong>。</p>
+<p><strong>不计入主档的理由</strong>：</p>
+<ol><li>火球的视觉规模不等于破坏，衡天 0.6、10.4 要求只看实际被摧毁的东西；</li><li>动图二的事后场景是完整的草地、树林与少量碎石，两名当事人都在场且存活，与直径近两千公里的地表毁灭矛盾；</li><li>"两人平均分担"是假设，画面没有交代双方的出力比例。</li></ol>
+<p>因此记为存疑上限，若找到完整 PV 能确认事后场景并非爆心，可再行调整。</p>
+<p><strong>破坏力记录</strong>：城△<span class="ev-badge ev-confirmed">〔实〕</span>（约 1.8×10¹⁷～3.4×10¹⁷ J）；国△（存疑，不进主档）。</p>
+<h3 id="sec-控-整体掌控">控（整体掌控）<a class="heading-anchor" href="#sec-控-整体掌控" data-target-id="sec-控-整体掌控" title="复制本节锚点链接">#</a></h3>
+<p>没有整体掌控某一范围的表现，记<span class="ev-badge ev-missing">〔缺〕</span>。</p>
+<h3 id="sec-域-影响范围-可突破强度上限">域（影响范围 × 可突破强度上限）<a class="heading-anchor" href="#sec-域-影响范围-可突破强度上限" data-target-id="sec-域-影响范围-可突破强度上限" title="复制本节锚点链接">#</a></h3>
+<p>没有特殊能力类表现，记<span class="ev-badge ev-missing">〔缺〕</span>。</p>
+<h3 id="sec-御-防御">御（防御）<a class="heading-anchor" href="#sec-御-防御" data-target-id="sec-御-防御" title="复制本节锚点链接">#</a></h3>
+<ul><li>原页面以"白骨精对御兔的手臂无法划破防，御兔防御＞白骨精的单刀输出＝弱爆星"推出"弱行星"。现有动图五中看不到御兔，也看不到斩击命中何物；"白骨精＝弱爆星"出自另一条目，本条目无法核对；衡天 1.4 要求以对手已确认的破坏力为下限，且须确认确实承受了该攻击。三项都不满足，不采用。</li><li>御兔经历了与虎力的终局对冲，结果是被打回玩偶、未被摧毁。对冲的能量本身属存疑（见上），不能据此定防御。</li><li>虎力以约四分之一光速从月球返回并撞毁城市（动图三第 20～25 帧），画面没有交代这一撞击是否直接命中御兔。</li></ul>
+<p><strong>防御记录</strong>：<span class="ev-badge ev-missing">〔缺〕</span>。</p>
+<h3 id="sec-速-速度">速（速度）<a class="heading-anchor" href="#sec-速-速度" data-target-id="sec-速-速度" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>投送速度</strong>：由击飞距离与时间得出，约 0.23～0.27 倍光速<span class="ev-badge ev-inferred">〔推〕</span>（依赖原页面的 5 秒帧数统计）。</li><li><strong>自身移动与反应</strong>：御兔与返回的虎力继续近身交战（动图三第 45～55 帧），但虎力近战时的速度没有量化，按衡天 1.4 推不出御兔的反应速度，记<span class="ev-badge ev-missing">〔缺〕</span>。</li><li>原页面以"来去各 5 秒"得出的约 7.14 万～8.12 万公里每秒，是虎力被打飞与返回的速度。被打飞的速度可以记为御兔的投送速度；返回的速度属于虎力本人，不计入御兔。</li></ul>
+<h3 id="sec-算-计算层级">算（计算层级）<a class="heading-anchor" href="#sec-算-计算层级" data-target-id="sec-算-计算层级" title="复制本节锚点链接">#</a></h3>
+<p>记<span class="ev-badge ev-missing">〔缺〕</span>。</p>
+<h3 id="sec-性-特性">性（特性）<a class="heading-anchor" href="#sec-性-特性" data-target-id="sec-性-特性" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">特性</th><th style="text-align:left">内容</th><th style="text-align:left">证据状态</th></tr></thead><tbody><tr><td style="text-align:left">变身</td><td style="text-align:left">玩偶与筋肉形态之间切换；游戏中为嫦娥的大招变身形态</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">萝卜强化</td><td style="text-align:left">官方宣传语"吃着萝卜就把人打上月球"</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">败北后复原</td><td style="text-align:left">被击败后变回玩偶，未被摧毁</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr></tbody></table></div>
+<h3 id="sec-层级轴">层级轴<a class="heading-anchor" href="#sec-层级轴" data-target-id="sec-层级轴" title="复制本节锚点链接">#</a></h3>
+<p>不涉及。</p>
+<h2 id="sec-五-综合定级">五、综合定级<a class="heading-anchor" href="#sec-五-综合定级" data-target-id="sec-五-综合定级" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-主档的来源">主档的来源<a class="heading-anchor" href="#sec-主档的来源" data-target-id="sec-主档的来源" title="复制本节锚点链接">#</a></h3>
+<p>按衡天 1.3，主档取破坏力、整体掌控中已确认<span class="ev-badge ev-confirmed">〔实〕</span>或下限<span class="ev-badge ev-lower">〔下〕</span>的最高者。整体掌控为<span class="ev-badge ev-missing">〔缺〕</span>，破坏力的已确认值来自击飞动能，<strong>综合量级为 ⊙城△<span class="ev-badge ev-confirmed">〔实〕</span></strong>；放宽时间假设时的<strong>保底为 ⊙城○～城△<span class="ev-badge ev-confirmed">〔实〕</span></strong>。</p>
+<h3 id="sec-为什么不到爆国或爆行星">为什么不到爆国或爆行星<a class="heading-anchor" href="#sec-为什么不到爆国或爆行星" data-target-id="sec-为什么不到爆国或爆行星" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>爆国（国△）</strong>：只来自终局火球的覆盖面积，火球规模不等于破坏，事后场景与之矛盾，记为存疑上限。</li><li><strong>爆行星（星▽，4.87×10³⁰ J）</strong>：原页面的依据是对白骨精攻击的防御，素材中看不到这一场景，"白骨精＝弱爆星"也无法在本条目核对。此外，衡天 1.4 允许的跨维推定中没有"由防御推出破坏"，即使防御成立，也不能用来抬高破坏力。</li></ul>
+<h3 id="sec-证伪核对">证伪核对<a class="heading-anchor" href="#sec-证伪核对" data-target-id="sec-证伪核对" title="复制本节锚点链接">#</a></h3>
+<p>不涉及"无限"一类宣称。</p>
+<h3 id="sec-结论的风险点">结论的风险点<a class="heading-anchor" href="#sec-结论的风险点" data-target-id="sec-结论的风险点" title="复制本节锚点链接">#</a></h3>
+<ul><li>5 秒是原页面按完整视频统计的数字，动图无法复核；时间每缩短一半，动能约增至四倍，但在 3～8 秒的合理范围内都不出城○～城△。</li><li>虎力的体重按一般成年人体估计。</li><li>火球测量只用了一段短弧拟合地球轮廓，且没有修正透视；该项只影响存疑上限。</li></ul>
+<h2 id="sec-六-横向比较">六、横向比较<a class="heading-anchor" href="#sec-六-横向比较" data-target-id="sec-六-横向比较" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">对象</th><th style="text-align:left">关键证据</th><th style="text-align:left">与御兔的关系</th></tr></thead><tbody><tr><td style="text-align:left">虎力</td><td style="text-align:left">被御兔一拳打上月球后，以约四分之一光速自行返回并撞毁城市；终局对冲后被炸黑倒地</td><td style="text-align:left">大致同档：二人互有攻防，终局两败</td></tr><tr><td style="text-align:left">嫦娥</td><td style="text-align:left">御兔的主人，剧情 PV 的委托人；游戏中以大招变身为御兔形态</td><td style="text-align:left">资料中没有二者的实力比较</td></tr><tr><td style="text-align:left">白骨精</td><td style="text-align:left">原页面称其斩不破御兔手臂</td><td style="text-align:left">素材中无法确认，不比较</td></tr></tbody></table></div>
+<h2 id="sec-七-不采纳的说法">七、不采纳的说法<a class="heading-anchor" href="#sec-七-不采纳的说法" data-target-id="sec-七-不采纳的说法" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-常见误读">常见误读<a class="heading-anchor" href="#sec-常见误读" data-target-id="sec-常见误读" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">说法</th><th style="text-align:left">出处</th><th style="text-align:left">不采纳的理由</th></tr></thead><tbody><tr><td style="text-align:left">御兔的量级为"弱爆星"，防御"弱行星"</td><td style="text-align:left">原定级页面</td><td style="text-align:left">依据的白骨精场景在素材中看不到御兔；对手量级来自其他条目；防御不能推出破坏（衡天 1.4 的允许推定中没有这一项）</td></tr><tr><td style="text-align:left">火球砸出 506 万平方公里的坑，二人平分各 253 万平方公里，"算能量＋后续扩散应该能回到超国"</td><td style="text-align:left">原定级页面</td><td style="text-align:left">画面是火球而不是坑；事后场景没有千公里级毁灭；"应该能"属推测</td></tr><tr><td style="text-align:left">御兔的速度为四分之一光速</td><td style="text-align:left">原定级页面</td><td style="text-align:left">该速度是虎力被打飞与返回的速度；打飞部分可作为御兔的投送速度，返回部分属于虎力</td></tr></tbody></table></div>
+<h3 id="sec-不采用的计算口径">不采用的计算口径<a class="heading-anchor" href="#sec-不采用的计算口径" data-target-id="sec-不采用的计算口径" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">口径</th><th style="text-align:left">不采用的理由及对应条文</th></tr></thead><tbody><tr><td style="text-align:left">把火球局部图叠加在地球全图上量面积</td><td style="text-align:left">两张图透视不同；改以同一画面中的地球边缘作比例尺</td></tr><tr><td style="text-align:left">以火球覆盖面积直接作为破坏面积</td><td style="text-align:left">光效与火球体积不等于能量（衡天 0.6、10.4）</td></tr><tr><td style="text-align:left">由防御值推出破坏力</td><td style="text-align:left">衡天 1.4 允许的跨维推定中没有"由防御推出破坏"；防御本身也只能由已确认的承受推出</td></tr></tbody></table></div>
+<h2 id="sec-八-存疑与作者矛盾">八、存疑与作者矛盾<a class="heading-anchor" href="#sec-八-存疑与作者矛盾" data-target-id="sec-八-存疑与作者矛盾" title="复制本节锚点链接">#</a></h2>
+<ol><li>终局火球与事后场景的规模矛盾：轨道视角下火球直径近两千公里，事后场景却是保存完好的草地与树林。</li><li>动图三第 4～18 帧中月球被画成带兔子脸的样式，背景同时出现带云层的地球大气，属于漫画式演出，不影响"打上月球"这一事件本身。</li><li>剧情 PV 的完整版本未能找到可访问的链接，帧数统计只能沿用原页面。</li></ol>
+<h2 id="sec-九-关键章节索引">九、关键章节索引<a class="heading-anchor" href="#sec-九-关键章节索引" data-target-id="sec-九-关键章节索引" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">素材</th><th style="text-align:left">帧</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">动图四</td><td style="text-align:left">第 26～34 帧</td><td style="text-align:left">御兔出拳，字幕"滚到月球去吧"</td></tr><tr><td style="text-align:left">动图四</td><td style="text-align:left">第 36～48 帧</td><td style="text-align:left">城市俯视，打击点周围的圆形冲击云墙</td></tr><tr><td style="text-align:left">动图四</td><td style="text-align:left">第 55 帧</td><td style="text-align:left">御兔手持萝卜</td></tr><tr><td style="text-align:left">动图三</td><td style="text-align:left">第 4～18 帧</td><td style="text-align:left">虎力出现在月球旁并折返</td></tr><tr><td style="text-align:left">动图三</td><td style="text-align:left">第 20～25 帧</td><td style="text-align:left">虎力返回，城市被撞毁</td></tr><tr><td style="text-align:left">动图三</td><td style="text-align:left">第 45～55 帧</td><td style="text-align:left">虎力与御兔近身交战</td></tr><tr><td style="text-align:left">动图一</td><td style="text-align:left">第 0～38 帧</td><td style="text-align:left">终局对冲</td></tr><tr><td style="text-align:left">动图一</td><td style="text-align:left">第 40～56 帧</td><td style="text-align:left">轨道视角：起爆点与火球</td></tr><tr><td style="text-align:left">动图二</td><td style="text-align:left">全段</td><td style="text-align:left">事后场景："兔兔回来了"，虎力倒地</td></tr><tr><td style="text-align:left">动图五</td><td style="text-align:left">全段</td><td style="text-align:left">持刀角色挥刀，未见御兔</td></tr></tbody></table></div>
+<h2 id="sec-参考资料">参考资料<a class="heading-anchor" href="#sec-参考资料" data-target-id="sec-参考资料" title="复制本节锚点链接">#</a></h2>
+<ul><li><a href="https://wap.gamersky.com/news/Content-1057836.html" target="_blank" rel="noopener">游民星空 · 《非人学园》剧情PV首度放出 都市上演激燃战斗</a></li><li><a href="https://m.ali213.net/news/180608/105809.html" target="_blank" rel="noopener">游侠网 · 《非人学园》6.22 App Store 独家首发</a></li><li><a href="https://www.ifanr.com/app/1055440" target="_blank" rel="noopener">爱范儿 · 《非人学园》试玩</a></li><li><a href="https://www.gameres.com/812925.html" target="_blank" rel="noopener">GameRes · 《非人学园》深度解读</a></li><li><a href="https://www.gamersky.com/handbook/201807/1070026_2.shtml" target="_blank" rel="noopener">游民星空 · 非人学园嫦娥攻略（技能）</a></li><li><a href="https://www.ithome.com/0/861/906.htm" target="_blank" rel="noopener">IT之家 · 《非人学园》停止新内容开发公告</a></li><li><a href="https://baike.zjhengde.com/index/index/detail.html?id=13500" target="_blank" rel="noopener">战力百科 · 御兔（id=13500）</a></li><li>《衡天⊙多维战力量级体系（第四版）》</li></ul>
+              </div>
+            </article>
+          </div>
+
+          <section class="section-block">
+            <div class="section-header">
+              <div>
+                <span class="section-kicker">Tier Anchor</span>
+                <h2 class="section-title">所属主档物理 / 数学基准对照</h2>
+              </div>
+              <a class="btn btn-secondary btn-sm" href="../tier/city-strong.html">
+                进入 ⊙城△ 量级页 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+              </a>
+            </div>
+            <div class="spec-grid">
+              <div class="spec-card">
+                <div class="spec-label">主档代字与序位</div>
+                <div class="spec-val accent mono">⊙ 城△ · 强爆城（#30）</div>
+              </div>
+              <div class="spec-card">
+                <div class="spec-label">能量阈值 / 超限基数</div>
+                <div class="spec-val mono">3,500 万 t TNT ／ 1.4644×10¹⁷ J</div>
+              </div>
+              <div class="spec-card">
+                <div class="spec-label">覆盖尺度与典型参照</div>
+                <div class="spec-val">纽约市 1,214 km²</div>
+              </div>
+              <div class="spec-card">
+                <div class="spec-label">对应《衡天第四版》章节</div>
+                <div class="spec-val">
+                  <a class="table-primary-link" href="../rules.html#sec-2-3-量级表-昆虫-爆恒星">2.3 量级表（昆虫～爆恒星） →</a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="pager-grid">
+            <div class="pager-card disabled">
+                      <span class="pager-dir">← 序列起点</span>
+                      <span class="pager-title">已是当前库内最低量级角色</span>
+                    </div>
+            <div class="pager-card next disabled">
+                      <span class="pager-dir">序列顶点 →</span>
+                      <span class="pager-title">已是当前库内最高量级角色</span>
+                    </div>
+          </div>
+        </div>
+        
+  </main>
+
+  <div class="floating-dock" aria-label="快捷工具">
+    <button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录" aria-label="展开章节目录"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg></button>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
+      <div class="search-modal-head">
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第四版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="../search.html">进入独立搜索页 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第四版基准）</span>
+      </div>
+      <div class="footer-links">
+        <a href="../tiers.html">量级天梯</a>
+        <a href="../characters.html">角色档案</a>
+        <a href="../rules.html">衡天体系全文</a>
+        <a href="../materials.html">材质能量库</a>
+        <a href="../search.html">全站检索</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../static/js/search-index.js"></script>
+  <script src="../static/js/app.js"></script>
+</body>
+</html>
