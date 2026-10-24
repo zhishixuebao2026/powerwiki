@@ -814,20 +814,54 @@
         .map((m) => `<span class="tag-pill">${escapeHTML(m)}</span>`)
         .join("");
 
+      const originLine =
+        escapeHTML(c.series || "未知出处") + (c.realm ? " · " + escapeHTML(c.realm) : "");
+
+      if (c.image_url) {
+        const shape = c.image_shape || "portrait";
+        const mediaLayoutCls =
+          shape === "landscape"
+            ? "has-media media-top"
+            : shape === "square"
+            ? "has-media media-side media-square"
+            : "has-media media-side";
+        const sizeAttrs =
+          c.image_w && c.image_h ? ` width="${Number(c.image_w)}" height="${Number(c.image_h)}"` : "";
+        return `
+        <a class="char-card ${mediaLayoutCls}" href="${resolveUrl("character/" + c.slug + ".html")}">
+          <div class="char-card-media">
+            <img class="char-card-img" src="${escapeHTML(resolveUrl(c.image_url))}" alt="${escapeHTML(c.name)}"${sizeAttrs} loading="lazy">
+          </div>
+          <div class="char-card-body">
+            <div class="char-head">
+              <div class="char-meta">
+                <h3 class="char-name">${escapeHTML(c.name)}</h3>
+                <div class="char-origin">${originLine}</div>
+              </div>
+              <span class="tier-badge gold mono">⊙ ${escapeHTML(t ? t.code : "待定")}</span>
+            </div>
+            <div class="char-tags">
+              <span class="tag-pill accent">${escapeHTML(t ? t.name : "待定")} · ${orderLabel}</span>
+              <span class="tag-pill mono">首字母 ${initialLetter}</span>
+              ${modHtml}
+            </div>
+            <p class="char-summary">${escapeHTML(c.summary || "")}</p>
+            <div class="char-foot">
+              <span class="char-cred">${formatEvidenceBadges(c.credibility || "点击查阅定级详情")}</span>
+              <span class="card-link-hint">查看档案 ${ICONS.arrowUpRight}</span>
+            </div>
+          </div>
+        </a>`;
+      }
+
       return `
         <a class="char-card" href="${resolveUrl("character/" + c.slug + ".html")}">
           <div class="char-head">
             <div class="char-identity">
-              <div class="char-monogram">${
-                c.image_url
-                  ? `<img src="${escapeHTML(resolveUrl(c.image_url))}" alt="${escapeHTML(c.name)}" loading="lazy">`
-                  : escapeHTML(c.name.slice(0, 1))
-              }</div>
+              <div class="char-monogram">${escapeHTML(c.name.slice(0, 1))}</div>
               <div class="char-meta">
                 <h3 class="char-name">${escapeHTML(c.name)}</h3>
-                <div class="char-origin">${escapeHTML(c.series || "未知出处")}${
-        c.realm ? " · " + escapeHTML(c.realm) : ""
-      }</div>
+                <div class="char-origin">${originLine}</div>
               </div>
             </div>
             <span class="tier-badge gold mono">⊙ ${escapeHTML(t ? t.code : "待定")}</span>
@@ -839,7 +873,7 @@
           </div>
           <p class="char-summary">${escapeHTML(c.summary || "")}</p>
           <div class="char-foot">
-            <span class="char-cred">${formatEvidenceBadges(c.credibility || "点击查阅七维证据链")}</span>
+            <span class="char-cred">${formatEvidenceBadges(c.credibility || "点击查阅定级详情")}</span>
             <span class="card-link-hint">查看档案 ${ICONS.arrowUpRight}</span>
           </div>
         </a>`;

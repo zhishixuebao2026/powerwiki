@@ -10,8 +10,9 @@ from __future__ import annotations
 import html
 import json
 import re
+import struct
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
@@ -61,12 +62,105 @@ def format_evidence_html(val: str) -> str:
 # ==============================================================================
 # Custom Zero-Dependency Verbatim Markdown Parser (Preserves Subscripts & Tables)
 # ==============================================================================
+def get_image_dimensions(img_path: Path) -> Optional[Tuple[int, int]]:
+    if not img_path.is_file():
+        return None
+    try:
+        data = img_path.read_bytes()
+    except OSError:
+        return None
+    # PNG
+    if len(data) >= 24 and data[:8] == b"\x89PNG\r\n\x1a\n" and data[12:16] == b"IHDR":
+        w, h = struct.unpack(">II", data[16:24])
+        return (int(w), int(h)) if w > 0 and h > 0 else None
+    # WebP
+    if len(data) >= 30 and data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        chunk = data[12:16]
+        if chunk == b"VP8 " and len(data) >= 30:
+            w, h = struct.unpack("<HH", data[26:30])
+            return (w & 0x3FFF, h & 0x3FFF)
+        if chunk == b"VP8L" and len(data) >= 25:
+            bits = struct.unpack("<I", data[21:25])[0]
+            w = (bits & 0x3FFF) + 1
+            h = ((bits >> 14) & 0x3FFF) + 1
+            return (int(w), int(h))
+        if chunk == b"VP8X" and len(data) >= 30:
+            w = int.from_bytes(data[24:27], "little") + 1
+            h = int.from_bytes(data[27:30], "little") + 1
+            return (int(w), int(h))
+    # JPEG
+    if len(data) >= 4 and data[:2] == b"\xff\xd8":
+        idx = 2
+        n = len(data)
+        sof_markers = {
+            0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7,
+            0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF,
+        }
+        while idx + 4 < n:
+            if data[idx] != 0xFF:
+                idx += 1
+                continue
+            while idx < n and data[idx] == 0xFF:
+                idx += 1
+            if idx >= n:
+                break
+            marker = data[idx]
+            idx += 1
+            if marker in (0xD8, 0xD9) or (0xD0 <= marker <= 0xD7):
+                continue
+            if idx + 2 > n:
+                break
+            seg_len = struct.unpack(">H", data[idx : idx + 2])[0]
+            if seg_len < 2 or idx + seg_len > n:
+                break
+            if marker in sof_markers and idx + 7 <= n:
+                h, w = struct.unpack(">HH", data[idx + 3 : idx + 7])
+                return (int(w), int(h)) if w > 0 and h > 0 else None
+            idx += seg_len
+    return None
+
+
+def classify_image_shape(w: int, h: int) -> str:
+    if w <= 0 or h <= 0:
+        return "portrait"
+    ratio = w / float(h)
+    if ratio > 1.22:
+        return "landscape"
+    if ratio < 0.85:
+        return "portrait"
+    return "square"
+
+
+def strip_character_doc_front_banner(md_text: str) -> str:
+    lines = md_text.splitlines()
+    idx = 0
+    n = len(lines)
+    while idx < n and not lines[idx].strip():
+        idx += 1
+    if idx < n and re.match(r"^#\s+.+$", lines[idx].strip()):
+        idx += 1
+        while idx < n and not lines[idx].strip():
+            idx += 1
+        if idx < n and lines[idx].strip().startswith(">") and "定级" in lines[idx]:
+            while idx < n and lines[idx].strip().startswith(">"):
+                idx += 1
+            while idx < n and not lines[idx].strip():
+                idx += 1
+        return "\n".join(lines[idx:])
+    return md_text
+
+
 class VerbatimMarkdownRenderer:
-    def __init__(self, image_map: Dict[str, str] | None = None) -> None:
+    def __init__(
+        self,
+        image_map: Dict[str, str] | None = None,
+        base_dir: Path | None = None,
+    ) -> None:
         self.toc: List[Dict[str, Any]] = []
         self._slug_counts: Dict[str, int] = {}
         self.sections_for_index: List[Dict[str, str]] = []
         self.image_map: Dict[str, str] = dict(image_map or {})
+        self.base_dir: Path = base_dir or ROOT
 
     def _make_id(self, text: str) -> str:
         clean = re.sub(r"[`*_~]", "", text).strip()
@@ -231,6 +325,12 @@ class VerbatimMarkdownRenderer:
                 resolved_src = self.image_map.get(src_raw, src_raw)
                 if record_toc and alt_raw:
                     cur_sec_buf.append(alt_raw)
+                dim_attr = ""
+                if not re.match(r"^(https?:)?//", resolved_src):
+                    local_img = (self.base_dir / resolved_src).resolve()
+                    dims = get_image_dimensions(local_img)
+                    if dims:
+                        dim_attr = f' width="{dims[0]}" height="{dims[1]}"'
                 cap_html = (
                     f'<figcaption class="md-figcaption">{self.render_inline(alt_raw)}</figcaption>'
                     if alt_raw
@@ -240,7 +340,7 @@ class VerbatimMarkdownRenderer:
                     f'<figure class="md-figure">'
                     f'<div class="md-figure-frame">'
                     f'<a class="md-figure-link" href="{esc(resolved_src)}" target="_blank" rel="noopener" title="点击查看原尺寸图片">'
-                    f'<img class="md-img" src="{esc(resolved_src)}" alt="{esc(alt_raw)}" loading="lazy">'
+                    f'<img class="md-img" src="{esc(resolved_src)}" alt="{esc(alt_raw)}"{dim_attr} loading="lazy">'
                     f"</a>"
                     f"</div>"
                     f"{cap_html}"
@@ -546,18 +646,53 @@ def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, A
     initial = esc((c.get("initial") or "#").upper())
     mod_html = "".join(f'<span class="tag-pill">{esc(m)}</span>' for m in (c.get("modifiers") or []))
     img_src = resolve_rel_asset(c.get("image_url", ""), href_prefix)
-    monogram_inner = (
-        f'<img src="{esc(img_src)}" alt="{esc(c["name"])}" loading="lazy">'
-        if img_src
-        else esc(c["name"][:1])
-    )
     origin_text = esc(c.get("series") or "未知出处") + (f" · {esc(c['realm'])}" if c.get("realm") else "")
+
+    if img_src:
+        shape = c.get("image_shape") or "portrait"
+        media_cls = (
+            "has-media media-top"
+            if shape == "landscape"
+            else "has-media media-side media-square"
+            if shape == "square"
+            else "has-media media-side"
+        )
+        size_attrs = (
+            f' width="{int(c["image_w"])}" height="{int(c["image_h"])}"'
+            if c.get("image_w") and c.get("image_h")
+            else ""
+        )
+        return f"""
+    <a class="char-card {media_cls}" href="{href_prefix}character/{esc(c['slug'])}.html">
+      <div class="char-card-media">
+        <img class="char-card-img" src="{esc(img_src)}" alt="{esc(c['name'])}"{size_attrs} loading="lazy">
+      </div>
+      <div class="char-card-body">
+        <div class="char-head">
+          <div class="char-meta">
+            <h3 class="char-name">{esc(c['name'])}</h3>
+            <div class="char-origin">{origin_text}</div>
+          </div>
+          <span class="tier-badge gold mono">⊙ {esc(t_code)}</span>
+        </div>
+        <div class="char-tags">
+          <span class="tag-pill accent">{esc(t_name)} · {t_order}</span>
+          <span class="tag-pill mono">首字母 {initial}</span>
+          {mod_html}
+        </div>
+        <p class="char-summary">{esc(c.get('summary') or '')}</p>
+        <div class="char-foot">
+          <span class="char-cred">{format_evidence_html(c.get('credibility') or '点击查阅定级详情')}</span>
+          <span class="card-link-hint">查看档案 {SVGS["arrow_up_right"]}</span>
+        </div>
+      </div>
+    </a>"""
 
     return f"""
     <a class="char-card" href="{href_prefix}character/{esc(c['slug'])}.html">
       <div class="char-head">
         <div class="char-identity">
-          <div class="char-monogram">{monogram_inner}</div>
+          <div class="char-monogram">{esc(c["name"][:1])}</div>
           <div class="char-meta">
             <h3 class="char-name">{esc(c['name'])}</h3>
             <div class="char-origin">{origin_text}</div>
@@ -572,7 +707,7 @@ def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, A
       </div>
       <p class="char-summary">{esc(c.get('summary') or '')}</p>
       <div class="char-foot">
-        <span class="char-cred">{format_evidence_html(c.get('credibility') or '点击查阅七维证据链')}</span>
+        <span class="char-cred">{format_evidence_html(c.get('credibility') or '点击查阅定级详情')}</span>
         <span class="card-link-hint">查看档案 {SVGS["arrow_up_right"]}</span>
       </div>
     </a>"""
@@ -593,12 +728,12 @@ def build_home_page(
     total_lines = rules_lines + materials_lines
 
     horizon_nodes = [
-        ("虫 → 星☆", "个体与行星阶", "5×10⁻⁵ ～ 10³⁶ J", "var(--dom-terrestrial)", "tiers.html?seg=terrestrial"),
-        ("巨▽ → 恒☆", "巨行星至恒星阶", "10³⁶ ～ 10⁴⁶ J", "var(--dom-stellar)", "tiers.html?seg=stellar"),
-        ("渡A → 渡B", "星际过渡带", "恒星系至星团衔接", "var(--dom-transition)", "tiers.html?seg=transition"),
-        ("系▽ → 维·∞", "恒星系至多元高维", "10⁴⁵ J ～ ∞-D", "var(--dom-cosmic)", "tiers.html?seg=cosmic"),
-        ("f_ω → 天基", "广义无限层级", "快速增长层级 FGH", "var(--dom-fgh)", "tiers.html?seg=fgh"),
-        ("外·门 → 天·最", "论外与论天大基数", "ℵ₀ ～ 莱因哈特/贝克莱", "var(--dom-beyond)", "tiers.html?seg=beyond"),
+        ("虫 → 表☆", "个体至行星地表阶", "5×10⁻⁵ ～ 10²⁹ J", "var(--dom-terrestrial)", "tiers.html?seg=terrestrial"),
+        ("星▽ → 恒☆", "行星至恒星阶", "10³⁰ ～ 10⁴⁴ J", "var(--dom-stellar)", "tiers.html?seg=stellar"),
+        ("过渡A / 过渡B", "星际过渡带", "恒星系至星团衔接", "var(--dom-transition)", "tiers.html?seg=transition"),
+        ("系▽ → 宇☆", "恒星系至宇宙阶", "40 AU ～ 超宇宙", "var(--dom-cosmic)", "tiers.html?seg=cosmic"),
+        ("广·塔 → 广·顶", "广义无限阶", "快速增长层级 FGH", "var(--dom-fgh)", "tiers.html?seg=fgh"),
+        ("外·门 → 天·最", "论外与论天阶", "ℵ₀ ～ 莱因哈特/贝克莱", "var(--dom-beyond)", "tiers.html?seg=beyond"),
     ]
     horizon_html = "".join(
         f"""
@@ -1059,7 +1194,7 @@ def build_tier_detail_pages(
                   <div class="char-tags">
                     <span class="tier-badge gold mono">⊙ {esc(t['code'])}</span>
                     <span class="count-badge mono">{order_badge}</span>
-                    <span class="tag-pill">{esc(g['title'])}</span>
+                    <span class="tag-pill">{esc(g.get('short_title') or g['title'])}</span>
                   </div>
                   <h1 class="page-title">{esc(t['name'])} · {esc(t['family'])}系</h1>
                   <p class="page-desc">{esc(t.get('notes', ''))}</p>
@@ -1275,73 +1410,89 @@ def build_character_detail_pages(
         full_writing = c.get("full_writing") or (
             f"综合量级：⊙{t['code']}——{t['name']}（{t['scale']}，能量/结构基准 {t['energy']}）。"
         )
+        group_badge_label = g.get("short_title") or g["title"]
 
-        avatar_src = resolve_rel_asset(c.get("image_url", ""), "../")
-        monogram_inner = (
-            f'<img src="{esc(avatar_src)}" alt="{esc(c["name"])}">'
-            if avatar_src
-            else esc(c["name"][:1])
-        )
-
-        submeta_parts = [f"出处：{esc(c.get('series') or '未标注')}", f"拼音首字母：{initial}"]
+        submeta_parts: List[str] = []
         if c.get("realm"):
             submeta_parts.append(f"形态：{esc(c['realm'])}")
         if c.get("alias"):
             submeta_parts.append(f"别称：{esc(c['alias'])}")
         if c.get("doc_date"):
-            submeta_parts.append(f"定级版本：{esc(c['doc_date'])}")
+            submeta_parts.append(f"定级日期：{esc(c['doc_date'])}")
+        if not submeta_parts:
+            submeta_parts.append(f"出处：{esc(c.get('series') or '未标注')}")
         submeta_html = "<span>·</span>".join(f"<span>{p}</span>" for p in submeta_parts)
 
-        portrait_src = resolve_rel_asset(c.get("portrait_url", ""), "../")
-        if portrait_src:
-            portrait_caption = esc(c.get("portrait_caption") or f"{c['name']} 官方角色图")
-            dossier_body_html = f"""
-            <div class="dossier-body has-portrait">
-              <div class="dossier-main-col">
-                <div class="dossier-top">
-                  <div class="dossier-title-block">
-                    <div class="char-monogram lg">{monogram_inner}</div>
-                    <div>
-                      <h1 class="page-title">{esc(c['name'])}</h1>
-                      <div class="dossier-submeta">{submeta_html}</div>
-                    </div>
-                  </div>
+        floor_val_html = format_evidence_html(c.get("floor_tier") or t["energy"])
+        ceiling_val_html = format_evidence_html(c.get("ceiling_note") or t["scale"])
+        basis_val_html = format_evidence_html(
+            c.get("core_basis") or c.get("credibility") or f"依据《衡天⊙ 第四版》{t['name']}标准评定"
+        )
+        floor_label = "保底量级" if c.get("floor_tier") else "主档能量带"
+        ceiling_label = "上限边界与反证" if c.get("ceiling_note") else "主档覆盖尺度"
 
-                  <div class="dossier-seal-col">
-                    <a class="tier-seal-link mono" href="../tier/{esc(t['slug'])}.html" title="查看所属主档规格页">
-                      <span>⊙ {esc(t['code'])}</span>
-                      <span>{esc(t['name'])}</span>
-                      <span>{t_order_str}</span>
-                      {SVGS["arrow_up_right"]}
-                    </a>
-                    <div class="char-tags">
-                      <span class="tag-pill accent">{esc(g['title'])}</span>
-                      {mod_chips_html}
-                    </div>
-                  </div>
+        portrait_src = resolve_rel_asset(c.get("portrait_url") or c.get("image_url") or "", "../")
+        if portrait_src:
+            portrait_caption = esc(c.get("portrait_caption") or f"{c['name']} 角色立绘")
+            p_shape = c.get("portrait_shape") or c.get("image_shape") or "portrait"
+            body_layout_cls = "has-landscape" if p_shape == "landscape" else "has-portrait"
+            pw = c.get("portrait_w") or c.get("image_w")
+            ph = c.get("portrait_h") or c.get("image_h")
+            p_dim_attrs = f' width="{int(pw)}" height="{int(ph)}"' if pw and ph else ""
+            dossier_body_html = f"""
+            <div class="dossier-body {body_layout_cls}">
+              <div class="dossier-main-col">
+                <div class="char-tags">
+                  <span class="tag-pill accent">{esc(group_badge_label)}</span>
+                  <span class="tag-pill">{esc(c.get('series') or '未标注出处')}</span>
+                  <span class="tag-pill mono">首字母 {initial}</span>
+                  {mod_chips_html}
+                </div>
+
+                <div>
+                  <h1 class="page-title">{esc(c['name'])}</h1>
+                  <div class="dossier-submeta">{submeta_html}</div>
                 </div>
 
                 <p class="page-desc">{esc(c.get('summary') or '')}</p>
 
-                <div class="full-writing-box">
-                  <div class="box-kicker">《衡天⊙ 第四版》1.5 正式完整书写摘要</div>
-                  <div>{format_evidence_html(full_writing)}</div>
-                  {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
+                <div class="dossier-kpi-grid">
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">综合主档定级</div>
+                    <div class="kpi-value">
+                      <a class="kpi-tier-link mono" href="../tier/{esc(t['slug'])}.html" title="查看所属主档规格页">
+                        <span>⊙ {esc(t['code'])} · {esc(t['name'])}（{t_order_str}）</span>
+                        {SVGS["arrow_up_right"]}
+                      </a>
+                    </div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">{floor_label}</div>
+                    <div class="kpi-value">{floor_val_html}</div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">{ceiling_label}</div>
+                    <div class="kpi-value">{ceiling_val_html}</div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">主档核心依据</div>
+                    <div class="kpi-value">{basis_val_html}</div>
+                  </div>
                 </div>
 
                 <div class="dossier-actions-row">
                   <a class="btn btn-secondary btn-sm" href="../tier/{esc(t['slug'])}.html">
-                    所属主档：⊙{esc(t['code'])} {esc(t['name'])}（{t_order_str}） {SVGS["arrow_up_right"]}
+                    进入 ⊙{esc(t['code'])} {esc(t['name'])}规格页 {SVGS["arrow_up_right"]}
                   </a>
                   <a class="btn btn-ghost btn-sm" href="{rule_href}">
-                    对照《衡天第四版》{esc(rule_sec_title or '基准条文')} →
+                    对照《衡天第四版》标尺条文 →
                   </a>
                 </div>
               </div>
 
               <aside class="char-portrait-stage" aria-label="角色官方立绘">
                 <div class="char-portrait-canvas">
-                  <img class="char-portrait-img" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）官方立绘">
+                  <img class="char-portrait-img" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）官方立绘"{p_dim_attrs}>
                 </div>
                 <div class="char-portrait-caption">{portrait_caption}</div>
               </aside>
@@ -1351,7 +1502,7 @@ def build_character_detail_pages(
             <div class="dossier-body">
               <div class="dossier-top">
                 <div class="dossier-title-block">
-                  <div class="char-monogram lg">{monogram_inner}</div>
+                  <div class="char-monogram lg">{esc(c["name"][:1])}</div>
                   <div>
                     <h1 class="page-title">{esc(c['name'])}</h1>
                     <div class="dossier-submeta">{submeta_html}</div>
@@ -1366,7 +1517,7 @@ def build_character_detail_pages(
                     {SVGS["arrow_up_right"]}
                   </a>
                   <div class="char-tags">
-                    <span class="tag-pill accent">{esc(g['title'])}</span>
+                    <span class="tag-pill accent">{esc(group_badge_label)}</span>
                     {mod_chips_html}
                   </div>
                 </div>
@@ -1375,7 +1526,7 @@ def build_character_detail_pages(
               <p class="page-desc">{esc(c.get('summary') or '')}</p>
 
               <div class="full-writing-box">
-                <div class="box-kicker">《衡天⊙ 第四版》1.5 正式完整书写（首次出现展开全称、标准与能量）</div>
+                <div class="box-kicker">正式完整书写摘要</div>
                 <div>{format_evidence_html(full_writing)}</div>
                 {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
               </div>
@@ -1387,11 +1538,9 @@ def build_character_detail_pages(
         if doc_rel_path and (ROOT / doc_rel_path).exists():
             has_full_doc = True
             raw_doc_md = (ROOT / doc_rel_path).read_text(encoding="utf-8")
-            doc_filename = Path(doc_rel_path).name
-            doc_renderer = VerbatimMarkdownRenderer(image_map=c.get("image_map"))
-            rendered_doc_html = doc_renderer.render(raw_doc_md)
-            doc_lines = len(raw_doc_md.splitlines())
-            doc_chars = len(raw_doc_md)
+            body_doc_md = strip_character_doc_front_banner(raw_doc_md)
+            doc_renderer = VerbatimMarkdownRenderer(image_map=c.get("image_map"), base_dir=CHAR_OUT_DIR)
+            rendered_doc_html = doc_renderer.render(body_doc_md)
             toc_links_html = "".join(
                 f'<a class="toc-item toc-lvl-{item["level"]}" href="#{esc(item["id"])}">{esc(item["title"])}</a>'
                 for item in doc_renderer.toc
@@ -1403,7 +1552,7 @@ def build_character_detail_pages(
                         "type": "char",
                         "code": f"{c.get('initial', '')} ⊙{t['code']}",
                         "title": f"{c['name']} · {sec['title']}",
-                        "badge": f"角色原文 · ⊙{t['code']}",
+                        "badge": f"角色档案 · ⊙{t['code']}",
                         "pinyin": c.get("pinyin", ""),
                         "text": clean_txt,
                         "url": f"character/{c['slug']}.html#{sec['id']}",
@@ -1415,10 +1564,10 @@ def build_character_detail_pages(
             <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
               <div class="toc-head">
                 <div class="toc-head-row">
-                  <span>定级全文目录</span>
+                  <span>档案章节目录</span>
                   <span class="mono">{len(doc_renderer.toc)} 节</span>
                 </div>
-                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选条目章节…" autocomplete="off">
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
               </div>
               <nav class="toc-list" id="toc-nav">
                 {toc_links_html}
@@ -1428,11 +1577,9 @@ def build_character_detail_pages(
             <article class="doc-panel">
               <div class="doc-toolbar">
                 <div class="doc-source-info">
-                  <span>源文件：<code class="mono">{esc(doc_filename)}</code></span>
+                  <span>定级档案全文</span>
                   <span>·</span>
-                  <span class="mono">{doc_lines:,} 行 / {doc_chars:,} 字</span>
-                  <span>·</span>
-                  <span class="ev-badge ev-confirmed">100% 完整原文无删减</span>
+                  <span>依据《衡天⊙ 多维战力量级体系（第四版）》</span>
                 </div>
                 <div class="doc-tools">
                   <div class="doc-find-box">
@@ -1509,30 +1656,10 @@ def build_character_detail_pages(
                     </div>"""
         )
 
-        body = f"""
-        <div class="container detail-stack">
-          <div class="subpage-bar">
-            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
-              {SVGS["arrow_left"]} <span class="js-back-label">返回角色档案库</span>
-            </button>
-            <nav class="breadcrumbs" aria-label="面包屑">
-              <a href="../index.html">首页</a>
-              <span>/</span>
-              <a href="../characters.html">角色分类</a>
-              <span>/</span>
-              <span>{esc(c['name'])}</span>
-            </nav>
-          </div>
-
-          <section class="dossier-header">
-            <div class="page-header-art" aria-hidden="true">
-              <img class="page-header-img" src="../static/img/character-chronicle.jpg" alt="">
-            </div>
-            {dossier_body_html}
-          </section>
-
-          {center_content_html}
-
+        tier_anchor_section = (
+            ""
+            if has_full_doc
+            else f"""
           <section class="section-block">
             <div class="section-header">
               <div>
@@ -1563,7 +1690,33 @@ def build_character_detail_pages(
                 </div>
               </div>
             </div>
+          </section>"""
+        )
+
+        body = f"""
+        <div class="container detail-stack">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              {SVGS["arrow_left"]} <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>{esc(c['name'])}</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img" src="../static/img/character-chronicle.jpg" alt="">
+            </div>
+            {dossier_body_html}
           </section>
+
+          {center_content_html}
+          {tier_anchor_section}
 
           <div class="pager-grid">
             {prev_html}
@@ -1850,10 +2003,26 @@ def build_search_index_bundle(
     }
 
     return (
-        "/* Auto-generated by build_site.py v6.2 — DO NOT EDIT MANUALLY */\n"
+        "/* Auto-generated by build_site.py v6.3 — DO NOT EDIT MANUALLY */\n"
         f"window.__POWERWIKI_DATA__ = {json.dumps(client_data, ensure_ascii=False, separators=(',', ':'))};\n"
         f"window.__POWERWIKI_INDEX__ = {json.dumps(index_entries, ensure_ascii=False, separators=(',', ':'))};\n"
     )
+
+
+def enrich_character_media_dimensions(all_chars: List[Dict[str, Any]]) -> None:
+    for c in all_chars:
+        img_rel = c.get("image_url") or ""
+        if img_rel and not re.match(r"^(https?:)?//", img_rel):
+            dims = get_image_dimensions((ROOT / img_rel.lstrip("./")).resolve())
+            if dims:
+                c["image_w"], c["image_h"] = dims[0], dims[1]
+                c["image_shape"] = classify_image_shape(dims[0], dims[1])
+        port_rel = c.get("portrait_url") or img_rel
+        if port_rel and not re.match(r"^(https?:)?//", port_rel):
+            p_dims = get_image_dimensions((ROOT / port_rel.lstrip("./")).resolve())
+            if p_dims:
+                c["portrait_w"], c["portrait_h"] = p_dims[0], p_dims[1]
+                c["portrait_shape"] = classify_image_shape(p_dims[0], p_dims[1])
 
 
 def main() -> None:
@@ -1866,6 +2035,7 @@ def main() -> None:
     for entry in chars_payload.get("characters", []):
         by_slug[entry["slug"]] = entry
     all_chars = list(by_slug.values())
+    enrich_character_media_dimensions(all_chars)
 
     rules_md = RULES_MD_PATH.read_text(encoding="utf-8")
     materials_md = MATERIALS_MD_PATH.read_text(encoding="utf-8")
@@ -1926,7 +2096,7 @@ def main() -> None:
     (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
 
     print(
-        f"[OK] PowerWiki v6.2 built successfully:\n"
+        f"[OK] PowerWiki v6.3 built successfully:\n"
         f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
         f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
         f"  - Standalone Character pages: {len(all_chars)} files in character/*.html ({len(char_doc_sections)} full-text sections indexed)\n"
