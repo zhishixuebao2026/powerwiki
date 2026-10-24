@@ -22,7 +22,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <div class="header-left">
-        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
         </button>
         <a class="brand-link" href="./index.html">
@@ -33,10 +33,11 @@
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
         <a class="nav-link" href="./index.html">首页</a>
-        <a class="nav-link active" href="./tiers.html">量级</a>
-        <a class="nav-link" href="./characters.html">角色</a>
-        <a class="nav-link" href="./rules.html">体系全文</a>
-        <a class="nav-link" href="./materials.html">材质库</a>
+        <a class="nav-link nav-cat active" href="./tiers.html">量级分类</a>
+        <a class="nav-link nav-cat" href="./characters.html">角色档案</a>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <a class="nav-link nav-doc" href="./rules.html">体系原文</a>
+        <a class="nav-link nav-doc" href="./materials.html">材质原文</a>
         <a class="nav-link" href="./search.html">搜索</a>
       </nav>
 
@@ -54,36 +55,98 @@
   </header>
 
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="./index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-name">衡天 PowerWiki</span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">核心分类大库</div>
+        <a class="drawer-card-link active" href="./tiers.html"><span class="drawer-card-title"><span>量级分类大库</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档从小到大 · 物理焦耳与集合论标尺</span></a>
+        <a class="drawer-card-link" href="./characters.html"><span class="drawer-card-title"><span>角色战力档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">首字母 A–Z / 量级从小到大双模式排序</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">基准规则原文（全文无删减）</div>
+        <a class="drawer-doc-link" href="./rules.html"><span>卷一 · 衡天量级体系（第四版）</span><span>→</span></a>
+        <a class="drawer-doc-link" href="./materials.html"><span>卷二 · 材质与破坏能量数据库</span><span>→</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        <a class="drawer-doc-link" href="./index.html"><span>返回首页总览</span><span>→</span></a>
+        <a class="drawer-doc-link" href="./search.html"><span>全站即时检索</span><span>→</span></a>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {
+        if (window.__PW_SYNC_LOCK__) { window.__PW_SYNC_LOCK__(); return; }
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }
+      function closeAll() {
+        if (window.__PW_CLOSE_ALL__) { window.__PW_CLOSE_ALL__(); return; }
+        drawer.classList.remove('open');
+        sync();
+      }
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      });
+      if (closeBtn) { closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }
+      if (backdrop) { backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {
+        links[j].addEventListener('click', function() { drawer.classList.remove('open'); sync(); });
+      }
+      window.addEventListener('pageshow', function() { drawer.classList.remove('open'); sync(); });
+    })();
+  </script>
 
   <main>
     
     <div class="container">
-      <div class="page-header">
-        <div class="page-header-art" aria-hidden="true">
-          <img class="page-header-img" src="static/img/monolith-scale.jpg" alt="">
+      <section class="category-hub" aria-label="量级分类大库总览">
+        <div class="category-hub-art" aria-hidden="true">
+          <img class="category-hub-img" src="static/img/monolith-scale.jpg" alt="">
         </div>
-        <div class="page-header-body">
-          <div class="nav-crumb-row">
-            <button type="button" class="back-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页">
-              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回首页</span>
-            </button>
-            <nav class="breadcrumbs" aria-label="面包屑">
-              <a href="index.html">首页</a>
-              <span>/</span>
-              <span>量级分类</span>
-            </nav>
-          </div>
-          <div class="page-title-row">
-            <div>
-              <h1 class="page-title">量级分类天梯（从小到大）</h1>
-              <p class="page-desc">
-                依据《衡天⊙ 多维战力量级体系（第四版）》严格按<strong>从小到大（#01 昆虫级 → #97 论天最上）</strong>单向递增排列。修饰符遵循 <code>▽ 弱</code> &lt; <code>○ 标准</code> &lt; <code>△ 强</code> &lt; <code>◆ 极</code> &lt; <code>☆ 超</code>。
-              </p>
-            </div>
+        <div class="category-hub-body">
+          <div class="hub-kicker-row">
+            <span class="hub-kicker-badge mono">⊙ CORE CATEGORY 01 · 量级分类大库</span>
             <span class="count-badge mono" id="tier-result-count">98 / 98 档</span>
           </div>
+          <div>
+            <h1 class="page-title">量级分类天梯（从小到大）</h1>
+            <p class="page-desc">
+              全站核心量级目录：严格按<strong>从小到大（#01 昆虫级 → #97 论天最上）</strong>单向递增排列。点击下方任一跨度格可快速筛选区间，点击具体档位卡片进入独立规格页。修饰符遵循 <code>▽ 弱</code> &lt; <code>○ 标准</code> &lt; <code>△ 强</code> &lt; <code>◆ 极</code> &lt; <code>☆ 超</code>。
+            </p>
+          </div>
+          <div class="atlas-spectrum" role="group" aria-label="六大量级跨度快速定位">
+            <button type="button" class="atlas-cell" data-tier-seg="terrestrial" style="--cell-color:var(--dom-terrestrial)"><span class="atlas-cell-code mono">虫 → 表☆</span><span class="atlas-cell-name">个体～地表阶</span><span class="atlas-cell-meta mono">41 档 · 5×10⁻⁵～10²⁹ J</span></button><button type="button" class="atlas-cell" data-tier-seg="stellar" style="--cell-color:var(--dom-stellar)"><span class="atlas-cell-code mono">星▽ → 恒☆</span><span class="atlas-cell-name">行星～恒星阶</span><span class="atlas-cell-meta mono">12 档 · 10³⁰～10⁴⁴ J</span></button><button type="button" class="atlas-cell" data-tier-seg="transition" style="--cell-color:var(--dom-transition)"><span class="atlas-cell-code mono">衔接与过渡</span><span class="atlas-cell-name">街城 / 星际过渡</span><span class="atlas-cell-meta mono">4 档 · 跨尺度衔接</span></button><button type="button" class="atlas-cell" data-tier-seg="cosmic" style="--cell-color:var(--dom-cosmic)"><span class="atlas-cell-code mono">系▽ → 宇☆</span><span class="atlas-cell-name">恒星系～宇宙阶</span><span class="atlas-cell-meta mono">25 档 · 40 AU～10⁹³ J</span></button><button type="button" class="atlas-cell" data-tier-seg="fgh" style="--cell-color:var(--dom-fgh)"><span class="atlas-cell-code mono">广·塔 → 广·顶</span><span class="atlas-cell-name">广义无限阶</span><span class="atlas-cell-meta mono">7 档 · FGH 增长层级</span></button><button type="button" class="atlas-cell" data-tier-seg="beyond" style="--cell-color:var(--dom-beyond)"><span class="atlas-cell-code mono">外·门 → 天·最</span><span class="atlas-cell-name">论外与论天阶</span><span class="atlas-cell-meta mono">8 档 · ℵ₀～大基数</span></button>
+          </div>
         </div>
-      </div>
+      </section>
 
       <div class="control-panel">
         <div class="control-row">
@@ -97,7 +160,7 @@
           </div>
 
           <div class="search-field">
-            <input type="search" class="search-input" id="tier-filter-input" placeholder="筛选代字、名称、能量或参照物（如 宇◆、2.24×10³²）…" autocomplete="off">
+            <input type="search" class="search-input" id="tier-filter-input" placeholder="筛选代字、名称、能量或参照物（如 宇△、城△、2.24×10³²）…" autocomplete="off">
             <button type="button" class="clear-input-btn" id="tier-filter-clear">清空</button>
           </div>
         </div>
@@ -105,10 +168,10 @@
         <div class="control-row divider-top">
           <div class="chip-rail" role="group" aria-label="量级区间筛选">
             <button type="button" class="chip-btn active" data-tier-seg="all">全量级 (98)</button>
-            <button type="button" class="chip-btn" data-tier-seg="terrestrial">个体～行星阶 (41)</button>
-            <button type="button" class="chip-btn" data-tier-seg="stellar">巨行星～恒星阶 (12)</button>
-            <button type="button" class="chip-btn" data-tier-seg="transition">星际过渡带 (4)</button>
-            <button type="button" class="chip-btn" data-tier-seg="cosmic">恒星系～多元高维 (25)</button>
+            <button type="button" class="chip-btn" data-tier-seg="terrestrial">个体～地表阶 (41)</button>
+            <button type="button" class="chip-btn" data-tier-seg="stellar">行星～恒星阶 (12)</button>
+            <button type="button" class="chip-btn" data-tier-seg="transition">衔接与过渡 (4)</button>
+            <button type="button" class="chip-btn" data-tier-seg="cosmic">恒星系～宇宙阶 (25)</button>
             <button type="button" class="chip-btn" data-tier-seg="fgh">广义无限 FGH (7)</button>
             <button type="button" class="chip-btn" data-tier-seg="beyond">论外～论天 (8)</button>
             <button type="button" class="chip-btn" data-tier-seg="unranked">待定 (1)</button>
@@ -1433,7 +1496,7 @@
                 <a class="tier-card" data-domain="cosmic" href="tier/universe-strong.html">
                   <div class="tier-card-top">
                     <span class="tier-badge mono">⊙ 宇△</span>
-                    <span class="tier-top-right"><span class="tier-seq mono">#80</span></span>
+                    <span class="tier-top-right"><span class="tag-pill accent">1 角色</span><span class="tier-seq mono">#80</span></span>
                   </div>
                   <div class="tier-name-row">
                     <h3 class="tier-name">强宇宙</h3>

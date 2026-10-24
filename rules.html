@@ -22,7 +22,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <div class="header-left">
-        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
         </button>
         <a class="brand-link" href="./index.html">
@@ -33,10 +33,11 @@
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
         <a class="nav-link" href="./index.html">首页</a>
-        <a class="nav-link" href="./tiers.html">量级</a>
-        <a class="nav-link" href="./characters.html">角色</a>
-        <a class="nav-link active" href="./rules.html">体系全文</a>
-        <a class="nav-link" href="./materials.html">材质库</a>
+        <a class="nav-link nav-cat" href="./tiers.html">量级分类</a>
+        <a class="nav-link nav-cat" href="./characters.html">角色档案</a>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <a class="nav-link nav-doc active" href="./rules.html">体系原文</a>
+        <a class="nav-link nav-doc" href="./materials.html">材质原文</a>
         <a class="nav-link" href="./search.html">搜索</a>
       </nav>
 
@@ -54,43 +55,107 @@
   </header>
 
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="./index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-name">衡天 PowerWiki</span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">核心分类大库</div>
+        <a class="drawer-card-link" href="./tiers.html"><span class="drawer-card-title"><span>量级分类大库</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档从小到大 · 物理焦耳与集合论标尺</span></a>
+        <a class="drawer-card-link" href="./characters.html"><span class="drawer-card-title"><span>角色战力档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">首字母 A–Z / 量级从小到大双模式排序</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">基准规则原文（全文无删减）</div>
+        <a class="drawer-doc-link active" href="./rules.html"><span>卷一 · 衡天量级体系（第四版）</span><span>→</span></a>
+        <a class="drawer-doc-link" href="./materials.html"><span>卷二 · 材质与破坏能量数据库</span><span>→</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        <a class="drawer-doc-link" href="./index.html"><span>返回首页总览</span><span>→</span></a>
+        <a class="drawer-doc-link" href="./search.html"><span>全站即时检索</span><span>→</span></a>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {
+        if (window.__PW_SYNC_LOCK__) { window.__PW_SYNC_LOCK__(); return; }
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }
+      function closeAll() {
+        if (window.__PW_CLOSE_ALL__) { window.__PW_CLOSE_ALL__(); return; }
+        drawer.classList.remove('open');
+        sync();
+      }
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      });
+      if (closeBtn) { closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }
+      if (backdrop) { backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {
+        links[j].addEventListener('click', function() { drawer.classList.remove('open'); sync(); });
+      }
+      window.addEventListener('pageshow', function() { drawer.classList.remove('open'); sync(); });
+    })();
+  </script>
 
   <main>
     
     <div class="container">
-      <div class="page-header">
-        <div class="page-header-art" aria-hidden="true">
-          <img class="page-header-img" src="static/img/cosmos-eclipse.jpg" alt="">
+      <header class="codex-header" aria-label="基准原文典籍页头">
+        <div class="codex-tabs" role="tablist" aria-label="基准原文双卷切换">
+          <a class="codex-tab active" href="rules.html">卷一：《衡天⊙ 多维战力量级体系（第四版）》原文</a>
+          <a class="codex-tab" href="materials.html">卷二：《材质与破坏能量数据库（第二版）》原文</a>
         </div>
-        <div class="page-header-body">
-          <div class="nav-crumb-row">
-            <button type="button" class="back-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页">
-              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回首页</span>
-            </button>
-            <nav class="breadcrumbs" aria-label="面包屑">
-              <a href="index.html">首页</a>
-              <span>/</span>
-              <span>衡天⊙ 多维战力量级体系（第四版·全文）</span>
-            </nav>
+
+        <div class="codex-folio">
+          <div class="codex-folio-kicker">
+            <span class="codex-folio-badge mono">CODEX VOL. I · 基准规则原文</span>
+            <span class="mono">全文无删减收录 · 1,474 行 · 47,334 字 · 129 节</span>
           </div>
-          <div class="page-title-row">
+          <h1 class="codex-folio-title">衡天⊙ 多维战力量级体系（第四版·全文）</h1>
+          <p class="codex-folio-desc">完整收录总则、常见违规与归因审查、1.5 完整书写规范、全量级定义、论外基数序数双轴、10.8 标注图与动图处理及超长篇自行通读流程。</p>
+          <div class="codex-folio-meta">
+            <span>定级标尺参考文本（区别于动态分类目录，完整保留 Markdown 原貌与表格数据）</span>
             <div>
-              <h1 class="page-title">衡天⊙ 多维战力量级体系（第四版·全文）</h1>
-              <p class="page-desc">完整收录总则、常见违规与归因审查、1.5 完整书写规范、全量级定义、论外基数序数双轴、10.8 标注图与动图处理及超长篇自行通读流程。</p>
-            </div>
-            <div class="header-side-actions">
-              <span class="count-badge mono">全文无删减 · 1,474 行 · 47,334 字</span>
-              <a class="btn btn-secondary btn-sm" href="materials.html">材质与破坏能量数据库 →</a>
+              <a class="table-primary-link" href="tiers.html">前往「量级分类」大库 →</a>
+              <span> · </span>
+              <a class="table-primary-link" href="characters.html">前往「角色档案」大库 →</a>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
       <div class="doc-layout">
         <aside class="doc-sidebar" id="doc-sidebar" aria-label="全文目录">
           <div class="toc-head">
             <div class="toc-head-row">
-              <span>章节目录索引</span>
+              <span>原文目录大纲</span>
               <span class="mono">129 节</span>
             </div>
             <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选目录章节…" autocomplete="off">
@@ -103,9 +168,9 @@
         <article class="doc-panel">
           <div class="doc-toolbar">
             <div class="doc-source-info">
-              <span>源文件：<code class="mono">衡天量级体系【第四版·最新】.md</code></span>
+              <span>基准原文全文</span>
               <span>·</span>
-              <span class="ev-badge ev-confirmed">100% 完整原文展示</span>
+              <code class="mono">衡天量级体系【第四版·最新】.md</code>
             </div>
             <div class="doc-tools">
               <div class="doc-find-box">

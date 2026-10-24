@@ -71,13 +71,16 @@
      -------------------------------------------------------------------------- */
   function syncScrollLock() {
     const anyModalOpen = Boolean(document.querySelector(".modal-backdrop.open"));
-    const nav = document.getElementById("main-nav");
+    const drawer = document.getElementById("site-drawer");
     const sidebar = document.getElementById("doc-sidebar");
     const drawerBackdrop = document.getElementById("drawer-backdrop");
+    const menuBtn = document.getElementById("mobile-menu-btn");
 
-    const navOpen = Boolean(nav && nav.classList.contains("open"));
+    const navOpen = Boolean(drawer && drawer.classList.contains("open"));
     const tocOpen = Boolean(sidebar && sidebar.classList.contains("drawer-open"));
 
+    if (drawer) drawer.setAttribute("aria-hidden", navOpen ? "false" : "true");
+    if (menuBtn) menuBtn.setAttribute("aria-expanded", navOpen ? "true" : "false");
     if (drawerBackdrop) {
       drawerBackdrop.classList.toggle("open", navOpen || tocOpen);
     }
@@ -86,8 +89,8 @@
 
   function closeAllDrawersAndModals() {
     document.querySelectorAll(".modal-backdrop.open").forEach((m) => m.classList.remove("open"));
-    const nav = document.getElementById("main-nav");
-    if (nav) nav.classList.remove("open");
+    const drawer = document.getElementById("site-drawer");
+    if (drawer) drawer.classList.remove("open");
     const sidebar = document.getElementById("doc-sidebar");
     if (sidebar) sidebar.classList.remove("drawer-open");
     syncScrollLock();
@@ -130,31 +133,52 @@
 
   function initMobileNav() {
     const btn = document.getElementById("mobile-menu-btn");
-    const nav = document.getElementById("main-nav");
+    const drawer = document.getElementById("site-drawer");
+    const closeBtn = document.getElementById("site-drawer-close");
     const drawerBackdrop = document.getElementById("drawer-backdrop");
 
-    if (drawerBackdrop) {
+    window.__PW_CLOSE_ALL__ = closeAllDrawersAndModals;
+    window.__PW_SYNC_LOCK__ = syncScrollLock;
+
+    if (drawerBackdrop && drawerBackdrop.dataset.bound !== "1") {
+      drawerBackdrop.dataset.bound = "1";
       drawerBackdrop.addEventListener("click", closeAllDrawersAndModals);
     }
 
-    if (!btn || !nav) return;
-    btn.addEventListener("click", () => {
-      const sidebar = document.getElementById("doc-sidebar");
-      if (sidebar) sidebar.classList.remove("drawer-open");
-      nav.classList.toggle("open");
-      syncScrollLock();
-    });
+    if (closeBtn && closeBtn.dataset.bound !== "1") {
+      closeBtn.dataset.bound = "1";
+      closeBtn.addEventListener("click", closeAllDrawersAndModals);
+    }
 
-    nav.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        nav.classList.remove("open");
+    if (btn && drawer && btn.dataset.navBound !== "1") {
+      btn.dataset.navBound = "1";
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelectorAll(".modal-backdrop.open").forEach((m) => m.classList.remove("open"));
+        const sidebar = document.getElementById("doc-sidebar");
+        if (sidebar) sidebar.classList.remove("drawer-open");
+        drawer.classList.toggle("open");
         syncScrollLock();
       });
+    }
+
+    if (drawer && drawer.dataset.linksBound !== "1") {
+      drawer.dataset.linksBound = "1";
+      drawer.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          drawer.classList.remove("open");
+          syncScrollLock();
+        });
+      });
+    }
+
+    window.addEventListener("pageshow", () => {
+      closeAllDrawersAndModals();
     });
 
     window.addEventListener("resize", () => {
-      if (window.innerWidth > 1024) {
-        if (nav.classList.contains("open")) nav.classList.remove("open");
+      if (window.innerWidth > 1080) {
+        if (drawer && drawer.classList.contains("open")) drawer.classList.remove("open");
         const sidebar = document.getElementById("doc-sidebar");
         if (sidebar && sidebar.classList.contains("drawer-open")) {
           sidebar.classList.remove("drawer-open");
@@ -475,8 +499,8 @@
 
     if (dockTocBtn) {
       dockTocBtn.addEventListener("click", () => {
-        const nav = document.getElementById("main-nav");
-        if (nav) nav.classList.remove("open");
+        const drawer = document.getElementById("site-drawer");
+        if (drawer) drawer.classList.remove("open");
         sidebar.classList.toggle("drawer-open");
         syncScrollLock();
       });
@@ -703,7 +727,12 @@
 
     segBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
-        state.segment = btn.dataset.tierSeg;
+        const targetSeg = btn.dataset.tierSeg;
+        if (btn.classList.contains("atlas-cell") && state.segment === targetSeg) {
+          state.segment = "all";
+        } else {
+          state.segment = targetSeg;
+        }
         persistPrefs();
         render();
       });
@@ -1163,8 +1192,8 @@
     }
 
     function openModal() {
-      const nav = document.getElementById("main-nav");
-      if (nav) nav.classList.remove("open");
+      const drawer = document.getElementById("site-drawer");
+      if (drawer) drawer.classList.remove("open");
       const sidebar = document.getElementById("doc-sidebar");
       if (sidebar) sidebar.classList.remove("drawer-open");
       backdrop.classList.add("open");
