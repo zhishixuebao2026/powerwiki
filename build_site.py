@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-衡天⊙ PowerWiki Static Site Builder v8.0
+衡天⊙ PowerWiki Static Site Builder v9.0
 Updated for 《衡天⊙ 多维战力量级体系（第五版）》 & Full-Text Character Dossiers
 """
 
@@ -33,6 +33,8 @@ SVGS = {
     "arrow_up": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
     "arrow_up_right": '<svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
     "toc": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>',
+    "home": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg>',
+    "materials": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg>',
     "atlas": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg>',
     "dossier": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg>',
     "library": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg>',
@@ -507,13 +509,15 @@ def render_shell(
     body_html: str,
     root_prefix: str = "./",
     has_toc_button: bool = False,
+    body_class: str = "",
 ) -> str:
     r = root_prefix
 
-    def nav_link(key: str, href: str, label: str, extra_cls: str = "") -> str:
+    def nav_link(key: str, href: str, label: str, extra_cls: str = "", icon: str = "") -> str:
         base = f"nav-link {extra_cls}".strip()
         cls = f"{base} active" if active_nav == key else base
-        return f'<a class="{cls}" href="{r}{href}">{label}</a>'
+        icon_html = f'<span class="nav-icon">{SVGS[icon]}</span>' if icon else ""
+        return f'<a class="{cls}" href="{r}{href}">{icon_html}<span>{label}</span></a>'
 
     def drawer_card(key: str, href: str, label: str, sub: str) -> str:
         cls = "drawer-card-link active" if active_nav == key else "drawer-card-link"
@@ -535,6 +539,8 @@ def render_shell(
         else ""
     )
 
+    shell_body_class = f"site-{active_nav} {body_class}".strip()
+
     page = f"""<!DOCTYPE html>
 <html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}">
 <head>
@@ -553,9 +559,11 @@ def render_shell(
   <link rel="preload" href="{r}static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{r}static/fonts/noto-sans-sc/index.css">
   <link rel="stylesheet" href="{r}static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="{r}static/fonts/noto-serif-sc/index.css">
   <link rel="stylesheet" href="{r}static/css/style.css">
+  <link rel="stylesheet" href="{r}static/css/editorial.css">
 </head>
-<body>
+<body class="{esc(shell_body_class)}">
   <header class="site-header">
     <div class="container header-inner">
       <div class="header-left">
@@ -564,16 +572,16 @@ def render_shell(
         </button>
         <a class="brand-link" href="{r}index.html">
           <span class="brand-mark">⊙</span>
-          <span class="brand-name">衡天 PowerWiki</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
         </a>
       </div>
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
-        {nav_link("home", "index.html", "首页")}
-        {nav_link("tiers", "tiers.html", "量级", "nav-cat")}
-        {nav_link("characters", "characters.html", "角色", "nav-cat")}
-        {nav_link("rules", "rules.html", "规则", "nav-doc")}
-        {nav_link("materials", "materials.html", "材质", "nav-doc")}
+        {nav_link("home", "index.html", "首页", icon="home")}
+        {nav_link("tiers", "tiers.html", "量级", "nav-cat", "atlas")}
+        {nav_link("characters", "characters.html", "角色", "nav-cat", "dossier")}
+        {nav_link("rules", "rules.html", "规则", "nav-doc", "library")}
+        {nav_link("materials", "materials.html", "材质", "nav-doc", "materials")}
       </nav>
 
       <div class="header-right">
@@ -594,7 +602,7 @@ def render_shell(
     <div class="site-drawer-head">
       <a class="brand-link" href="{r}index.html">
         <span class="brand-mark">⊙</span>
-        <span class="brand-name">衡天 PowerWiki</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
       </a>
       <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
         {SVGS["close"]}
@@ -1535,6 +1543,7 @@ def build_character_detail_pages(
             body_html=body,
             root_prefix="../",
             has_toc_button=has_full_doc,
+            body_class=f"character-site character-{c['slug']}",
         )
         (CHAR_OUT_DIR / f"{c['slug']}.html").write_text(page_html, encoding="utf-8")
 
@@ -1709,7 +1718,7 @@ def build_search_index_bundle(
     }
 
     return (
-        "/* Auto-generated by build_site.py v8.0 — DO NOT EDIT MANUALLY */\n"
+        "/* Auto-generated by build_site.py v9.0 — DO NOT EDIT MANUALLY */\n"
         f"window.__POWERWIKI_DATA__ = {json.dumps(client_data, ensure_ascii=False, separators=(',', ':'))};\n"
         f"window.__POWERWIKI_INDEX__ = {json.dumps(index_entries, ensure_ascii=False, separators=(',', ':'))};\n"
     )
@@ -1802,7 +1811,7 @@ def main() -> None:
     (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
 
     print(
-        f"[OK] PowerWiki v8.0 built successfully:\n"
+        f"[OK] PowerWiki v9.0 built successfully:\n"
         f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
         f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
         f"  - Standalone Character pages: {len(all_chars)} files in character/*.html ({len(char_doc_sections)} full-text sections indexed)\n"
