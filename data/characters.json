@@ -17,7 +17,7 @@
       "doc_path": "data/docs/characters/御兔（非人学园）衡天定级.md",
       "doc_date": "2026-10-25",
       "doc_basis": "依据《衡天⊙ 多维战力量级体系（第四版）》",
-      "floor_tier": "⊙城○～城△〔实〕（约 6.7×10¹⁶ J 起）",
+      "floor_tier": "⊙城○～城△〔实〕（约 6.7×10¹⁶ J 起）",
       "ceiling_note": "国△（终局轨道火球 · 存疑不进主档）",
       "core_basis": "一拳将虎力打上月球（动能 1.8×10¹⁷～3.4×10¹⁷ J〔实〕）",
       "image_map": {
@@ -41,7 +41,31 @@
         "算": "〔缺〕",
         "性": "玩偶与筋肉形态之间的变身〔实〕；吃萝卜强化（官方宣传语）〔实〕；被击败后变回玩偶、未被摧毁〔实〕"
       },
-      "card_summary": "嫦娥的兔子玩偶，暴走后化为人形；以一拳将虎力打上月球为定级依据。"
+      "card_summary": "嫦娥的兔子玩偶，暴走后化为人形；以一拳将虎力打上月球为定级依据。",
+      "detail_lede": "嫦娥的兔子玩偶，暴走后化为筋肉人形。以一拳打飞虎力至月球的相对论动能确立强爆城级主档；终局轨道火球仅列存疑上限。",
+      "visual": {
+        "kicker": "LUNAR KINETIC OBSERVATION",
+        "register": "YUTU · LUNAR EVENT 01",
+        "art_url": "static/img/characters/yutu/lunar-observatory.jpg",
+        "art_badge": "LUNAR EVENT / 01",
+        "facts": [
+          {
+            "label": "主档动能",
+            "value": "1.8–3.4×10¹⁷ J",
+            "note": "相对论动能 · 主档〔实〕"
+          },
+          {
+            "label": "投送速度",
+            "value": "0.23–0.27c",
+            "note": "地月距离 / 约 5 秒〔推〕"
+          },
+          {
+            "label": "存疑边界",
+            "value": "国△ · 不进主档",
+            "note": "事后场景与火球规模矛盾"
+          }
+        ]
+      }
     },
     {
       "slug": "futan",
@@ -58,7 +82,7 @@
       "doc_path": "data/docs/characters/弗坦（诡秘地海）衡天定级（新）.md",
       "doc_date": "2026-10-25",
       "doc_basis": "依据《衡天⊙ 多维战力量级体系（第五版）》",
-      "floor_tier": "⊙星○（掌控式）〔实〕（2.24×10³² J · 同化整条时间线）",
+      "floor_tier": "⊙星○（掌控式）〔实〕（2.24×10³² J · 同化整条时间线）",
       "ceiling_note": "苏醒全力〔隐〕（未观测 · 排除广义无限与论外）",
       "core_basis": "苏醒未来星辰清空＋跨位面同步（元·多，至少十几，≳1.2×10⁷⁹ J〔下〕）",
       "image_map": {},
@@ -79,7 +103,31 @@
         "算": "〔缺〕：无自我意识，法则式落子效果与全知查尔斯相当，不折算计算层级",
         "性": "不灭〔实〕；超越位面的唯一个体〔实〕；生而为神〔实〕；形态不定〔实〕；掌控生死法则〔实〕；灵魂级模因污染〔实〕"
       },
-      "card_summary": "Ehod 级神明，全书始终沉睡；以苏醒未来的星辰清空与跨位面同步定级。"
+      "card_summary": "Ehod 级神明，全书始终沉睡；以苏醒未来的星辰清空与跨位面同步定级。",
+      "detail_lede": "基金会 003 · Ehod 级神明，沉睡于地海深渊的画后时空。以苏醒未来的星辰清空与跨位面同步确立强宇宙级下限；苏醒全力仍未观测。",
+      "visual": {
+        "kicker": "ABYSSAL ENTITY OBSERVATION",
+        "register": "FOUNDATION 003 · EHOD",
+        "art_url": "static/img/characters/futan/abyssal-observation.jpg",
+        "art_badge": "003 / PERMANENT SLUMBER",
+        "facts": [
+          {
+            "label": "可确认位面",
+            "value": "至少十几",
+            "note": "元·多 · 跨位面同步〔下〕"
+          },
+          {
+            "label": "主档当量",
+            "value": "1.2×10⁷⁹ J 起",
+            "note": "苏醒未来 · 星辰清空〔下〕"
+          },
+          {
+            "label": "苏醒全力",
+            "value": "未观测",
+            "note": "〔隐〕 · 不抬高也不压低主档"
+          }
+        ]
+      }
     }
   ]
 }
