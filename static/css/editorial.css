@@ -458,6 +458,11 @@ body.character-futan .fact-value { font-size: 21px; }
   .nav-link { padding-inline: 10px; }
 }
 
+@media (max-width: 1080px) {
+  .doc-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .doc-panel, .markdown-body { width: 100%; min-width: 0; }
+}
+
 @media (max-width: 780px) {
   :root, [data-theme="dark"] { --header-h: 64px; }
   .container, .home-stack, .header-inner { padding-inline: 24px; }
@@ -722,4 +727,12 @@ body.site-search .search-hit.card-mode:hover { border-left-color: var(--accent);
   body.site-search .search-page-header { margin-top: 30px; padding-bottom: 26px; }
   body.site-search .search-page-header::after { right: -4%; font-size: 92px; }
   body.site-search #dedicated-search-input { height: 46px; font-size: 14px; }
+  .doc-toolbar { width: 100%; padding: 10px; gap: 8px; }
+  .doc-tools { width: 100%; gap: 8px; }
+  .doc-find-box { display: flex; flex: 0 0 100%; width: 100%; min-width: 0; gap: 6px; }
+  .doc-find-input { flex: 1; min-width: 0; height: 36px; }
+  .doc-find-box .tool-btn { flex: 0 0 auto; height: 36px; padding-inline: 14px; }
+  .doc-find-count { align-self: center; min-width: 0; }
+  .doc-find-count:empty { display: none; }
+  .doc-tools > .tool-btn { flex: 1; min-width: 0; height: 34px; }
 }
