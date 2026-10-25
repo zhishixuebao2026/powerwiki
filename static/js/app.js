@@ -1283,6 +1283,35 @@ function renderCard(t) {
     render();
   }
 
+  function initReadingProgress() {
+    const bar = document.getElementById("reading-progress-bar");
+    const article = document.querySelector(".markdown-body");
+    if (!bar || !article) return;
+
+    let queued = false;
+    function update() {
+      queued = false;
+      const headerHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 64;
+      const articleTop = article.getBoundingClientRect().top + window.scrollY;
+      const start = articleTop - headerHeight - 24;
+      const end = articleTop + article.offsetHeight - window.innerHeight * 0.55;
+      const progress = Math.min(1, Math.max(0, (window.scrollY - start) / Math.max(1, end - start)));
+      bar.style.transform = `scaleX(${progress})`;
+      bar.parentElement.classList.toggle("is-reading", progress > 0 && progress < 1);
+      bar.parentElement.classList.toggle("is-complete", progress >= 1);
+    }
+    function requestUpdate() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    }
+
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(requestUpdate);
+    update();
+  }
+
   function initHorizontalRails() {
     document.querySelectorAll(".chip-rail, .alpha-letters").forEach((rail) => {
       rail.addEventListener(
@@ -1308,6 +1337,7 @@ function renderCard(t) {
     initCharactersExplorer();
     initDedicatedSearchPage();
     initDocumentReader();
+    initReadingProgress();
     initBrowsingCacheAndBack();
     initGlobalSearchModal();
     initHorizontalRails();

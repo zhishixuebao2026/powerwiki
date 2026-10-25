@@ -479,3 +479,247 @@ body.character-futan .fact-value { font-size: 21px; }
   body.character-futan .fact-value { font-size: 17px; }
   .footer-inner { padding-top: 20px; }
 }
+
+/* ==========================================================================
+   v9.1 — Editorial refinement, evidence plates and reading instruments
+   ========================================================================== */
+::selection { color: var(--text-primary); background: color-mix(in srgb, var(--accent) 22%, transparent); }
+
+.reading-progress {
+  position: fixed;
+  z-index: 1001;
+  top: var(--header-h);
+  right: 0;
+  left: 0;
+  height: 2px;
+  overflow: hidden;
+  opacity: .8;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+.reading-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  box-shadow: 0 0 12px var(--accent-soft);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+.reading-progress.is-complete { opacity: .28; }
+
+/* Three distinct routes inside the same global design system. */
+.portal-card {
+  --portal-accent: var(--accent);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--panel-glass) 42%, color-mix(in srgb, var(--portal-accent) 4%, var(--panel-glass)));
+}
+.portal-card:nth-child(1) { --portal-accent: #46776f; }
+.portal-card:nth-child(2) { --portal-accent: #4f718b; }
+.portal-card:nth-child(3) { --portal-accent: #886a32; }
+[data-theme="dark"] .portal-card:nth-child(1) { --portal-accent: #8fbbb2; }
+[data-theme="dark"] .portal-card:nth-child(2) { --portal-accent: #9dbbd3; }
+[data-theme="dark"] .portal-card:nth-child(3) { --portal-accent: #d0b476; }
+.portal-card::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 25px;
+  width: 48px;
+  height: 1px;
+  background: var(--portal-accent);
+  opacity: .75;
+}
+.portal-card::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  right: -72px;
+  bottom: -105px;
+  width: 190px;
+  height: 190px;
+  border: 1px solid var(--portal-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 28px color-mix(in srgb, var(--portal-accent) 4%, transparent), 0 0 0 58px color-mix(in srgb, var(--portal-accent) 3%, transparent);
+  opacity: .18;
+  pointer-events: none;
+}
+.portal-card > * { position: relative; z-index: 1; }
+.portal-card .portal-glyph {
+  color: var(--portal-accent);
+  border-color: color-mix(in srgb, var(--portal-accent) 20%, transparent);
+  background: color-mix(in srgb, var(--portal-accent) 8%, transparent);
+}
+.portal-card .portal-icon { transition: color .2s ease, transform .25s ease; }
+.portal-card:hover { border-color: color-mix(in srgb, var(--portal-accent) 24%, var(--border-subtle)); }
+.portal-card:hover .portal-icon { color: var(--portal-accent); transform: translate(2px, -2px); }
+
+/* Character-specific cards on both the home page and the roster. */
+.char-card { --card-accent: var(--accent); position: relative; }
+.char-card::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  right: 22px;
+  bottom: 0;
+  left: 22px;
+  height: 2px;
+  background: var(--card-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s ease;
+}
+.char-card:hover::after { transform: scaleX(1); }
+.char-card .char-tier-line { color: var(--card-accent); }
+.char-card .char-card-img { transition: transform .45s cubic-bezier(.2,.7,.2,1), filter .3s ease; }
+.char-card-yutu { --card-accent: #315f82; border-radius: 20px 8px 20px 8px; }
+.char-card-futan { --card-accent: #7d6840; border-radius: 6px; }
+[data-theme="dark"] .char-card-yutu { --card-accent: #9dbfda; }
+[data-theme="dark"] .char-card-futan { --card-accent: #c9ae70; }
+.char-card-yutu .char-card-media.is-portrait {
+  background:
+    radial-gradient(circle at 28% 58%, rgba(49,95,130,.34) 0 2px, transparent 3px 54px, rgba(49,95,130,.13) 55px 56px, transparent 57px 82px, rgba(49,95,130,.08) 83px 84px, transparent 85px),
+    radial-gradient(circle at 76% 42%, rgba(255,255,255,.94), rgba(255,255,255,0) 45%),
+    linear-gradient(135deg, #edf1f2, #dce5e9);
+}
+[data-theme="dark"] .char-card-yutu .char-card-media.is-portrait {
+  background:
+    radial-gradient(circle at 28% 58%, rgba(157,191,218,.30) 0 2px, transparent 3px 54px, rgba(157,191,218,.14) 55px 56px, transparent 57px 82px, rgba(157,191,218,.08) 83px 84px, transparent 85px),
+    radial-gradient(circle at 76% 42%, rgba(157,191,218,.18), rgba(157,191,218,0) 48%),
+    linear-gradient(135deg, #263945, #142530);
+}
+.char-card-yutu .char-card-media::after { color: #41647a; }
+[data-theme="dark"] .char-card-yutu .char-card-media::after { color: #aec5d5; }
+.char-card-futan .char-name { font-family: var(--font-editorial); font-weight: 620; letter-spacing: .015em; }
+.char-card-futan .char-card-media::after { letter-spacing: .34em; }
+.pager-card .pager-title { transition: color .2s ease; }
+.pager-card:hover .pager-title { color: var(--accent); }
+@media (hover: hover) {
+  .char-card-yutu:hover .char-card-img { transform: scale(1.025); transform-origin: 90% 100%; }
+  .char-card-futan:hover .char-card-img { transform: scale(1.035); }
+}
+
+/* Chapter numbers make long evidence documents easier to scan. */
+body.character-site .markdown-body { counter-reset: dossier-chapter; }
+body.character-site .markdown-body h2 { counter-increment: dossier-chapter; }
+body.character-site .markdown-body h2::before {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  margin-right: 12px;
+  vertical-align: middle;
+  color: var(--accent);
+  background: transparent;
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  line-height: 1;
+  transform: translateY(-2px);
+}
+body.character-yutu .markdown-body h2::before {
+  content: counter(dossier-chapter, decimal-leading-zero);
+  min-width: 28px;
+  min-height: 22px;
+  padding: 3px 5px;
+  border: 1px solid var(--border-accent);
+  border-radius: 5px;
+  background: var(--accent-soft);
+}
+body.character-futan .markdown-body h2::before {
+  content: "§ " counter(dossier-chapter, decimal-leading-zero);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-accent);
+  font-family: var(--font-editorial);
+  font-size: 12px;
+}
+body.character-site .markdown-body tbody tr { transition: background-color .18s ease; }
+body.character-site .markdown-body tbody tr:hover { background: var(--accent-soft); }
+body.character-futan .markdown-body th { font-family: var(--font-editorial); font-weight: 650; }
+
+/* Yutu's original measurement images become technical evidence plates. */
+body.character-yutu .md-figure {
+  padding: 12px;
+  border: 1px solid var(--border-subtle);
+  background: linear-gradient(145deg, var(--panel-glass), var(--accent-soft));
+  box-shadow: 0 14px 40px rgba(32,58,75,.06);
+}
+body.character-yutu .md-figure-frame { position: relative; border: 1px solid var(--border-subtle); background: var(--bg-surface); }
+body.character-yutu .md-figure-frame::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 10px;
+  border: 1px solid var(--accent);
+  opacity: .16;
+  pointer-events: none;
+}
+body.character-yutu .md-figure-frame::after {
+  content: "+";
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 16px;
+  color: var(--accent);
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: 15px;
+  opacity: .65;
+  pointer-events: none;
+}
+body.character-yutu .md-figure figcaption::before {
+  content: "MEASUREMENT PLATE";
+  margin-right: 10px;
+  color: var(--accent);
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: .14em;
+}
+
+/* Dedicated search reads like an index, not a generic results list. */
+body.site-search .search-page-header {
+  position: relative;
+  isolation: isolate;
+  margin-top: 42px;
+  padding-bottom: 34px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-subtle);
+}
+body.site-search .search-page-header::after {
+  content: "⊙";
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: 4%;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 144px;
+  line-height: 1;
+  opacity: .055;
+  transform: translateY(-50%);
+}
+body.site-search .search-page-header .page-header-body { position: relative; z-index: 1; }
+body.site-search .control-panel { margin-top: 24px; }
+body.site-search #dedicated-search-input { height: 50px; padding-inline: 18px; font-size: 15px; }
+body.site-search .search-hit.card-mode {
+  border-left: 2px solid transparent;
+  transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
+}
+body.site-search .search-hit.card-mode:hover { border-left-color: var(--accent); }
+
+@media (max-width: 560px) {
+  .portal-card::after { opacity: .12; }
+  body.character-site .markdown-body h2::before { margin-right: 9px; }
+  body.character-yutu .markdown-body h2::before { min-width: 25px; min-height: 20px; }
+  body.character-yutu .md-figure { padding: 8px; }
+  body.character-yutu .md-figure figcaption::before { display: block; margin: 0 0 4px; }
+  body.site-search .search-page-header { margin-top: 30px; padding-bottom: 26px; }
+  body.site-search .search-page-header::after { right: -4%; font-size: 92px; }
+  body.site-search #dedicated-search-input { height: 46px; font-size: 14px; }
+}
