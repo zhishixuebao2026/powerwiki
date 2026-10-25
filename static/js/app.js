@@ -834,21 +834,22 @@ function renderCard(t) {
       }
     }
 
-function renderCharCard(c) {
+    function renderCharCard(c) {
       const t = c._tier;
       const orderLabel = t && !t.unranked ? `#${String(t.order).padStart(2, "0")}` : "待定";
       const originLine = escapeHTML(c.series || "未知出处");
       const tierLine = `<div class="char-tier-line"><span>${escapeHTML(t ? t.name : "待定")}</span><span class="mono">${orderLabel}</span></div>`;
-      const summary = `<p class="char-summary">${escapeHTML(c.summary || "")}</p>`;
+      const summary = `<p class="char-summary">${escapeHTML(c.card_summary || c.summary || "")}</p>`;
       const foot = `<div class="char-foot"><span>${escapeHTML(c.doc_date || "已归档")} 更新</span><span class="card-link-hint">阅读档案 ${ICONS.arrowUpRight}</span></div>`;
 
       if (c.image_url) {
-        const shape = c.image_shape || "portrait";
-        const mediaLayoutCls = shape === "landscape" ? "has-media media-top" : shape === "square" ? "has-media media-side media-square" : "has-media media-side";
+        const rawShape = c.image_shape || "portrait";
+        const shape = ["landscape", "square", "portrait"].includes(rawShape) ? rawShape : "portrait";
+        const imageUrl = resolveUrl(c.image_url);
         const sizeAttrs = c.image_w && c.image_h ? ` width="${Number(c.image_w)}" height="${Number(c.image_h)}"` : "";
         return `
-        <a class="char-card ${mediaLayoutCls}" href="${resolveUrl("character/" + c.slug + ".html")}">
-          <div class="char-card-media"><img class="char-card-img" src="${escapeHTML(resolveUrl(c.image_url))}" alt="${escapeHTML(c.name)}"${sizeAttrs} loading="lazy"></div>
+        <a class="char-card has-media media-top" href="${resolveUrl("character/" + c.slug + ".html")}">
+          <div class="char-card-media is-${shape}" data-art-label="${escapeHTML((c.pinyin || c.slug).toUpperCase())}" style="--char-image:url('${escapeHTML(imageUrl)}')"><img class="char-card-img" src="${escapeHTML(imageUrl)}" alt="${escapeHTML(c.name)}"${sizeAttrs} loading="lazy"></div>
           <div class="char-card-body">
             <div class="char-head">
               <div class="char-meta"><h3 class="char-name">${escapeHTML(c.name)}</h3><div class="char-origin">${originLine}</div></div>

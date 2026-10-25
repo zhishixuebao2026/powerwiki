@@ -33,6 +33,9 @@ SVGS = {
     "arrow_up": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
     "arrow_up_right": '<svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
     "toc": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>',
+    "atlas": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg>',
+    "dossier": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg>',
+    "library": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg>',
 }
 
 DIM_META = [
@@ -726,60 +729,35 @@ def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, A
     origin_text = esc(c.get("series") or "未知出处")
     updated = esc(c.get("doc_date") or "已归档")
     tier_line = f'<div class="char-tier-line"><span>{esc(t_name)}</span><span class="mono">{t_order}</span></div>'
-    summary = f'<p class="char-summary">{esc(c.get("summary") or "")}</p>'
-    foot = (
-        f'<div class="char-foot"><span>{updated} 更新</span>'
-        f'<span class="card-link-hint">阅读档案 {SVGS["arrow_up_right"]}</span></div>'
-    )
+    summary = f'<p class="char-summary">{esc(c.get("card_summary") or c.get("summary") or "")}</p>'
+    foot = f'<div class="char-foot"><span>{updated} 更新</span><span class="card-link-hint">阅读档案 {SVGS["arrow_up_right"]}</span></div>'
 
     if img_src:
         shape = c.get("image_shape") or "portrait"
-        media_cls = (
-            "has-media media-top"
-            if shape == "landscape"
-            else "has-media media-side media-square"
-            if shape == "square"
-            else "has-media media-side"
-        )
-        size_attrs = (
-            f' width="{int(c["image_w"])}" height="{int(c["image_h"])}"'
-            if c.get("image_w") and c.get("image_h")
-            else ""
-        )
+        if shape not in {"landscape", "square", "portrait"}:
+            shape = "portrait"
+        size_attrs = f' width="{int(c["image_w"])}" height="{int(c["image_h"])}"' if c.get("image_w") and c.get("image_h") else ""
         return f"""
-    <a class="char-card {media_cls}" href="{href_prefix}character/{esc(c['slug'])}.html">
-      <div class="char-card-media">
+    <a class="char-card has-media media-top" href="{href_prefix}character/{esc(c['slug'])}.html">
+      <div class="char-card-media is-{shape}" data-art-label="{esc(c.get('pinyin') or c['slug']).upper()}" style="--char-image:url('{esc(img_src)}')">
         <img class="char-card-img" src="{esc(img_src)}" alt="{esc(c['name'])}"{size_attrs} loading="lazy">
       </div>
       <div class="char-card-body">
         <div class="char-head">
-          <div class="char-meta">
-            <h3 class="char-name">{esc(c['name'])}</h3>
-            <div class="char-origin">{origin_text}</div>
-          </div>
+          <div class="char-meta"><h3 class="char-name">{esc(c['name'])}</h3><div class="char-origin">{origin_text}</div></div>
           <span class="tier-badge gold mono">⊙ {esc(t_code)}</span>
         </div>
-        {tier_line}
-        {summary}
-        {foot}
+        {tier_line}{summary}{foot}
       </div>
     </a>"""
 
     return f"""
     <a class="char-card" href="{href_prefix}character/{esc(c['slug'])}.html">
       <div class="char-head">
-        <div class="char-identity">
-          <div class="char-monogram">{esc(c["name"][:1])}</div>
-          <div class="char-meta">
-            <h3 class="char-name">{esc(c['name'])}</h3>
-            <div class="char-origin">{origin_text}</div>
-          </div>
-        </div>
+        <div class="char-identity"><div class="char-monogram">{esc(c["name"][:1])}</div><div class="char-meta"><h3 class="char-name">{esc(c['name'])}</h3><div class="char-origin">{origin_text}</div></div></div>
         <span class="tier-badge gold mono">⊙ {esc(t_code)}</span>
       </div>
-      {tier_line}
-      {summary}
-      {foot}
+      {tier_line}{summary}{foot}
     </a>"""
 
 def build_home_page(
@@ -809,7 +787,7 @@ def build_home_page(
     <div class="container home-stack">
       <section class="hero-banner" aria-labelledby="home-title">
         <div class="hero-backdrop" aria-hidden="true">
-          <img class="hero-backdrop-img" src="static/img/cosmos-eclipse.jpg" alt="">
+          <img class="hero-backdrop-img" src="static/img/cosmic-atlas-hero.jpg" width="1584" height="672" alt="">
         </div>
         <div class="hero-body">
           <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.25 最新基准</div>
@@ -837,17 +815,17 @@ def build_home_page(
         </div>
         <div class="portal-grid">
           <a class="portal-card" href="tiers.html">
-            <div class="portal-top"><span class="portal-num mono">01 / ATLAS</span><span class="portal-icon">{SVGS["arrow_up_right"]}</span></div>
+            <div class="portal-top"><span class="portal-heading"><span class="portal-glyph">{SVGS["atlas"]}</span><span class="portal-num mono">01 / ATLAS</span></span><span class="portal-icon">{SVGS["arrow_up_right"]}</span></div>
             <div><h3 class="portal-title">量级天梯</h3><p class="portal-text">按序位、跨度或能量检索，从昆虫级连续查阅至论天最上。</p></div>
             <span class="portal-link">进入 {len(tiers)} 个档位 →</span>
           </a>
           <a class="portal-card" href="characters.html">
-            <div class="portal-top"><span class="portal-num mono">02 / DOSSIERS</span><span class="portal-icon">{SVGS["arrow_up_right"]}</span></div>
+            <div class="portal-top"><span class="portal-heading"><span class="portal-glyph">{SVGS["dossier"]}</span><span class="portal-num mono">02 / DOSSIERS</span></span><span class="portal-icon">{SVGS["arrow_up_right"]}</span></div>
             <div><h3 class="portal-title">角色档案</h3><p class="portal-text">先看定级结论，再按章节核对完整证据、计算与存疑说明。</p></div>
             <span class="portal-link">查阅 {len(all_chars)} 份档案 →</span>
           </a>
           <div class="portal-card portal-library">
-            <div class="portal-top"><span class="portal-num mono">03 / LIBRARY</span></div>
+            <div class="portal-top"><span class="portal-heading"><span class="portal-glyph">{SVGS["library"]}</span><span class="portal-num mono">03 / LIBRARY</span></span></div>
             <div><h3 class="portal-title">规则与资料</h3><p class="portal-text">保留完整原文、目录与页内定位，适合逐条核对。</p></div>
             <div class="library-links">
               <a href="rules.html"><span>衡天量级体系</span><span class="mono">第五版 →</span></a>
