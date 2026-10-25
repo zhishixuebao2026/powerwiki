@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark" data-root="./" data-page-id="materials">
+<html lang="zh-CN" data-theme="light" data-root="./" data-page-id="materials">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>材质与破坏能量数据库（第二版·全文） · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {
       try {
@@ -13,9 +13,6 @@
       } catch (e) {}
     })();
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/style.css">
 </head>
 <body>
@@ -33,12 +30,10 @@
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
         <a class="nav-link" href="./index.html">首页</a>
-        <a class="nav-link nav-cat" href="./tiers.html">量级分类</a>
-        <a class="nav-link nav-cat" href="./characters.html">角色档案</a>
-        <span class="nav-divider" aria-hidden="true"></span>
-        <a class="nav-link nav-doc" href="./rules.html">体系原文</a>
-        <a class="nav-link nav-doc active" href="./materials.html">材质原文</a>
-        <a class="nav-link" href="./search.html">搜索</a>
+        <a class="nav-link nav-cat" href="./tiers.html">量级</a>
+        <a class="nav-link nav-cat" href="./characters.html">角色</a>
+        <a class="nav-link nav-doc" href="./rules.html">规则</a>
+        <a class="nav-link nav-doc active" href="./materials.html">材质</a>
       </nav>
 
       <div class="header-right">
@@ -67,14 +62,14 @@
     </div>
     <div class="site-drawer-body">
       <div class="drawer-group">
-        <div class="drawer-group-label">核心分类大库</div>
-        <a class="drawer-card-link" href="./tiers.html"><span class="drawer-card-title"><span>量级分类大库</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档从小到大 · 物理焦耳与集合论标尺</span></a>
-        <a class="drawer-card-link" href="./characters.html"><span class="drawer-card-title"><span>角色战力档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">首字母 A–Z / 量级从小到大双模式排序</span></a>
+        <div class="drawer-group-label">查阅</div>
+        <a class="drawer-card-link" href="./tiers.html"><span class="drawer-card-title"><span>量级天梯</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档 · 从昆虫到论天</span></a>
+        <a class="drawer-card-link" href="./characters.html"><span class="drawer-card-title"><span>角色档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">定级结论与完整证据原文</span></a>
       </div>
       <div class="drawer-group">
-        <div class="drawer-group-label">基准规则原文（全文无删减）</div>
-        <a class="drawer-doc-link" href="./rules.html"><span>卷一 · 衡天量级体系（第四版）</span><span>→</span></a>
-        <a class="drawer-doc-link active" href="./materials.html"><span>卷二 · 材质与破坏能量数据库</span><span>→</span></a>
+        <div class="drawer-group-label">规则与资料</div>
+        <a class="drawer-doc-link" href="./rules.html"><span>衡天体系 · 第五版</span><span>→</span></a>
+        <a class="drawer-doc-link active" href="./materials.html"><span>材质与能量 · 第二版</span><span>→</span></a>
       </div>
       <div class="drawer-group">
         <div class="drawer-group-label">快捷导航</div>
@@ -125,67 +120,36 @@
   </script>
 
   <main>
-    
-    <div class="container">
-      <header class="codex-header" aria-label="基准原文典籍页头">
-        <div class="codex-tabs" role="tablist" aria-label="基准原文双卷切换">
-          <a class="codex-tab" href="rules.html">卷一：《衡天⊙ 多维战力量级体系（第四版）》原文</a>
-          <a class="codex-tab active" href="materials.html">卷二：《材质与破坏能量数据库（第二版）》原文</a>
-        </div>
 
+    <div class="container">
+      <header class="codex-header">
+        <nav class="codex-tabs" aria-label="规则与资料切换">
+          <a class="codex-tab" href="rules.html">衡天体系 · 第五版</a>
+          <a class="codex-tab active" href="materials.html">材质与能量 · 第二版</a>
+        </nav>
         <div class="codex-folio">
-          <div class="codex-folio-kicker">
-            <span class="codex-folio-badge mono">CODEX VOL. II · 物理能量原文</span>
-            <span class="mono">全文无删减收录 · 416 行 · 14,494 字 · 35 节</span>
-          </div>
+          <div class="codex-folio-kicker"><span class="codex-folio-badge mono">第二版 · 物理参考</span><span>完整原文 · 35 节</span></div>
           <h1 class="codex-folio-title">材质与破坏能量数据库（第二版·全文）</h1>
-          <p class="codex-folio-desc">完整收录岩石/金属/生物力学强度、碎裂至核子解离破坏方式比能（J/cm³）、天体结合能与致密星物质锚点。</p>
-          <div class="codex-folio-meta">
-            <span>定级标尺参考文本（区别于动态分类目录，完整保留 Markdown 原貌与表格数据）</span>
-            <div>
-              <a class="table-primary-link" href="tiers.html">前往「量级分类」大库 →</a>
-              <span> · </span>
-              <a class="table-primary-link" href="characters.html">前往「角色档案」大库 →</a>
-            </div>
-          </div>
+          <p class="codex-folio-desc">岩石、金属、生物与天体材质的破坏能量参考。</p>
         </div>
       </header>
 
       <div class="doc-layout">
         <aside class="doc-sidebar" id="doc-sidebar" aria-label="全文目录">
-          <div class="toc-head">
-            <div class="toc-head-row">
-              <span>原文目录大纲</span>
-              <span class="mono">35 节</span>
-            </div>
-            <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选目录章节…" autocomplete="off">
-          </div>
-          <nav class="toc-list" id="toc-nav">
-            <a class="toc-item toc-lvl-1" href="#sec-材质与破坏能量数据库-第二版">材质与破坏能量数据库（第二版）</a><a class="toc-item toc-lvl-1" href="#sec-第二版修订要点">第二版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-第零部分-方法论-先分清问的是哪种物理量">第零部分　方法论：先分清问的是哪种物理量</a><a class="toc-item toc-lvl-2" href="#sec-0-1-破坏动词映射-两条独立轴">0.1 破坏动词映射：两条独立轴</a><a class="toc-item toc-lvl-2" href="#sec-0-2-斩断-切开高速运动物体-不等于承受其全部动能">0.2 斩断、切开高速运动物体，不等于承受其全部动能</a><a class="toc-item toc-lvl-2" href="#sec-0-3-两个可直接验证描写是否符合物理的小工具">0.3 两个可直接验证描写是否符合物理的小工具</a><a class="toc-item toc-lvl-1" href="#sec-第一部分-常规材质粉碎能量密度-继承自汪吧摘录">第一部分　常规材质粉碎能量密度（继承自汪吧摘录）</a><a class="toc-item toc-lvl-2" href="#sec-1-1-破碎程度定义">1.1 破碎程度定义</a><a class="toc-item toc-lvl-2" href="#sec-1-2-粉碎能量密度参照表">1.2 粉碎能量密度参照表</a><a class="toc-item toc-lvl-2" href="#sec-1-3-gbu-57-一个-权威数字-其实是多方矛盾的案例">1.3 GBU-57：一个&quot;权威数字&quot;其实是多方矛盾的案例</a><a class="toc-item toc-lvl-1" href="#sec-第二部分-材料强度参考表-区别于破碎能量-单独使用">第二部分　材料强度参考表（区别于破碎能量，单独使用）</a><a class="toc-item toc-lvl-2" href="#sec-2-1-常见材质">2.1 常见材质</a><a class="toc-item toc-lvl-2" href="#sec-2-2-防御维度的高端锚点-中子星外壳">2.2 防御维度的高端锚点：中子星外壳</a><a class="toc-item toc-lvl-1" href="#sec-第三部分-相变能量-熔化与汽化">第三部分　相变能量：熔化与汽化</a><a class="toc-item toc-lvl-2" href="#sec-3-1-常见材质的相变能量密度-第二版统一口径">3.1 常见材质的相变能量密度（第二版统一口径）</a><a class="toc-item toc-lvl-2" href="#sec-3-2-关键锚点-汽化是粉碎的两到三个数量级">3.2 关键锚点：汽化是粉碎的两到三个数量级</a><a class="toc-item toc-lvl-2" href="#sec-3-3-数据来源说明">3.3 数据来源说明</a><a class="toc-item toc-lvl-1" href="#sec-第四部分-天体引力束缚能-公式与参考值">第四部分　天体引力束缚能：公式与参考值</a><a class="toc-item toc-lvl-2" href="#sec-4-1-引力束缚能的定义边界">4.1 引力束缚能的定义边界</a><a class="toc-item toc-lvl-2" href="#sec-4-2-基础公式">4.2 基础公式</a><a class="toc-item toc-lvl-2" href="#sec-4-3-常规天体参考值-均匀球公式复算">4.3 常规天体参考值（均匀球公式复算）</a><a class="toc-item toc-lvl-2" href="#sec-4-4-致密天体-白矮星与中子星-第二版更正">4.4 致密天体：白矮星与中子星（第二版更正）</a><a class="toc-item toc-lvl-3" href="#sec-束缚能阶梯">束缚能阶梯</a><a class="toc-item toc-lvl-2" href="#sec-4-5-两类不要求完整引力束缚能的天体级表现">4.5 两类不要求完整引力束缚能的天体级表现</a><a class="toc-item toc-lvl-1" href="#sec-第五部分-全球性持续热注入的物理阈值-ki-与-sn-极限">第五部分　全球性持续热注入的物理阈值：KI 与 SN 极限</a><a class="toc-item toc-lvl-2" href="#sec-5-1-两条阈值">5.1 两条阈值</a><a class="toc-item toc-lvl-2" href="#sec-5-2-使用方法">5.2 使用方法</a><a class="toc-item toc-lvl-2" href="#sec-5-3-适用边界">5.3 适用边界</a><a class="toc-item toc-lvl-1" href="#sec-第六部分-撞击成坑的物理框架-补充参考">第六部分　撞击成坑的物理框架（补充参考）</a><a class="toc-item toc-lvl-1" href="#sec-第七部分-数据源现状-为何没有统一权威站点">第七部分　数据源现状：为何没有统一权威站点</a><a class="toc-item toc-lvl-1" href="#sec-第八部分-爆炸与云层-图像判读用的数据表-第二版新增">第八部分　爆炸与云层：图像判读用的数据表（第二版新增）</a><a class="toc-item toc-lvl-2" href="#sec-8-1-爆炸半径与当量">8.1 爆炸半径与当量</a><a class="toc-item toc-lvl-2" href="#sec-8-2-云层计算">8.2 云层计算</a><a class="toc-item toc-lvl-1" href="#sec-附-参考来源">附：参考来源</a><a class="toc-item toc-lvl-1" href="#sec-附-待补充事项">附：待补充事项</a>
-          </nav>
+          <div class="toc-head"><div class="toc-head-row"><span>本文目录</span><span class="mono">35</span></div><input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off"></div>
+          <nav class="toc-list" id="toc-nav"><a class="toc-item toc-lvl-1" href="#sec-材质与破坏能量数据库-第二版">材质与破坏能量数据库（第二版）</a><a class="toc-item toc-lvl-1" href="#sec-第二版修订要点">第二版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-第零部分-方法论-先分清问的是哪种物理量">第零部分　方法论：先分清问的是哪种物理量</a><a class="toc-item toc-lvl-2" href="#sec-0-1-破坏动词映射-两条独立轴">0.1 破坏动词映射：两条独立轴</a><a class="toc-item toc-lvl-2" href="#sec-0-2-斩断-切开高速运动物体-不等于承受其全部动能">0.2 斩断、切开高速运动物体，不等于承受其全部动能</a><a class="toc-item toc-lvl-2" href="#sec-0-3-两个可直接验证描写是否符合物理的小工具">0.3 两个可直接验证描写是否符合物理的小工具</a><a class="toc-item toc-lvl-1" href="#sec-第一部分-常规材质粉碎能量密度-继承自汪吧摘录">第一部分　常规材质粉碎能量密度（继承自汪吧摘录）</a><a class="toc-item toc-lvl-2" href="#sec-1-1-破碎程度定义">1.1 破碎程度定义</a><a class="toc-item toc-lvl-2" href="#sec-1-2-粉碎能量密度参照表">1.2 粉碎能量密度参照表</a><a class="toc-item toc-lvl-2" href="#sec-1-3-gbu-57-一个-权威数字-其实是多方矛盾的案例">1.3 GBU-57：一个&quot;权威数字&quot;其实是多方矛盾的案例</a><a class="toc-item toc-lvl-1" href="#sec-第二部分-材料强度参考表-区别于破碎能量-单独使用">第二部分　材料强度参考表（区别于破碎能量，单独使用）</a><a class="toc-item toc-lvl-2" href="#sec-2-1-常见材质">2.1 常见材质</a><a class="toc-item toc-lvl-2" href="#sec-2-2-防御维度的高端锚点-中子星外壳">2.2 防御维度的高端锚点：中子星外壳</a><a class="toc-item toc-lvl-1" href="#sec-第三部分-相变能量-熔化与汽化">第三部分　相变能量：熔化与汽化</a><a class="toc-item toc-lvl-2" href="#sec-3-1-常见材质的相变能量密度-第二版统一口径">3.1 常见材质的相变能量密度（第二版统一口径）</a><a class="toc-item toc-lvl-2" href="#sec-3-2-关键锚点-汽化是粉碎的两到三个数量级">3.2 关键锚点：汽化是粉碎的两到三个数量级</a><a class="toc-item toc-lvl-2" href="#sec-3-3-数据来源说明">3.3 数据来源说明</a><a class="toc-item toc-lvl-1" href="#sec-第四部分-天体引力束缚能-公式与参考值">第四部分　天体引力束缚能：公式与参考值</a><a class="toc-item toc-lvl-2" href="#sec-4-1-引力束缚能的定义边界">4.1 引力束缚能的定义边界</a><a class="toc-item toc-lvl-2" href="#sec-4-2-基础公式">4.2 基础公式</a><a class="toc-item toc-lvl-2" href="#sec-4-3-常规天体参考值-均匀球公式复算">4.3 常规天体参考值（均匀球公式复算）</a><a class="toc-item toc-lvl-2" href="#sec-4-4-致密天体-白矮星与中子星-第二版更正">4.4 致密天体：白矮星与中子星（第二版更正）</a><a class="toc-item toc-lvl-3" href="#sec-束缚能阶梯">束缚能阶梯</a><a class="toc-item toc-lvl-2" href="#sec-4-5-两类不要求完整引力束缚能的天体级表现">4.5 两类不要求完整引力束缚能的天体级表现</a><a class="toc-item toc-lvl-1" href="#sec-第五部分-全球性持续热注入的物理阈值-ki-与-sn-极限">第五部分　全球性持续热注入的物理阈值：KI 与 SN 极限</a><a class="toc-item toc-lvl-2" href="#sec-5-1-两条阈值">5.1 两条阈值</a><a class="toc-item toc-lvl-2" href="#sec-5-2-使用方法">5.2 使用方法</a><a class="toc-item toc-lvl-2" href="#sec-5-3-适用边界">5.3 适用边界</a><a class="toc-item toc-lvl-1" href="#sec-第六部分-撞击成坑的物理框架-补充参考">第六部分　撞击成坑的物理框架（补充参考）</a><a class="toc-item toc-lvl-1" href="#sec-第七部分-数据源现状-为何没有统一权威站点">第七部分　数据源现状：为何没有统一权威站点</a><a class="toc-item toc-lvl-1" href="#sec-第八部分-爆炸与云层-图像判读用的数据表-第二版新增">第八部分　爆炸与云层：图像判读用的数据表（第二版新增）</a><a class="toc-item toc-lvl-2" href="#sec-8-1-爆炸半径与当量">8.1 爆炸半径与当量</a><a class="toc-item toc-lvl-2" href="#sec-8-2-云层计算">8.2 云层计算</a><a class="toc-item toc-lvl-1" href="#sec-附-参考来源">附：参考来源</a><a class="toc-item toc-lvl-1" href="#sec-附-待补充事项">附：待补充事项</a></nav>
         </aside>
-
         <article class="doc-panel">
           <div class="doc-toolbar">
-            <div class="doc-source-info">
-              <span>基准原文全文</span>
-              <span>·</span>
-              <code class="mono">材质与破坏能量数据库（新）.md</code>
-            </div>
+            <div class="doc-source-info"><span>阅读工具</span></div>
             <div class="doc-tools">
-              <div class="doc-find-box">
-                <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
-                <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
-                <span class="doc-find-count mono" id="doc-find-count"></span>
-              </div>
-              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+              <div class="doc-find-box"><input type="search" class="doc-find-input" id="doc-find-input" placeholder="在本文中查找…"><button type="button" class="tool-btn" id="doc-find-next">查找</button><span class="doc-find-count mono" id="doc-find-count"></span></div>
+              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A−</button>
               <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
               <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
             </div>
           </div>
-
-          <div class="markdown-body">
-            <h1 id="sec-材质与破坏能量数据库-第二版">材质与破坏能量数据库（第二版）<a class="heading-anchor" href="#sec-材质与破坏能量数据库-第二版" data-target-id="sec-材质与破坏能量数据库-第二版" title="复制本节锚点链接">#</a></h1>
+          <div class="markdown-body"><h1 id="sec-材质与破坏能量数据库-第二版">材质与破坏能量数据库（第二版）<a class="heading-anchor" href="#sec-材质与破坏能量数据库-第二版" data-target-id="sec-材质与破坏能量数据库-第二版" title="复制本节锚点链接">#</a></h1>
 <blockquote><p>本文件是《衡天⊙多维战力量级体系》（下称"衡天"）的配套数据参考，回答"某种材质或天体被破坏到某种程度需要多少能量"，以及"某种材质能扛住多大的力"。<br>所有数值标注来源，可交叉核实。使用前先看第零部分，确定应查哪张表。按需查表即可，不需要通读。长篇作品的分批流程见衡天"使用流程与分批处理"。</p></blockquote>
 <hr>
 <h1 id="sec-第二版修订要点">第二版修订要点<a class="heading-anchor" href="#sec-第二版修订要点" data-target-id="sec-第二版修订要点" title="复制本节锚点链接">#</a></h1>
@@ -331,12 +295,11 @@
 <ul><li>玄武岩汽化能：《A dark matter hail》（arXiv）；Bacon、Russell 与 Carstens 的岩石热学性质实验数据（经 SpaceBattles 论坛技术讨论转引并交叉核实）</li><li>花岗岩加热至汽化温度：MIT 定向能钻探技术报告（毫米波深孔钻探）</li><li>铁的熔化热、汽化热、密度、熔沸点：标准物性数据（维基百科"铁"条目信息框）</li><li>金刚石强度：《Approaching diamond's theoretical elasticity and strength limits》（Nature Communications, 2019）；金刚石压缩强度第一性原理计算（J. Phys. Chem. C）；CVD 金刚石综述（arXiv, 2009）</li><li>花岗岩强度：多产地花岗岩三点弯曲实验（PLOS ONE, 2018）；工程材料数据库交叉比对</li><li>天然湖冰抗压强度：《Applied Sciences》 2017 年第 7 卷第 5 期（MDPI）湖冰单轴压缩实验</li><li>木材顺纹强度：Ecochoice《木材的力学性质》</li><li>人类股骨强度：Rod Lakes《骨的弹性各向异性》（转引自 OpenOregon《人体物理学》）</li><li>中子星外壳强度：Horowitz 与 Kadau，《The breaking strain of neutron star crust and gravitational waves》（Physical Review Letters, 2009）</li><li>白矮星质量与半径：康涅狄格大学物理系白矮星讲义</li><li>Ia 型超新星能量收支：Woosley 等，《Type Ia Supernova Light Curves》（arXiv astro-ph/0609562）</li><li>中子星束缚能：《The Cosmic Energy Inventory》（Fukugita 与 Peebles）</li><li>两半球引力：均匀球两半之间作用力的标准结果（参照 MathWorks 均匀带电球算例，引力情形同理）</li><li>KI 与 SN 极限：Komabayashi（1967）、Ingersoll（1969）原始文献；Goldblatt 与 Watson（2012, Phil. Trans. R. Soc. A）；Goldblatt 等（2013, Nature Geoscience）；Kodama 等（2018, JGR Planets）</li><li>斩陨原则、破坏动词两轴框架等：《汪峰在吧量级参考册》（2026），经交叉验证部分内容</li><li>地球真实束缚能（PREM 修正）：HandWiki 引力束缚能条目</li><li>GBU-57 数据矛盾：美国空军公开声明、简氏防务独立评估、多家防务媒体二手报道的交叉比对</li><li>爆炸当量、云层计算：VS Battles Wiki 的 Explosion Yield Calculations 与 Cloud Calculations 页面</li></ul>
 <hr>
 <h1 id="sec-附-待补充事项">附：待补充事项<a class="heading-anchor" href="#sec-附-待补充事项" data-target-id="sec-附-待补充事项" title="复制本节锚点链接">#</a></h1>
-<ol><li>撞击成坑标度律的完整展开（π 标度公式、参数取值）。</li><li>振星的规范算法：按振动模式分别给出弹性能公式，替换存疑的旧值。</li><li>冰的抗拉强度、生物软组织与更多金属的数据。</li><li>世界观强度换算的具体操作案例（衡天 0.7）。</li></ol>
-          </div>
+<ol><li>撞击成坑标度律的完整展开（π 标度公式、参数取值）。</li><li>振星的规范算法：按振动模式分别给出弹性能公式，替换存疑的旧值。</li><li>冰的抗拉强度、生物软组织与更多金属的数据。</li><li>世界观强度换算的具体操作案例（衡天 0.7）。</li></ol></div>
         </article>
       </div>
     </div>
-    
+
   </main>
 
   <div class="floating-dock" aria-label="快捷工具">
@@ -357,7 +320,7 @@
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
         <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
         <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天第四版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第五版全文</button>
         <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
@@ -372,14 +335,13 @@
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="brand-mark">⊙</span>
-        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第四版基准）</span>
+        <span>衡天 PowerWiki · 第五版基准</span>
       </div>
       <div class="footer-links">
         <a href="./tiers.html">量级天梯</a>
         <a href="./characters.html">角色档案</a>
         <a href="./rules.html">衡天体系全文</a>
         <a href="./materials.html">材质能量库</a>
-        <a href="./search.html">全站检索</a>
       </div>
     </div>
   </footer>

@@ -1,5 +1,5 @@
 {
-  "schema_version": "4.0",
+  "schema_version": "5.0",
   "note": "正式角色档案列表。新增角色时填入 characters 数组并运行 python3 build_site.py 即可自动检测图片真实尺寸比例、生成 character/<slug>.html 独立详情页、更新角色分类排序与全站搜索索引。",
   "characters": [
     {
@@ -15,7 +15,7 @@
       "portrait_url": "static/img/characters/yutu/official-portrait.png",
       "portrait_caption": "官方立绘 · 嫦娥 & 御兔（玩偶 / 兄贵双形态）",
       "doc_path": "data/docs/characters/御兔（非人学园）衡天定级.md",
-      "doc_date": "2026-10-24",
+      "doc_date": "2026-10-25",
       "doc_basis": "依据《衡天⊙ 多维战力量级体系（第四版）》",
       "floor_tier": "⊙城○～城△〔实〕（约 6.7×10¹⁶ J 起）",
       "ceiling_note": "国△（终局轨道火球 · 存疑不进主档）",
@@ -51,12 +51,12 @@
       "series": "《诡秘地海》",
       "realm": "Ehod 级古神 · 始终沉睡",
       "tier_slug": "universe-strong",
-      "image_url": "static/img/characters/futan/cthulhu-portrait.jpg",
-      "portrait_url": "static/img/characters/futan/cthulhu-portrait.jpg",
-      "portrait_caption": "形象参考 · 克苏鲁古神（人类视觉曲解下的有翼触手巨神投影）",
+      "image_url": "static/img/characters/futan/cthulhu-wallpaper.jpg",
+      "portrait_url": "static/img/characters/futan/cthulhu-wallpaper.jpg",
+      "portrait_caption": "形象参考 · 克苏鲁古神壁纸（艺术演绎，非原作官方形象）",
       "doc_path": "data/docs/characters/弗坦（诡秘地海）衡天定级（新）.md",
-      "doc_date": "2026-10-23",
-      "doc_basis": "依据《衡天⊙ 多维战力量级体系（第三版）》",
+      "doc_date": "2026-10-25",
+      "doc_basis": "依据《衡天⊙ 多维战力量级体系（第五版）》",
       "floor_tier": "⊙星○（掌控式）〔实〕（2.24×10³² J · 同化整条时间线）",
       "ceiling_note": "苏醒全力〔隐〕（未观测 · 排除广义无限与论外）",
       "core_basis": "苏醒未来星辰清空＋跨位面同步（元·多，至少十几，≳1.2×10⁷⁹ J〔下〕）",
