@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark" data-root="./" data-page-id="rules">
+<html lang="zh-CN" data-theme="light" data-root="./" data-page-id="rules">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>衡天⊙ 多维战力量级体系（第四版·全文） · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <title>衡天⊙ 多维战力量级体系（第五版·全文） · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {
       try {
@@ -13,12 +13,14 @@
       } catch (e) {}
     })();
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="./static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./static/fonts/noto-sans-sc/index.css">
+  <link rel="stylesheet" href="./static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="./static/fonts/noto-serif-sc/index.css">
   <link rel="stylesheet" href="./static/css/style.css">
+  <link rel="stylesheet" href="./static/css/editorial.css">
 </head>
-<body>
+<body class="site-rules">
   <header class="site-header">
     <div class="container header-inner">
       <div class="header-left">
@@ -27,18 +29,16 @@
         </button>
         <a class="brand-link" href="./index.html">
           <span class="brand-mark">⊙</span>
-          <span class="brand-name">衡天 PowerWiki</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
         </a>
       </div>
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
-        <a class="nav-link" href="./index.html">首页</a>
-        <a class="nav-link nav-cat" href="./tiers.html">量级分类</a>
-        <a class="nav-link nav-cat" href="./characters.html">角色档案</a>
-        <span class="nav-divider" aria-hidden="true"></span>
-        <a class="nav-link nav-doc active" href="./rules.html">体系原文</a>
-        <a class="nav-link nav-doc" href="./materials.html">材质原文</a>
-        <a class="nav-link" href="./search.html">搜索</a>
+        <a class="nav-link" href="./index.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></span><span>首页</span></a>
+        <a class="nav-link nav-cat" href="./tiers.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg></span><span>量级</span></a>
+        <a class="nav-link nav-cat" href="./characters.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg></span><span>角色</span></a>
+        <a class="nav-link nav-doc active" href="./rules.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg></span><span>规则</span></a>
+        <a class="nav-link nav-doc" href="./materials.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg></span><span>材质</span></a>
       </nav>
 
       <div class="header-right">
@@ -53,13 +53,14 @@
       </div>
     </div>
   </header>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
 
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
   <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
     <div class="site-drawer-head">
       <a class="brand-link" href="./index.html">
         <span class="brand-mark">⊙</span>
-        <span class="brand-name">衡天 PowerWiki</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
       </a>
       <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
         <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -67,14 +68,14 @@
     </div>
     <div class="site-drawer-body">
       <div class="drawer-group">
-        <div class="drawer-group-label">核心分类大库</div>
-        <a class="drawer-card-link" href="./tiers.html"><span class="drawer-card-title"><span>量级分类大库</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档从小到大 · 物理焦耳与集合论标尺</span></a>
-        <a class="drawer-card-link" href="./characters.html"><span class="drawer-card-title"><span>角色战力档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">首字母 A–Z / 量级从小到大双模式排序</span></a>
+        <div class="drawer-group-label">查阅</div>
+        <a class="drawer-card-link" href="./tiers.html"><span class="drawer-card-title"><span>量级天梯</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档 · 从昆虫到论天</span></a>
+        <a class="drawer-card-link" href="./characters.html"><span class="drawer-card-title"><span>角色档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">定级结论与完整证据原文</span></a>
       </div>
       <div class="drawer-group">
-        <div class="drawer-group-label">基准规则原文（全文无删减）</div>
-        <a class="drawer-doc-link active" href="./rules.html"><span>卷一 · 衡天量级体系（第四版）</span><span>→</span></a>
-        <a class="drawer-doc-link" href="./materials.html"><span>卷二 · 材质与破坏能量数据库</span><span>→</span></a>
+        <div class="drawer-group-label">规则与资料</div>
+        <a class="drawer-doc-link active" href="./rules.html"><span>衡天体系 · 第五版</span><span>→</span></a>
+        <a class="drawer-doc-link" href="./materials.html"><span>材质与能量 · 第二版</span><span>→</span></a>
       </div>
       <div class="drawer-group">
         <div class="drawer-group-label">快捷导航</div>
@@ -125,68 +126,37 @@
   </script>
 
   <main>
-    
-    <div class="container">
-      <header class="codex-header" aria-label="基准原文典籍页头">
-        <div class="codex-tabs" role="tablist" aria-label="基准原文双卷切换">
-          <a class="codex-tab active" href="rules.html">卷一：《衡天⊙ 多维战力量级体系（第四版）》原文</a>
-          <a class="codex-tab" href="materials.html">卷二：《材质与破坏能量数据库（第二版）》原文</a>
-        </div>
 
+    <div class="container">
+      <header class="codex-header">
+        <nav class="codex-tabs" aria-label="规则与资料切换">
+          <a class="codex-tab active" href="rules.html">衡天体系 · 第五版</a>
+          <a class="codex-tab" href="materials.html">材质与能量 · 第二版</a>
+        </nav>
         <div class="codex-folio">
-          <div class="codex-folio-kicker">
-            <span class="codex-folio-badge mono">CODEX VOL. I · 基准规则原文</span>
-            <span class="mono">全文无删减收录 · 1,474 行 · 47,334 字 · 129 节</span>
-          </div>
-          <h1 class="codex-folio-title">衡天⊙ 多维战力量级体系（第四版·全文）</h1>
-          <p class="codex-folio-desc">完整收录总则、常见违规与归因审查、1.5 完整书写规范、全量级定义、论外基数序数双轴、10.8 标注图与动图处理及超长篇自行通读流程。</p>
-          <div class="codex-folio-meta">
-            <span>定级标尺参考文本（区别于动态分类目录，完整保留 Markdown 原貌与表格数据）</span>
-            <div>
-              <a class="table-primary-link" href="tiers.html">前往「量级分类」大库 →</a>
-              <span> · </span>
-              <a class="table-primary-link" href="characters.html">前往「角色档案」大库 →</a>
-            </div>
-          </div>
+          <div class="codex-folio-kicker"><span class="codex-folio-badge mono">第五版 · 2026.10.25</span><span>完整原文 · 132 节</span></div>
+          <h1 class="codex-folio-title">衡天⊙ 多维战力量级体系（第五版·全文）</h1>
+          <p class="codex-folio-desc">核对判定通则、量级定义、无限类证据与图像测量规范。</p>
         </div>
       </header>
 
       <div class="doc-layout">
         <aside class="doc-sidebar" id="doc-sidebar" aria-label="全文目录">
-          <div class="toc-head">
-            <div class="toc-head-row">
-              <span>原文目录大纲</span>
-              <span class="mono">129 节</span>
-            </div>
-            <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选目录章节…" autocomplete="off">
-          </div>
-          <nav class="toc-list" id="toc-nav">
-            <a class="toc-item toc-lvl-1" href="#sec-衡天-多维战力量级体系-第四版">衡天⊙ 多维战力量级体系（第四版）</a><a class="toc-item toc-lvl-1" href="#sec-符号速查">符号速查</a><a class="toc-item toc-lvl-2" href="#sec-一-细分修饰符">一、细分修饰符</a><a class="toc-item toc-lvl-2" href="#sec-二-量级代字-有限能量轴">二、量级代字（有限能量轴）</a><a class="toc-item toc-lvl-2" href="#sec-三-广义无限区分段代字">三、广义无限区分段代字</a><a class="toc-item toc-lvl-2" href="#sec-四-论外级代字">四、论外级代字</a><a class="toc-item toc-lvl-2" href="#sec-五-维度代字">五、维度代字</a><a class="toc-item toc-lvl-2" href="#sec-六-证据状态">六、证据状态</a><a class="toc-item toc-lvl-2" href="#sec-七-书写示例">七、书写示例</a><a class="toc-item toc-lvl-1" href="#sec-第四版修订要点">第四版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-第三版修订要点">第三版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-第二版修订要点">第二版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-本体系的用途-定级与证伪">本体系的用途：定级与证伪</a><a class="toc-item toc-lvl-1" href="#sec-使用流程与分批处理">使用流程与分批处理</a><a class="toc-item toc-lvl-2" href="#sec-适用范围">适用范围</a><a class="toc-item toc-lvl-2" href="#sec-输入分批">输入分批</a><a class="toc-item toc-lvl-2" href="#sec-超长篇自行通读流程-第三版新增">超长篇自行通读流程（第三版新增）</a><a class="toc-item toc-lvl-2" href="#sec-输出分阶段">输出分阶段</a><a class="toc-item toc-lvl-2" href="#sec-推荐执行顺序">推荐执行顺序</a><a class="toc-item toc-lvl-2" href="#sec-阶段间结转">阶段间结转</a><a class="toc-item toc-lvl-2" href="#sec-ai-使用本体系时的输出方式">AI 使用本体系时的输出方式</a><a class="toc-item toc-lvl-1" href="#sec-第零部分-判定通则">第零部分　判定通则</a><a class="toc-item toc-lvl-2" href="#sec-0-1-定级基本原则">0.1 定级基本原则</a><a class="toc-item toc-lvl-2" href="#sec-0-2-无数-不等于阿列夫零">0.2 &quot;无数&quot;不等于阿列夫零</a><a class="toc-item toc-lvl-3" href="#sec-0-2-1-写作动机不影响判定标准">0.2.1 写作动机不影响判定标准</a><a class="toc-item toc-lvl-2" href="#sec-0-3-适用范围">0.3 适用范围</a><a class="toc-item toc-lvl-2" href="#sec-0-4-暗物质与暗能量">0.4 暗物质与暗能量</a><a class="toc-item toc-lvl-2" href="#sec-0-5-天体系统的核心默认规则">0.5 天体系统的核心默认规则</a><a class="toc-item toc-lvl-2" href="#sec-0-6-能量与范围分开标注">0.6 能量与范围分开标注</a><a class="toc-item toc-lvl-2" href="#sec-0-7-世界观强度换算">0.7 世界观强度换算</a><a class="toc-item toc-lvl-2" href="#sec-0-8-半球扩散为默认">0.8 半球扩散为默认</a><a class="toc-item toc-lvl-2" href="#sec-0-9-空间能力与无范围摧毁">0.9 空间能力与无范围摧毁</a><a class="toc-item toc-lvl-2" href="#sec-0-10-远距离打击的交叉比对">0.10 远距离打击的交叉比对</a><a class="toc-item toc-lvl-2" href="#sec-0-11-掌控与毁灭-单向推定">0.11 掌控与毁灭：单向推定</a><a class="toc-item toc-lvl-2" href="#sec-0-12-定级不只看破坏">0.12 定级不只看破坏</a><a class="toc-item toc-lvl-2" href="#sec-0-13-束缚能类数据-下限-且上限无公式解">0.13 束缚能类数据：下限，且上限无公式解</a><a class="toc-item toc-lvl-2" href="#sec-0-14-认知规模不等于实际规模">0.14 认知规模不等于实际规模</a><a class="toc-item toc-lvl-3" href="#sec-0-14-1-未遂战绩按说话人分级">0.14.1 未遂战绩按说话人分级</a><a class="toc-item toc-lvl-3" href="#sec-0-14-2-归因与知情度审查-第三版新增">0.14.2 归因与知情度审查（第三版新增）</a><a class="toc-item toc-lvl-2" href="#sec-0-15-有限资源与无限战力的逻辑冲突">0.15 有限资源与无限战力的逻辑冲突</a><a class="toc-item toc-lvl-3" href="#sec-0-15-1-多击不认">0.15.1 多击不认</a><a class="toc-item toc-lvl-2" href="#sec-0-16-特殊能力的量化路径-范围-可影响强度上限">0.16 特殊能力的量化路径：范围 × 可影响强度上限</a><a class="toc-item toc-lvl-2" href="#sec-0-17-已达到规模原则">0.17 已达到规模原则</a><a class="toc-item toc-lvl-2" href="#sec-0-18-两种无限与-数点无意义">0.18 两种无限与&quot;数点无意义&quot;</a><a class="toc-item toc-lvl-2" href="#sec-0-19-模型切换-目标式与覆盖式">0.19 模型切换：目标式与覆盖式</a><a class="toc-item toc-lvl-1" href="#sec-第一部分-多维评定与综合量级">第一部分　多维评定与综合量级</a><a class="toc-item toc-lvl-2" href="#sec-1-1-七个维度">1.1 七个维度</a><a class="toc-item toc-lvl-2" href="#sec-1-2-每一格都带证据状态">1.2 每一格都带证据状态</a><a class="toc-item toc-lvl-2" href="#sec-1-3-综合量级的合成规则">1.3 综合量级的合成规则</a><a class="toc-item toc-lvl-2" href="#sec-1-4-跨维推定-允许与禁止">1.4 跨维推定：允许与禁止</a><a class="toc-item toc-lvl-2" href="#sec-1-5-书写格式">1.5 书写格式</a><a class="toc-item toc-lvl-3" href="#sec-完整书写-第三版新增-正式输出用">完整书写（第三版新增，正式输出用）</a><a class="toc-item toc-lvl-2" href="#sec-1-6-比较规则">1.6 比较规则</a><a class="toc-item toc-lvl-1" href="#sec-第二部分-有限能量轴-继承区-爆恒星及以下">第二部分　有限能量轴·继承区（爆恒星及以下）</a><a class="toc-item toc-lvl-2" href="#sec-2-1-破碎程度分级">2.1 破碎程度分级</a><a class="toc-item toc-lvl-2" href="#sec-2-2-粉碎能量密度参照表">2.2 粉碎能量密度参照表</a><a class="toc-item toc-lvl-3" href="#sec-刻度说明-重要">刻度说明（重要）</a><a class="toc-item toc-lvl-2" href="#sec-2-3-量级表-昆虫-爆恒星">2.3 量级表（昆虫～爆恒星）</a><a class="toc-item toc-lvl-2" href="#sec-2-4-复算校验与修正记录">2.4 复算校验与修正记录</a><a class="toc-item toc-lvl-1" href="#sec-第三部分-有限能量轴-过渡带">第三部分　有限能量轴·过渡带</a><a class="toc-item toc-lvl-2" href="#sec-3-1-过渡带-a-恒星-恒星系-1-8-10⁴²-3-7-10⁴⁹-j">3.1 过渡带 A：恒星 → 恒星系（1.8×10⁴² ～ 3.7×10⁴⁹ J）</a><a class="toc-item toc-lvl-2" href="#sec-3-2-过渡带-b-恒星系-星团-3-7-10⁵⁶-3-7-10⁵⁸-j">3.2 过渡带 B：恒星系 → 星团（3.7×10⁵⁶ ～ 3.7×10⁵⁸ J）</a><a class="toc-item toc-lvl-1" href="#sec-第四部分-有限能量轴-覆盖体系-恒星系级至超宇宙">第四部分　有限能量轴·覆盖体系（恒星系级至超宇宙）</a><a class="toc-item toc-lvl-2" href="#sec-4-1-与旧体系的根本差异">4.1 与旧体系的根本差异</a><a class="toc-item toc-lvl-2" href="#sec-4-2-核心公式与基准">4.2 核心公式与基准</a><a class="toc-item toc-lvl-2" href="#sec-4-3-恒星系级-系-半球扩散">4.3 恒星系级（系，半球扩散）</a><a class="toc-item toc-lvl-2" href="#sec-4-4-星团级-团-半球扩散">4.4 星团级（团，半球扩散）</a><a class="toc-item toc-lvl-2" href="#sec-4-5-形状适配打击总则">4.5 形状适配打击总则</a><a class="toc-item toc-lvl-2" href="#sec-4-6-星系级-河-盘面适配-πd²-4">4.6 星系级（河，盘面适配 πD²/4）</a><a class="toc-item toc-lvl-2" href="#sec-4-7-星系团级-簇-回到半球扩散">4.7 星系团级（簇，回到半球扩散）</a><a class="toc-item toc-lvl-2" href="#sec-4-8-宇宙结构级-构-半球扩散为默认">4.8 宇宙结构级（构，半球扩散为默认）</a><a class="toc-item toc-lvl-2" href="#sec-4-9-宇宙级-宇-半球扩散-第二版重新分档">4.9 宇宙级（宇，半球扩散）——第二版重新分档</a><a class="toc-item toc-lvl-1" href="#sec-第五部分-广义无限区-广">第五部分　广义无限区（广）</a><a class="toc-item toc-lvl-2" href="#sec-5-1-第二版的定义">5.1 第二版的定义</a><a class="toc-item toc-lvl-2" href="#sec-5-2-入区线-10-3-倍标准宇宙能量">5.2 入区线：10↑↑3 倍标准宇宙能量</a><a class="toc-item toc-lvl-2" href="#sec-5-3-入区证据">5.3 入区证据</a><a class="toc-item toc-lvl-2" href="#sec-5-4-区内分段-快速增长层级">5.4 区内分段：快速增长层级</a><a class="toc-item toc-lvl-2" href="#sec-5-5-增长速度的标注">5.5 增长速度的标注</a><a class="toc-item toc-lvl-2" href="#sec-5-6-证伪五信号-命中任意一种即降级">5.6 证伪五信号：命中任意一种即降级</a><a class="toc-item toc-lvl-2" href="#sec-5-7-跨对象比较的局限">5.7 跨对象比较的局限</a><a class="toc-item toc-lvl-1" href="#sec-第六部分-数量轴-横向多元">第六部分　数量轴（横向多元）</a><a class="toc-item toc-lvl-2" href="#sec-6-1-计数对象-个体化的完整结构">6.1 计数对象：个体化的完整结构</a><a class="toc-item toc-lvl-2" href="#sec-6-2-数点无意义">6.2 数点无意义</a><a class="toc-item toc-lvl-2" href="#sec-6-3-有限多元的能量当量">6.3 有限多元的能量当量</a><a class="toc-item toc-lvl-2" href="#sec-6-4-书写">6.4 书写</a><a class="toc-item toc-lvl-2" href="#sec-6-5-时间线与平行世界">6.5 时间线与平行世界</a><a class="toc-item toc-lvl-2" href="#sec-6-6-ℵ₀-及以上">6.6 ℵ₀ 及以上</a><a class="toc-item toc-lvl-1" href="#sec-第七部分-层级轴-位面跃迁与嵌套">第七部分　层级轴（位面跃迁与嵌套）</a><a class="toc-item toc-lvl-2" href="#sec-7-1-与能量轴的关系">7.1 与能量轴的关系</a><a class="toc-item toc-lvl-2" href="#sec-7-2-跃迁性质的五种分类-判定前先分流">7.2 跃迁性质的五种分类（判定前先分流）</a><a class="toc-item toc-lvl-2" href="#sec-7-3-跃迁门槛-强度验证优先于位面名义">7.3 跃迁门槛：强度验证优先于位面名义</a><a class="toc-item toc-lvl-2" href="#sec-7-4-单级跃迁的下限判定">7.4 单级跃迁的下限判定</a><a class="toc-item toc-lvl-2" href="#sec-7-5-多级跃迁-倍率记法-第二版定稿">7.5 多级跃迁：倍率记法（第二版定稿）</a><a class="toc-item toc-lvl-2" href="#sec-7-6-无限嵌套-无限超脱-的处理-第二版修订">7.6 &quot;无限嵌套&quot;&quot;无限超脱&quot;的处理（第二版修订）</a><a class="toc-item toc-lvl-2" href="#sec-7-7-外物赐予型-能力归属与战力归属拆分">7.7 外物赐予型：能力归属与战力归属拆分</a><a class="toc-item toc-lvl-2" href="#sec-7-8-叙事层与第四面墙-至多计为嵌套结构">7.8 叙事层与第四面墙：至多计为嵌套结构</a><a class="toc-item toc-lvl-2" href="#sec-7-9-层级轴必检与-只有标签没有倍率-第三版新增">7.9 层级轴必检与&quot;只有标签没有倍率&quot;（第三版新增）</a><a class="toc-item toc-lvl-1" href="#sec-第八部分-论外级-真无限-ℵ₀-起">第八部分　论外级（真无限 · ℵ₀ 起）</a><a class="toc-item toc-lvl-2" href="#sec-8-1-定性与门槛">8.1 定性与门槛</a><a class="toc-item toc-lvl-2" href="#sec-8-2-论外级的比较维度">8.2 论外级的比较维度</a><a class="toc-item toc-lvl-2" href="#sec-8-3-序数比结构-不比大小">8.3 序数比结构，不比大小</a><a class="toc-item toc-lvl-3" href="#sec-8-3-1-序数不能当作-攀爬式境界">8.3.1 序数不能当作&quot;攀爬式境界&quot;</a><a class="toc-item toc-lvl-3" href="#sec-8-3-2-外力赋予的-ℵ₀-级战力-来源与操作者分开评级">8.3.2 外力赋予的 ℵ₀ 级战力：来源与操作者分开评级</a><a class="toc-item toc-lvl-3" href="#sec-8-3-3-结构封闭性-用盒内的操作-突破不了盒子">8.3.3 结构封闭性：用盒内的操作，突破不了盒子</a><a class="toc-item toc-lvl-2" href="#sec-8-4-超越数学-类描述-关系不是规模">8.4 &quot;超越数学&quot;类描述：关系不是规模</a><a class="toc-item toc-lvl-2" href="#sec-8-5-论外级内部分档-第二版修订">8.5 论外级内部分档（第二版修订）</a><a class="toc-item toc-lvl-3" href="#sec-完整分档表">完整分档表</a><a class="toc-item toc-lvl-3" href="#sec-关于-0-的修正">关于 0# 的修正</a><a class="toc-item toc-lvl-3" href="#sec-分档说明与技术要点">分档说明与技术要点</a><a class="toc-item toc-lvl-3" href="#sec-与外部标准的对接">与外部标准的对接</a><a class="toc-item toc-lvl-1" href="#sec-第九部分-能力维度细则">第九部分　能力维度细则</a><a class="toc-item toc-lvl-2" href="#sec-9-1-速度-速">9.1 速度（速）</a><a class="toc-item toc-lvl-2" href="#sec-9-2-防御-御">9.2 防御（御）</a><a class="toc-item toc-lvl-2" href="#sec-9-3-掌控-控-与影响范围-域">9.3 掌控（控）与影响范围（域）</a><a class="toc-item toc-lvl-2" href="#sec-9-4-计算层级-算">9.4 计算层级（算）</a><a class="toc-item toc-lvl-2" href="#sec-9-5-特性-性">9.5 特性（性）</a><a class="toc-item toc-lvl-1" href="#sec-第十部分-图像-漫画与动画的量化方法">第十部分　图像、漫画与动画的量化方法</a><a class="toc-item toc-lvl-2" href="#sec-10-1-总原则">10.1 总原则</a><a class="toc-item toc-lvl-2" href="#sec-10-2-像素比例尺法">10.2 像素比例尺法</a><a class="toc-item toc-lvl-2" href="#sec-10-3-角尺寸法">10.3 角尺寸法</a><a class="toc-item toc-lvl-2" href="#sec-10-4-从图像得到破坏能量">10.4 从图像得到破坏能量</a><a class="toc-item toc-lvl-2" href="#sec-10-5-速度与时间">10.5 速度与时间</a><a class="toc-item toc-lvl-2" href="#sec-10-6-常见陷阱">10.6 常见陷阱</a><a class="toc-item toc-lvl-2" href="#sec-10-7-ai-分析图像时的流程">10.7 AI 分析图像时的流程</a><a class="toc-item toc-lvl-2" href="#sec-10-8-标注图与动图处理-第四版新增">10.8 标注图与动图处理（第四版新增）</a><a class="toc-item toc-lvl-1" href="#sec-第十一部分-速查">第十一部分　速查</a><a class="toc-item toc-lvl-2" href="#sec-11-1-模型切换速查">11.1 模型切换速查</a><a class="toc-item toc-lvl-2" href="#sec-11-2-全链条总览">11.2 全链条总览</a><a class="toc-item toc-lvl-1" href="#sec-附-未定稿事项">附：未定稿事项</a>
-          </nav>
+          <div class="toc-head"><div class="toc-head-row"><span>本文目录</span><span class="mono">132</span></div><input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off"></div>
+          <nav class="toc-list" id="toc-nav"><a class="toc-item toc-lvl-1" href="#sec-衡天-多维战力量级体系-第五版">衡天⊙ 多维战力量级体系（第五版）</a><a class="toc-item toc-lvl-1" href="#sec-符号速查">符号速查</a><a class="toc-item toc-lvl-2" href="#sec-一-细分修饰符">一、细分修饰符</a><a class="toc-item toc-lvl-2" href="#sec-二-量级代字-有限能量轴">二、量级代字（有限能量轴）</a><a class="toc-item toc-lvl-2" href="#sec-三-广义无限区分段代字">三、广义无限区分段代字</a><a class="toc-item toc-lvl-2" href="#sec-四-论外级代字">四、论外级代字</a><a class="toc-item toc-lvl-2" href="#sec-五-维度代字">五、维度代字</a><a class="toc-item toc-lvl-2" href="#sec-六-证据状态">六、证据状态</a><a class="toc-item toc-lvl-2" href="#sec-七-书写示例">七、书写示例</a><a class="toc-item toc-lvl-1" href="#sec-第五版修订要点">第五版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-第四版修订要点">第四版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-第三版修订要点">第三版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-第二版修订要点">第二版修订要点</a><a class="toc-item toc-lvl-1" href="#sec-本体系的用途-定级与证伪">本体系的用途：定级与证伪</a><a class="toc-item toc-lvl-1" href="#sec-使用流程与分批处理">使用流程与分批处理</a><a class="toc-item toc-lvl-2" href="#sec-适用范围">适用范围</a><a class="toc-item toc-lvl-2" href="#sec-输入分批">输入分批</a><a class="toc-item toc-lvl-2" href="#sec-超长篇自行通读流程-第三版新增">超长篇自行通读流程（第三版新增）</a><a class="toc-item toc-lvl-2" href="#sec-输出分阶段">输出分阶段</a><a class="toc-item toc-lvl-2" href="#sec-推荐执行顺序">推荐执行顺序</a><a class="toc-item toc-lvl-2" href="#sec-阶段间结转">阶段间结转</a><a class="toc-item toc-lvl-2" href="#sec-ai-使用本体系时的输出方式">AI 使用本体系时的输出方式</a><a class="toc-item toc-lvl-1" href="#sec-第零部分-判定通则">第零部分　判定通则</a><a class="toc-item toc-lvl-2" href="#sec-0-1-定级基本原则">0.1 定级基本原则</a><a class="toc-item toc-lvl-2" href="#sec-0-2-无数-不等于阿列夫零">0.2 &quot;无数&quot;不等于阿列夫零</a><a class="toc-item toc-lvl-3" href="#sec-0-2-1-写作动机不影响判定标准">0.2.1 写作动机不影响判定标准</a><a class="toc-item toc-lvl-2" href="#sec-0-3-适用范围">0.3 适用范围</a><a class="toc-item toc-lvl-2" href="#sec-0-4-暗物质与暗能量">0.4 暗物质与暗能量</a><a class="toc-item toc-lvl-2" href="#sec-0-5-天体系统的核心默认规则">0.5 天体系统的核心默认规则</a><a class="toc-item toc-lvl-2" href="#sec-0-6-能量与范围分开标注">0.6 能量与范围分开标注</a><a class="toc-item toc-lvl-2" href="#sec-0-7-世界观强度换算">0.7 世界观强度换算</a><a class="toc-item toc-lvl-2" href="#sec-0-8-半球扩散为默认">0.8 半球扩散为默认</a><a class="toc-item toc-lvl-2" href="#sec-0-9-空间能力与无范围摧毁">0.9 空间能力与无范围摧毁</a><a class="toc-item toc-lvl-2" href="#sec-0-10-远距离打击的交叉比对">0.10 远距离打击的交叉比对</a><a class="toc-item toc-lvl-2" href="#sec-0-11-掌控与毁灭-单向推定">0.11 掌控与毁灭：单向推定</a><a class="toc-item toc-lvl-2" href="#sec-0-12-定级不只看破坏">0.12 定级不只看破坏</a><a class="toc-item toc-lvl-2" href="#sec-0-13-束缚能类数据-下限-且上限无公式解">0.13 束缚能类数据：下限，且上限无公式解</a><a class="toc-item toc-lvl-2" href="#sec-0-14-认知规模不等于实际规模">0.14 认知规模不等于实际规模</a><a class="toc-item toc-lvl-3" href="#sec-0-14-1-未遂战绩按说话人分级">0.14.1 未遂战绩按说话人分级</a><a class="toc-item toc-lvl-3" href="#sec-0-14-2-归因与知情度审查-第三版新增">0.14.2 归因与知情度审查（第三版新增）</a><a class="toc-item toc-lvl-2" href="#sec-0-15-有限资源与无限战力的逻辑冲突">0.15 有限资源与无限战力的逻辑冲突</a><a class="toc-item toc-lvl-3" href="#sec-0-15-1-多击不认">0.15.1 多击不认</a><a class="toc-item toc-lvl-2" href="#sec-0-16-特殊能力的量化路径-范围-可影响强度上限">0.16 特殊能力的量化路径：范围 × 可影响强度上限</a><a class="toc-item toc-lvl-2" href="#sec-0-17-已达到规模原则">0.17 已达到规模原则</a><a class="toc-item toc-lvl-2" href="#sec-0-18-两种无限与-数点无意义">0.18 两种无限与&quot;数点无意义&quot;</a><a class="toc-item toc-lvl-2" href="#sec-0-19-模型切换-目标式与覆盖式">0.19 模型切换：目标式与覆盖式</a><a class="toc-item toc-lvl-2" href="#sec-0-20-展示规模与能力规模分开-第五版新增">0.20 展示规模与能力规模分开（第五版新增）</a><a class="toc-item toc-lvl-1" href="#sec-第一部分-多维评定与综合量级">第一部分　多维评定与综合量级</a><a class="toc-item toc-lvl-2" href="#sec-1-1-七个维度">1.1 七个维度</a><a class="toc-item toc-lvl-2" href="#sec-1-2-每一格都带证据状态">1.2 每一格都带证据状态</a><a class="toc-item toc-lvl-2" href="#sec-1-3-综合量级的合成规则">1.3 综合量级的合成规则</a><a class="toc-item toc-lvl-2" href="#sec-1-4-跨维推定-允许与禁止">1.4 跨维推定：允许与禁止</a><a class="toc-item toc-lvl-2" href="#sec-1-5-书写格式">1.5 书写格式</a><a class="toc-item toc-lvl-3" href="#sec-完整书写-第三版新增-正式输出用">完整书写（第三版新增，正式输出用）</a><a class="toc-item toc-lvl-2" href="#sec-1-6-比较规则">1.6 比较规则</a><a class="toc-item toc-lvl-1" href="#sec-第二部分-有限能量轴-继承区-爆恒星及以下">第二部分　有限能量轴·继承区（爆恒星及以下）</a><a class="toc-item toc-lvl-2" href="#sec-2-1-破碎程度分级">2.1 破碎程度分级</a><a class="toc-item toc-lvl-2" href="#sec-2-2-粉碎能量密度参照表">2.2 粉碎能量密度参照表</a><a class="toc-item toc-lvl-3" href="#sec-刻度说明-重要">刻度说明（重要）</a><a class="toc-item toc-lvl-2" href="#sec-2-3-量级表-昆虫-爆恒星">2.3 量级表（昆虫～爆恒星）</a><a class="toc-item toc-lvl-2" href="#sec-2-4-复算校验与修正记录">2.4 复算校验与修正记录</a><a class="toc-item toc-lvl-1" href="#sec-第三部分-有限能量轴-过渡带">第三部分　有限能量轴·过渡带</a><a class="toc-item toc-lvl-2" href="#sec-3-1-过渡带-a-恒星-恒星系-1-8-10⁴²-3-7-10⁴⁹-j">3.1 过渡带 A：恒星 → 恒星系（1.8×10⁴² ～ 3.7×10⁴⁹ J）</a><a class="toc-item toc-lvl-2" href="#sec-3-2-过渡带-b-恒星系-星团-3-7-10⁵⁶-3-7-10⁵⁸-j">3.2 过渡带 B：恒星系 → 星团（3.7×10⁵⁶ ～ 3.7×10⁵⁸ J）</a><a class="toc-item toc-lvl-1" href="#sec-第四部分-有限能量轴-覆盖体系-恒星系级至超宇宙">第四部分　有限能量轴·覆盖体系（恒星系级至超宇宙）</a><a class="toc-item toc-lvl-2" href="#sec-4-1-与旧体系的根本差异">4.1 与旧体系的根本差异</a><a class="toc-item toc-lvl-2" href="#sec-4-2-核心公式与基准">4.2 核心公式与基准</a><a class="toc-item toc-lvl-2" href="#sec-4-3-恒星系级-系-半球扩散">4.3 恒星系级（系，半球扩散）</a><a class="toc-item toc-lvl-2" href="#sec-4-4-星团级-团-半球扩散">4.4 星团级（团，半球扩散）</a><a class="toc-item toc-lvl-2" href="#sec-4-5-形状适配打击总则">4.5 形状适配打击总则</a><a class="toc-item toc-lvl-2" href="#sec-4-6-星系级-河-盘面适配-πd²-4">4.6 星系级（河，盘面适配 πD²/4）</a><a class="toc-item toc-lvl-2" href="#sec-4-7-星系团级-簇-回到半球扩散">4.7 星系团级（簇，回到半球扩散）</a><a class="toc-item toc-lvl-2" href="#sec-4-8-宇宙结构级-构-半球扩散为默认">4.8 宇宙结构级（构，半球扩散为默认）</a><a class="toc-item toc-lvl-2" href="#sec-4-9-宇宙级-宇-半球扩散-第二版重新分档">4.9 宇宙级（宇，半球扩散）——第二版重新分档</a><a class="toc-item toc-lvl-1" href="#sec-第五部分-广义无限区-广">第五部分　广义无限区（广）</a><a class="toc-item toc-lvl-2" href="#sec-5-1-第二版的定义">5.1 第二版的定义</a><a class="toc-item toc-lvl-2" href="#sec-5-2-入区线-10-3-倍标准宇宙能量">5.2 入区线：10↑↑3 倍标准宇宙能量</a><a class="toc-item toc-lvl-2" href="#sec-5-3-入区证据">5.3 入区证据</a><a class="toc-item toc-lvl-2" href="#sec-5-4-区内分段-快速增长层级">5.4 区内分段：快速增长层级</a><a class="toc-item toc-lvl-2" href="#sec-5-5-增长速度的标注">5.5 增长速度的标注</a><a class="toc-item toc-lvl-2" href="#sec-5-6-证伪五信号-命中任意一种即降级">5.6 证伪五信号：命中任意一种即降级</a><a class="toc-item toc-lvl-2" href="#sec-5-7-跨对象比较的局限">5.7 跨对象比较的局限</a><a class="toc-item toc-lvl-1" href="#sec-第六部分-数量轴-横向多元">第六部分　数量轴（横向多元）</a><a class="toc-item toc-lvl-2" href="#sec-6-1-计数对象-个体化的完整结构">6.1 计数对象：个体化的完整结构</a><a class="toc-item toc-lvl-2" href="#sec-6-2-数点无意义">6.2 数点无意义</a><a class="toc-item toc-lvl-2" href="#sec-6-3-有限多元的能量当量">6.3 有限多元的能量当量</a><a class="toc-item toc-lvl-2" href="#sec-6-4-书写">6.4 书写</a><a class="toc-item toc-lvl-2" href="#sec-6-5-时间线与平行世界">6.5 时间线与平行世界</a><a class="toc-item toc-lvl-2" href="#sec-6-6-ℵ₀-及以上">6.6 ℵ₀ 及以上</a><a class="toc-item toc-lvl-1" href="#sec-第七部分-层级轴-位面跃迁与嵌套">第七部分　层级轴（位面跃迁与嵌套）</a><a class="toc-item toc-lvl-2" href="#sec-7-1-与能量轴的关系">7.1 与能量轴的关系</a><a class="toc-item toc-lvl-2" href="#sec-7-2-跃迁性质的五种分类-判定前先分流">7.2 跃迁性质的五种分类（判定前先分流）</a><a class="toc-item toc-lvl-2" href="#sec-7-3-跃迁门槛-强度验证优先于位面名义">7.3 跃迁门槛：强度验证优先于位面名义</a><a class="toc-item toc-lvl-2" href="#sec-7-4-单级跃迁的下限判定">7.4 单级跃迁的下限判定</a><a class="toc-item toc-lvl-2" href="#sec-7-5-多级跃迁-倍率记法-第二版定稿">7.5 多级跃迁：倍率记法（第二版定稿）</a><a class="toc-item toc-lvl-2" href="#sec-7-6-无限嵌套-无限超脱-的处理-第二版修订">7.6 &quot;无限嵌套&quot;&quot;无限超脱&quot;的处理（第二版修订）</a><a class="toc-item toc-lvl-2" href="#sec-7-7-外物赐予型-能力归属与战力归属拆分">7.7 外物赐予型：能力归属与战力归属拆分</a><a class="toc-item toc-lvl-2" href="#sec-7-8-叙事层与第四面墙-至多计为嵌套结构">7.8 叙事层与第四面墙：至多计为嵌套结构</a><a class="toc-item toc-lvl-2" href="#sec-7-9-层级轴必检与-只有标签没有倍率-第三版新增">7.9 层级轴必检与&quot;只有标签没有倍率&quot;（第三版新增）</a><a class="toc-item toc-lvl-1" href="#sec-第八部分-论外级-真无限-ℵ₀-起">第八部分　论外级（真无限 · ℵ₀ 起）</a><a class="toc-item toc-lvl-2" href="#sec-8-1-定性与门槛">8.1 定性与门槛</a><a class="toc-item toc-lvl-3" href="#sec-明确设定陈述-第五版新增">明确设定陈述（第五版新增）</a><a class="toc-item toc-lvl-2" href="#sec-8-2-论外级的比较维度">8.2 论外级的比较维度</a><a class="toc-item toc-lvl-2" href="#sec-8-3-序数比结构-不比大小">8.3 序数比结构，不比大小</a><a class="toc-item toc-lvl-3" href="#sec-8-3-1-序数不能当作-攀爬式境界">8.3.1 序数不能当作&quot;攀爬式境界&quot;</a><a class="toc-item toc-lvl-3" href="#sec-8-3-2-外力赋予的-ℵ₀-级战力-来源与操作者分开评级">8.3.2 外力赋予的 ℵ₀ 级战力：来源与操作者分开评级</a><a class="toc-item toc-lvl-3" href="#sec-8-3-3-结构封闭性-用盒内的操作-突破不了盒子">8.3.3 结构封闭性：用盒内的操作，突破不了盒子</a><a class="toc-item toc-lvl-2" href="#sec-8-4-超越数学-类描述-关系不是规模">8.4 &quot;超越数学&quot;类描述：关系不是规模</a><a class="toc-item toc-lvl-2" href="#sec-8-5-论外级内部分档-第二版修订">8.5 论外级内部分档（第二版修订）</a><a class="toc-item toc-lvl-3" href="#sec-完整分档表">完整分档表</a><a class="toc-item toc-lvl-3" href="#sec-关于-0-的修正">关于 0# 的修正</a><a class="toc-item toc-lvl-3" href="#sec-分档说明与技术要点">分档说明与技术要点</a><a class="toc-item toc-lvl-3" href="#sec-与外部标准的对接">与外部标准的对接</a><a class="toc-item toc-lvl-1" href="#sec-第九部分-能力维度细则">第九部分　能力维度细则</a><a class="toc-item toc-lvl-2" href="#sec-9-1-速度-速">9.1 速度（速）</a><a class="toc-item toc-lvl-2" href="#sec-9-2-防御-御">9.2 防御（御）</a><a class="toc-item toc-lvl-2" href="#sec-9-3-掌控-控-与影响范围-域">9.3 掌控（控）与影响范围（域）</a><a class="toc-item toc-lvl-2" href="#sec-9-4-计算层级-算">9.4 计算层级（算）</a><a class="toc-item toc-lvl-2" href="#sec-9-5-特性-性">9.5 特性（性）</a><a class="toc-item toc-lvl-1" href="#sec-第十部分-图像-漫画与动画的量化方法">第十部分　图像、漫画与动画的量化方法</a><a class="toc-item toc-lvl-2" href="#sec-10-1-总原则">10.1 总原则</a><a class="toc-item toc-lvl-2" href="#sec-10-2-像素比例尺法">10.2 像素比例尺法</a><a class="toc-item toc-lvl-2" href="#sec-10-3-角尺寸法">10.3 角尺寸法</a><a class="toc-item toc-lvl-2" href="#sec-10-4-从图像得到破坏能量">10.4 从图像得到破坏能量</a><a class="toc-item toc-lvl-2" href="#sec-10-5-速度与时间">10.5 速度与时间</a><a class="toc-item toc-lvl-2" href="#sec-10-6-常见陷阱">10.6 常见陷阱</a><a class="toc-item toc-lvl-2" href="#sec-10-7-ai-分析图像时的流程">10.7 AI 分析图像时的流程</a><a class="toc-item toc-lvl-2" href="#sec-10-8-标注图与动图处理-第四版新增">10.8 标注图与动图处理（第四版新增）</a><a class="toc-item toc-lvl-1" href="#sec-第十一部分-速查">第十一部分　速查</a><a class="toc-item toc-lvl-2" href="#sec-11-1-模型切换速查">11.1 模型切换速查</a><a class="toc-item toc-lvl-2" href="#sec-11-2-全链条总览">11.2 全链条总览</a><a class="toc-item toc-lvl-1" href="#sec-附-未定稿事项">附：未定稿事项</a></nav>
         </aside>
-
         <article class="doc-panel">
           <div class="doc-toolbar">
-            <div class="doc-source-info">
-              <span>基准原文全文</span>
-              <span>·</span>
-              <code class="mono">衡天量级体系【第四版·最新】.md</code>
-            </div>
+            <div class="doc-source-info"><span>阅读工具</span></div>
             <div class="doc-tools">
-              <div class="doc-find-box">
-                <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
-                <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
-                <span class="doc-find-count mono" id="doc-find-count"></span>
-              </div>
-              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+              <div class="doc-find-box"><input type="search" class="doc-find-input" id="doc-find-input" placeholder="在本文中查找…"><button type="button" class="tool-btn" id="doc-find-next">查找</button><span class="doc-find-count mono" id="doc-find-count"></span></div>
+              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A−</button>
               <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
               <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
             </div>
           </div>
-
-          <div class="markdown-body">
-            <h1 id="sec-衡天-多维战力量级体系-第四版">衡天⊙ 多维战力量级体系（第四版）<a class="heading-anchor" href="#sec-衡天-多维战力量级体系-第四版" data-target-id="sec-衡天-多维战力量级体系-第四版" title="复制本节锚点链接">#</a></h1>
-<blockquote><p><strong>版本</strong>：第四版（2026-10-24），在第三版基础上修订，是目前的最新版。第三版《衡天量级体系（第三版）》、第二版《衡天量级体系》、更早的《战力量级体系》都原样保留在项目中，供对照。<br>本文是原《战力量级体系》的重制版。<br><strong>名称</strong>："衡"是称量，"天"是从凡人一直量到天外。<strong>体系标记 ⊙</strong> 是天文学里的太阳符号：覆盖体系的基准通量 F* 由恒星推出，整套刻度是从一颗恒星开始向外衡量的。<br>简称「衡天」，定级结论前缀写作「⊙」。</p></blockquote>
+          <div class="markdown-body"><h1 id="sec-衡天-多维战力量级体系-第五版">衡天⊙ 多维战力量级体系（第五版）<a class="heading-anchor" href="#sec-衡天-多维战力量级体系-第五版" data-target-id="sec-衡天-多维战力量级体系-第五版" title="复制本节锚点链接">#</a></h1>
+<blockquote><p><strong>版本</strong>：第五版（2026-10-25），在第四版基础上修订，是目前的最新版。第四版《衡天量级体系（第四版）》、第三版《衡天量级体系（第三版）》、第二版《衡天量级体系》、更早的《战力量级体系》都原样保留在项目中，供对照。<br>本文是原《战力量级体系》的重制版。<br><strong>名称</strong>："衡"是称量，"天"是从凡人一直量到天外。<strong>体系标记 ⊙</strong> 是天文学里的太阳符号：覆盖体系的基准通量 F* 由恒星推出，整套刻度是从一颗恒星开始向外衡量的。<br>简称「衡天」，定级结论前缀写作「⊙」。</p></blockquote>
 <hr>
 <h1 id="sec-符号速查">符号速查<a class="heading-anchor" href="#sec-符号速查" data-target-id="sec-符号速查" title="复制本节锚点链接">#</a></h1>
 <blockquote><p><strong>代字是速记，不是正式写法。</strong> 正式输出（报告、文档、论战帖、给别人看的结论）中，每个代字、修饰符、证据标签、维度名第一次出现时，都要在旁边写出<strong>完整名称和判定标准或能量</strong>，例如写「宇△（强宇宙级：可观测宇宙直径的 1～1 万倍，8.0×10⁷⁷～8.0×10⁸⁵ J）」，而不是只写「宇△」；写「<span class="ev-badge ev-lower">〔下〕</span>（下限：只能确认至少如此）」，而不是只写「<span class="ev-badge ev-lower">〔下〕</span>」。读者不应该需要回到本表才能看懂结论。详见 1.5「完整书写」与"AI 使用本体系时的输出方式"。</p></blockquote>
@@ -203,9 +173,13 @@
 <h2 id="sec-五-维度代字">五、维度代字<a class="heading-anchor" href="#sec-五-维度代字" data-target-id="sec-五-维度代字" title="复制本节锚点链接">#</a></h2>
 <div class="md-table-wrap"><table><thead><tr><th style="text-align:left">代字</th><th style="text-align:left">维度</th></tr></thead><tbody><tr><td style="text-align:left">破</td><td style="text-align:left">破坏</td></tr><tr><td style="text-align:left">控</td><td style="text-align:left">掌控</td></tr><tr><td style="text-align:left">域</td><td style="text-align:left">影响范围与可影响强度上限</td></tr><tr><td style="text-align:left">御</td><td style="text-align:left">防御</td></tr><tr><td style="text-align:left">速</td><td style="text-align:left">速度</td></tr><tr><td style="text-align:left">算</td><td style="text-align:left">计算层级</td></tr><tr><td style="text-align:left">性</td><td style="text-align:left">特性</td></tr></tbody></table></div>
 <h2 id="sec-六-证据状态">六、证据状态<a class="heading-anchor" href="#sec-六-证据状态" data-target-id="sec-六-证据状态" title="复制本节锚点链接">#</a></h2>
-<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">标记</th><th style="text-align:left">含义</th></tr></thead><tbody><tr><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td><td style="text-align:left">已确认：文本直接展示了该表现</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">下限：只能确认"至少如此"（旁白未遂、胜负关系等）</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-inferred">〔推〕</span></td><td style="text-align:left">推定：由其他维度按 1.4 的允许规则推出</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-hidden">〔隐〕</span></td><td style="text-align:left">未观测：有该能力，但规模被收束、隐藏或未展示</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td><td style="text-align:left">缺：文本完全没有涉及</td></tr></tbody></table></div>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">标记</th><th style="text-align:left">含义</th></tr></thead><tbody><tr><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td><td style="text-align:left">已确认：文本直接展示了该表现</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">下限：只能确认"至少如此"（旁白未遂、胜负关系、明确设定陈述等）</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-inferred">〔推〕</span></td><td style="text-align:left">推定：由其他维度按 1.4 的允许规则推出</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-hidden">〔隐〕</span></td><td style="text-align:left">未观测：有该能力，但规模被收束、隐藏或未展示</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td><td style="text-align:left">缺：文本完全没有涉及</td></tr></tbody></table></div>
 <h2 id="sec-七-书写示例">七、书写示例<a class="heading-anchor" href="#sec-七-书写示例" data-target-id="sec-七-书写示例" title="复制本节锚点链接">#</a></h2>
 <blockquote><p>⊙宇△（掌控式）· 可信度：破<span class="ev-badge ev-confirmed">〔实〕</span>、控<span class="ev-badge ev-confirmed">〔实〕</span><br>破：宇○<span class="ev-badge ev-confirmed">〔实〕</span>｜控：宇△<span class="ev-badge ev-confirmed">〔实〕</span>｜域：—｜御：<span class="ev-badge ev-missing">〔缺〕</span>｜速：超光速·空间跳跃<span class="ev-badge ev-confirmed">〔实〕</span>｜算：0′<span class="ev-badge ev-inferred">〔推〕</span>｜性：不灭</p></blockquote>
+<hr>
+<h1 id="sec-第五版修订要点">第五版修订要点<a class="heading-anchor" href="#sec-第五版修订要点" data-target-id="sec-第五版修订要点" title="复制本节锚点链接">#</a></h1>
+<p>第五版不改动任何量级刻度和能量数值，只调整无限类宣称的证据分级。起因是：旧版在"结构性证明"与"纯文学性描述"之间缺少中间档，作品对世界规则的平实交代（"宇宙在空间上无限延伸""平行宇宙有无限多个"）会被当作修辞一并挡掉；同时"构造过程"的措辞容易被理解为要求交代来历或生成过程。</p>
+<ol><li><strong>8.1 新增「明确设定陈述」一档</strong>：来源、指明对象、字面用法、不被推翻四条同时满足时，可过论外门槛（ℵ₀），记<span class="ev-badge ev-lower">〔下〕</span>；只到门槛本身，不支持更高分档。附正例与反例。</li><li><strong>"构造过程"改为"结构交代"</strong>：要求的是说清"什么在无限、是什么形态"，静态描述即可，不要求来历、成因或生成过程（5.3、8.1）。</li><li><strong>0.15 补充"天生如此"</strong>：生来即具备、或所在世界本身无限的对象，不需要交代来历；本条只针对"有限世界里长出来的无限"。</li><li><strong>0.2 补充字面设定与修辞的区分</strong>；6.1、6.5、7.6 相应补入明确设定陈述的处理。</li><li><strong>重申三条不放宽的界线</strong>：设定陈述不进入广义无限区内部分段与论外内部分档；广义无限区仍须结构或明确数值；世界无限不等于角色能摧毁或掌控它。</li><li><strong>新增 0.20 展示规模与能力规模分开</strong>：局部交手不压低别处已确认的上限；由"本体整体状态变化＋跨结构唯一"一类逻辑关系外推波及范围，须四条同时成立，记<span class="ev-badge ev-lower">〔下〕</span>；列出三种不成立的外推（高维即全灭、存在范围乘进每次出手、局部持平即继承对方最高战绩）。1.4 禁止推定、6.3 相应补入引用。</li></ol>
 <hr>
 <h1 id="sec-第四版修订要点">第四版修订要点<a class="heading-anchor" href="#sec-第四版修订要点" data-target-id="sec-第四版修订要点" title="复制本节锚点链接">#</a></h1>
 <p>第四版不改动任何量级刻度、能量数值和判定通则，只补充图像素材的处理方法。</p>
@@ -261,6 +235,7 @@
 <p>涉及"无数宇宙""无数星辰"的描述，<strong>绝对禁止直接等同于 ℵ₀</strong>。没有明确递进和证据时，"无数""无限"一类词默认为<strong>虚词和夸张</strong>。</p>
 <p><strong>说话人和场合影响证据力：</strong></p>
 <ul><li><strong>叙事者/旁白定调</strong>：全知视角客观交代世界规则，证据力最高；</li><li><strong>角色平静陈述</strong>：证据力中等，仍需 0.14 的自述可靠性检验；涉及事件原因时，还要过 0.14.2 的归因与知情度审查；</li><li><strong>角色在鼓动性/仪式性场合的发言</strong>（演讲、祭祀、战前动员）：是修辞工具，证据力最低，默认按虚词处理。</li></ul>
+<p><strong>字面设定与修辞的区分（第五版补充）</strong>：本条针对的是修饰性的"无数""无限"——"力量无穷无尽""无数星辰""无尽的威压"。作品在交代世界规则时，平实写明"什么"是无限的（"宇宙在空间上无限延伸，星系处处均匀分布""平行宇宙有无限多个，每一个都是完整的宇宙"），这不是修辞，而是设定陈述，按 8.1「明确设定陈述」审查，满足条件即可采信，不默认为虚词。</p>
 <h3 id="sec-0-2-1-写作动机不影响判定标准">0.2.1 写作动机不影响判定标准<a class="heading-anchor" href="#sec-0-2-1-写作动机不影响判定标准" data-target-id="sec-0-2-1-写作动机不影响判定标准" title="复制本节锚点链接">#</a></h3>
 <p>部分作品明显是为论战而写，直接把阿列夫零、大基数套进世界观。<strong>本体系不因"看起来是为论战而写"就额外加码怀疑，也不因"作者显然懂数学"就放宽标准</strong>——判定对象始终是文本实际展示了什么。这类作品往往在举证阶段自然落空，原因是单纯复读术语提供不了具体操作证据，而不是体系对它们格外严苛；反之，若构造确实自洽、扛得住检验，就按同样标准正常定级。</p>
 <h2 id="sec-0-3-适用范围">0.3 适用范围<a class="heading-anchor" href="#sec-0-3-适用范围" data-target-id="sec-0-3-适用范围" title="复制本节锚点链接">#</a></h2>
@@ -314,6 +289,9 @@
 <p>世界观本身有限，角色却在其中修炼、吞噬到论外级 → 逻辑冲突：<strong>有限世界内的有限资源，无法产出超出该世界总量的战力。</strong> 作品常见的解释路径有能量质变、功法跃迁、外部注入三类。</p>
 <ul><li>作品给出明确机制（接入外部无限源，或世界观本身非有限）→ 正常定级；</li><li>机制语焉不详（仅以"纯度""境界不同"带过）→ 正常定级，但结论附存疑；</li><li>完全没有机制且世界明确有限 → 可信度显著下调，优先按有限能量轴处理，不直接采信为广义无限区或论外级。</li></ul>
 <p>这条是把能量守恒的直觉引入判定：不禁止作品设定无限，但要求作品<strong>为无限付出解释成本</strong>。</p>
+<p><strong>天生如此不需要解释（第五版补充）</strong>：本条只针对"有限世界里长出来的无限"——角色从有限起点，靠修炼、吞噬、积累在有限世界内达到无限。以下情形不适用本条，不需要交代来历或成因：</p>
+<ul><li>对象生来即是如此（创世神、世界本身、作为设定存在的至高存在）；</li><li>对象所在的世界观本身就是无限的，力量来源与世界同源；</li><li>剧情直接展示了作用于无限对象的表现，没有说明是怎么做到的——战绩本身就是证据，不需要解释手段。</li></ul>
+<p>不需要交代来历，不等于不需要证据：对象"是什么规模"仍须由 8.1 的某一档证据确认，"天生如此"只免除"怎么来的"这一问。</p>
 <h3 id="sec-0-15-1-多击不认">0.15.1 多击不认<a class="heading-anchor" href="#sec-0-15-1-多击不认" data-target-id="sec-0-15-1-多击不认" title="复制本节锚点链接">#</a></h3>
 <p>能量/尺度对应关系是以<strong>单点集中释放</strong>标定的。多次攻击、分散施加，不能把能量相加后套用单点标准：</p>
 <ol><li>分散比集中覆盖面积大得多，承认累加会架空整套面积-能量对应关系；</li><li>集中释放在爆心有过度加热的损耗，分散反而更有效率。</li></ol>
@@ -336,6 +314,17 @@
 <p>同一个"打爆太阳"，两种模型差 8 倍，这是定义差，不是矛盾，判定时按表现选取并注明：</p>
 <ul><li><strong>目标式（结合能）</strong>：表现为摧毁一个明确的目标本身（一颗行星、一颗恒星），不要求能量覆盖目标以外的区域 → 用目标的结合能或粉碎能（第二部分）。</li><li><strong>覆盖式（覆盖模型）</strong>：表现为一击摧毁一片区域内的全部目标，或能量需要从一端抵达另一端 → 用 E = 2πD² × F*（第四部分）。覆盖模型在恰好罩住一颗恒星时的最低代价就是 8U，这是"覆盖开销"的地板。</li></ul>
 <p><strong>默认</strong>：爆恒星及以下按目标式，恒星系级及以上按覆盖式。低层级表现明显属于覆盖式（例如要求冲击波从行星一侧抵达另一侧并扫平全部表面）时，可按覆盖式另算并标注。</p>
+<h2 id="sec-0-20-展示规模与能力规模分开-第五版新增">0.20 展示规模与能力规模分开（第五版新增）<a class="heading-anchor" href="#sec-0-20-展示规模与能力规模分开-第五版新增" data-target-id="sec-0-20-展示规模与能力规模分开-第五版新增" title="复制本节锚点链接">#</a></h2>
+<p>高维、上位、跨结构存在的对象，常常只在很小的场地里交手或展示力量。场地的大小不等于能力的上限，但"真正的实力应当更大"也不能凭感觉放大。本条把两个方向的规则放在一起。</p>
+<p><strong>一、场地不封顶</strong></p>
+<ul><li>局部交手只确定<strong>这一次</strong>的已确认输出<span class="ev-badge ev-confirmed">〔实〕</span>，不降低作品别处已确认的上限（0.1 取最高上限）；</li><li>战斗被收束、隐藏、转移时记<span class="ev-badge ev-hidden">〔隐〕</span>（0.6），<span class="ev-badge ev-hidden">〔隐〕</span>不改变主档（1.3 第 6 条）；</li><li>"真正的实力远不止于此"一类旁白或台词，按 0.14.1 作未遂或潜力处理，可作为不降级的理由，不给出具体数值。</li></ul>
+<p><strong>二、由逻辑关系外推波及范围</strong></p>
+<p>典型形式：「对象的某个事件可摧毁一个宇宙」＋「对象是跨全部位面的唯一个体」→「这一事件同时波及全部位面」。以下四条<strong>同时成立</strong>时可以采用，记<span class="ev-badge ev-lower">〔下〕</span>：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">条件</th><th style="text-align:left">要求</th><th style="text-align:left">不成立的情形</th></tr></thead><tbody><tr><td style="text-align:left">前提已确认</td><td style="text-align:left">单个结构内的后果本身为<span class="ev-badge ev-confirmed">〔实〕</span>或<span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">前提只是角色猜想、修辞，或本身就是推定</td></tr><tr><td style="text-align:left">本体的整体状态变化</td><td style="text-align:left">苏醒、死亡、降临、显现等<strong>整个对象</strong>的变化</td><td style="text-align:left">分身、投影、化身的动作；本体的局部动作（只伸出一根触手、只同化一条时间线）</td></tr><tr><td style="text-align:left">唯一性有文本依据</td><td style="text-align:left">文本写明是跨结构的同一个体</td><td style="text-align:left">各结构中各有一个个体（多击不认，0.15.1）</td></tr><tr><td style="text-align:left">只走一步</td><td style="text-align:left">从已确认的前提直接推出范围</td><td style="text-align:left">再接"所以它平时每次出手都是这个规模"——两步以上不进主档（1.3 第 2 条）</td></tr></tbody></table></div>
+<ul><li>各结构是否同步，有直接观测时按 6.3 正常计数；没有观测、只靠逻辑时，记「元·多（数目未定）」，按能确认的最小数目计当量（6.5）；</li><li>逻辑关系只能推出"不止一个、波及全部"，<strong>推不出具体数目</strong>，也推不出各结构的规模比前提更大；</li><li>这一外推确定的是该事件的波及范围，属于"破"或"控"的下限，不改变对象的防御、速度等其他维度（1.3 第 5 条）。</li></ul>
+<p><strong>三、三种不成立的外推</strong></p>
+<ol><li><strong>高维、上位 ⇒ 能摧毁下层全部</strong>：位置高只是结构标注，须先按 7.3 核实强度，再有 7.4 的绝对压制表现。</li><li><strong>存在于 N 个结构 ⇒ 每次出手都乘 N</strong>：存在范围不等于一次作用的范围（6.3"一次作用"表第一行）。</li><li><strong>与 X 局部交手持平或压制 X ⇒ 继承 X 的最高战绩</strong>：交手只传递<strong>这一场</strong>双方实际展示的输出。要以 X 为参照抬高本方，须同时满足：文本表明 X 当场是本体、全力、未被收束；按 1.4 以 X <strong>已确认的防御</strong>为下限记<span class="ev-badge ev-lower">〔下〕</span>。X 的最高战绩若来自另一个事件（例如苏醒、全盛期、另一形态），不随这场交手传递。</li></ol>
+<p><strong>示例</strong>：某存在跨所有位面唯一，旁白交代其苏醒后的未来里宇宙被清空，且各位面同时出现同一苏醒前兆 → 苏醒按全部位面计，记「宇级（元·多）<span class="ev-badge ev-lower">〔下〕</span>」。它在某一位面的城市里与主角近身交手、打得有来有回 → 该场只记城市级的已确认输出，主档不受影响；主角也不因这场交手获得"全部位面"的战绩，除非另有本体全力、防御已确认的证据。</p>
 <hr>
 <h1 id="sec-第一部分-多维评定与综合量级">第一部分　多维评定与综合量级<a class="heading-anchor" href="#sec-第一部分-多维评定与综合量级" data-target-id="sec-第一部分-多维评定与综合量级" title="复制本节锚点链接">#</a></h1>
 <blockquote><p>量级本来就应该是综合的；但很多作品只展示了部分维度，数据必然有缺失。所以本体系<strong>多维表与综合量级并用</strong>：多维表负责记录，综合量级负责比较。缺项时，综合量级给出"目前能确认的位置"，多维表标出"缺在哪里"。</p></blockquote>
@@ -350,7 +339,7 @@
 <p><strong>允许的单步推定（记<span class="ev-badge ev-inferred">〔推〕</span>或<span class="ev-badge ev-lower">〔下〕</span>）：</strong></p>
 <div class="md-table-wrap"><table><thead><tr><th style="text-align:left">由</th><th style="text-align:left">推出</th><th style="text-align:left">条件</th></tr></thead><tbody><tr><td style="text-align:left">控</td><td style="text-align:left">破<span class="ev-badge ev-inferred">〔推〕</span></td><td style="text-align:left">0.11 的整体掌控成立条件</td></tr><tr><td style="text-align:left">正面击败或压制对手</td><td style="text-align:left">破或控<span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">以对手已确认的御为下限；须是正面压制，不是偷袭、规则型胜利或对手自毁</td></tr><tr><td style="text-align:left">承受对手已确认的破</td><td style="text-align:left">御<span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">承受后未被摧毁；"硬抗"与"承伤"分开记（9.2）</td></tr><tr><td style="text-align:left">一次作用覆盖直径 D，耗时 t</td><td style="text-align:left">速（投送）<span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">下限为 D/t</td></tr></tbody></table></div>
 <p><strong>禁止的推定：</strong></p>
-<ul><li>破 ⇒ 御："打得出就扛得住"不成立；</li><li>破 ⇒ 速、破 ⇒ 控；</li><li>综合量级 ⇒ 任何单维；</li><li>境界名、称号、排行榜位次 ⇒ 任何维度（除非作品给出了该境界的已确认表现）。</li></ul>
+<ul><li>破 ⇒ 御："打得出就扛得住"不成立；</li><li>破 ⇒ 速、破 ⇒ 控；</li><li>综合量级 ⇒ 任何单维；</li><li>境界名、称号、排行榜位次 ⇒ 任何维度（除非作品给出了该境界的已确认表现）；</li><li>局部交手持平或压制 ⇒ 继承对手的最高战绩（0.20）。</li></ul>
 <h2 id="sec-1-5-书写格式">1.5 书写格式<a class="heading-anchor" href="#sec-1-5-书写格式" data-target-id="sec-1-5-书写格式" title="复制本节锚点链接">#</a></h2>
 <p>完整格式：</p>
 <blockquote><p>⊙〔主档〕（掌控式/攻防双满/需时等修饰）· 可信度：〔依据维度〕<br>破：……｜控：……｜域：……｜御：……｜速：……｜算：……｜性：……</p></blockquote>
@@ -462,6 +451,8 @@
 <p><strong>核心证据：递归结构。</strong> 作品很少直接写出幂塔，通常要从结构里读出来。最常见、也最站得住的是递归嵌套：</p>
 <ul><li>一个世界里有 N 个世界，每个里面又有 N 个，共 k 层 → 总数为 N 的 k 次方。这仍是普通指数，属于宇宙级（第六部分换算当量）。</li><li>若层数本身也按同样方式增长，或者每一层的嵌套数取上一层的总数 → 总数成为幂塔，进入本区。</li></ul>
 <p><strong>入区的证据是文本写清楚了"每一层怎样由上一层生成"</strong>，而不是一句"无穷无尽"。</p>
+<p><strong>结构交代不等于来历（第五版补充）</strong>："每一层怎样由上一层生成"说的是结构的形态，可以是静态描述（"每一层都包含上一层全部世界那么多个副本"），不要求作品交代这套结构是怎么形成的、谁造的、从何而来。作品直接给出具体数值（"十的十的十次方倍"）时按 0.1 照常采用，同样不需要结构。</p>
+<p><strong>本区不接受设定陈述式的"无限"</strong>：本区是有限数，入区和分段都取决于实际规模多大，只有结构或明确数值能回答这个问题。平实交代的"无限"要么按 8.1「明确设定陈述」过论外门槛，要么不过而回到 0.2，不会落在本区之内。</p>
 <p><strong>铺垫法（修订）</strong>：角色或世界观此前已明确达到超宇宙级，随后的跃升写明了生成方式（例如"把此前的全部作为一层，再如此重复同样多次"），可以入区。没有前置节点、凭空出现的"无穷无尽"，仍按 0.2 默认为虚词。</p>
 <p><strong>不认的三种情形：</strong></p>
 <ol><li>"能一直延续""永远增长"（0.17）；</li><li>纯修饰性的"无限""无穷"（0.2）；</li><li><strong>嵌套命名替代升级</strong>：分级名称越来越长、越来越玄（微型→小型→……→超级巨无霸→超级无量无尽→不可思议→非有无……），却没有任何实际规模差异的证据。命名是结构标签，不是规模证据，按其可确认的实际表现处理。</li></ol>
@@ -483,7 +474,7 @@
 <blockquote><p>本部分处理"一次作用波及多个完整宇宙、时间线、位面"的情形。数量轴不是独立维度，而是"破""控""域"的范围描述（1.1）。</p></blockquote>
 <h2 id="sec-6-1-计数对象-个体化的完整结构">6.1 计数对象：个体化的完整结构<a class="heading-anchor" href="#sec-6-1-计数对象-个体化的完整结构" data-target-id="sec-6-1-计数对象-个体化的完整结构" title="复制本节锚点链接">#</a></h2>
 <p>能够被计数的，只有满足以下三个条件的结构：</p>
-<ol><li><strong>完整</strong>：自身包含完整的时空与物质，规模至少达到作品中"一个宇宙"的设定；</li><li><strong>独立</strong>：彼此分离，不是同一空间中的不同区域；</li><li><strong>可计数</strong>：文本给出了数目，或给出了结构性的生成方式。</li></ol>
+<ol><li><strong>完整</strong>：自身包含完整的时空与物质，规模至少达到作品中"一个宇宙"的设定；</li><li><strong>独立</strong>：彼此分离，不是同一空间中的不同区域；</li><li><strong>可计数</strong>：文本给出了数目，或给出了结构性的生成方式，或以明确设定陈述（8.1）交代其数目无限。</li></ol>
 <p>不满足"完整"的——例如每条时间线只展示了一颗星球的历史——按"N 个某规模的结构"记，规模取文本实际展示的那一层，不自动升格为宇宙。</p>
 <p><strong>位面定义的审查（第三版补充）</strong>：作品对"位面""平行世界""次元"往往有自己的定义，判定"独立"之前须先读这个定义。</p>
 <ul><li>定义为各自独立、互不包含的完整世界 → 按完整结构计数；</li><li>定义为<strong>同一时空中不同频率、不同层次的叠加</strong>（"由不同振动频率能量的物质世界共同存在的复数叠加时空"一类）→ 各层是否算"彼此分离"存在疑问。此时可以计数，但"每个位面是一个完整宇宙"这一步只记<span class="ev-badge ev-inferred">〔推〕</span>，并在结论里写明这一层风险；</li><li>作品没有给定义 → 按各位面实际展示的内容判断，不默认升格。</li></ul>
@@ -497,12 +488,12 @@
 <ul><li><strong>多击不认</strong>（0.15.1）：分别、先后作用于多个宇宙，不累加成"一次作用 N 个宇宙"，各次单独定级；</li><li><strong>跨界本身是特性</strong>：能作用于其他宇宙，另在"性"中标注"跨界"，不额外加档；</li><li>宇宙大小写明时，按各自的实际能量相加。</li></ul>
 <p><strong>"一次作用"与 N 的认定（第三版补充）</strong>：N 是<strong>这一次作用实际波及的结构数目</strong>，不是"对象存在于多少个结构中"，也不是"世界里一共有多少个结构"。</p>
 <div class="md-table-wrap"><table><thead><tr><th style="text-align:left">情形</th><th style="text-align:left">处理</th></tr></thead><tbody><tr><td style="text-align:left">对象跨 N 个结构存在，但这次只作用于其中 1 个（例如只同化了一条时间线）</td><td style="text-align:left">按 1 个记；"跨 N 个结构存在"记入"性"，不乘 N</td></tr><tr><td style="text-align:left">唯一个体的同一事件，在 N 个结构中<strong>同时</strong>产生后果，且文本对"同步"有直接观测（例如各位面同时出现同一前兆、同一结局）</td><td style="text-align:left">可按一次作用波及 N 个计；"每个结构都毁到某规模"若只观测了其中一个，记<span class="ev-badge ev-lower">〔下〕</span></td></tr><tr><td style="text-align:left">文本只说"所有位面都会受影响"，没有观测，也没有数目</td><td style="text-align:left">记「元·多（数目未定）」，按能确认的最小数目处理（6.5）</td></tr><tr><td style="text-align:left">对象在不同结构中各有一个分身，分别出手</td><td style="text-align:left">多击不认，各自定级</td></tr></tbody></table></div>
-<p>把"对象的存在范围"直接乘进"一次作用的破坏当量"，是数量轴最常见的虚高来源。</p>
+<p>把"对象的存在范围"直接乘进"一次作用的破坏当量"，是数量轴最常见的虚高来源。只靠逻辑关系（而非直接观测）认定"同时波及全部结构"时，另按 0.20 的四条检查。</p>
 <h2 id="sec-6-4-书写">6.4 书写<a class="heading-anchor" href="#sec-6-4-书写" data-target-id="sec-6-4-书写" title="复制本节锚点链接">#</a></h2>
 <p>在对应维度写明个数与当量，代字为「元·N」：</p>
 <blockquote><p>破：宇△（元·10，当量 8.0×10⁷⁸ J）<span class="ev-badge ev-confirmed">〔实〕</span></p></blockquote>
 <h2 id="sec-6-5-时间线与平行世界">6.5 时间线与平行世界<a class="heading-anchor" href="#sec-6-5-时间线与平行世界" data-target-id="sec-6-5-时间线与平行世界" title="复制本节锚点链接">#</a></h2>
-<ul><li>每条时间线须是<strong>完整的宇宙历史</strong>，才能按宇宙计数。</li><li>只改写同一宇宙内的事件走向（让某人遇到或错过某事），属于因果、事件类的特殊能力，记入"域"：「域：事件改写·影响范围 N 条时间线·可影响强度上限 XX」，不进"破"。</li><li>"无穷无尽的时间线"没有结构证明时，按 0.2 处理为虚词，<strong>不得记 ℵ₀</strong>；记作「元·多（数目未定）」，按文本能确认的最小数目处理。</li></ul>
+<ul><li>每条时间线须是<strong>完整的宇宙历史</strong>，才能按宇宙计数。</li><li>只改写同一宇宙内的事件走向（让某人遇到或错过某事），属于因果、事件类的特殊能力，记入"域"：「域：事件改写·影响范围 N 条时间线·可影响强度上限 XX」，不进"破"。</li><li>"无穷无尽的时间线"既没有结构证明、又不满足 8.1「明确设定陈述」时，按 0.2 处理为虚词，<strong>不得记 ℵ₀</strong>；记作「元·多（数目未定）」，按文本能确认的最小数目处理。满足明确设定陈述（每条都是完整的宇宙历史、数目被平实交代为无限、未被推翻）时，可记 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>，转第八部分。</li></ul>
 <h2 id="sec-6-6-ℵ₀-及以上">6.6 ℵ₀ 及以上<a class="heading-anchor" href="#sec-6-6-ℵ₀-及以上" data-target-id="sec-6-6-ℵ₀-及以上" title="复制本节锚点链接">#</a></h2>
 <p>一次作用波及可数无限个及更多完整结构，转第八部分，改用基数与序数标注，不再换算能量当量。</p>
 <hr>
@@ -527,7 +518,7 @@
 <p><strong>还原能量</strong>：基准位面一旦算出具体能量，倍率随时可还原为焦耳，信息不丢失。还原后的能量若越过超宇宙上界，按第五部分入区判定。</p>
 <h2 id="sec-7-6-无限嵌套-无限超脱-的处理-第二版修订">7.6 "无限嵌套""无限超脱"的处理（第二版修订）<a class="heading-anchor" href="#sec-7-6-无限嵌套-无限超脱-的处理-第二版修订" data-target-id="sec-7-6-无限嵌套-无限超脱-的处理-第二版修订" title="复制本节锚点链接">#</a></h2>
 <p>旧版把这类描写指向"不可计算区"，第二版改为按结构判定：</p>
-<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">文本实际给出的结构</th><th style="text-align:left">处理</th></tr></thead><tbody><tr><td style="text-align:left">有限层数，层数可以写出</td><td style="text-align:left">按 7.5 倍率制</td></tr><tr><td style="text-align:left">层数本身递归增长（每一层的层数由上一层生成）</td><td style="text-align:left">按递归结构入广义无限区（5.3），用分段代字</td></tr><tr><td style="text-align:left">所有层同时存在，且有完成态的结构证明（可逐层编号、找不到最后一层）</td><td style="text-align:left">论外门槛及以上，按 8.3 用序数标注层数结构</td></tr><tr><td style="text-align:left">只有"无限嵌套"字样，没有结构</td><td style="text-align:left">按 0.2 虚词处理，按可确认的最大层数计</td></tr></tbody></table></div>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">文本实际给出的结构</th><th style="text-align:left">处理</th></tr></thead><tbody><tr><td style="text-align:left">有限层数，层数可以写出</td><td style="text-align:left">按 7.5 倍率制</td></tr><tr><td style="text-align:left">层数本身递归增长（每一层的层数由上一层生成）</td><td style="text-align:left">按递归结构入广义无限区（5.3），用分段代字</td></tr><tr><td style="text-align:left">所有层同时存在，且有完成态的结构证明（可逐层编号、找不到最后一层）</td><td style="text-align:left">论外门槛及以上，按 8.3 用序数标注层数结构</td></tr><tr><td style="text-align:left">所有层同时存在、层数无尽，由旁白或官方设定平实交代，没有逐层结构</td><td style="text-align:left">按 8.1「明确设定陈述」审查；通过则记论外门槛 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>，不支持更高分档</td></tr><tr><td style="text-align:left">只有"无限嵌套"字样，没有结构</td><td style="text-align:left">按 0.2 虚词处理，按可确认的最大层数计</td></tr></tbody></table></div>
 <p><strong>措辞判读</strong>：</p>
 <ul><li>"近乎无限""趋近无限"描述的是过程 → 按已达到规模（0.17）定级；</li><li>"极限的超脱""超脱一切"描述的是关系 → 需要结构证据，不因措辞自动升级（另见 8.4）。</li></ul>
 <h2 id="sec-7-7-外物赐予型-能力归属与战力归属拆分">7.7 外物赐予型：能力归属与战力归属拆分<a class="heading-anchor" href="#sec-7-7-外物赐予型-能力归属与战力归属拆分" data-target-id="sec-7-7-外物赐予型-能力归属与战力归属拆分" title="复制本节锚点链接">#</a></h2>
@@ -556,9 +547,20 @@
 <p><strong>入档须同时通过两道关</strong>：</p>
 <ol><li><strong>通则 0.2</strong>：需要明确递进和证据，"无数""无限"默认为虚词；</li><li><strong>通则 0.15</strong>：有限世界内产出的无限战力须有机制解释。</li></ol>
 <p><strong>证据分级</strong>：</p>
-<ul><li><strong>结构性证明（最强，直接满足门槛）</strong>：对象具备 ℵ₀ 的实际数学结构——可以逐一编号、数下去，但找不到最后一个；或写明离散、可数、无界的构造过程。即便没有出现"阿列夫零"这个词，也已满足定义特征。</li><li><strong>其它数学化描述（次强）</strong>：明确的对角化构造、明确的双射关系陈述等，按论证的严谨程度判断。</li><li><strong>纯文学性描述（弱，默认不过门槛）</strong>：只有"无限""无穷无尽""数不清"一类修饰词。即便反复出现、措辞极尽夸张，也不因次数或华丽程度而升级。</li></ul>
-<p><strong>经验规律：多数作品从未产出过结构性证明。</strong> 文学性的"无限"几乎零成本，结构性描述要求作者构思出"如何逐一枚举""为什么没有终点"，这个门槛本身就会挡掉绝大多数宣称。<strong>数量不能替代结构。</strong></p>
-<p>结构性证明解决的是"够不够格算 ℵ₀"，不解决"已经完成还是仍在进行"：后者须另用 0.17 与 5.6 的增长悖论检验。</p>
+<ul><li><strong>结构性证明（最强，直接满足门槛）</strong>：对象具备 ℵ₀ 的实际数学结构——可以逐一编号、数下去，但找不到最后一个；或写明离散、可数、无界的结构交代（静态描述即可，不要求来历或生成过程）。即便没有出现"阿列夫零"这个词，也已满足定义特征。</li><li><strong>其它数学化描述（次强）</strong>：明确的对角化构造、明确的双射关系陈述等，按论证的严谨程度判断。</li><li><strong>明确设定陈述（中，第五版新增，只到门槛）</strong>：作品对世界规则的平实交代，见下方"明确设定陈述"小节。</li><li><strong>纯文学性描述（弱，默认不过门槛）</strong>：只有"无限""无穷无尽""数不清"一类修饰词。即便反复出现、措辞极尽夸张，也不因次数或华丽程度而升级。</li></ul>
+<p><strong>经验规律：多数作品从未产出过结构性证明。</strong> 文学性的"无限"几乎零成本，结构性描述要求作者构思出"如何逐一枚举""为什么没有终点"，这个门槛本身就会挡掉绝大多数宣称。明确设定陈述为平实交代世界规则的作品留出了门槛这一级，但它要求指明对象、前后一致、不被推翻，同样挡得住修饰性的宣称。<strong>数量不能替代结构，措辞不能替代对象。</strong></p>
+<p>结构性证明与明确设定陈述解决的是"够不够格算 ℵ₀"，不解决"已经完成还是仍在进行"：后者须另用 0.17 与 5.6 的增长悖论检验。</p>
+<h3 id="sec-明确设定陈述-第五版新增">明确设定陈述（第五版新增）<a class="heading-anchor" href="#sec-明确设定陈述-第五版新增" data-target-id="sec-明确设定陈述-第五版新增" title="复制本节锚点链接">#</a></h3>
+<p>作者交代世界规则时，通常不会写出"如何逐一编号"，而是平实地说"宇宙无限延伸""平行世界有无限多个"。这类陈述与修饰性的"无穷无尽"性质不同，下列四条<strong>同时满足</strong>时可过论外门槛：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">条件</th><th style="text-align:left">要求</th><th style="text-align:left">不满足的典型情形</th></tr></thead><tbody><tr><td style="text-align:left">来源</td><td style="text-align:left">旁白、全知叙述，或官方设定资料</td><td style="text-align:left">角色的鼓动性、仪式性发言（0.2）；不知情者的转述（0.14.2）</td></tr><tr><td style="text-align:left">指明对象</td><td style="text-align:left">说清楚是什么在无限：完整宇宙的个数（须满足 6.1 的完整、独立）、物质分布于其中的无限空间（0.18）、同时存在的层</td><td style="text-align:left">"力量无穷""无尽的威压""无限的可能"——对象是修饰性的，或是量值而非计数（0.18）</td></tr><tr><td style="text-align:left">字面用法</td><td style="text-align:left">语境是交代世界规则；全作前后用法一致</td><td style="text-align:left">渲染气氛的段落；同一对象时而写成"无限"、时而写成有限的"许多""成千上万"</td></tr><tr><td style="text-align:left">不被推翻</td><td style="text-align:left">不触发 5.6 证伪五信号，不与实际表现冲突</td><td style="text-align:left">紧邻处给出具体数目（邻近量化悖论）；"已达无限"又"仍在扩张"（增长悖论）；后文写出能量枯竭</td></tr></tbody></table></div>
+<p><strong>处理</strong>：</p>
+<ul><li>四条都满足 → 记论外门槛「外·门（ℵ₀）<span class="ev-badge ev-lower">〔下〕</span>」，并注明"依据：明确设定陈述"；</li><li>官方设定资料与正文画面或叙述冲突时，以正文为准，冲突写入"存疑与作者矛盾"；</li><li>有一条不满足 → 不过门槛，回到 0.2，按可确认的最大规模定级。</li></ul>
+<p><strong>三条不放宽的界线</strong>：</p>
+<ol><li><strong>只到门槛本身。</strong> 设定陈述最多证明"有 ℵ₀ 级的无限"。论外内部的更高分档（8.5）仍须结构证据，"更无限""超越无限""无限之上的无限"不携带大小信息（8.4）。中文的"不可数"通常是"数不清"的意思，不能直接读作 ℵ₁ 或不可数基数。</li><li><strong>不进入广义无限区。</strong> 广义无限区是有限数，只有结构或明确数值能定位（5.3）。</li><li><strong>世界无限不等于角色无限。</strong> 确认世界是无限的，只确定了目标的规模；角色是否一次作用于其全部，仍按 6.3"一次作用"、0.14 与 0.14.2 审查。对象"身躯无限大"一类描述属于体量，不是破坏（0.6）。</li></ol>
+<p><strong>正例</strong>：</p>
+<ul><li>旁白在开篇交代世界结构："宇宙在空间上没有边界，向各个方向无限延伸，星系在其中处处均匀分布。"——来源为旁白，对象是物质分布于其中的无限空间，语境是交代规则，后文没有给出总量。按 0.18 的接口过门槛，记 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>。</li><li>官方设定写明"平行宇宙有无限多个，每一个都拥有完整的时空与历史"，正文各处一致，从未给出总数，也没有出现吞噬、比大小等实体化操作。记 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>；若后文有角色一次抹去全部平行宇宙的表现，该表现可按 ℵ₀ 计入"破"。</li></ul>
+<p><strong>反例</strong>：</p>
+<ul><li>"他体内的力量无穷无尽。"——对象是力量，属修饰；且能量是量值，不对应基数（0.18）。</li><li>旁白说"无穷无尽的世界"，下一段写"这数百万个世界都在颤抖"。——邻近量化悖论，按数百万计。</li><li>"诸天万界无穷无尽，而他仍在不断吞噬、不断扩张。"——增长悖论，且吞噬属实体化操作。</li><li>"无论走到哪一层，永远还有更高的一层。"——描述的是永不完成的过程，没有任何时刻已达到的规模（0.17），也没有指明对象。</li></ul>
 <h2 id="sec-8-2-论外级的比较维度">8.2 论外级的比较维度<a class="heading-anchor" href="#sec-8-2-论外级的比较维度" data-target-id="sec-8-2-论外级的比较维度" title="复制本节锚点链接">#</a></h2>
 <ul><li>有限区比的是<strong>规模</strong>（多少焦耳、多大范围、多少个宇宙）；</li><li>论外级比的是<strong>计数基数</strong>（多少个完整结构）与<strong>结构复杂度</strong>（超脱了多少层、迭代了多少次、嵌套了多深）。</li></ul>
 <h2 id="sec-8-3-序数比结构-不比大小">8.3 序数比结构，不比大小<a class="heading-anchor" href="#sec-8-3-序数比结构-不比大小" data-target-id="sec-8-3-序数比结构-不比大小" title="复制本节锚点链接">#</a></h2>
@@ -676,12 +678,11 @@
 <blockquote><p>星系级上限（4.2×10⁶⁸，盘面模型）与星系团级下限（9.2×10⁶⁹，半球模型）之间有 22 倍间隔，因模型切换所致，非断层；落在其间的球状目标按半球模型直接算能量即可。</p></blockquote>
 <hr>
 <h1 id="sec-附-未定稿事项">附：未定稿事项<a class="heading-anchor" href="#sec-附-未定稿事项" data-target-id="sec-附-未定稿事项" title="复制本节锚点链接">#</a></h1>
-<ol><li><strong>速度档位</strong>：亚光速是否需要细分，1% 光速的分界是否合适。</li><li><strong>防御</strong>：硬抗与承伤之间的折算关系；护盾类防御如何与本体防御合并比较。</li><li><strong>层级轴</strong>：倍率记法的字段是否还需增补（例如压制的持续性）。</li><li><strong>计算层级与认知相称</strong>：8.3.1 中"认知相称"的具体判据，如何与 9.4 的层级一一对接。</li><li><strong>广义无限区的静态归段</strong>：多数作品写不到快速增长层级的精度，粗分段的判读示例需要用实际作品补充。</li><li><strong>材质数据库</strong>：世界观强度换算的具体操作案例仍缺，计划另行制作流程示范。</li><li><strong>归因审查的证据力排序</strong>（第三版新增，待补）：亲历者记录、档案、旁白、事后研究报告之间冲突时的优先顺序，目前只写了"更具体、更接近事件者优先"，尚需用更多作品案例细化。</li><li><strong>层级轴倍率缺失时的比较</strong>（第三版新增，待补）：两个对象都只有"跃迁标签"、都没有倍率时，能否、以及如何做定性比较。</li></ol>
-          </div>
+<ol><li><strong>速度档位</strong>：亚光速是否需要细分，1% 光速的分界是否合适。</li><li><strong>防御</strong>：硬抗与承伤之间的折算关系；护盾类防御如何与本体防御合并比较。</li><li><strong>层级轴</strong>：倍率记法的字段是否还需增补（例如压制的持续性）。</li><li><strong>计算层级与认知相称</strong>：8.3.1 中"认知相称"的具体判据，如何与 9.4 的层级一一对接。</li><li><strong>广义无限区的静态归段</strong>：多数作品写不到快速增长层级的精度，粗分段的判读示例需要用实际作品补充。</li><li><strong>材质数据库</strong>：世界观强度换算的具体操作案例仍缺，计划另行制作流程示范。</li><li><strong>归因审查的证据力排序</strong>（第三版新增，待补）：亲历者记录、档案、旁白、事后研究报告之间冲突时的优先顺序，目前只写了"更具体、更接近事件者优先"，尚需用更多作品案例细化。</li><li><strong>层级轴倍率缺失时的比较</strong>（第三版新增，待补）：两个对象都只有"跃迁标签"、都没有倍率时，能否、以及如何做定性比较。</li></ol></div>
         </article>
       </div>
     </div>
-    
+
   </main>
 
   <div class="floating-dock" aria-label="快捷工具">
@@ -702,7 +703,7 @@
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
         <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
         <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天第四版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第五版全文</button>
         <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
@@ -717,14 +718,13 @@
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="brand-mark">⊙</span>
-        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第四版基准）</span>
+        <span>衡天 PowerWiki · 第五版基准</span>
       </div>
       <div class="footer-links">
         <a href="./tiers.html">量级天梯</a>
         <a href="./characters.html">角色档案</a>
         <a href="./rules.html">衡天体系全文</a>
         <a href="./materials.html">材质能量库</a>
-        <a href="./search.html">全站检索</a>
       </div>
     </div>
   </footer>

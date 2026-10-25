@@ -1,0 +1,738 @@
+/* ==========================================================================
+   PowerWiki v9.0 — Global Observatory Shell & Full-Page Character Worlds
+   Loaded after the functional design system. All character themes include
+   independent light/dark palettes for navigation, evidence, tools and footer.
+   ========================================================================== */
+:root,
+[data-theme="dark"] {
+  --header-h: 74px;
+  --font-editorial: "Noto Serif SC Variable", "Noto Serif SC", "Songti SC", serif;
+  --bg-canvas: #080d11;
+  --bg-subtle: #0e161b;
+  --bg-surface: #111a20;
+  --bg-elevated: #172229;
+  --bg-header: rgba(8, 13, 17, 0.86);
+  --text-primary: #edf1ee;
+  --text-secondary: #a4b0aa;
+  --text-muted: #718079;
+  --accent: #d0b476;
+  --accent-strong: #e5cb94;
+  --accent-soft: rgba(208, 180, 118, 0.11);
+  --border-subtle: rgba(223, 232, 225, 0.075);
+  --border-default: rgba(223, 232, 225, 0.13);
+  --border-accent: rgba(208, 180, 118, 0.32);
+  --panel-glass: rgba(17, 26, 32, 0.76);
+  --site-grid: rgba(210, 225, 216, 0.022);
+  --shell-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="light"] {
+  --bg-canvas: #f1f2ed;
+  --bg-subtle: #e8ebe4;
+  --bg-surface: #fbfbf7;
+  --bg-elevated: #f4f5ef;
+  --bg-header: rgba(241, 242, 237, 0.86);
+  --text-primary: #17211d;
+  --text-secondary: #4f5f56;
+  --text-muted: #78847c;
+  --accent: #785b22;
+  --accent-strong: #5d4416;
+  --accent-soft: rgba(120, 91, 34, 0.085);
+  --border-subtle: rgba(26, 39, 32, 0.075);
+  --border-default: rgba(26, 39, 32, 0.13);
+  --border-accent: rgba(120, 91, 34, 0.28);
+  --panel-glass: rgba(251, 251, 247, 0.76);
+  --site-grid: rgba(32, 52, 41, 0.026);
+  --shell-shadow: 0 20px 60px rgba(29, 43, 35, 0.07);
+}
+
+body {
+  isolation: isolate;
+  background-color: var(--bg-canvas);
+  letter-spacing: 0.008em;
+}
+body::before {
+  content: "";
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(90deg, var(--site-grid) 1px, transparent 1px), linear-gradient(var(--site-grid) 1px, transparent 1px);
+  background-size: 88px 88px;
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 76%);
+  mask-image: linear-gradient(to bottom, #000, transparent 76%);
+}
+body > main, body > .site-footer { position: relative; z-index: 1; }
+
+.container, .home-stack { max-width: 1240px; }
+.container { padding-inline: 32px; }
+.home-stack { padding-left: 32px; padding-right: 32px; }
+body.wide-doc-mode .container { max-width: 1480px; }
+
+/* Global archive command bar */
+.site-header { height: var(--header-h); border-bottom-color: transparent; }
+.site-header::before {
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-header);
+  box-shadow: 0 8px 32px rgba(20, 32, 26, 0.025);
+}
+.header-inner { max-width: 1360px; padding-inline: 32px; }
+.brand-copy { display: flex; flex-direction: column; gap: 4px; line-height: 1; }
+.brand-name { font-size: 14.5px; font-weight: 650; letter-spacing: -0.02em; }
+.brand-subtitle {
+  color: var(--text-muted);
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: 6.6px;
+  font-weight: 550;
+  letter-spacing: 0.155em;
+  white-space: nowrap;
+}
+.brand-mark { width: 34px; height: 34px; border-radius: 11px; }
+.main-nav { gap: 3px; padding: 0; border: 0; background: transparent; }
+.nav-link {
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+}
+.nav-icon { display: inline-flex; color: var(--text-muted); }
+.nav-icon .svg-icon { width: 13px; height: 13px; }
+.nav-link.active .nav-icon, .nav-link:hover .nav-icon { color: var(--accent); }
+.nav-link.active, .nav-link.nav-cat.active, .nav-link.nav-doc.active {
+  border-color: var(--border-subtle);
+  background: var(--panel-glass);
+  box-shadow: 0 3px 12px rgba(22, 34, 28, 0.055);
+}
+.search-btn, .icon-btn { height: 38px; background: var(--panel-glass); }
+.site-drawer .brand-subtitle { display: none; }
+
+/* Editorial typography and quieter, more deliberate surfaces */
+.page-title, .codex-folio-title, .section-title, .group-title,
+.markdown-body h1, .markdown-body h2 {
+  font-family: var(--font-editorial);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+.hero-heading, .char-name, .portal-title { font-family: var(--font-display); }
+.page-title { font-size: clamp(32px, 3.4vw, 42px); }
+.section-title { font-size: 23px; }
+.page-desc, .markdown-body { text-wrap: pretty; }
+.category-hub {
+  border-radius: 20px 20px 7px 20px;
+  background: linear-gradient(125deg, var(--panel-glass), var(--bg-subtle));
+  box-shadow: var(--shell-shadow);
+  backdrop-filter: blur(16px);
+}
+.category-hub::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 32px;
+  width: 84px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.category-hub::after { opacity: 0.38; }
+.control-panel {
+  border-radius: 14px;
+  background: var(--panel-glass);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 32px rgba(26, 39, 32, 0.035);
+}
+.search-input, .select-control, .toc-filter, .doc-find-input { background: var(--bg-surface); }
+
+.tier-grid { gap: 14px; }
+.tier-card {
+  overflow: visible;
+  border-radius: 6px 16px 6px 16px;
+  background: linear-gradient(145deg, var(--bg-surface) 30%, color-mix(in srgb, var(--dom-color, var(--accent)) 5%, var(--bg-surface)));
+  box-shadow: 0 6px 22px rgba(25, 38, 30, 0.028);
+}
+.tier-card::after {
+  content: "";
+  position: absolute;
+  right: 13px;
+  bottom: 13px;
+  width: 17px;
+  height: 17px;
+  border-right: 1px solid var(--dom-color, var(--accent));
+  border-bottom: 1px solid var(--dom-color, var(--accent));
+  opacity: 0.18;
+  pointer-events: none;
+}
+.tier-card .tier-name { font-family: var(--font-editorial); font-size: 18px; font-weight: 650; }
+.tier-card .tier-badge { border-radius: 5px; }
+.tier-card:hover { box-shadow: var(--shell-shadow); }
+
+.hero-banner { box-shadow: 0 28px 80px rgba(7, 25, 24, 0.18), inset 0 1px 0 rgba(255,255,255,.05); }
+.portal-card, .char-card { background: var(--panel-glass); backdrop-filter: blur(12px); }
+.home-stats { background: var(--panel-glass); }
+
+/* Reading instruments */
+.codex-folio-title { font-size: clamp(28px, 3.2vw, 38px); }
+.doc-toolbar {
+  top: calc(var(--header-h) + 10px);
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--panel-glass);
+  box-shadow: 0 8px 26px rgba(20, 32, 26, 0.04);
+  backdrop-filter: blur(20px);
+}
+.doc-sidebar { top: calc(var(--header-h) + 18px); }
+.toc-head { padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); }
+.toc-list { padding-top: 12px; }
+.toc-item { border-radius: 6px; }
+.toc-item.active { background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
+.markdown-body { letter-spacing: 0.012em; }
+.markdown-body h1 {
+  position: relative;
+  margin-top: 56px;
+  padding-bottom: 17px;
+  border-bottom: 0;
+  font-size: 29px;
+}
+.markdown-body h1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 72px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.markdown-body h2 {
+  position: relative;
+  margin-top: 44px;
+  padding-left: 0;
+  border-bottom: 0;
+  font-size: 22px;
+}
+.markdown-body h2::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  margin-right: 10px;
+  vertical-align: middle;
+  background: var(--accent);
+}
+.markdown-body h3 { color: var(--text-primary); font-family: var(--font-display); }
+.markdown-body blockquote {
+  padding: 17px 20px;
+  border: 0;
+  border-left: 2px solid var(--accent);
+  background: linear-gradient(90deg, var(--accent-soft), transparent 86%);
+}
+.md-table-wrap, .md-figure { border-color: var(--border-subtle); border-radius: 12px; }
+.markdown-body th {
+  background: color-mix(in srgb, var(--accent) 4%, var(--bg-surface));
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.035em;
+}
+.modal-panel {
+  border: 1px solid var(--border-default);
+  border-radius: 20px;
+  background: var(--panel-glass);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(28px);
+}
+.site-footer { padding: 30px 0; border-top: 0; background: transparent; }
+.footer-inner { padding-top: 24px; border-top: 1px solid var(--border-subtle); }
+
+/* Wide-screen folio edge notation */
+@media (min-width: 1500px) {
+  body::after {
+    content: "HENGTIAN / OBSERVATORY · V5";
+    position: fixed;
+    z-index: 0;
+    right: 17px;
+    top: 50%;
+    color: var(--text-muted);
+    font-family: "Space Grotesk Variable", sans-serif;
+    font-size: 8px;
+    letter-spacing: 0.24em;
+    opacity: 0.55;
+    writing-mode: vertical-rl;
+    pointer-events: none;
+  }
+}
+
+/* ==========================================================================
+   Full-page character palettes. These variables intentionally theme the body,
+   not only the dossier, so every tool and surface belongs to the same world.
+   ========================================================================== */
+body.character-site .character-detail {
+  --accent: var(--char-accent);
+  --accent-strong: var(--char-accent-strong);
+  --accent-soft: var(--char-accent-soft);
+  --border-accent: var(--char-border-accent);
+}
+body.character-site .character-dossier { --dossier-accent: var(--char-header-accent); }
+body.character-site .dossier-register {
+  padding: 4px 7px;
+  border: 1px solid var(--dossier-border);
+  border-radius: 5px;
+  background: var(--dossier-surface);
+  backdrop-filter: blur(10px);
+}
+body.character-site .dossier-fact-rail {
+  margin-inline: -34px;
+  padding-inline: 34px;
+  backdrop-filter: blur(16px);
+}
+[data-theme="light"] body.character-yutu .dossier-fact-rail { background: rgba(242, 242, 234, .70); }
+[data-theme="dark"] body.character-yutu .dossier-fact-rail { background: rgba(15, 27, 39, .38); }
+body.character-futan .dossier-fact-rail { background: rgba(4, 16, 18, .25); }
+body.character-site .detail-stack { gap: 36px; }
+body.character-site .subpage-bar { color: var(--text-muted); }
+body.character-site .back-btn { border-color: var(--border-subtle); background: var(--panel-glass); }
+body.character-site .pager-card { background: var(--panel-glass); }
+
+[data-theme="light"] body.character-yutu {
+  --bg-canvas: #edf1f2;
+  --bg-subtle: #e1e8eb;
+  --bg-surface: #f8faf9;
+  --bg-elevated: #f0f4f4;
+  --bg-header: rgba(237, 241, 242, 0.87);
+  --text-primary: #172a38;
+  --text-secondary: #4d626f;
+  --text-muted: #758791;
+  --char-accent: #315f82;
+  --char-accent-strong: #23465f;
+  --char-accent-soft: rgba(49, 95, 130, 0.09);
+  --char-border-accent: rgba(49, 95, 130, 0.28);
+  --char-header-accent: #315f82;
+  --accent: var(--char-accent);
+  --accent-strong: var(--char-accent-strong);
+  --accent-soft: var(--char-accent-soft);
+  --border-accent: var(--char-border-accent);
+  --border-subtle: rgba(33, 65, 84, 0.08);
+  --border-default: rgba(33, 65, 84, 0.14);
+  --panel-glass: rgba(248, 250, 249, 0.74);
+  --site-grid: rgba(49, 95, 130, 0.035);
+  --char-atmosphere: linear-gradient(180deg, rgba(237,241,242,.20), rgba(237,241,242,.96)), url("../img/characters/yutu/lunar-observatory.jpg");
+  --char-art-opacity: .26;
+}
+[data-theme="dark"] body.character-yutu {
+  --bg-canvas: #08111c;
+  --bg-subtle: #0f1c28;
+  --bg-surface: #12222f;
+  --bg-elevated: #182b39;
+  --bg-header: rgba(8, 17, 28, 0.88);
+  --text-primary: #e9f0f3;
+  --text-secondary: #a2b5c0;
+  --text-muted: #718b99;
+  --char-accent: #9dbfda;
+  --char-accent-strong: #c3d8e8;
+  --char-accent-soft: rgba(157, 191, 218, 0.11);
+  --char-border-accent: rgba(157, 191, 218, 0.29);
+  --char-header-accent: #a5c4de;
+  --accent: var(--char-accent);
+  --accent-strong: var(--char-accent-strong);
+  --accent-soft: var(--char-accent-soft);
+  --border-accent: var(--char-border-accent);
+  --border-subtle: rgba(189, 213, 227, 0.08);
+  --border-default: rgba(189, 213, 227, 0.14);
+  --panel-glass: rgba(18, 34, 47, 0.76);
+  --site-grid: rgba(157, 191, 218, 0.027);
+  --char-atmosphere: linear-gradient(180deg, rgba(8,17,28,.65), rgba(8,17,28,.98)), url("../img/characters/yutu/lunar-observatory.jpg");
+  --char-art-opacity: .34;
+}
+
+[data-theme="light"] body.character-futan {
+  --bg-canvas: #e8edE8;
+  --bg-subtle: #dce5de;
+  --bg-surface: #f5f7f2;
+  --bg-elevated: #edf1eb;
+  --bg-header: rgba(232, 237, 232, 0.88);
+  --text-primary: #152b27;
+  --text-secondary: #48615a;
+  --text-muted: #74877f;
+  --char-accent: #316d62;
+  --char-accent-strong: #214f47;
+  --char-accent-soft: rgba(49, 109, 98, 0.09);
+  --char-border-accent: rgba(49, 109, 98, 0.28);
+  --char-header-accent: #d2b77a;
+  --accent: var(--char-accent);
+  --accent-strong: var(--char-accent-strong);
+  --accent-soft: var(--char-accent-soft);
+  --border-accent: var(--char-border-accent);
+  --border-subtle: rgba(31, 70, 60, 0.08);
+  --border-default: rgba(31, 70, 60, 0.14);
+  --panel-glass: rgba(245, 247, 242, 0.75);
+  --site-grid: rgba(49, 109, 98, 0.03);
+  --char-atmosphere: linear-gradient(180deg, rgba(232,237,232,.65), rgba(232,237,232,.99)), url("../img/characters/futan/abyssal-observation.jpg");
+  --char-art-opacity: .28;
+}
+[data-theme="dark"] body.character-futan {
+  --bg-canvas: #040c0f;
+  --bg-subtle: #091619;
+  --bg-surface: #0b1a1c;
+  --bg-elevated: #112527;
+  --bg-header: rgba(4, 12, 15, 0.90);
+  --text-primary: #e7ede6;
+  --text-secondary: #9fb2a9;
+  --text-muted: #708a80;
+  --char-accent: #c9ae70;
+  --char-accent-strong: #e4ca91;
+  --char-accent-soft: rgba(201, 174, 112, 0.105);
+  --char-border-accent: rgba(201, 174, 112, 0.29);
+  --char-header-accent: #d2b77a;
+  --accent: var(--char-accent);
+  --accent-strong: var(--char-accent-strong);
+  --accent-soft: var(--char-accent-soft);
+  --border-accent: var(--char-border-accent);
+  --border-subtle: rgba(195, 215, 202, 0.075);
+  --border-default: rgba(195, 215, 202, 0.135);
+  --panel-glass: rgba(11, 26, 28, 0.80);
+  --site-grid: rgba(201, 174, 112, 0.022);
+  --char-atmosphere: linear-gradient(180deg, rgba(4,12,15,.12), rgba(4,12,15,.94)), url("../img/characters/futan/abyssal-observation.jpg");
+  --char-art-opacity: .52;
+}
+
+body.character-site::before {
+  background: var(--char-atmosphere);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  opacity: var(--char-art-opacity);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 82%);
+  mask-image: linear-gradient(to bottom, #000, transparent 82%);
+}
+
+/* Shared function, visibly different material and typographic languages. */
+body.character-yutu .character-dossier { border-radius: 28px 10px 28px 10px; }
+body.character-yutu .char-portrait-stage,
+body.character-yutu .dossier-kpi-card,
+body.character-yutu .doc-toolbar,
+body.character-yutu .md-table-wrap,
+body.character-yutu .md-figure { border-radius: 15px; }
+body.character-yutu .page-title,
+body.character-yutu .markdown-body h1,
+body.character-yutu .markdown-body h2 { font-family: var(--font-display); font-weight: 650; }
+
+body.character-futan .character-dossier { border-radius: 6px; }
+body.character-futan .char-portrait-stage,
+body.character-futan .dossier-kpi-card,
+body.character-futan .doc-toolbar,
+body.character-futan .md-table-wrap,
+body.character-futan .md-figure,
+body.character-futan .modal-panel { border-radius: 4px; }
+body.character-futan .page-title,
+body.character-futan .markdown-body h1,
+body.character-futan .markdown-body h2,
+body.character-futan .fact-value {
+  font-family: var(--font-editorial);
+  font-weight: 620;
+  letter-spacing: -0.02em;
+}
+body.character-futan .character-dossier .page-title { letter-spacing: .02em; }
+body.character-futan .markdown-body { letter-spacing: .018em; }
+body.character-futan .fact-value { font-size: 21px; }
+
+@media (min-width: 901px) {
+  body.character-site .doc-sidebar {
+    padding: 17px 14px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    background: var(--panel-glass);
+    box-shadow: 0 12px 36px rgba(16, 29, 24, 0.035);
+    backdrop-filter: blur(18px);
+  }
+  body.character-futan .doc-sidebar { border-radius: 4px; }
+  body.character-site .doc-toolbar { margin-bottom: 38px; }
+}
+
+@media (min-width: 1500px) {
+  body.character-yutu::after { content: "YUTU / LUNAR KINETIC ARCHIVE"; }
+  body.character-futan::after { content: "003 / ABYSSAL ENTITY ARCHIVE"; }
+}
+
+@media (max-width: 1200px) {
+  .brand-subtitle { display: none; }
+  .nav-icon { display: none; }
+  .nav-link { padding-inline: 10px; }
+}
+
+@media (max-width: 1080px) {
+  .doc-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .doc-panel, .markdown-body { width: 100%; min-width: 0; }
+}
+
+@media (max-width: 780px) {
+  :root, [data-theme="dark"] { --header-h: 64px; }
+  .container, .home-stack, .header-inner { padding-inline: 24px; }
+  .doc-toolbar { position: relative; top: auto; }
+  body.character-site .detail-stack { gap: 28px; }
+}
+
+@media (max-width: 560px) {
+  .container, .home-stack, .header-inner { padding-inline: 16px; }
+  .brand-copy { gap: 0; }
+  .brand-name { font-size: 14px; }
+  .brand-mark { width: 30px; height: 30px; border-radius: 9px; }
+  .category-hub { border-radius: 16px 16px 6px 16px; }
+  .markdown-body h1 { font-size: 25px; }
+  .markdown-body h2 { font-size: 20px; }
+  .markdown-body h2::before { width: 13px; margin-right: 8px; }
+  body.character-site::before { opacity: calc(var(--char-art-opacity) * .72); }
+  body.character-yutu .character-dossier { border-radius: 22px 8px 22px 8px; }
+  body.character-futan .fact-value { font-size: 17px; }
+  .footer-inner { padding-top: 20px; }
+}
+
+/* ==========================================================================
+   v9.1 — Editorial refinement, evidence plates and reading instruments
+   ========================================================================== */
+::selection { color: var(--text-primary); background: color-mix(in srgb, var(--accent) 22%, transparent); }
+
+.reading-progress {
+  position: fixed;
+  z-index: 1001;
+  top: var(--header-h);
+  right: 0;
+  left: 0;
+  height: 2px;
+  overflow: hidden;
+  opacity: .8;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+.reading-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  box-shadow: 0 0 12px var(--accent-soft);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+.reading-progress.is-complete { opacity: .28; }
+
+/* Three distinct routes inside the same global design system. */
+.portal-card {
+  --portal-accent: var(--accent);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--panel-glass) 42%, color-mix(in srgb, var(--portal-accent) 4%, var(--panel-glass)));
+}
+.portal-card:nth-child(1) { --portal-accent: #46776f; }
+.portal-card:nth-child(2) { --portal-accent: #4f718b; }
+.portal-card:nth-child(3) { --portal-accent: #886a32; }
+[data-theme="dark"] .portal-card:nth-child(1) { --portal-accent: #8fbbb2; }
+[data-theme="dark"] .portal-card:nth-child(2) { --portal-accent: #9dbbd3; }
+[data-theme="dark"] .portal-card:nth-child(3) { --portal-accent: #d0b476; }
+.portal-card::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 25px;
+  width: 48px;
+  height: 1px;
+  background: var(--portal-accent);
+  opacity: .75;
+}
+.portal-card::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  right: -72px;
+  bottom: -105px;
+  width: 190px;
+  height: 190px;
+  border: 1px solid var(--portal-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 28px color-mix(in srgb, var(--portal-accent) 4%, transparent), 0 0 0 58px color-mix(in srgb, var(--portal-accent) 3%, transparent);
+  opacity: .18;
+  pointer-events: none;
+}
+.portal-card > * { position: relative; z-index: 1; }
+.portal-card .portal-glyph {
+  color: var(--portal-accent);
+  border-color: color-mix(in srgb, var(--portal-accent) 20%, transparent);
+  background: color-mix(in srgb, var(--portal-accent) 8%, transparent);
+}
+.portal-card .portal-icon { transition: color .2s ease, transform .25s ease; }
+.portal-card:hover { border-color: color-mix(in srgb, var(--portal-accent) 24%, var(--border-subtle)); }
+.portal-card:hover .portal-icon { color: var(--portal-accent); transform: translate(2px, -2px); }
+
+/* Character-specific cards on both the home page and the roster. */
+.char-card { --card-accent: var(--accent); position: relative; }
+.char-card::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  right: 22px;
+  bottom: 0;
+  left: 22px;
+  height: 2px;
+  background: var(--card-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s ease;
+}
+.char-card:hover::after { transform: scaleX(1); }
+.char-card .char-tier-line { color: var(--card-accent); }
+.char-card .char-card-img { transition: transform .45s cubic-bezier(.2,.7,.2,1), filter .3s ease; }
+.char-card-yutu { --card-accent: #315f82; border-radius: 20px 8px 20px 8px; }
+.char-card-futan { --card-accent: #7d6840; border-radius: 6px; }
+[data-theme="dark"] .char-card-yutu { --card-accent: #9dbfda; }
+[data-theme="dark"] .char-card-futan { --card-accent: #c9ae70; }
+.char-card-yutu .char-card-media.is-portrait {
+  background:
+    radial-gradient(circle at 28% 58%, rgba(49,95,130,.34) 0 2px, transparent 3px 54px, rgba(49,95,130,.13) 55px 56px, transparent 57px 82px, rgba(49,95,130,.08) 83px 84px, transparent 85px),
+    radial-gradient(circle at 76% 42%, rgba(255,255,255,.94), rgba(255,255,255,0) 45%),
+    linear-gradient(135deg, #edf1f2, #dce5e9);
+}
+[data-theme="dark"] .char-card-yutu .char-card-media.is-portrait {
+  background:
+    radial-gradient(circle at 28% 58%, rgba(157,191,218,.30) 0 2px, transparent 3px 54px, rgba(157,191,218,.14) 55px 56px, transparent 57px 82px, rgba(157,191,218,.08) 83px 84px, transparent 85px),
+    radial-gradient(circle at 76% 42%, rgba(157,191,218,.18), rgba(157,191,218,0) 48%),
+    linear-gradient(135deg, #263945, #142530);
+}
+.char-card-yutu .char-card-media::after { color: #41647a; }
+[data-theme="dark"] .char-card-yutu .char-card-media::after { color: #aec5d5; }
+.char-card-futan .char-name { font-family: var(--font-editorial); font-weight: 620; letter-spacing: .015em; }
+.char-card-futan .char-card-media::after { letter-spacing: .34em; }
+.pager-card .pager-title { transition: color .2s ease; }
+.pager-card:hover .pager-title { color: var(--accent); }
+@media (hover: hover) {
+  .char-card-yutu:hover .char-card-img { transform: scale(1.025); transform-origin: 90% 100%; }
+  .char-card-futan:hover .char-card-img { transform: scale(1.035); }
+}
+
+/* Chapter numbers make long evidence documents easier to scan. */
+body.character-site .markdown-body { counter-reset: dossier-chapter; }
+body.character-site .markdown-body h2 { counter-increment: dossier-chapter; }
+body.character-site .markdown-body h2::before {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  margin-right: 12px;
+  vertical-align: middle;
+  color: var(--accent);
+  background: transparent;
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  line-height: 1;
+  transform: translateY(-2px);
+}
+body.character-yutu .markdown-body h2::before {
+  content: counter(dossier-chapter, decimal-leading-zero);
+  min-width: 28px;
+  min-height: 22px;
+  padding: 3px 5px;
+  border: 1px solid var(--border-accent);
+  border-radius: 5px;
+  background: var(--accent-soft);
+}
+body.character-futan .markdown-body h2::before {
+  content: "§ " counter(dossier-chapter, decimal-leading-zero);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-accent);
+  font-family: var(--font-editorial);
+  font-size: 12px;
+}
+body.character-site .markdown-body tbody tr { transition: background-color .18s ease; }
+body.character-site .markdown-body tbody tr:hover { background: var(--accent-soft); }
+body.character-futan .markdown-body th { font-family: var(--font-editorial); font-weight: 650; }
+
+/* Yutu's original measurement images become technical evidence plates. */
+body.character-yutu .md-figure {
+  padding: 12px;
+  border: 1px solid var(--border-subtle);
+  background: linear-gradient(145deg, var(--panel-glass), var(--accent-soft));
+  box-shadow: 0 14px 40px rgba(32,58,75,.06);
+}
+body.character-yutu .md-figure-frame { position: relative; border: 1px solid var(--border-subtle); background: var(--bg-surface); }
+body.character-yutu .md-figure-frame::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 10px;
+  border: 1px solid var(--accent);
+  opacity: .16;
+  pointer-events: none;
+}
+body.character-yutu .md-figure-frame::after {
+  content: "+";
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 16px;
+  color: var(--accent);
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: 15px;
+  opacity: .65;
+  pointer-events: none;
+}
+body.character-yutu .md-figure figcaption::before {
+  content: "MEASUREMENT PLATE";
+  margin-right: 10px;
+  color: var(--accent);
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: .14em;
+}
+
+/* Dedicated search reads like an index, not a generic results list. */
+body.site-search .search-page-header {
+  position: relative;
+  isolation: isolate;
+  margin-top: 42px;
+  padding-bottom: 34px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-subtle);
+}
+body.site-search .search-page-header::after {
+  content: "⊙";
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: 4%;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 144px;
+  line-height: 1;
+  opacity: .055;
+  transform: translateY(-50%);
+}
+body.site-search .search-page-header .page-header-body { position: relative; z-index: 1; }
+body.site-search .control-panel { margin-top: 24px; }
+body.site-search #dedicated-search-input { height: 50px; padding-inline: 18px; font-size: 15px; }
+body.site-search .search-hit.card-mode {
+  border-left: 2px solid transparent;
+  transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
+}
+body.site-search .search-hit.card-mode:hover { border-left-color: var(--accent); }
+
+@media (max-width: 560px) {
+  .portal-card::after { opacity: .12; }
+  body.character-site .markdown-body h2::before { margin-right: 9px; }
+  body.character-yutu .markdown-body h2::before { min-width: 25px; min-height: 20px; }
+  body.character-yutu .md-figure { padding: 8px; }
+  body.character-yutu .md-figure figcaption::before { display: block; margin: 0 0 4px; }
+  body.site-search .search-page-header { margin-top: 30px; padding-bottom: 26px; }
+  body.site-search .search-page-header::after { right: -4%; font-size: 92px; }
+  body.site-search #dedicated-search-input { height: 46px; font-size: 14px; }
+  .doc-toolbar { width: 100%; padding: 10px; gap: 8px; }
+  .doc-tools { width: 100%; gap: 8px; }
+  .doc-find-box { display: flex; flex: 0 0 100%; width: 100%; min-width: 0; gap: 6px; }
+  .doc-find-input { flex: 1; min-width: 0; height: 36px; }
+  .doc-find-box .tool-btn { flex: 0 0 auto; height: 36px; padding-inline: 14px; }
+  .doc-find-count { align-self: center; min-width: 0; }
+  .doc-find-count:empty { display: none; }
+  .doc-tools > .tool-btn { flex: 1; min-width: 0; height: 34px; }
+}

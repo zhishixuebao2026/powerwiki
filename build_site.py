@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-衡天⊙ PowerWiki Static Site Builder v6.2
-Updated for 《衡天⊙ 多维战力量级体系（第四版）》 & Full-Text Character Dossiers
+衡天⊙ PowerWiki Static Site Builder v9.1
+Updated for 《衡天⊙ 多维战力量级体系（第五版）》 & Full-Text Character Dossiers
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ TIER_OUT_DIR = ROOT / "tier"
 CHAR_OUT_DIR = ROOT / "character"
 JS_OUT_DIR = ROOT / "static" / "js"
 
-RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第四版·最新】.md"
+RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第五版·最新】.md"
 MATERIALS_MD_PATH = DOCS_DIR / "材质与破坏能量数据库（新）.md"
 
 SVGS = {
@@ -33,6 +33,11 @@ SVGS = {
     "arrow_up": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
     "arrow_up_right": '<svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
     "toc": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>',
+    "home": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg>',
+    "materials": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg>',
+    "atlas": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg>',
+    "dossier": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg>',
+    "library": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg>',
 }
 
 DIM_META = [
@@ -151,6 +156,21 @@ def strip_character_doc_front_banner(md_text: str) -> str:
     return md_text
 
 
+def clean_index_text(text: str) -> str:
+    """Turn raw Markdown collected by the renderer into readable search copy."""
+    text = re.sub(r"!\[([^\]]*)\]\([^)]+\)", r"\1", text)
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
+    text = re.sub(r"__(.+?)__", r"\1", text)
+    text = re.sub(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", r"\1", text)
+    text = re.sub(r"\\([\\`*_{}\[\]()#+\-.!|])", r"\1", text)
+    text = text.replace("|", " · ")
+    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"(?:·\s*){2,}", "· ", text)
+    return text.strip(" ·\t\n")
+
+
 class VerbatimMarkdownRenderer:
     def __init__(
         self,
@@ -259,7 +279,7 @@ class VerbatimMarkdownRenderer:
             nonlocal cur_sec_buf
             if not record_toc:
                 return
-            joined = " ".join(cur_sec_buf).strip()
+            joined = clean_index_text(" ".join(cur_sec_buf))
             if joined:
                 self.sections_for_index.append(
                     {"id": cur_sec_id, "title": cur_sec_title, "text": joined}
@@ -504,13 +524,15 @@ def render_shell(
     body_html: str,
     root_prefix: str = "./",
     has_toc_button: bool = False,
+    body_class: str = "",
 ) -> str:
     r = root_prefix
 
-    def nav_link(key: str, href: str, label: str, extra_cls: str = "") -> str:
+    def nav_link(key: str, href: str, label: str, extra_cls: str = "", icon: str = "") -> str:
         base = f"nav-link {extra_cls}".strip()
         cls = f"{base} active" if active_nav == key else base
-        return f'<a class="{cls}" href="{r}{href}">{label}</a>'
+        icon_html = f'<span class="nav-icon">{SVGS[icon]}</span>' if icon else ""
+        return f'<a class="{cls}" href="{r}{href}">{icon_html}<span>{label}</span></a>'
 
     def drawer_card(key: str, href: str, label: str, sub: str) -> str:
         cls = "drawer-card-link active" if active_nav == key else "drawer-card-link"
@@ -532,13 +554,20 @@ def render_shell(
         else ""
     )
 
-    return f"""<!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark" data-root="{r}" data-page-id="{esc(page_id)}">
+    shell_body_class = f"site-{active_nav} {body_class}".strip()
+    reading_progress_html = (
+        '\n  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>'
+        if has_toc_button
+        else ""
+    )
+
+    page = f"""<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{esc(title)} · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {{
       try {{
@@ -547,12 +576,14 @@ def render_shell(
       }} catch (e) {{}}
     }})();
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="{r}static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{r}static/fonts/noto-sans-sc/index.css">
+  <link rel="stylesheet" href="{r}static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="{r}static/fonts/noto-serif-sc/index.css">
   <link rel="stylesheet" href="{r}static/css/style.css">
+  <link rel="stylesheet" href="{r}static/css/editorial.css">
 </head>
-<body>
+<body class="{esc(shell_body_class)}">
   <header class="site-header">
     <div class="container header-inner">
       <div class="header-left">
@@ -561,18 +592,16 @@ def render_shell(
         </button>
         <a class="brand-link" href="{r}index.html">
           <span class="brand-mark">⊙</span>
-          <span class="brand-name">衡天 PowerWiki</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
         </a>
       </div>
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
-        {nav_link("home", "index.html", "首页")}
-        {nav_link("tiers", "tiers.html", "量级分类", "nav-cat")}
-        {nav_link("characters", "characters.html", "角色档案", "nav-cat")}
-        <span class="nav-divider" aria-hidden="true"></span>
-        {nav_link("rules", "rules.html", "体系原文", "nav-doc")}
-        {nav_link("materials", "materials.html", "材质原文", "nav-doc")}
-        {nav_link("search", "search.html", "搜索")}
+        {nav_link("home", "index.html", "首页", icon="home")}
+        {nav_link("tiers", "tiers.html", "量级", "nav-cat", "atlas")}
+        {nav_link("characters", "characters.html", "角色", "nav-cat", "dossier")}
+        {nav_link("rules", "rules.html", "规则", "nav-doc", "library")}
+        {nav_link("materials", "materials.html", "材质", "nav-doc", "materials")}
       </nav>
 
       <div class="header-right">
@@ -586,14 +615,14 @@ def render_shell(
         </button>
       </div>
     </div>
-  </header>
+  </header>{reading_progress_html}
 
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
   <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
     <div class="site-drawer-head">
       <a class="brand-link" href="{r}index.html">
         <span class="brand-mark">⊙</span>
-        <span class="brand-name">衡天 PowerWiki</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
       </a>
       <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
         {SVGS["close"]}
@@ -601,14 +630,14 @@ def render_shell(
     </div>
     <div class="site-drawer-body">
       <div class="drawer-group">
-        <div class="drawer-group-label">核心分类大库</div>
-        {drawer_card("tiers", "tiers.html", "量级分类大库", "98 档从小到大 · 物理焦耳与集合论标尺")}
-        {drawer_card("characters", "characters.html", "角色战力档案", "首字母 A–Z / 量级从小到大双模式排序")}
+        <div class="drawer-group-label">查阅</div>
+        {drawer_card("tiers", "tiers.html", "量级天梯", "98 档 · 从昆虫到论天")}
+        {drawer_card("characters", "characters.html", "角色档案", "定级结论与完整证据原文")}
       </div>
       <div class="drawer-group">
-        <div class="drawer-group-label">基准规则原文（全文无删减）</div>
-        {drawer_doc("rules", "rules.html", "卷一 · 衡天量级体系（第四版）")}
-        {drawer_doc("materials", "materials.html", "卷二 · 材质与破坏能量数据库")}
+        <div class="drawer-group-label">规则与资料</div>
+        {drawer_doc("rules", "rules.html", "衡天体系 · 第五版")}
+        {drawer_doc("materials", "materials.html", "材质与能量 · 第二版")}
       </div>
       <div class="drawer-group">
         <div class="drawer-group-label">快捷导航</div>
@@ -680,7 +709,7 @@ def render_shell(
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
         <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
         <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天第四版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第五版全文</button>
         <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
@@ -695,14 +724,13 @@ def render_shell(
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="brand-mark">⊙</span>
-        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第四版基准）</span>
+        <span>衡天 PowerWiki · 第五版基准</span>
       </div>
       <div class="footer-links">
         <a href="{r}tiers.html">量级天梯</a>
         <a href="{r}characters.html">角色档案</a>
         <a href="{r}rules.html">衡天体系全文</a>
         <a href="{r}materials.html">材质能量库</a>
-        <a href="{r}search.html">全站检索</a>
       </div>
     </div>
   </footer>
@@ -712,6 +740,7 @@ def render_shell(
 </body>
 </html>
 """
+    return "\n".join(line.rstrip() for line in page.splitlines()) + "\n"
 
 
 def resolve_rel_asset(rel_path: str, prefix: str) -> str:
@@ -727,79 +756,41 @@ def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, A
     t_code = t["code"] if t else "待定"
     t_name = t["name"] if t else "待定"
     t_order = f"#{t['order']:02d}" if t and not t.get("unranked") else "待定"
-    initial = esc((c.get("initial") or "#").upper())
-    mod_html = "".join(f'<span class="tag-pill">{esc(m)}</span>' for m in (c.get("modifiers") or []))
     img_src = resolve_rel_asset(c.get("image_url", ""), href_prefix)
-    origin_text = esc(c.get("series") or "未知出处") + (f" · {esc(c['realm'])}" if c.get("realm") else "")
+    origin_text = esc(c.get("series") or "未知出处")
+    updated = esc(c.get("doc_date") or "已归档")
+    tier_line = f'<div class="char-tier-line"><span>{esc(t_name)}</span><span class="mono">{t_order}</span></div>'
+    summary = f'<p class="char-summary">{esc(c.get("card_summary") or c.get("summary") or "")}</p>'
+    foot = f'<div class="char-foot"><span>{updated} 更新</span><span class="card-link-hint">阅读档案 {SVGS["arrow_up_right"]}</span></div>'
 
     if img_src:
         shape = c.get("image_shape") or "portrait"
-        media_cls = (
-            "has-media media-top"
-            if shape == "landscape"
-            else "has-media media-side media-square"
-            if shape == "square"
-            else "has-media media-side"
-        )
-        size_attrs = (
-            f' width="{int(c["image_w"])}" height="{int(c["image_h"])}"'
-            if c.get("image_w") and c.get("image_h")
-            else ""
-        )
+        if shape not in {"landscape", "square", "portrait"}:
+            shape = "portrait"
+        size_attrs = f' width="{int(c["image_w"])}" height="{int(c["image_h"])}"' if c.get("image_w") and c.get("image_h") else ""
         return f"""
-    <a class="char-card {media_cls}" href="{href_prefix}character/{esc(c['slug'])}.html">
-      <div class="char-card-media">
+    <a class="char-card has-media media-top char-card-{esc(c['slug'])}" data-character="{esc(c['slug'])}" href="{href_prefix}character/{esc(c['slug'])}.html">
+      <div class="char-card-media is-{shape}" data-art-label="{esc(c.get('pinyin') or c['slug']).upper()}" style="--char-image:url('{esc(img_src)}')">
         <img class="char-card-img" src="{esc(img_src)}" alt="{esc(c['name'])}"{size_attrs} loading="lazy">
       </div>
       <div class="char-card-body">
         <div class="char-head">
-          <div class="char-meta">
-            <h3 class="char-name">{esc(c['name'])}</h3>
-            <div class="char-origin">{origin_text}</div>
-          </div>
+          <div class="char-meta"><h3 class="char-name">{esc(c['name'])}</h3><div class="char-origin">{origin_text}</div></div>
           <span class="tier-badge gold mono">⊙ {esc(t_code)}</span>
         </div>
-        <div class="char-tags">
-          <span class="tag-pill accent">{esc(t_name)} · {t_order}</span>
-          <span class="tag-pill mono">首字母 {initial}</span>
-          {mod_html}
-        </div>
-        <p class="char-summary">{esc(c.get('summary') or '')}</p>
-        <div class="char-foot">
-          <span class="char-cred">{format_evidence_html(c.get('credibility') or '点击查阅定级详情')}</span>
-          <span class="card-link-hint">查看档案 {SVGS["arrow_up_right"]}</span>
-        </div>
+        {tier_line}{summary}{foot}
       </div>
     </a>"""
 
     return f"""
-    <a class="char-card" href="{href_prefix}character/{esc(c['slug'])}.html">
+    <a class="char-card char-card-{esc(c['slug'])}" data-character="{esc(c['slug'])}" href="{href_prefix}character/{esc(c['slug'])}.html">
       <div class="char-head">
-        <div class="char-identity">
-          <div class="char-monogram">{esc(c["name"][:1])}</div>
-          <div class="char-meta">
-            <h3 class="char-name">{esc(c['name'])}</h3>
-            <div class="char-origin">{origin_text}</div>
-          </div>
-        </div>
+        <div class="char-identity"><div class="char-monogram">{esc(c["name"][:1])}</div><div class="char-meta"><h3 class="char-name">{esc(c['name'])}</h3><div class="char-origin">{origin_text}</div></div></div>
         <span class="tier-badge gold mono">⊙ {esc(t_code)}</span>
       </div>
-      <div class="char-tags">
-        <span class="tag-pill accent">{esc(t_name)} · {t_order}</span>
-        <span class="tag-pill mono">首字母 {initial}</span>
-        {mod_html}
-      </div>
-      <p class="char-summary">{esc(c.get('summary') or '')}</p>
-      <div class="char-foot">
-        <span class="char-cred">{format_evidence_html(c.get('credibility') or '点击查阅定级详情')}</span>
-        <span class="card-link-hint">查看档案 {SVGS["arrow_up_right"]}</span>
-      </div>
+      {tier_line}{summary}{foot}
     </a>"""
 
-
-# ==============================================================================
-# Page Builders
-# ==============================================================================
 def build_home_page(
     tiers: List[Dict[str, Any]],
     all_chars: List[Dict[str, Any]],
@@ -807,227 +798,78 @@ def build_home_page(
     materials_lines: int,
     rules_toc_count: int,
 ) -> str:
-    ranked_count = sum(1 for t in tiers if not t.get("unranked"))
     tier_by_slug = {t["slug"]: t for t in tiers}
-    total_lines = rules_lines + materials_lines
-
-    horizon_nodes = [
-        ("虫 → 表☆", "个体至行星地表阶", "5×10⁻⁵ ～ 10²⁹ J", "var(--dom-terrestrial)", "tiers.html?seg=terrestrial"),
-        ("星▽ → 恒☆", "行星至恒星阶", "10³⁰ ～ 10⁴⁴ J", "var(--dom-stellar)", "tiers.html?seg=stellar"),
-        ("过渡A / 过渡B", "星际过渡带", "恒星系至星团衔接", "var(--dom-transition)", "tiers.html?seg=transition"),
-        ("系▽ → 宇☆", "恒星系至宇宙阶", "40 AU ～ 超宇宙", "var(--dom-cosmic)", "tiers.html?seg=cosmic"),
-        ("广·塔 → 广·顶", "广义无限阶", "快速增长层级 FGH", "var(--dom-fgh)", "tiers.html?seg=fgh"),
-        ("外·门 → 天·最", "论外与论天阶", "ℵ₀ ～ 莱因哈特/贝克莱", "var(--dom-beyond)", "tiers.html?seg=beyond"),
-    ]
-    horizon_html = "".join(
-        f"""
-        <a class="horizon-item" href="{h[4]}" style="--seg-color:{h[3]}">
-          <span class="horizon-code mono">{esc(h[0])}</span>
-          <span class="horizon-name">{esc(h[1])}</span>
-          <span class="horizon-range mono">{esc(h[2])}</span>
-        </a>"""
-        for h in horizon_nodes
-    )
-
     featured_section = ""
     if all_chars:
-        featured_cards = [render_char_card_html(c, tier_by_slug, "") for c in all_chars[:6]]
+        featured_cards = [render_char_card_html(c, tier_by_slug, "") for c in all_chars[:4]]
         featured_section = f"""
-      <section class="section-block">
+      <section class="section-block home-dossiers">
         <div class="section-header">
           <div>
-            <span class="section-kicker">Featured Dossiers</span>
-            <h2 class="section-title">已收录角色档案</h2>
+            <span class="section-kicker">Character dossiers</span>
+            <h2 class="section-title">角色档案</h2>
           </div>
-          <a class="btn btn-secondary btn-sm" href="characters.html">全部 {len(all_chars)} 位角色 →</a>
+          <a class="text-link" href="characters.html">查看全部 {len(all_chars)} 位 →</a>
         </div>
-        <div class="char-grid">
-          {"".join(featured_cards)}
-        </div>
+        <div class="char-grid">{"".join(featured_cards)}</div>
       </section>"""
-
-    third_stat_val = f"{len(all_chars)} 份" if all_chars else "第四版"
-    third_stat_label = (
-        "独立角色档案页（首字母 / 量级双排序）"
-        if all_chars
-        else "2026-10-24 最新修订（含标注图与动图规范）"
-    )
 
     body = f"""
     <div class="container home-stack">
-      <section>
-        <div class="hero-banner">
-          <div class="hero-backdrop" aria-hidden="true">
-            <img class="hero-backdrop-img" src="static/img/cosmos-eclipse.jpg" alt="">
-          </div>
-          <div class="hero-body">
-            <div class="eyebrow">
-              <span class="eyebrow-dot"></span>
-              <span>衡天⊙ 多维战力量级体系 · 第四版最新基准</span>
-            </div>
-            <h1 class="hero-heading">多维战力刻度与物理破坏参考百科</h1>
-            <p class="hero-desc">
-              以《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》为唯一标尺。每一量级锚定明确物理焦耳或集合论基数，支持全量级天梯检索、角色归档与双典籍全文查阅。
-            </p>
-            <div class="hero-cta-row">
-              <a class="btn btn-primary" href="tiers.html">浏览量级天梯（从小到大）</a>
-              <a class="btn btn-secondary" href="rules.html">阅读第四版体系全文</a>
-              <button type="button" class="btn btn-ghost js-open-search">{SVGS["search"]} 全站检索</button>
-            </div>
-          </div>
+      <section class="hero-banner" aria-labelledby="home-title">
+        <div class="hero-backdrop" aria-hidden="true">
+          <img class="hero-backdrop-img" src="static/img/cosmic-atlas-hero.jpg" width="1584" height="672" alt="">
         </div>
-
-        <div class="stats-strip">
-          <div class="stat-cell">
-            <span class="stat-value mono">{ranked_count} + 1</span>
-            <span class="stat-label">连续量级档位（#01 虫 → #97 天·最）</span>
-          </div>
-          <div class="stat-cell">
-            <span class="stat-value mono">7 维 × 5 态</span>
-            <span class="stat-label">破控域御速算性 · 证据等级分离</span>
-          </div>
-          <div class="stat-cell">
-            <span class="stat-value mono">{third_stat_val}</span>
-            <span class="stat-label">{third_stat_label}</span>
-          </div>
-          <div class="stat-cell">
-            <span class="stat-value mono">{total_lines:,} 行</span>
-            <span class="stat-label">两部基准典籍 100% 完整原文收录</span>
+        <div class="hero-body">
+          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.25 最新基准</div>
+          <h1 class="hero-heading" id="home-title">从昆虫到无限，<br><span>查清每一个量级。</span></h1>
+          <p class="hero-desc">从物理能量到无限基数，用同一套标尺查阅量级、角色证据与规则原文。</p>
+          <div class="hero-cta-row">
+            <a class="btn btn-primary" href="tiers.html">浏览量级天梯 {SVGS["arrow_up_right"]}</a>
+            <a class="btn btn-secondary" href="rules.html">阅读第五版规则</a>
           </div>
         </div>
       </section>
 
-      <section class="section-block">
+      <div class="home-stats" aria-label="站点概览">
+        <a class="home-stat" href="tiers.html"><strong class="mono">{len(tiers)}</strong><span>量级档位</span></a>
+        <a class="home-stat" href="characters.html"><strong class="mono">{len(all_chars)}</strong><span>角色档案</span></a>
+        <a class="home-stat" href="rules.html"><strong class="mono">V5</strong><span>当前规则版本</span></a>
+      </div>
+
+      <section class="section-block" aria-labelledby="start-title">
         <div class="section-header">
           <div>
-            <span class="section-kicker">Core Categories</span>
-            <h2 class="section-title">两大核心分类目录</h2>
+            <span class="section-kicker">Start here</span>
+            <h2 class="section-title" id="start-title">从这里开始</h2>
           </div>
         </div>
-
         <div class="portal-grid">
           <a class="portal-card" href="tiers.html">
-            <div>
-              <div class="portal-top">
-                <span class="portal-num mono">CATEGORY 01 / TIER ATLAS</span>
-                <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
-              </div>
-              <h3 class="portal-title">量级分类大库</h3>
-              <p class="portal-text">严格按能量与数学结构「从小到大」单向递增排列：由昆虫级（5×10⁻⁵ J）经行星、恒星、星系，直至莱因哈特与贝克莱基数。全 98 档均设独立规格页。</p>
-            </div>
-            <div class="portal-footer">
-              <span class="tag-pill accent">↑ 严格从小到大</span>
-              <span class="tag-pill">98 独立规格页</span>
-              <span class="tag-pill">卡片 / 天梯 / 总表三视图</span>
-            </div>
+            <div class="portal-top"><span class="portal-heading"><span class="portal-glyph">{SVGS["atlas"]}</span><span class="portal-num mono">01 / ATLAS</span></span><span class="portal-icon">{SVGS["arrow_up_right"]}</span></div>
+            <div><h3 class="portal-title">量级天梯</h3><p class="portal-text">按序位、跨度或能量检索，从昆虫级连续查阅至论天最上。</p></div>
+            <span class="portal-link">进入 {len(tiers)} 个档位 →</span>
           </a>
-
           <a class="portal-card" href="characters.html">
-            <div>
-              <div class="portal-top">
-                <span class="portal-num mono">CATEGORY 02 / CHARACTER ROSTER</span>
-                <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
-              </div>
-              <h3 class="portal-title">角色战力档案库</h3>
-              <p class="portal-text">支持「按量级从小到大」与「按首字母 A–Z」双模式排序；每位角色拥有独立档案页，完整呈现定级结论、七维证据链与原文核对索引。</p>
-            </div>
-            <div class="portal-footer">
-              <span class="tag-pill accent">A–Z 首字母 / ↑ 从小到大</span>
-              <span class="tag-pill">{len(all_chars)} 位已归档角色</span>
-              <span class="tag-pill">自动记忆排序与位置</span>
-            </div>
+            <div class="portal-top"><span class="portal-heading"><span class="portal-glyph">{SVGS["dossier"]}</span><span class="portal-num mono">02 / DOSSIERS</span></span><span class="portal-icon">{SVGS["arrow_up_right"]}</span></div>
+            <div><h3 class="portal-title">角色档案</h3><p class="portal-text">先看定级结论，再按章节核对完整证据、计算与存疑说明。</p></div>
+            <span class="portal-link">查阅 {len(all_chars)} 份档案 →</span>
           </a>
-        </div>
-      </section>
-
-      <section class="section-block">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">Canonical Reference Texts</span>
-            <h2 class="section-title">基准规则原文典籍（全文无删减）</h2>
+          <div class="portal-card portal-library">
+            <div class="portal-top"><span class="portal-heading"><span class="portal-glyph">{SVGS["library"]}</span><span class="portal-num mono">03 / LIBRARY</span></span></div>
+            <div><h3 class="portal-title">规则与资料</h3><p class="portal-text">保留完整原文、目录与页内定位，适合逐条核对。</p></div>
+            <div class="library-links">
+              <a href="rules.html"><span>衡天量级体系</span><span class="mono">第五版 →</span></a>
+              <a href="materials.html"><span>材质与破坏能量</span><span class="mono">第二版 →</span></a>
+            </div>
           </div>
-        </div>
-
-        <div class="codex-strip">
-          <a class="codex-volume-card" href="rules.html">
-            <div>
-              <div class="codex-vol-kicker mono">CODEX VOL. I · {rules_lines:,} 行 · {rules_toc_count} 节目录</div>
-              <h3 class="codex-vol-title">《衡天⊙ 多维战力量级体系（第四版）》原文</h3>
-              <p class="codex-vol-desc">完整收录总则、归因与知情度审查、全量级定义、论外双轴、标注图与动图规范及超长篇通读流程。</p>
-            </div>
-            <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
-          </a>
-
-          <a class="codex-volume-card" href="materials.html">
-            <div>
-              <div class="codex-vol-kicker mono">CODEX VOL. II · {materials_lines:,} 行 · 物理破坏比能锚点</div>
-              <h3 class="codex-vol-title">《材质与破坏能量数据库（第二版）》原文</h3>
-              <p class="codex-vol-desc">完整收录岩石与金属力学强度、碎裂/熔化/汽化至核子完全解离的全破坏方式比能（J/cm³）及致密星物质锚点。</p>
-            </div>
-            <span class="portal-icon">{SVGS["arrow_up_right"]}</span>
-          </a>
-        </div>
-      </section>
-
-      <section class="section-block">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">Scale Spectrum</span>
-            <h2 class="section-title">六大量级跨度速览</h2>
-          </div>
-          <a class="btn btn-secondary btn-sm" href="tiers.html">查看全部 98 档 →</a>
-        </div>
-        <div class="horizon-grid">
-          {horizon_html}
         </div>
       </section>
 
       {featured_section}
-
-      <section class="section-block">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">Methodology</span>
-            <h2 class="section-title">七维并列与五态证据规范</h2>
-          </div>
-          <a class="btn btn-secondary btn-sm" href="rules.html">阅读第四版总则 →</a>
-        </div>
-        <div class="principles-grid">
-          <div class="principle-card">
-            <h3 class="principle-title">七维独立计分（缺项不反推）</h3>
-            <p class="principle-desc">
-              除 0.11 条「整体掌控物质与结构可单向推出破坏」外，破坏、防御、速度、算力、场域与特性严格独立记录，原文未涉及之维度一律记为〔缺〕。
-            </p>
-            <div class="pill-cluster">
-              <span class="tag-pill"><strong class="mono">破</strong> 破坏能量</span>
-              <span class="tag-pill"><strong class="mono">控</strong> 整体掌控</span>
-              <span class="tag-pill"><strong class="mono">域</strong> 作用范围</span>
-              <span class="tag-pill"><strong class="mono">御</strong> 防御承受</span>
-              <span class="tag-pill"><strong class="mono">速</strong> 机动速度</span>
-              <span class="tag-pill"><strong class="mono">算</strong> 图灵演算</span>
-              <span class="tag-pill"><strong class="mono">性</strong> 机制特性</span>
-            </div>
-          </div>
-
-          <div class="principle-card">
-            <h3 class="principle-title">五级证据状态标识</h3>
-            <p class="principle-desc">
-              所有定级须经 0.14.2「归因与知情度审查」（在场、知情、记忆可靠、表现一致、无后文推翻、归因准确）及 10.8「标注图与动图处理」核验，并显式标注证据等级。
-            </p>
-            <div class="pill-cluster">
-              <span class="tag-pill"><span class="ev-badge ev-confirmed">〔实〕</span> 已确认表现</span>
-              <span class="tag-pill"><span class="ev-badge ev-lower">〔下〕</span> 保守下限</span>
-              <span class="tag-pill"><span class="ev-badge ev-inferred">〔推〕</span> 规则单向推定</span>
-              <span class="tag-pill"><span class="ev-badge ev-hidden">〔隐〕</span> 隐含结构锚点</span>
-              <span class="tag-pill"><span class="ev-badge ev-missing">〔缺〕</span> 原文未涉及</span>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
     """
     return render_shell(title="首页", page_id="home", active_nav="home", body_html=body, root_prefix="./")
-
 
 def build_tiers_page(
     tiers: List[Dict[str, Any]],
@@ -1037,14 +879,12 @@ def build_tiers_page(
     group_map = {g["id"]: g for g in groups}
     char_count_by_tier: Dict[str, int] = {}
     for c in all_chars:
-        ts = c.get("tier_slug")
-        if ts:
-            char_count_by_tier[ts] = char_count_by_tier.get(ts, 0) + 1
+        slug = c.get("tier_slug")
+        if slug:
+            char_count_by_tier[slug] = char_count_by_tier.get(slug, 0) + 1
 
-    ranked = sorted([t for t in tiers if not t.get("unranked")], key=lambda x: x["order"])
-    unranked = [t for t in tiers if t.get("unranked")]
-    all_ordered = ranked + unranked
-
+    ranked = sorted((t for t in tiers if not t.get("unranked")), key=lambda t: t["order"])
+    all_ordered = ranked + [t for t in tiers if t.get("unranked")]
     ordered_gids: List[str] = []
     for t in all_ordered:
         if t["group_id"] not in ordered_gids:
@@ -1052,126 +892,75 @@ def build_tiers_page(
 
     ssr_sections: List[str] = []
     for gid in ordered_gids:
-        g = group_map.get(gid, {"title": gid, "subtitle": ""})
-        g_items = [t for t in all_ordered if t["group_id"] == gid]
-        cards_html = []
-        for t in g_items:
-            order_str = "待定" if t.get("unranked") else f"#{t['order']:02d}"
-            c_cnt = char_count_by_tier.get(t["slug"], 0)
-            char_pill = f'<span class="tag-pill accent">{c_cnt} 角色</span>' if c_cnt > 0 else ""
-            cards_html.append(
-                f"""
+        group = group_map.get(gid, {"title": gid})
+        items = [t for t in all_ordered if t["group_id"] == gid]
+        cards: List[str] = []
+        for t in items:
+            order = "待定" if t.get("unranked") else f"#{t['order']:02d}"
+            count = char_count_by_tier.get(t["slug"], 0)
+            char_pill = f'<span class="tier-char-count">{count} 角色</span>' if count else ""
+            cards.append(f"""
                 <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
                   <div class="tier-card-top">
                     <span class="tier-badge mono">⊙ {esc(t['code'])}</span>
-                    <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order_str}</span></span>
+                    <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order}</span></span>
                   </div>
-                  <div class="tier-name-row">
-                    <h3 class="tier-name">{esc(t['name'])}</h3>
-                    <span class="tier-family">{esc(t['family'])}</span>
-                  </div>
+                  <div class="tier-name-row"><h3 class="tier-name">{esc(t['name'])}</h3></div>
                   <div class="tier-energy mono">{esc(t['energy'])}</div>
                   <p class="tier-scale">{esc(t['scale'])}</p>
-                  <div class="tier-foot">
-                    <span>{esc(t['model'])}</span>
-                    {SVGS["arrow_up_right"]}
-                  </div>
-                </a>"""
-            )
-        ssr_sections.append(
-            f"""
+                </a>""")
+        ssr_sections.append(f"""
             <section class="group-section" id="group-{esc(gid)}">
-              <div class="group-header">
-                <h2 class="group-title">{esc(g['title'])}</h2>
-                <span class="group-sub">{esc(g['subtitle'])} · {len(g_items)} 档</span>
-              </div>
-              <div class="tier-grid">{''.join(cards_html)}</div>
-            </section>"""
-        )
+              <div class="group-header"><h2 class="group-title">{esc(group['title'])}</h2><span class="group-sub">{len(items)} 档</span></div>
+              <div class="tier-grid">{''.join(cards)}</div>
+            </section>""")
 
-    dom_counts: Dict[str, int] = {}
+    counts: Dict[str, int] = {}
     for t in tiers:
-        dom = t.get("domain", "unranked")
-        dom_counts[dom] = dom_counts.get(dom, 0) + 1
-
-    spectrum_defs = [
-        ("terrestrial", "虫 → 表☆", "个体～地表阶", f"{dom_counts.get('terrestrial', 0)} 档 · 5×10⁻⁵～10²⁹ J", "var(--dom-terrestrial)"),
-        ("stellar", "星▽ → 恒☆", "行星～恒星阶", f"{dom_counts.get('stellar', 0)} 档 · 10³⁰～10⁴⁴ J", "var(--dom-stellar)"),
-        ("transition", "衔接与过渡", "街城 / 星际过渡", f"{dom_counts.get('transition', 0)} 档 · 跨尺度衔接", "var(--dom-transition)"),
-        ("cosmic", "系▽ → 宇☆", "恒星系～宇宙阶", f"{dom_counts.get('cosmic', 0)} 档 · 40 AU～10⁹³ J", "var(--dom-cosmic)"),
-        ("fgh", "广·塔 → 广·顶", "广义无限阶", f"{dom_counts.get('fgh', 0)} 档 · FGH 增长层级", "var(--dom-fgh)"),
-        ("beyond", "外·门 → 天·最", "论外与论天阶", f"{dom_counts.get('beyond', 0)} 档 · ℵ₀～大基数", "var(--dom-beyond)"),
-    ]
-    spectrum_html = "".join(
-        f'<button type="button" class="atlas-cell" data-tier-seg="{seg}" style="--cell-color:{col}">'
-        f'<span class="atlas-cell-code mono">{code}</span>'
-        f'<span class="atlas-cell-name">{name}</span>'
-        f'<span class="atlas-cell-meta mono">{meta}</span>'
-        f"</button>"
-        for seg, code, name, meta, col in spectrum_defs
-    )
+        domain = t.get("domain", "unranked")
+        counts[domain] = counts.get(domain, 0) + 1
 
     body = f"""
     <div class="container">
-      <section class="category-hub" aria-label="量级分类大库总览">
-        <div class="category-hub-art" aria-hidden="true">
-          <img class="category-hub-img" src="static/img/monolith-scale.jpg" alt="">
-        </div>
+      <section class="category-hub" aria-labelledby="tiers-title">
         <div class="category-hub-body">
           <div class="hub-kicker-row">
-            <span class="hub-kicker-badge mono">⊙ CORE CATEGORY 01 · 量级分类大库</span>
+            <span class="hub-kicker-badge mono">TIER ATLAS · 第五版</span>
             <span class="count-badge mono" id="tier-result-count">{len(tiers)} / {len(tiers)} 档</span>
           </div>
-          <div>
-            <h1 class="page-title">量级分类天梯（从小到大）</h1>
-            <p class="page-desc">
-              全站核心量级目录：严格按<strong>从小到大（#01 昆虫级 → #97 论天最上）</strong>单向递增排列。点击下方任一跨度格可快速筛选区间，点击具体档位卡片进入独立规格页。修饰符遵循 <code>▽ 弱</code> &lt; <code>○ 标准</code> &lt; <code>△ 强</code> &lt; <code>◆ 极</code> &lt; <code>☆ 超</code>。
-            </p>
-          </div>
-          <div class="atlas-spectrum" role="group" aria-label="六大量级跨度快速定位">
-            {spectrum_html}
-          </div>
+          <div><h1 class="page-title" id="tiers-title">量级天梯</h1><p class="page-desc">从 #01 昆虫级到 #97 论天最上，按能量与数学结构递增。</p></div>
         </div>
       </section>
 
       <div class="control-panel">
         <div class="control-row">
-          <div class="control-cluster">
-            <span class="rule-indicator mono">↑ 排列基准：从小到大 (#01 → #97)</span>
-            <div class="seg-group" role="group" aria-label="视图模式">
-              <button type="button" class="seg-btn active" data-tier-view="card">分阶卡片</button>
-              <button type="button" class="seg-btn" data-tier-view="flat">连续天梯</button>
-              <button type="button" class="seg-btn" data-tier-view="table">紧凑总表</button>
-            </div>
+          <div class="seg-group" role="group" aria-label="视图模式">
+            <button type="button" class="seg-btn active" data-tier-view="card">卡片</button>
+            <button type="button" class="seg-btn" data-tier-view="flat">天梯</button>
+            <button type="button" class="seg-btn" data-tier-view="table">总表</button>
           </div>
-
           <div class="search-field">
-            <input type="search" class="search-input" id="tier-filter-input" placeholder="筛选代字、名称、能量或参照物（如 宇△、城△、2.24×10³²）…" autocomplete="off">
+            <input type="search" class="search-input" id="tier-filter-input" placeholder="搜索代字、名称、能量或参照物…" autocomplete="off">
             <button type="button" class="clear-input-btn" id="tier-filter-clear">清空</button>
           </div>
         </div>
-
         <div class="control-row divider-top">
           <div class="chip-rail" role="group" aria-label="量级区间筛选">
-            <button type="button" class="chip-btn active" data-tier-seg="all">全量级 ({len(tiers)})</button>
-            <button type="button" class="chip-btn" data-tier-seg="terrestrial">个体～地表阶 ({dom_counts.get('terrestrial', 0)})</button>
-            <button type="button" class="chip-btn" data-tier-seg="stellar">行星～恒星阶 ({dom_counts.get('stellar', 0)})</button>
-            <button type="button" class="chip-btn" data-tier-seg="transition">衔接与过渡 ({dom_counts.get('transition', 0)})</button>
-            <button type="button" class="chip-btn" data-tier-seg="cosmic">恒星系～宇宙阶 ({dom_counts.get('cosmic', 0)})</button>
-            <button type="button" class="chip-btn" data-tier-seg="fgh">广义无限 FGH ({dom_counts.get('fgh', 0)})</button>
-            <button type="button" class="chip-btn" data-tier-seg="beyond">论外～论天 ({dom_counts.get('beyond', 0)})</button>
-            <button type="button" class="chip-btn" data-tier-seg="unranked">待定 ({dom_counts.get('unranked', 0)})</button>
+            <button type="button" class="chip-btn active" data-tier-seg="all">全部 {len(tiers)}</button>
+            <button type="button" class="chip-btn" data-tier-seg="terrestrial">个体—地表 {counts.get('terrestrial', 0)}</button>
+            <button type="button" class="chip-btn" data-tier-seg="stellar">行星—恒星 {counts.get('stellar', 0)}</button>
+            <button type="button" class="chip-btn" data-tier-seg="transition">过渡 {counts.get('transition', 0)}</button>
+            <button type="button" class="chip-btn" data-tier-seg="cosmic">恒星系—宇宙 {counts.get('cosmic', 0)}</button>
+            <button type="button" class="chip-btn" data-tier-seg="fgh">广义无限 {counts.get('fgh', 0)}</button>
+            <button type="button" class="chip-btn" data-tier-seg="beyond">论外—论天 {counts.get('beyond', 0)}</button>
+            <button type="button" class="chip-btn" data-tier-seg="unranked">待定 {counts.get('unranked', 0)}</button>
           </div>
         </div>
       </div>
-
-      <div class="content-section" id="tiers-explorer-mount">
-        {''.join(ssr_sections)}
-      </div>
+      <div class="content-section" id="tiers-explorer-mount">{''.join(ssr_sections)}</div>
     </div>
     """
-    return render_shell(title="量级分类（从小到大）", page_id="tiers", active_nav="tiers", body_html=body, root_prefix="./")
-
+    return render_shell(title="量级天梯", page_id="tiers", active_nav="tiers", body_html=body, root_prefix="./")
 
 def build_tier_detail_pages(
     tiers: List[Dict[str, Any]],
@@ -1299,14 +1088,10 @@ def build_tier_detail_pages(
                   <p class="page-desc">{esc(t.get('notes', ''))}</p>
                 </div>
                 <a class="btn btn-secondary btn-sm" href="{rule_href}">
-                  查阅《衡天第四版》对应章节 {SVGS["arrow_up_right"]}
+                  查阅《衡天第五版》对应章节 {SVGS["arrow_up_right"]}
                 </a>
               </div>
 
-              <div class="full-writing-box">
-                <div class="box-kicker">《衡天⊙ 第四版》1.5 完整书写推荐格式（首次出现须写全称与标准）</div>
-                <div>综合量级：<span class="mono">⊙{esc(t['code'])}</span>——{esc(t['name'])}（{esc(t['scale'])}，能量/结构基准 <span class="mono">{esc(t['energy'])}</span>）</div>
-              </div>
             </div>
           </section>
 
@@ -1323,17 +1108,11 @@ def build_tier_detail_pages(
               <div class="spec-label">物理 / 数学计算模型</div>
               <div class="spec-val">{esc(t['model'])}</div>
             </div>
-            <div class="spec-card">
-              <div class="spec-label">检索拼音索引</div>
-              <div class="spec-val mono">首字母 {(t.get('initial') or '#').upper()} · {esc(t.get('code_pinyin', ''))} / {esc(t.get('full_pinyin', ''))}</div>
-            </div>
           </section>
-
-          {neighbor_section}
 
           <section class="section-block">
             <div class="section-header">
-              <h2 class="section-title">本档位已收录角色（{len(chars_in_tier)}）</h2>
+              <h2 class="section-title">本档位角色（{len(chars_in_tier)}）</h2>
             </div>
             {char_list_html}
           </section>
@@ -1357,132 +1136,60 @@ def build_tier_detail_pages(
 
 def build_characters_page(all_chars: List[Dict[str, Any]], tiers: List[Dict[str, Any]]) -> str:
     tier_by_slug = {t["slug"]: t for t in tiers}
-    sorted_chars = sorted(
-        all_chars,
-        key=lambda c: (
-            tier_by_slug.get(c.get("tier_slug", ""), {}).get("order", 999),
-            c.get("pinyin") or c.get("name") or "",
-        ),
-    )
-
-    all_series = sorted({c["series"] for c in all_chars if c.get("series")})
-    series_options_html = f'<option value="all">全部作品（{len(all_series)}）</option>' + "".join(
-        f'<option value="{esc(s)}">{esc(s)}</option>' for s in all_series
-    )
+    sorted_chars = sorted(all_chars, key=lambda c: (tier_by_slug.get(c.get("tier_slug", ""), {}).get("order", 999), c.get("pinyin") or c.get("name") or ""))
+    compact = len(all_chars) <= 8
+    cards = "".join(render_char_card_html(c, tier_by_slug, "") for c in sorted_chars)
 
     if sorted_chars:
-        ssr_cards = [render_char_card_html(c, tier_by_slug, "") for c in sorted_chars]
-        ssr_mount_inner = f"""
+        ssr_mount_inner = f'<div class="char-grid compact-roster-grid">{cards}</div>' if compact else f"""
         <section class="group-section" id="char-scale-list">
-          <div class="group-header">
-            <h2 class="group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
-            <span class="group-sub">{len(sorted_chars)} 位角色</span>
-          </div>
-          <div class="char-grid">{"".join(ssr_cards)}</div>
+          <div class="group-header"><h2 class="group-title">按量级递增</h2><span class="group-sub">{len(sorted_chars)} 位角色</span></div>
+          <div class="char-grid">{cards}</div>
         </section>"""
     else:
         ssr_mount_inner = """
-        <div class="empty-state-box">
-          <h3 class="empty-state-title">当前暂未收录角色档案</h3>
-          <p class="empty-state-sub">角色库已清空待录。后续在 data/characters.json 中录入角色后，将自动生成专属独立页面并支持按量级从小到大与按首字母 A–Z 排序。</p>
-        </div>"""
+        <div class="empty-state-box"><h3 class="empty-state-title">暂无角色档案</h3><p class="empty-state-sub">新档案收录后会显示在这里。</p></div>"""
 
-    if sorted_chars:
-        low_c = sorted_chars[0]
-        high_c = sorted_chars[-1]
-        low_t = tier_by_slug.get(low_c.get("tier_slug", ""), {})
-        high_t = tier_by_slug.get(high_c.get("tier_slug", ""), {})
-        span_text = (
-            f"⊙{low_t.get('code', '待定')}（{low_c['name']}）→ ⊙{high_t.get('code', '待定')}（{high_c['name']}）"
-            if len(sorted_chars) > 1
-            else f"⊙{low_t.get('code', '待定')}（{low_c['name']}）"
-        )
-    else:
-        span_text = "待录入"
+    series_options = ""
+    if not compact:
+        all_series = sorted({c["series"] for c in all_chars if c.get("series")})
+        series_options = f'<select class="select-control" id="char-series-select" aria-label="按作品筛选"><option value="all">全部作品（{len(all_series)}）</option>' + "".join(f'<option value="{esc(s)}">{esc(s)}</option>' for s in all_series) + "</select>"
 
-    works_text = " · ".join(all_series[:4]) if all_series else "待录入"
+    domain_controls = "" if compact else """
+        <div class="control-row divider-top"><div class="chip-rail" role="group" aria-label="角色所属量级区间">
+          <button type="button" class="chip-btn active" data-char-domain="all">全部区间</button>
+          <button type="button" class="chip-btn" data-char-domain="terrestrial">个体—地表</button>
+          <button type="button" class="chip-btn" data-char-domain="stellar">行星—恒星</button>
+          <button type="button" class="chip-btn" data-char-domain="transition">过渡</button>
+          <button type="button" class="chip-btn" data-char-domain="cosmic">恒星系—宇宙</button>
+          <button type="button" class="chip-btn" data-char-domain="fgh">广义无限</button>
+          <button type="button" class="chip-btn" data-char-domain="beyond">论外—论天</button>
+        </div></div>"""
+    alpha_bar = "" if compact else '<div class="alpha-bar" id="char-alpha-bar" aria-label="首字母快速定位"><div class="alpha-letters" id="char-alpha-letters"></div></div>'
 
     body = f"""
     <div class="container">
-      <section class="category-hub" aria-label="角色战力档案大库总览">
-        <div class="category-hub-art" aria-hidden="true">
-          <img class="category-hub-img" src="static/img/character-chronicle.jpg" alt="">
-        </div>
+      <section class="category-hub" aria-labelledby="characters-title">
         <div class="category-hub-body">
-          <div class="hub-kicker-row">
-            <span class="hub-kicker-badge mono">⊙ CORE CATEGORY 02 · 角色战力档案库</span>
-            <span class="count-badge mono" id="char-result-count">{len(all_chars)} / {len(all_chars)} 位</span>
-          </div>
-          <div>
-            <h1 class="page-title">角色战力档案目录</h1>
-            <p class="page-desc">
-              全站核心角色目录：支持<strong>按主档量级从小到大</strong>与<strong>按拼音首字母（A–Z）</strong>双模式实时切换；点击任一角色卡片进入专属独立档案页面，返回时自动恢复当前排序与浏览位置。
-            </p>
-          </div>
-          <div class="roster-metrics">
-            <div class="roster-metric-card">
-              <span class="roster-metric-label">已收录角色档案</span>
-              <span class="roster-metric-val mono">{len(all_chars)} 位（100% 独立定级全文页）</span>
-            </div>
-            <div class="roster-metric-card">
-              <span class="roster-metric-label">覆盖作品出处</span>
-              <span class="roster-metric-val">{esc(works_text)}</span>
-            </div>
-            <div class="roster-metric-card">
-              <span class="roster-metric-label">当前收录量级跨度</span>
-              <span class="roster-metric-val mono">{esc(span_text)}</span>
-            </div>
-          </div>
+          <div class="hub-kicker-row"><span class="hub-kicker-badge mono">CHARACTER DOSSIERS</span><span class="count-badge mono" id="char-result-count">{len(all_chars)} / {len(all_chars)} 位</span></div>
+          <div><h1 class="page-title" id="characters-title">角色档案</h1><p class="page-desc">先看结论，再进入完整档案核对证据、计算与存疑说明。</p></div>
         </div>
       </section>
-
       <div class="control-panel">
         <div class="control-row">
           <div class="control-cluster">
-            <div class="seg-group" role="group" aria-label="角色排序方式">
-              <button type="button" class="seg-btn active" data-char-sort="asc">↑ 按量级从小到大</button>
-              <button type="button" class="seg-btn" data-char-sort="alpha">A–Z 按首字母排序</button>
-            </div>
-            <select class="select-control" id="char-series-select" aria-label="按作品筛选">
-              {series_options_html}
-            </select>
+            <div class="seg-group" role="group" aria-label="角色排序方式"><button type="button" class="seg-btn active" data-char-sort="asc">量级 ↑</button><button type="button" class="seg-btn" data-char-sort="alpha">A–Z</button></div>
+            {series_options}
           </div>
-
-          <div class="search-field">
-            <input type="search" class="search-input" id="char-filter-input" placeholder="检索角色名、首字母、出处或量级代字…" autocomplete="off">
-          </div>
+          <div class="search-field"><input type="search" class="search-input" id="char-filter-input" placeholder="搜索角色、作品或量级…" autocomplete="off"></div>
         </div>
-
-        <div class="control-row divider-top">
-          <div class="chip-rail" role="group" aria-label="角色所属量级区间">
-            <button type="button" class="chip-btn active" data-char-domain="all">全部区间</button>
-            <button type="button" class="chip-btn" data-char-domain="terrestrial">个体～地表阶</button>
-            <button type="button" class="chip-btn" data-char-domain="stellar">行星～恒星阶</button>
-            <button type="button" class="chip-btn" data-char-domain="transition">衔接与过渡</button>
-            <button type="button" class="chip-btn" data-char-domain="cosmic">恒星系～宇宙阶</button>
-            <button type="button" class="chip-btn" data-char-domain="fgh">广义无限 FGH</button>
-            <button type="button" class="chip-btn" data-char-domain="beyond">论外～论天</button>
-          </div>
-        </div>
+        {domain_controls}
       </div>
-
-      <div class="alpha-bar" id="char-alpha-bar" aria-label="首字母快速定位">
-        <div class="alpha-letters" id="char-alpha-letters"></div>
-      </div>
-
-      <div class="content-section" id="chars-explorer-mount">
-        {ssr_mount_inner}
-      </div>
+      {alpha_bar}
+      <div class="content-section" id="chars-explorer-mount">{ssr_mount_inner}</div>
     </div>
     """
-    return render_shell(
-        title="角色分类（首字母 / 从小到大）",
-        page_id="characters",
-        active_nav="characters",
-        body_html=body,
-        root_prefix="./",
-    )
-
+    return render_shell(title="角色档案", page_id="characters", active_nav="characters", body_html=body, root_prefix="./")
 
 def build_character_detail_pages(
     all_chars: List[Dict[str, Any]],
@@ -1545,10 +1252,28 @@ def build_character_detail_pages(
         floor_val_html = format_evidence_html(c.get("floor_tier") or t["energy"])
         ceiling_val_html = format_evidence_html(c.get("ceiling_note") or t["scale"])
         basis_val_html = format_evidence_html(
-            c.get("core_basis") or c.get("credibility") or f"依据《衡天⊙ 第四版》{t['name']}标准评定"
+            c.get("core_basis") or c.get("credibility") or f"依据《衡天⊙ 第五版》{t['name']}标准评定"
         )
         floor_label = "保底量级" if c.get("floor_tier") else "主档能量带"
         ceiling_label = "上限边界与反证" if c.get("ceiling_note") else "主档覆盖尺度"
+
+        visual = c.get("visual") or {}
+        detail_lede = c.get("detail_lede") or c.get("summary") or ""
+        header_art_src = resolve_rel_asset(visual.get("art_url") or "static/img/character-chronicle.jpg", "../")
+        header_class = f"dossier-header character-dossier theme-{esc(c['slug'])}" if visual else "dossier-header"
+        dossier_masthead_html = ""
+        if visual:
+            dossier_masthead_html = f"""
+            <div class="dossier-masthead">
+              <span class="dossier-kicker mono">{esc(visual.get('kicker') or 'CHARACTER OBSERVATION')}</span>
+              <span class="dossier-register mono">{esc(visual.get('register') or c['slug'].upper())}</span>
+            </div>"""
+        fact_items_html = "".join(
+            f"""<div class="dossier-fact"><span class="fact-label">{esc(item.get('label') or '')}</span><strong class="fact-value">{esc(item.get('value') or '')}</strong><span class="fact-note">{format_evidence_html(item.get('note') or '')}</span></div>"""
+            for item in (visual.get("facts") or [])
+        )
+        dossier_fact_rail_html = f'<div class="dossier-fact-rail">{fact_items_html}</div>' if fact_items_html else ""
+        portrait_index_html = f'<span class="portrait-index mono">{esc(visual.get("art_badge"))}</span>' if visual.get("art_badge") else ""
 
         portrait_src = resolve_rel_asset(c.get("portrait_url") or c.get("image_url") or "", "../")
         if portrait_src:
@@ -1564,8 +1289,6 @@ def build_character_detail_pages(
                 <div class="char-tags">
                   <span class="tag-pill accent">{esc(group_badge_label)}</span>
                   <span class="tag-pill">{esc(c.get('series') or '未标注出处')}</span>
-                  <span class="tag-pill mono">首字母 {initial}</span>
-                  {mod_chips_html}
                 </div>
 
                 <div>
@@ -1573,7 +1296,7 @@ def build_character_detail_pages(
                   <div class="dossier-submeta">{submeta_html}</div>
                 </div>
 
-                <p class="page-desc">{esc(c.get('summary') or '')}</p>
+                <p class="page-desc">{esc(detail_lede)}</p>
 
                 <div class="dossier-kpi-grid">
                   <div class="dossier-kpi-card">
@@ -1589,29 +1312,15 @@ def build_character_detail_pages(
                     <div class="kpi-label">{floor_label}</div>
                     <div class="kpi-value">{floor_val_html}</div>
                   </div>
-                  <div class="dossier-kpi-card">
-                    <div class="kpi-label">{ceiling_label}</div>
-                    <div class="kpi-value">{ceiling_val_html}</div>
-                  </div>
-                  <div class="dossier-kpi-card">
-                    <div class="kpi-label">主档核心依据</div>
-                    <div class="kpi-value">{basis_val_html}</div>
-                  </div>
                 </div>
 
-                <div class="dossier-actions-row">
-                  <a class="btn btn-secondary btn-sm" href="../tier/{esc(t['slug'])}.html">
-                    进入 ⊙{esc(t['code'])} {esc(t['name'])}规格页 {SVGS["arrow_up_right"]}
-                  </a>
-                  <a class="btn btn-ghost btn-sm" href="{rule_href}">
-                    对照《衡天第四版》标尺条文 →
-                  </a>
-                </div>
+                <div class="dossier-actions-row"><a class="text-link" href="{rule_href}">对照衡天规则原文 →</a></div>
               </div>
 
-              <aside class="char-portrait-stage" aria-label="角色官方立绘">
+              <aside class="char-portrait-stage" aria-label="角色形象参考">
                 <div class="char-portrait-canvas">
-                  <img class="char-portrait-img" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）官方立绘"{p_dim_attrs}>
+                  {portrait_index_html}
+                  <img class="char-portrait-img" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）形象参考"{p_dim_attrs}>
                 </div>
                 <div class="char-portrait-caption">{portrait_caption}</div>
               </aside>
@@ -1642,7 +1351,7 @@ def build_character_detail_pages(
                 </div>
               </div>
 
-              <p class="page-desc">{esc(c.get('summary') or '')}</p>
+              <p class="page-desc">{esc(detail_lede)}</p>
 
               <div class="full-writing-box">
                 <div class="box-kicker">正式完整书写摘要</div>
@@ -1678,7 +1387,7 @@ def build_character_detail_pages(
                     }
                 )
 
-            doc_basis_label = esc(c.get("doc_basis") or "依据《衡天⊙ 多维战力量级体系（第四版）》")
+            doc_basis_label = esc(c.get("doc_basis") or "依据《衡天⊙ 多维战力量级体系（第五版）》")
             center_content_html = f"""
           <div class="doc-layout">
             <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
@@ -1804,9 +1513,9 @@ def build_character_detail_pages(
                 <div class="spec-val">{esc(t['scale'])}</div>
               </div>
               <div class="spec-card">
-                <div class="spec-label">对应《衡天第四版》章节</div>
+                <div class="spec-label">对应《衡天第五版》章节</div>
                 <div class="spec-val">
-                  <a class="table-primary-link" href="{rule_href}">{esc(rule_sec_title or '查阅第四版规范原文')} →</a>
+                  <a class="table-primary-link" href="{rule_href}">{esc(rule_sec_title or '查阅第五版规范原文')} →</a>
                 </div>
               </div>
             </div>
@@ -1814,7 +1523,7 @@ def build_character_detail_pages(
         )
 
         body = f"""
-        <div class="container detail-stack">
+        <div class="container detail-stack character-detail character-{esc(c['slug'])}">
           <div class="subpage-bar">
             <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
               {SVGS["arrow_left"]} <span class="js-back-label">返回角色档案库</span>
@@ -1828,11 +1537,13 @@ def build_character_detail_pages(
             </nav>
           </div>
 
-          <section class="dossier-header">
+          <section class="{header_class}">
             <div class="page-header-art" aria-hidden="true">
-              <img class="page-header-img" src="../static/img/character-chronicle.jpg" alt="">
+              <img class="page-header-img" src="{esc(header_art_src)}" alt="">
             </div>
+            {dossier_masthead_html}
             {dossier_body_html}
+            {dossier_fact_rail_html}
           </section>
 
           {center_content_html}
@@ -1852,6 +1563,7 @@ def build_character_detail_pages(
             body_html=body,
             root_prefix="../",
             has_toc_button=has_full_doc,
+            body_class=f"character-site character-{c['slug']}",
         )
         (CHAR_OUT_DIR / f"{c['slug']}.html").write_text(page_html, encoding="utf-8")
 
@@ -1872,176 +1584,79 @@ def build_fulltext_doc_page(
     renderer = VerbatimMarkdownRenderer()
     rendered_html = renderer.render(md_text)
     line_count = len(md_text.splitlines())
-    char_count = len(md_text)
 
     toc_links: List[str] = []
     title_to_id: Dict[str, str] = {}
     for item in renderer.toc:
-        lvl = item["level"]
-        hid = item["id"]
-        htitle = item["title"]
-        title_to_id[htitle] = hid
-        toc_links.append(f'<a class="toc-item toc-lvl-{lvl}" href="#{esc(hid)}">{esc(htitle)}</a>')
+        title_to_id[item["title"]] = item["id"]
+        toc_links.append(f'<a class="toc-item toc-lvl-{item["level"]}" href="#{esc(item["id"])}">{esc(item["title"])}</a>')
 
     rules_tab_cls = "codex-tab active" if active_nav == "rules" else "codex-tab"
     mat_tab_cls = "codex-tab active" if active_nav == "materials" else "codex-tab"
-    vol_code = "CODEX VOL. I · 基准规则原文" if active_nav == "rules" else "CODEX VOL. II · 物理能量原文"
+    version_label = "第五版 · 2026.10.25" if active_nav == "rules" else "第二版 · 物理参考"
 
     body = f"""
     <div class="container">
-      <header class="codex-header" aria-label="基准原文典籍页头">
-        <div class="codex-tabs" role="tablist" aria-label="基准原文双卷切换">
-          <a class="{rules_tab_cls}" href="rules.html">卷一：《衡天⊙ 多维战力量级体系（第四版）》原文</a>
-          <a class="{mat_tab_cls}" href="materials.html">卷二：《材质与破坏能量数据库（第二版）》原文</a>
-        </div>
-
+      <header class="codex-header">
+        <nav class="codex-tabs" aria-label="规则与资料切换">
+          <a class="{rules_tab_cls}" href="rules.html">衡天体系 · 第五版</a>
+          <a class="{mat_tab_cls}" href="materials.html">材质与能量 · 第二版</a>
+        </nav>
         <div class="codex-folio">
-          <div class="codex-folio-kicker">
-            <span class="codex-folio-badge mono">{vol_code}</span>
-            <span class="mono">全文无删减收录 · {line_count:,} 行 · {char_count:,} 字 · {len(renderer.toc)} 节</span>
-          </div>
+          <div class="codex-folio-kicker"><span class="codex-folio-badge mono">{version_label}</span><span>完整原文 · {len(renderer.toc)} 节</span></div>
           <h1 class="codex-folio-title">{esc(title)}</h1>
           <p class="codex-folio-desc">{esc(subtitle)}</p>
-          <div class="codex-folio-meta">
-            <span>定级标尺参考文本（区别于动态分类目录，完整保留 Markdown 原貌与表格数据）</span>
-            <div>
-              <a class="table-primary-link" href="tiers.html">前往「量级分类」大库 →</a>
-              <span> · </span>
-              <a class="table-primary-link" href="characters.html">前往「角色档案」大库 →</a>
-            </div>
-          </div>
         </div>
       </header>
 
       <div class="doc-layout">
         <aside class="doc-sidebar" id="doc-sidebar" aria-label="全文目录">
-          <div class="toc-head">
-            <div class="toc-head-row">
-              <span>原文目录大纲</span>
-              <span class="mono">{len(renderer.toc)} 节</span>
-            </div>
-            <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选目录章节…" autocomplete="off">
-          </div>
-          <nav class="toc-list" id="toc-nav">
-            {''.join(toc_links)}
-          </nav>
+          <div class="toc-head"><div class="toc-head-row"><span>本文目录</span><span class="mono">{len(renderer.toc)}</span></div><input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off"></div>
+          <nav class="toc-list" id="toc-nav">{''.join(toc_links)}</nav>
         </aside>
-
         <article class="doc-panel">
           <div class="doc-toolbar">
-            <div class="doc-source-info">
-              <span>基准原文全文</span>
-              <span>·</span>
-              <code class="mono">{esc(source_filename)}</code>
-            </div>
+            <div class="doc-source-info"><span>阅读工具</span></div>
             <div class="doc-tools">
-              <div class="doc-find-box">
-                <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
-                <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
-                <span class="doc-find-count mono" id="doc-find-count"></span>
-              </div>
-              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
+              <div class="doc-find-box"><input type="search" class="doc-find-input" id="doc-find-input" placeholder="在本文中查找…"><button type="button" class="tool-btn" id="doc-find-next">查找</button><span class="doc-find-count mono" id="doc-find-count"></span></div>
+              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A−</button>
               <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
               <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
             </div>
           </div>
-
-          <div class="markdown-body">
-            {rendered_html}
-          </div>
+          <div class="markdown-body">{rendered_html}</div>
         </article>
       </div>
     </div>
     """
-
-    full_html = render_shell(
-        title=title,
-        page_id=page_id,
-        active_nav=active_nav,
-        body_html=body,
-        root_prefix="./",
-        has_toc_button=True,
-    )
+    full_html = render_shell(title=title, page_id=page_id, active_nav=active_nav, body_html=body, root_prefix="./", has_toc_button=True)
     return full_html, renderer.sections_for_index, title_to_id
 
-
 def build_search_page() -> str:
-    hot_queries = [
-        "御兔",
-        "城△",
-        "宇◆",
-        "标注图与动图",
-        "完整书写",
-        "归因与知情度",
-        "超长篇",
-        "外·门",
-        "中子星外壳",
-        "花岗岩",
-        "莱因哈特",
-    ]
-    hot_chips = "".join(
-        f'<button type="button" class="chip-btn" data-hot-query="{esc(q)}">{esc(q)}</button>'
-        for q in hot_queries
-    )
-
     body = f"""
     <div class="container">
-      <div class="page-header">
-        <div class="page-header-art" aria-hidden="true">
-          <img class="page-header-img" src="static/img/cosmos-eclipse.jpg" alt="">
-        </div>
+      <header class="page-header search-page-header">
         <div class="page-header-body">
-          <div class="nav-crumb-row">
-            <button type="button" class="back-btn js-smart-back" data-fallback="index.html" data-fallback-name="首页">
-              {SVGS["arrow_left"]} <span class="js-back-label">返回首页</span>
-            </button>
-            <nav class="breadcrumbs" aria-label="面包屑">
-              <a href="index.html">首页</a>
-              <span>/</span>
-              <span>全站搜索</span>
-            </nav>
-          </div>
           <div class="page-title-row">
-            <div>
-              <h1 class="page-title">全站即时检索引擎</h1>
-              <p class="page-desc">
-                跨<strong>98 个量级档位</strong>、<strong>角色档案</strong>、《衡天量级体系（第四版）》全文与《材质与破坏能量数据库（第二版）》全文毫秒级检索。
-              </p>
-            </div>
+            <div><span class="section-kicker">Search PowerWiki</span><h1 class="page-title">搜索全站</h1><p class="page-desc">检索量级、角色证据、第五版规则与材质数据。</p></div>
             <span class="count-badge mono" id="dedicated-search-count">准备就绪</span>
           </div>
         </div>
-      </div>
-
+      </header>
       <div class="control-panel">
-        <div class="search-field full">
-          <input type="search" class="search-input lg" id="dedicated-search-input" placeholder="输入关键词（支持空格分词组合检索，如：星○ 2.24、标注图 帧号、归因 审查、花岗岩 粉碎）…" autofocus>
-        </div>
-
-        <div class="control-row">
-          <div class="chip-rail">
-            <span class="rail-label">范围：</span>
-            <button type="button" class="chip-btn active" data-page-search-type="all">全部类别</button>
-            <button type="button" class="chip-btn" data-page-search-type="tier">量级分类 (98)</button>
-            <button type="button" class="chip-btn" data-page-search-type="char">角色档案</button>
-            <button type="button" class="chip-btn" data-page-search-type="rules">衡天第四版全文</button>
-            <button type="button" class="chip-btn" data-page-search-type="materials">材质能量库全文</button>
-          </div>
-        </div>
-
-        <div class="control-row divider-top">
-          <div class="chip-rail">
-            <span class="rail-label">热词：</span>
-            {hot_chips}
-          </div>
-        </div>
+        <div class="search-field full"><input type="search" class="search-input lg" id="dedicated-search-input" placeholder="输入关键词；用空格组合多个条件…" autofocus></div>
+        <div class="control-row"><div class="chip-rail" aria-label="搜索范围">
+          <button type="button" class="chip-btn active" data-page-search-type="all">全部</button>
+          <button type="button" class="chip-btn" data-page-search-type="tier">量级</button>
+          <button type="button" class="chip-btn" data-page-search-type="char">角色</button>
+          <button type="button" class="chip-btn" data-page-search-type="rules">第五版规则</button>
+          <button type="button" class="chip-btn" data-page-search-type="materials">材质数据</button>
+        </div></div>
       </div>
-
       <div class="content-section" id="dedicated-search-results"></div>
     </div>
     """
     return render_shell(title="全站搜索", page_id="search", active_nav="search", body_html=body, root_prefix="./")
-
 
 def build_search_index_bundle(
     *,
@@ -2094,8 +1709,8 @@ def build_search_index_bundle(
             {
                 "type": "rules",
                 "code": "",
-                "title": f"衡天第四版 · {sec['title']}",
-                "badge": "衡天第四版",
+                "title": f"衡天第五版 · {sec['title']}",
+                "badge": "衡天第五版",
                 "pinyin": "",
                 "text": clean_txt,
                 "url": f"rules.html#{sec['id']}",
@@ -2123,7 +1738,7 @@ def build_search_index_bundle(
     }
 
     return (
-        "/* Auto-generated by build_site.py v6.3 — DO NOT EDIT MANUALLY */\n"
+        "/* Auto-generated by build_site.py v9.1 — DO NOT EDIT MANUALLY */\n"
         f"window.__POWERWIKI_DATA__ = {json.dumps(client_data, ensure_ascii=False, separators=(',', ':'))};\n"
         f"window.__POWERWIKI_INDEX__ = {json.dumps(index_entries, ensure_ascii=False, separators=(',', ':'))};\n"
     )
@@ -2163,9 +1778,9 @@ def main() -> None:
     rules_html, rules_sections, rules_title_to_id = build_fulltext_doc_page(
         page_id="rules",
         active_nav="rules",
-        title="衡天⊙ 多维战力量级体系（第四版·全文）",
-        subtitle="完整收录总则、常见违规与归因审查、1.5 完整书写规范、全量级定义、论外基数序数双轴、10.8 标注图与动图处理及超长篇自行通读流程。",
-        source_filename="衡天量级体系【第四版·最新】.md",
+        title="衡天⊙ 多维战力量级体系（第五版·全文）",
+        subtitle="核对判定通则、量级定义、无限类证据与图像测量规范。",
+        source_filename="衡天量级体系【第五版·最新】.md",
         masthead_img="static/img/cosmos-eclipse.jpg",
         md_text=rules_md,
         other_doc_link=("materials.html", "材质与破坏能量数据库"),
@@ -2176,11 +1791,11 @@ def main() -> None:
         page_id="materials",
         active_nav="materials",
         title="材质与破坏能量数据库（第二版·全文）",
-        subtitle="完整收录岩石/金属/生物力学强度、碎裂至核子解离破坏方式比能（J/cm³）、天体结合能与致密星物质锚点。",
+        subtitle="岩石、金属、生物与天体材质的破坏能量参考。",
         source_filename="材质与破坏能量数据库（新）.md",
         masthead_img="static/img/physics-lattice.jpg",
         md_text=materials_md,
-        other_doc_link=("rules.html", "衡天量级体系（第四版）"),
+        other_doc_link=("rules.html", "衡天量级体系（第五版）"),
     )
     (ROOT / "materials.html").write_text(materials_html, encoding="utf-8")
 
@@ -2216,11 +1831,11 @@ def main() -> None:
     (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
 
     print(
-        f"[OK] PowerWiki v6.3 built successfully:\n"
+        f"[OK] PowerWiki v9.1 built successfully:\n"
         f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
         f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
         f"  - Standalone Character pages: {len(all_chars)} files in character/*.html ({len(char_doc_sections)} full-text sections indexed)\n"
-        f"  - Rules v4 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections"
+        f"  - Rules v5 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections"
     )
 
 

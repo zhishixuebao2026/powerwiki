@@ -580,26 +580,19 @@
       return q.split(/\s+/).every((tok) => hay.includes(tok));
     }
 
-    function renderCard(t) {
+function renderCard(t) {
       const orderText = t.unranked ? "待定" : `#${String(t.order).padStart(2, "0")}`;
       const cCount = charCountByTier[t.slug] || 0;
-      const charPill = cCount > 0 ? `<span class="tag-pill accent">${cCount} 角色</span>` : "";
+      const charPill = cCount > 0 ? `<span class="tier-char-count">${cCount} 角色</span>` : "";
       return `
         <a class="tier-card" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
           <div class="tier-card-top">
             <span class="tier-badge mono">⊙ ${escapeHTML(t.code)}</span>
             <span class="tier-top-right">${charPill}<span class="tier-seq mono">${orderText}</span></span>
           </div>
-          <div class="tier-name-row">
-            <h3 class="tier-name">${escapeHTML(t.name)}</h3>
-            <span class="tier-family">${escapeHTML(t.family)}</span>
-          </div>
+          <div class="tier-name-row"><h3 class="tier-name">${escapeHTML(t.name)}</h3></div>
           <div class="tier-energy mono">${escapeHTML(t.energy)}</div>
           <p class="tier-scale">${escapeHTML(t.scale)}</p>
-          <div class="tier-foot">
-            <span>${escapeHTML(t.model)}</span>
-            ${ICONS.arrowUpRight}
-          </div>
         </a>`;
     }
 
@@ -622,8 +615,8 @@
       return `
         <section class="group-section" id="group-flat">
           <div class="group-header">
-            <h2 class="group-title">连续天梯序列（#01 昆虫级 → #97 论天最上）</h2>
-            <span class="group-sub">严格按量级从小到大排列 · 共 ${list.length} 档</span>
+            <h2 class="group-title">连续天梯</h2>
+            <span class="group-sub">${list.length} 档 · 从小到大</span>
           </div>
           <div class="ladder-list">${rows}</div>
         </section>`;
@@ -717,7 +710,7 @@
             <section class="group-section" id="group-${escapeHTML(gid)}">
               <div class="group-header">
                 <h2 class="group-title">${escapeHTML(g ? g.title : gid)}</h2>
-                <span class="group-sub">${escapeHTML(g ? g.subtitle : "")} · ${gItems.length} 档</span>
+                <span class="group-sub">${gItems.length} 档</span>
               </div>
               <div class="tier-grid">${gItems.map(renderCard).join("")}</div>
             </section>`;
@@ -823,6 +816,12 @@
       });
     });
 
+    const compactRoster = pool.length <= 8;
+    if (compactRoster) {
+      state.domain = "all";
+      state.series = "all";
+    }
+
     if (seriesSelect) {
       const allSeries = Array.from(new Set(pool.map((c) => c.series).filter(Boolean))).sort();
       seriesSelect.innerHTML =
@@ -837,48 +836,26 @@
 
     function renderCharCard(c) {
       const t = c._tier;
-      const initialLetter = escapeHTML((c.initial || "#").toUpperCase());
       const orderLabel = t && !t.unranked ? `#${String(t.order).padStart(2, "0")}` : "待定";
-      const modHtml = (c.modifiers || [])
-        .map((m) => `<span class="tag-pill">${escapeHTML(m)}</span>`)
-        .join("");
-
-      const originLine =
-        escapeHTML(c.series || "未知出处") + (c.realm ? " · " + escapeHTML(c.realm) : "");
+      const originLine = escapeHTML(c.series || "未知出处");
+      const tierLine = `<div class="char-tier-line"><span>${escapeHTML(t ? t.name : "待定")}</span><span class="mono">${orderLabel}</span></div>`;
+      const summary = `<p class="char-summary">${escapeHTML(c.card_summary || c.summary || "")}</p>`;
+      const foot = `<div class="char-foot"><span>${escapeHTML(c.doc_date || "已归档")} 更新</span><span class="card-link-hint">阅读档案 ${ICONS.arrowUpRight}</span></div>`;
 
       if (c.image_url) {
-        const shape = c.image_shape || "portrait";
-        const mediaLayoutCls =
-          shape === "landscape"
-            ? "has-media media-top"
-            : shape === "square"
-            ? "has-media media-side media-square"
-            : "has-media media-side";
-        const sizeAttrs =
-          c.image_w && c.image_h ? ` width="${Number(c.image_w)}" height="${Number(c.image_h)}"` : "";
+        const rawShape = c.image_shape || "portrait";
+        const shape = ["landscape", "square", "portrait"].includes(rawShape) ? rawShape : "portrait";
+        const imageUrl = resolveUrl(c.image_url);
+        const sizeAttrs = c.image_w && c.image_h ? ` width="${Number(c.image_w)}" height="${Number(c.image_h)}"` : "";
         return `
-        <a class="char-card ${mediaLayoutCls}" href="${resolveUrl("character/" + c.slug + ".html")}">
-          <div class="char-card-media">
-            <img class="char-card-img" src="${escapeHTML(resolveUrl(c.image_url))}" alt="${escapeHTML(c.name)}"${sizeAttrs} loading="lazy">
-          </div>
+        <a class="char-card has-media media-top" href="${resolveUrl("character/" + c.slug + ".html")}">
+          <div class="char-card-media is-${shape}" data-art-label="${escapeHTML((c.pinyin || c.slug).toUpperCase())}" style="--char-image:url('${escapeHTML(imageUrl)}')"><img class="char-card-img" src="${escapeHTML(imageUrl)}" alt="${escapeHTML(c.name)}"${sizeAttrs} loading="lazy"></div>
           <div class="char-card-body">
             <div class="char-head">
-              <div class="char-meta">
-                <h3 class="char-name">${escapeHTML(c.name)}</h3>
-                <div class="char-origin">${originLine}</div>
-              </div>
+              <div class="char-meta"><h3 class="char-name">${escapeHTML(c.name)}</h3><div class="char-origin">${originLine}</div></div>
               <span class="tier-badge gold mono">⊙ ${escapeHTML(t ? t.code : "待定")}</span>
             </div>
-            <div class="char-tags">
-              <span class="tag-pill accent">${escapeHTML(t ? t.name : "待定")} · ${orderLabel}</span>
-              <span class="tag-pill mono">首字母 ${initialLetter}</span>
-              ${modHtml}
-            </div>
-            <p class="char-summary">${escapeHTML(c.summary || "")}</p>
-            <div class="char-foot">
-              <span class="char-cred">${formatEvidenceBadges(c.credibility || "点击查阅定级详情")}</span>
-              <span class="card-link-hint">查看档案 ${ICONS.arrowUpRight}</span>
-            </div>
+            ${tierLine}${summary}${foot}
           </div>
         </a>`;
       }
@@ -886,25 +863,10 @@
       return `
         <a class="char-card" href="${resolveUrl("character/" + c.slug + ".html")}">
           <div class="char-head">
-            <div class="char-identity">
-              <div class="char-monogram">${escapeHTML(c.name.slice(0, 1))}</div>
-              <div class="char-meta">
-                <h3 class="char-name">${escapeHTML(c.name)}</h3>
-                <div class="char-origin">${originLine}</div>
-              </div>
-            </div>
+            <div class="char-identity"><div class="char-monogram">${escapeHTML(c.name.slice(0, 1))}</div><div class="char-meta"><h3 class="char-name">${escapeHTML(c.name)}</h3><div class="char-origin">${originLine}</div></div></div>
             <span class="tier-badge gold mono">⊙ ${escapeHTML(t ? t.code : "待定")}</span>
           </div>
-          <div class="char-tags">
-            <span class="tag-pill accent">${escapeHTML(t ? t.name : "待定")} · ${orderLabel}</span>
-            <span class="tag-pill mono">首字母 ${initialLetter}</span>
-            ${modHtml}
-          </div>
-          <p class="char-summary">${escapeHTML(c.summary || "")}</p>
-          <div class="char-foot">
-            <span class="char-cred">${formatEvidenceBadges(c.credibility || "点击查阅定级详情")}</span>
-            <span class="card-link-hint">查看档案 ${ICONS.arrowUpRight}</span>
-          </div>
+          ${tierLine}${summary}${foot}
         </a>`;
     }
 
@@ -969,6 +931,17 @@
             render();
           });
         }
+        return;
+      }
+
+      if (compactRoster) {
+        if (alphaBar) alphaBar.classList.remove("visible");
+        const sorted = filtered.slice().sort((a, b) => {
+          if (state.sort === "alpha") return String(a.pinyin || a.name).localeCompare(String(b.pinyin || b.name));
+          const diff = a._order - b._order;
+          return diff !== 0 ? diff : String(a.pinyin || a.name).localeCompare(String(b.pinyin || b.name));
+        });
+        mount.innerHTML = `<div class="char-grid compact-roster-grid">${sorted.map(renderCharCard).join("")}</div>`;
         return;
       }
 
@@ -1144,7 +1117,7 @@
   const TYPE_LABELS = {
     tier: "量级分类",
     char: "角色档案",
-    rules: "衡天第四版",
+    rules: "衡天第五版",
     materials: "材质能量库"
   };
 
@@ -1273,7 +1246,7 @@
         mount.innerHTML = `
           <div class="empty-state-box">
             <h3 class="empty-state-title">没有找到匹配内容</h3>
-            <p class="empty-state-sub">试试检索代字（如 恒○、宇◆、外·门）、第四版规则（如 标注图与动图、归因与知情度审查、完整书写）或材质名称（如 中子星、花岗岩）。</p>
+            <p class="empty-state-sub">试试检索代字（如 恒○、宇◆、外·门）、第五版规则（如 明确设定陈述、标注图与动图、归因审查）或材质名称（如 中子星、花岗岩）。</p>
           </div>`;
         return;
       }
@@ -1310,6 +1283,35 @@
     render();
   }
 
+  function initReadingProgress() {
+    const bar = document.getElementById("reading-progress-bar");
+    const article = document.querySelector(".markdown-body");
+    if (!bar || !article) return;
+
+    let queued = false;
+    function update() {
+      queued = false;
+      const headerHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 64;
+      const articleTop = article.getBoundingClientRect().top + window.scrollY;
+      const start = articleTop - headerHeight - 24;
+      const end = articleTop + article.offsetHeight - window.innerHeight * 0.55;
+      const progress = Math.min(1, Math.max(0, (window.scrollY - start) / Math.max(1, end - start)));
+      bar.style.transform = `scaleX(${progress})`;
+      bar.parentElement.classList.toggle("is-reading", progress > 0 && progress < 1);
+      bar.parentElement.classList.toggle("is-complete", progress >= 1);
+    }
+    function requestUpdate() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    }
+
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(requestUpdate);
+    update();
+  }
+
   function initHorizontalRails() {
     document.querySelectorAll(".chip-rail, .alpha-letters").forEach((rail) => {
       rail.addEventListener(
@@ -1335,6 +1337,7 @@
     initCharactersExplorer();
     initDedicatedSearchPage();
     initDocumentReader();
+    initReadingProgress();
     initBrowsingCacheAndBack();
     initGlobalSearchModal();
     initHorizontalRails();

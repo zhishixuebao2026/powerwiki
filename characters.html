@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark" data-root="./" data-page-id="characters">
+<html lang="zh-CN" data-theme="light" data-root="./" data-page-id="characters">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>角色分类（首字母 / 从小到大） · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第四版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <title>角色档案 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {
       try {
@@ -13,12 +13,14 @@
       } catch (e) {}
     })();
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="./static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./static/fonts/noto-sans-sc/index.css">
+  <link rel="stylesheet" href="./static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="./static/fonts/noto-serif-sc/index.css">
   <link rel="stylesheet" href="./static/css/style.css">
+  <link rel="stylesheet" href="./static/css/editorial.css">
 </head>
-<body>
+<body class="site-characters">
   <header class="site-header">
     <div class="container header-inner">
       <div class="header-left">
@@ -27,18 +29,16 @@
         </button>
         <a class="brand-link" href="./index.html">
           <span class="brand-mark">⊙</span>
-          <span class="brand-name">衡天 PowerWiki</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
         </a>
       </div>
 
       <nav class="main-nav" id="main-nav" aria-label="主导航">
-        <a class="nav-link" href="./index.html">首页</a>
-        <a class="nav-link nav-cat" href="./tiers.html">量级分类</a>
-        <a class="nav-link nav-cat active" href="./characters.html">角色档案</a>
-        <span class="nav-divider" aria-hidden="true"></span>
-        <a class="nav-link nav-doc" href="./rules.html">体系原文</a>
-        <a class="nav-link nav-doc" href="./materials.html">材质原文</a>
-        <a class="nav-link" href="./search.html">搜索</a>
+        <a class="nav-link" href="./index.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></span><span>首页</span></a>
+        <a class="nav-link nav-cat" href="./tiers.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg></span><span>量级</span></a>
+        <a class="nav-link nav-cat active" href="./characters.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg></span><span>角色</span></a>
+        <a class="nav-link nav-doc" href="./rules.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg></span><span>规则</span></a>
+        <a class="nav-link nav-doc" href="./materials.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg></span><span>材质</span></a>
       </nav>
 
       <div class="header-right">
@@ -59,7 +59,7 @@
     <div class="site-drawer-head">
       <a class="brand-link" href="./index.html">
         <span class="brand-mark">⊙</span>
-        <span class="brand-name">衡天 PowerWiki</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
       </a>
       <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
         <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -67,14 +67,14 @@
     </div>
     <div class="site-drawer-body">
       <div class="drawer-group">
-        <div class="drawer-group-label">核心分类大库</div>
-        <a class="drawer-card-link" href="./tiers.html"><span class="drawer-card-title"><span>量级分类大库</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档从小到大 · 物理焦耳与集合论标尺</span></a>
-        <a class="drawer-card-link active" href="./characters.html"><span class="drawer-card-title"><span>角色战力档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">首字母 A–Z / 量级从小到大双模式排序</span></a>
+        <div class="drawer-group-label">查阅</div>
+        <a class="drawer-card-link" href="./tiers.html"><span class="drawer-card-title"><span>量级天梯</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档 · 从昆虫到论天</span></a>
+        <a class="drawer-card-link active" href="./characters.html"><span class="drawer-card-title"><span>角色档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">定级结论与完整证据原文</span></a>
       </div>
       <div class="drawer-group">
-        <div class="drawer-group-label">基准规则原文（全文无删减）</div>
-        <a class="drawer-doc-link" href="./rules.html"><span>卷一 · 衡天量级体系（第四版）</span><span>→</span></a>
-        <a class="drawer-doc-link" href="./materials.html"><span>卷二 · 材质与破坏能量数据库</span><span>→</span></a>
+        <div class="drawer-group-label">规则与资料</div>
+        <a class="drawer-doc-link" href="./rules.html"><span>衡天体系 · 第五版</span><span>→</span></a>
+        <a class="drawer-doc-link" href="./materials.html"><span>材质与能量 · 第二版</span><span>→</span></a>
       </div>
       <div class="drawer-group">
         <div class="drawer-group-label">快捷导航</div>
@@ -125,138 +125,56 @@
   </script>
 
   <main>
-    
+
     <div class="container">
-      <section class="category-hub" aria-label="角色战力档案大库总览">
-        <div class="category-hub-art" aria-hidden="true">
-          <img class="category-hub-img" src="static/img/character-chronicle.jpg" alt="">
-        </div>
+      <section class="category-hub" aria-labelledby="characters-title">
         <div class="category-hub-body">
-          <div class="hub-kicker-row">
-            <span class="hub-kicker-badge mono">⊙ CORE CATEGORY 02 · 角色战力档案库</span>
-            <span class="count-badge mono" id="char-result-count">2 / 2 位</span>
-          </div>
-          <div>
-            <h1 class="page-title">角色战力档案目录</h1>
-            <p class="page-desc">
-              全站核心角色目录：支持<strong>按主档量级从小到大</strong>与<strong>按拼音首字母（A–Z）</strong>双模式实时切换；点击任一角色卡片进入专属独立档案页面，返回时自动恢复当前排序与浏览位置。
-            </p>
-          </div>
-          <div class="roster-metrics">
-            <div class="roster-metric-card">
-              <span class="roster-metric-label">已收录角色档案</span>
-              <span class="roster-metric-val mono">2 位（100% 独立定级全文页）</span>
-            </div>
-            <div class="roster-metric-card">
-              <span class="roster-metric-label">覆盖作品出处</span>
-              <span class="roster-metric-val">《诡秘地海》 · 《非人学园》</span>
-            </div>
-            <div class="roster-metric-card">
-              <span class="roster-metric-label">当前收录量级跨度</span>
-              <span class="roster-metric-val mono">⊙城△（御兔）→ ⊙宇△（弗坦）</span>
-            </div>
-          </div>
+          <div class="hub-kicker-row"><span class="hub-kicker-badge mono">CHARACTER DOSSIERS</span><span class="count-badge mono" id="char-result-count">2 / 2 位</span></div>
+          <div><h1 class="page-title" id="characters-title">角色档案</h1><p class="page-desc">先看结论，再进入完整档案核对证据、计算与存疑说明。</p></div>
         </div>
       </section>
-
       <div class="control-panel">
         <div class="control-row">
           <div class="control-cluster">
-            <div class="seg-group" role="group" aria-label="角色排序方式">
-              <button type="button" class="seg-btn active" data-char-sort="asc">↑ 按量级从小到大</button>
-              <button type="button" class="seg-btn" data-char-sort="alpha">A–Z 按首字母排序</button>
-            </div>
-            <select class="select-control" id="char-series-select" aria-label="按作品筛选">
-              <option value="all">全部作品（2）</option><option value="《诡秘地海》">《诡秘地海》</option><option value="《非人学园》">《非人学园》</option>
-            </select>
-          </div>
+            <div class="seg-group" role="group" aria-label="角色排序方式"><button type="button" class="seg-btn active" data-char-sort="asc">量级 ↑</button><button type="button" class="seg-btn" data-char-sort="alpha">A–Z</button></div>
 
-          <div class="search-field">
-            <input type="search" class="search-input" id="char-filter-input" placeholder="检索角色名、首字母、出处或量级代字…" autocomplete="off">
           </div>
+          <div class="search-field"><input type="search" class="search-input" id="char-filter-input" placeholder="搜索角色、作品或量级…" autocomplete="off"></div>
         </div>
 
-        <div class="control-row divider-top">
-          <div class="chip-rail" role="group" aria-label="角色所属量级区间">
-            <button type="button" class="chip-btn active" data-char-domain="all">全部区间</button>
-            <button type="button" class="chip-btn" data-char-domain="terrestrial">个体～地表阶</button>
-            <button type="button" class="chip-btn" data-char-domain="stellar">行星～恒星阶</button>
-            <button type="button" class="chip-btn" data-char-domain="transition">衔接与过渡</button>
-            <button type="button" class="chip-btn" data-char-domain="cosmic">恒星系～宇宙阶</button>
-            <button type="button" class="chip-btn" data-char-domain="fgh">广义无限 FGH</button>
-            <button type="button" class="chip-btn" data-char-domain="beyond">论外～论天</button>
-          </div>
-        </div>
       </div>
 
-      <div class="alpha-bar" id="char-alpha-bar" aria-label="首字母快速定位">
-        <div class="alpha-letters" id="char-alpha-letters"></div>
-      </div>
-
-      <div class="content-section" id="chars-explorer-mount">
-        
-        <section class="group-section" id="char-scale-list">
-          <div class="group-header">
-            <h2 class="group-title">按主档量级从小到大排列（低量级 → 高量级）</h2>
-            <span class="group-sub">2 位角色</span>
-          </div>
-          <div class="char-grid">
-    <a class="char-card has-media media-side" href="character/yutu.html">
-      <div class="char-card-media">
+      <div class="content-section" id="chars-explorer-mount"><div class="char-grid compact-roster-grid">
+    <a class="char-card has-media media-top char-card-yutu" data-character="yutu" href="character/yutu.html">
+      <div class="char-card-media is-portrait" data-art-label="YUTU" style="--char-image:url('static/img/characters/yutu/official-portrait.png')">
         <img class="char-card-img" src="static/img/characters/yutu/official-portrait.png" alt="御兔" width="276" height="465" loading="lazy">
       </div>
       <div class="char-card-body">
         <div class="char-head">
-          <div class="char-meta">
-            <h3 class="char-name">御兔</h3>
-            <div class="char-origin">《非人学园》 · 玩偶形态 / 筋肉兄贵变身</div>
-          </div>
+          <div class="char-meta"><h3 class="char-name">御兔</h3><div class="char-origin">《非人学园》</div></div>
           <span class="tier-badge gold mono">⊙ 城△</span>
         </div>
-        <div class="char-tags">
-          <span class="tag-pill accent">强爆城 · #30</span>
-          <span class="tag-pill mono">首字母 Y</span>
-          <span class="tag-pill">保底 ⊙城○～城△〔实〕</span><span class="tag-pill">存疑上限 国△</span><span class="tag-pill">投送 0.23～0.27c〔推〕</span>
-        </div>
-        <p class="char-summary">嫦娥随身玩偶，暴走后化为肌肉发达的人形兔子。剧情 PV 中一拳将律师虎力打上月球，按地月距离与 5 秒赋予约四分之一光速计算，相对论动能约 1.8×10¹⁷～3.4×10¹⁷ J，落在强爆城级（⊙城△〔实〕）。</p>
-        <div class="char-foot">
-          <span class="char-cred">主档 ⊙城△<span class="ev-badge ev-confirmed">〔实〕</span> · 保底 ⊙城○～城△<span class="ev-badge ev-confirmed">〔实〕</span> · 存疑上限 国△</span>
-          <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-        </div>
+        <div class="char-tier-line"><span>强爆城</span><span class="mono">#30</span></div><p class="char-summary">嫦娥的兔子玩偶，暴走后化为人形；以一拳将虎力打上月球为定级依据。</p><div class="char-foot"><span>2026-10-25 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
     </a>
-    <a class="char-card has-media media-side" href="character/futan.html">
-      <div class="char-card-media">
-        <img class="char-card-img" src="static/img/characters/futan/cthulhu-portrait.jpg" alt="弗坦" width="820" height="1024" loading="lazy">
+    <a class="char-card has-media media-top char-card-futan" data-character="futan" href="character/futan.html">
+      <div class="char-card-media is-landscape" data-art-label="FUTAN" style="--char-image:url('static/img/characters/futan/cthulhu-wallpaper.jpg')">
+        <img class="char-card-img" src="static/img/characters/futan/cthulhu-wallpaper.jpg" alt="弗坦" width="1408" height="768" loading="lazy">
       </div>
       <div class="char-card-body">
         <div class="char-head">
-          <div class="char-meta">
-            <h3 class="char-name">弗坦</h3>
-            <div class="char-origin">《诡秘地海》 · Ehod 级古神 · 始终沉睡</div>
-          </div>
+          <div class="char-meta"><h3 class="char-name">弗坦</h3><div class="char-origin">《诡秘地海》</div></div>
           <span class="tier-badge gold mono">⊙ 宇△</span>
         </div>
-        <div class="char-tags">
-          <span class="tag-pill accent">强宇宙 · #80</span>
-          <span class="tag-pill mono">首字母 F</span>
-          <span class="tag-pill">元·多（至少十几）〔下〕</span><span class="tag-pill">保底 ⊙星○〔实〕</span><span class="tag-pill">跨位面唯一 · 不灭〔实〕</span>
-        </div>
-        <p class="char-summary">《诡秘地海》位阶最高神明（基金会 003 · Ehod 级），沉睡于地海深渊海沟画后时空，全书从未苏醒。跨所有位面唯一且永远不灭；010 观测的苏醒未来中可观测宇宙星辰清空，结合跨位面同步（至少十几个位面），综合定为强宇宙级下限 ⊙宇△（元·多，至少十几）〔下〕。</p>
-        <div class="char-foot">
-          <span class="char-cred">主档 ⊙宇△（元·多）<span class="ev-badge ev-lower">〔下〕</span> · 保底 ⊙星○（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span> · 苏醒全力<span class="ev-badge ev-hidden">〔隐〕</span></span>
-          <span class="card-link-hint">查看档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
-        </div>
+        <div class="char-tier-line"><span>强宇宙</span><span class="mono">#80</span></div><p class="char-summary">Ehod 级神明，全书始终沉睡；以苏醒未来的星辰清空与跨位面同步定级。</p><div class="char-foot"><span>2026-10-25 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
-    </a></div>
-        </section>
-      </div>
+    </a></div></div>
     </div>
-    
+
   </main>
 
   <div class="floating-dock" aria-label="快捷工具">
-    
+
     <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
       <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </button>
@@ -273,7 +191,7 @@
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
         <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
         <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天第四版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第五版全文</button>
         <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
@@ -288,14 +206,13 @@
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="brand-mark">⊙</span>
-        <span>衡天 PowerWiki · 多维战力与物理破坏参考百科（第四版基准）</span>
+        <span>衡天 PowerWiki · 第五版基准</span>
       </div>
       <div class="footer-links">
         <a href="./tiers.html">量级天梯</a>
         <a href="./characters.html">角色档案</a>
         <a href="./rules.html">衡天体系全文</a>
         <a href="./materials.html">材质能量库</a>
-        <a href="./search.html">全站检索</a>
       </div>
     </div>
   </footer>
