@@ -283,7 +283,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     4. Full-Text Document Reader (TOC ScrollSpy + Finder + Font/Wide Prefs)
+     4. Full-Text Document Reader (TOC ScrollSpy + Font/Wide Prefs)
      -------------------------------------------------------------------------- */
   function initDocumentReader() {
     const sidebar = document.getElementById("doc-sidebar");
@@ -303,7 +303,10 @@
     const fontDecBtn = document.getElementById("doc-font-dec");
     const fontIncBtn = document.getElementById("doc-font-inc");
     const wideBtn = document.getElementById("doc-wide-toggle");
-    if (wideBtn) wideBtn.classList.toggle("active", Boolean(prefs.wide));
+    if (wideBtn) {
+      wideBtn.classList.toggle("active", Boolean(prefs.wide));
+      wideBtn.setAttribute("aria-pressed", String(Boolean(prefs.wide)));
+    }
 
     let rebuildTocOffsets = () => {};
 
@@ -328,57 +331,10 @@
         prefs.wide = !prefs.wide;
         document.body.classList.toggle("wide-doc-mode", prefs.wide);
         wideBtn.classList.toggle("active", prefs.wide);
+        wideBtn.setAttribute("aria-pressed", String(prefs.wide));
         safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
         rebuildTocOffsets();
       });
-    }
-
-    const findInput = document.getElementById("doc-find-input");
-    const findNextBtn = document.getElementById("doc-find-next");
-    const findCountEl = document.getElementById("doc-find-count");
-    let findMatches = [];
-    let findIdx = -1;
-
-    function runDocFind(jump) {
-      if (!findInput || !mdBody) return;
-      const q = findInput.value.trim().toLowerCase();
-      if (!q) {
-        findMatches = [];
-        findIdx = -1;
-        if (findCountEl) findCountEl.textContent = "";
-        return;
-      }
-      const blocks = Array.from(mdBody.querySelectorAll("h1, h2, h3, p, li, tr, figcaption"));
-      findMatches = blocks.filter((el) => el.textContent.toLowerCase().includes(q));
-      if (findMatches.length === 0) {
-        if (findCountEl) findCountEl.textContent = "0 处";
-        return;
-      }
-      if (jump) {
-        findIdx = (findIdx + 1) % findMatches.length;
-        const target = findMatches[findIdx];
-        scrollToElementWithOffset(target, true);
-        target.classList.remove("flash-highlight");
-        void target.offsetWidth;
-        target.classList.add("flash-highlight");
-        if (findCountEl) findCountEl.textContent = `${findIdx + 1}/${findMatches.length}`;
-      } else {
-        findIdx = -1;
-        if (findCountEl) findCountEl.textContent = `${findMatches.length} 处`;
-      }
-    }
-
-    if (findInput) {
-      findInput.addEventListener("input", () => runDocFind(false));
-      findInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          runDocFind(true);
-        }
-      });
-    }
-    if (findNextBtn) {
-      findNextBtn.addEventListener("click", () => runDocFind(true));
     }
 
     document.querySelectorAll(".heading-anchor").forEach((anchor) => {

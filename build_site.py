@@ -857,7 +857,7 @@ def build_home_page(
           </a>
           <div class="portal-card portal-library">
             <div class="portal-top"><span class="portal-heading"><span class="portal-glyph">{SVGS["library"]}</span><span class="portal-num mono">03 / LIBRARY</span></span></div>
-            <div><h3 class="portal-title">规则与资料</h3><p class="portal-text">保留完整原文、目录与页内定位，适合逐条核对。</p></div>
+            <div><h3 class="portal-title">规则与资料</h3><p class="portal-text">保留完整原文与章节目录，方便逐条核对。</p></div>
             <div class="library-links">
               <a href="rules.html"><span>衡天量级体系</span><span class="mono">第五版 →</span></a>
               <a href="materials.html"><span>材质与破坏能量</span><span class="mono">第二版 →</span></a>
@@ -1058,7 +1058,7 @@ def build_tier_detail_pages(
         order_badge = "待定档" if is_unranked else f"序位 #{t['order']:02d} / 97"
 
         body = f"""
-        <div class="container detail-stack">
+        <div class="container detail-stack tier-detail-stack" id="group-{esc(t['group_id'])}">
           <div class="subpage-bar">
             <button type="button" class="back-btn js-smart-back" data-fallback="tiers.html" data-fallback-name="量级分类">
               {SVGS["arrow_left"]} <span class="js-back-label">返回量级分类</span>
@@ -1072,7 +1072,7 @@ def build_tier_detail_pages(
             </nav>
           </div>
 
-          <section class="dossier-header">
+          <section class="dossier-header tier-dossier">
             <div class="page-header-art" aria-hidden="true">
               <img class="page-header-img" src="../static/img/monolith-scale.jpg" alt="">
             </div>
@@ -1082,7 +1082,7 @@ def build_tier_detail_pages(
                   <div class="char-tags">
                     <span class="tier-badge gold mono">⊙ {esc(t['code'])}</span>
                     <span class="count-badge mono">{order_badge}</span>
-                    <span class="tag-pill">{esc(g.get('short_title') or g['title'])}</span>
+                    <span class="tag-pill tier-group-pill"><span class="tier-group-mark" aria-hidden="true"></span>{esc(g.get('short_title') or g['title'])}</span>
                   </div>
                   <h1 class="page-title">{esc(t['name'])} · {esc(t['family'])}系</h1>
                   <p class="page-desc">{esc(t.get('notes', ''))}</p>
@@ -1410,15 +1410,10 @@ def build_character_detail_pages(
                   <span>·</span>
                   <span>{doc_basis_label}</span>
                 </div>
-                <div class="doc-tools">
-                  <div class="doc-find-box">
-                    <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
-                    <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
-                    <span class="doc-find-count mono" id="doc-find-count"></span>
-                  </div>
-                  <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
-                  <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
-                  <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
+                <div class="doc-tools" role="group" aria-label="阅读显示设置">
+                  <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+                  <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+                  <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
                 </div>
               </div>
 
@@ -1616,12 +1611,11 @@ def build_fulltext_doc_page(
         </aside>
         <article class="doc-panel">
           <div class="doc-toolbar">
-            <div class="doc-source-info"><span>阅读工具</span></div>
-            <div class="doc-tools">
-              <div class="doc-find-box"><input type="search" class="doc-find-input" id="doc-find-input" placeholder="在本文中查找…"><button type="button" class="tool-btn" id="doc-find-next">查找</button><span class="doc-find-count mono" id="doc-find-count"></span></div>
-              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A−</button>
-              <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
-              <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
+            <div class="doc-source-info"><span>阅读设置</span></div>
+            <div class="doc-tools" role="group" aria-label="阅读显示设置">
+              <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+              <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+              <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
             </div>
           </div>
           <div class="markdown-body">{rendered_html}</div>
