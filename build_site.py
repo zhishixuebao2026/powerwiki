@@ -582,6 +582,7 @@ def render_shell(
   <link rel="stylesheet" href="{r}static/fonts/noto-serif-sc/index.css">
   <link rel="stylesheet" href="{r}static/css/style.css">
   <link rel="stylesheet" href="{r}static/css/editorial.css">
+  <link rel="stylesheet" href="{r}static/css/experience.css">
 </head>
 <body class="{esc(shell_body_class)}">
   <header class="site-header">

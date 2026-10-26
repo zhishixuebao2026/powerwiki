@@ -1258,7 +1258,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   box-shadow: 0 4px 14px rgba(16,28,22,.03);
 }
 .ladder-row:hover { border-color: var(--border-accent); background: var(--bg-elevated); transform: translateX(2px); }
-.data-table-wrap { border-radius:14px; overflow:hidden; box-shadow: 0 10px 30px rgba(16,28,22,.04); }
+.data-table-wrap {
+  border-radius:14px;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  box-shadow: 0 10px 30px rgba(16,28,22,.04);
+}
 .data-table th { font-family: var(--font-mono); letter-spacing:.04em; font-size:11px; }
 
 /* ——— 角色卡：御兔 / 弗坦 专属卡面（首页与档案列表共用） ——— */
@@ -1594,7 +1602,10 @@ body.character-site .markdown-body h2::before { width:auto; height:auto; backgro
   border-radius:12px; border:1px solid var(--border-subtle);
   background: var(--bg-surface);
   box-shadow: 0 10px 32px rgba(16,28,22,.04);
-  overflow:hidden;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
 }
 .markdown-body table { min-width:560px; }
 .markdown-body th {

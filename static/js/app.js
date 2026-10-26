@@ -120,13 +120,33 @@
     updateIcon();
     if (btn) {
       btn.addEventListener("click", () => {
-        const cur = document.documentElement.getAttribute("data-theme") || "dark";
+        const root = document.documentElement;
+        const cur = root.getAttribute("data-theme") || "dark";
         const next = cur === "dark" ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", next);
-        try {
-          localStorage.setItem(STORAGE_KEYS.theme, next);
-        } catch (_) {}
-        updateIcon();
+        const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const applyTheme = () => {
+          root.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem(STORAGE_KEYS.theme, next);
+          } catch (_) {}
+          updateIcon();
+        };
+
+        if (!reduceMotion && typeof document.startViewTransition === "function") {
+          try {
+            document.startViewTransition(applyTheme);
+            return;
+          } catch (_) {}
+        }
+
+        if (!reduceMotion) {
+          root.classList.add("theme-transitioning");
+          void root.offsetWidth;
+        }
+        applyTheme();
+        if (!reduceMotion) {
+          window.setTimeout(() => root.classList.remove("theme-transitioning"), 420);
+        }
       });
     }
   }
@@ -1283,6 +1303,31 @@ function renderCard(t) {
     });
   }
 
+  function initMotionReveal() {
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion || !("IntersectionObserver" in window)) return;
+
+    const targets = document.querySelectorAll(
+      ".portal-card, .tier-card, .char-card, .spec-card, .neighbor-row, .pager-card"
+    );
+    if (!targets.length) return;
+
+    const observer = new IntersectionObserver((entries, activeObserver) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in-view");
+        activeObserver.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px 0px -36px 0px", threshold: 0.06 });
+
+    targets.forEach((target, index) => {
+      target.classList.add("motion-reveal");
+      target.style.setProperty("--reveal-delay", `${(index % 4) * 55}ms`);
+      observer.observe(target);
+    });
+    requestAnimationFrame(() => document.documentElement.classList.add("has-motion-reveal"));
+  }
+
   /* --------------------------------------------------------------------------
      Boot — Render synchronous DOM lists FIRST, then restore cached scrollY
      -------------------------------------------------------------------------- */
@@ -1297,6 +1342,7 @@ function renderCard(t) {
     initBrowsingCacheAndBack();
     initGlobalSearchModal();
     initHorizontalRails();
+    initMotionReveal();
   }
 
   if (document.readyState === "loading") {

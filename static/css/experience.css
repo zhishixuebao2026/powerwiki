@@ -1,0 +1,589 @@
+/* ==========================================================================
+   PowerWiki v12 — Character Worlds & Motion Direction
+   A shared archive shell, with two genuinely separate character worlds.
+   ========================================================================== */
+
+:root {
+  --world-ease: cubic-bezier(.22, .72, .2, 1);
+  --world-ease-spring: cubic-bezier(.2, .82, .24, 1.18);
+}
+
+/* Cross-document page changes and the theme switch use the browser's native
+   snapshot transition when supported; every effect still has a CSS fallback. */
+@view-transition { navigation: auto; }
+::view-transition-group(root) { animation-duration: .42s; }
+::view-transition-old(root) { animation: pw-view-out .22s ease both; }
+::view-transition-new(root) { animation: pw-view-in .34s var(--world-ease) both; }
+@keyframes pw-view-out { to { opacity: .72; filter: blur(2px); } }
+@keyframes pw-view-in { from { opacity: .72; filter: blur(2px); } to { opacity: 1; filter: none; } }
+@keyframes pw-page-arrive { from { opacity: .72; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+body > main { transform-origin: 50% 0; animation: pw-page-arrive .42s var(--world-ease) both; }
+
+/* Scroll reveal is opt-in from app.js: no-JS and unsupported browsers keep
+   their content visible, and reduced-motion users skip the entrance effects. */
+html.has-motion-reveal .motion-reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .52s var(--world-ease), transform .52s var(--world-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.has-motion-reveal .motion-reveal.is-in-view { opacity: 1; transform: none; }
+
+/* Shared site finish: sharper focus, more tactile states, cleaner controls. */
+.nav-link.active { position: relative; }
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  right: 11px;
+  bottom: 2px;
+  left: 11px;
+  height: 1px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: .72;
+}
+:where(.portal-card, .tier-card, .char-card, .spec-card, .neighbor-row, .pager-card, .search-hit):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.site-header::before,
+.nav-link,
+.portal-card,
+.tier-card,
+.char-card,
+.spec-card,
+.doc-sidebar,
+.doc-toolbar,
+.doc-panel,
+.md-table-wrap,
+.md-figure {
+  transition-timing-function: var(--world-ease);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .portal-card:hover .portal-icon { transform: translate(2px, -2px) rotate(4deg); }
+  .char-card .char-card-img { transition: transform .55s var(--world-ease), filter .35s ease; }
+  .char-card:hover .char-card-img { transform: scale(1.035); }
+  .spec-card:hover { transform: translateY(-3px); }
+}
+
+html.theme-transitioning body,
+html.theme-transitioning main,
+html.theme-transitioning .site-header,
+html.theme-transitioning .main-nav,
+html.theme-transitioning .doc-sidebar,
+html.theme-transitioning .doc-toolbar,
+html.theme-transitioning .doc-panel,
+html.theme-transitioning .markdown-body,
+html.theme-transitioning .portal-card,
+html.theme-transitioning .tier-card,
+html.theme-transitioning .char-card,
+html.theme-transitioning .spec-card,
+html.theme-transitioning .neighbor-row,
+html.theme-transitioning .pager-card,
+html.theme-transitioning .search-hit,
+html.theme-transitioning .modal-panel,
+html.theme-transitioning .toc-item,
+html.theme-transitioning .toc-filter,
+html.theme-transitioning .tag-pill,
+html.theme-transitioning .search-btn,
+html.theme-transitioning .icon-btn,
+html.theme-transitioning .character-dossier,
+html.theme-transitioning .dossier-kpi-card,
+html.theme-transitioning .dossier-fact-rail,
+html.theme-transitioning .md-table-wrap,
+html.theme-transitioning .md-figure {
+  transition: background-color .34s ease, color .26s ease, border-color .34s ease, box-shadow .34s ease !important;
+}
+
+/* ==========================================================================
+   YUTU / 月面轨道观测站
+   Light: moon-paper, porcelain, clear blue instrumentation.
+   Dark: midnight orbit, silver-blue telemetry, cold lunar light.
+   ========================================================================== */
+[data-theme="light"] body.character-yutu {
+  --bg-canvas: #edf3f6;
+  --bg-subtle: #e2ebf0;
+  --bg-surface: #fbfdfd;
+  --bg-elevated: #f2f7f9;
+  --bg-header: rgba(237, 243, 246, .92);
+  --text-primary: #172b3a;
+  --text-secondary: #4c6575;
+  --text-muted: #718997;
+  --accent: #2d638a;
+  --accent-strong: #1e4a6c;
+  --accent-soft: rgba(45, 99, 138, .09);
+  --border-accent: rgba(45, 99, 138, .25);
+  --panel-glass: rgba(251, 253, 252, .84);
+  --site-grid: rgba(45, 99, 138, .032);
+  --char-accent: #2d638a;
+  --char-accent-strong: #1e4a6c;
+  --char-accent-soft: rgba(45, 99, 138, .09);
+  --char-border-accent: rgba(45, 99, 138, .25);
+  --char-header-accent: #2d638a;
+  --char-atmosphere:
+    radial-gradient(700px 380px at 80% 8%, rgba(60, 111, 146, .13), transparent 70%),
+    linear-gradient(180deg, rgba(237, 243, 246, .2), rgba(237, 243, 246, .96)),
+    url("../img/characters/yutu/lunar-observatory.jpg");
+  --char-art-opacity: .28;
+}
+[data-theme="dark"] body.character-yutu {
+  --bg-canvas: #071320;
+  --bg-subtle: #0c1d2b;
+  --bg-surface: #112637;
+  --bg-elevated: #183347;
+  --bg-header: rgba(7, 19, 32, .92);
+  --text-primary: #e8f0f5;
+  --text-secondary: #a7bac8;
+  --text-muted: #7b94a4;
+  --accent: #a5c9e3;
+  --accent-strong: #cee4f4;
+  --accent-soft: rgba(165, 201, 227, .12);
+  --border-accent: rgba(165, 201, 227, .32);
+  --panel-glass: rgba(17, 38, 55, .82);
+  --site-grid: rgba(165, 201, 227, .028);
+  --char-accent: #a5c9e3;
+  --char-accent-strong: #cee4f4;
+  --char-accent-soft: rgba(165, 201, 227, .12);
+  --char-border-accent: rgba(165, 201, 227, .32);
+  --char-header-accent: #b6d3e8;
+  --char-atmosphere:
+    radial-gradient(740px 400px at 78% 4%, rgba(124, 177, 216, .15), transparent 70%),
+    linear-gradient(180deg, rgba(7, 19, 32, .42), rgba(7, 19, 32, .98)),
+    url("../img/characters/yutu/lunar-observatory.jpg");
+  --char-art-opacity: .35;
+}
+
+[data-theme="light"] body.character-yutu .character-dossier {
+  --dossier-bg: #f3f4ee;
+  --dossier-text: #172b3a;
+  --dossier-muted: #536b78;
+  --dossier-accent: #2d638a;
+  --dossier-border: rgba(45, 99, 138, .24);
+  --dossier-surface: rgba(252, 253, 248, .78);
+  --dossier-art-opacity: .72;
+  --dossier-overlay: linear-gradient(90deg, rgba(243, 244, 238, .98) 0%, rgba(243, 244, 238, .9) 42%, rgba(243, 244, 238, .35) 76%, rgba(243, 244, 238, .16) 100%);
+  --dossier-motif:
+    radial-gradient(ellipse 430px 300px at 82% 47%, transparent 52%, rgba(45, 99, 138, .17) 52.2% 52.5%, transparent 52.8%),
+    radial-gradient(ellipse 300px 210px at 82% 47%, transparent 49%, rgba(45, 99, 138, .11) 49.3% 49.6%, transparent 49.9%),
+    linear-gradient(90deg, transparent 0 68%, rgba(45, 99, 138, .07) 68.1%, transparent 68.2%);
+}
+[data-theme="dark"] body.character-yutu .character-dossier {
+  --dossier-bg: #0d1b29;
+  --dossier-text: #e8f0f5;
+  --dossier-muted: #a7bac8;
+  --dossier-accent: #b6d3e8;
+  --dossier-border: rgba(165, 201, 227, .24);
+  --dossier-surface: rgba(14, 31, 46, .8);
+  --dossier-art-opacity: .45;
+  --dossier-overlay: linear-gradient(90deg, rgba(9, 22, 36, .98) 0%, rgba(9, 22, 36, .88) 44%, rgba(9, 22, 36, .44) 78%, rgba(9, 22, 36, .22) 100%);
+  --dossier-motif:
+    radial-gradient(ellipse 430px 300px at 82% 47%, transparent 52%, rgba(165, 201, 227, .24) 52.2% 52.5%, transparent 52.8%),
+    radial-gradient(ellipse 300px 210px at 82% 47%, transparent 49%, rgba(165, 201, 227, .15) 49.3% 49.6%, transparent 49.9%),
+    linear-gradient(90deg, transparent 0 68%, rgba(165, 201, 227, .08) 68.1%, transparent 68.2%);
+}
+
+body.character-yutu .character-dossier {
+  border-radius: 26px 9px 26px 9px;
+  overflow: hidden;
+  box-shadow: 0 28px 72px rgba(25, 56, 76, .12);
+}
+body.character-yutu .character-dossier::after {
+  background: var(--dossier-motif), var(--dossier-overlay);
+  background-size: auto, cover;
+  background-position: right center, center;
+}
+body.character-yutu .dossier-masthead {
+  padding: 20px 0 14px;
+  border-bottom: 1px solid var(--dossier-border);
+}
+body.character-yutu .dossier-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+body.character-yutu .dossier-kicker::before {
+  content: "☾";
+  display: inline-grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid var(--dossier-border);
+  border-radius: 50%;
+  background: var(--dossier-surface);
+  font-size: 12px;
+}
+body.character-yutu .dossier-register {
+  padding: 6px 10px;
+  border: 1px solid var(--dossier-border);
+  border-radius: 999px;
+  background: var(--dossier-surface);
+  color: var(--dossier-accent);
+  font-size: 8px;
+}
+body.character-yutu .character-dossier .page-title {
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 680;
+  letter-spacing: -.065em;
+  text-shadow: 0 4px 28px color-mix(in srgb, var(--dossier-accent) 12%, transparent);
+}
+body.character-yutu .character-dossier .page-desc {
+  max-width: 58ch;
+  padding-left: 14px;
+  border-left: 2px solid var(--dossier-accent);
+}
+body.character-yutu .character-dossier .dossier-kpi-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  transition: transform .28s var(--world-ease), border-color .28s ease, box-shadow .28s ease;
+}
+body.character-yutu .character-dossier .dossier-kpi-card:first-child {
+  border-left: 3px solid var(--dossier-accent);
+  background: linear-gradient(115deg, var(--dossier-surface), color-mix(in srgb, var(--dossier-accent) 6%, var(--dossier-surface)));
+}
+body.character-yutu .character-dossier .char-portrait-stage {
+  border-radius: 28px 9px 28px 9px;
+  border-color: var(--dossier-border);
+  box-shadow: 0 22px 54px color-mix(in srgb, var(--dossier-accent) 16%, transparent);
+}
+body.character-yutu .theme-yutu .char-portrait-canvas {
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 348px;
+  background:
+    radial-gradient(circle at 50% 43%, color-mix(in srgb, white 82%, var(--dossier-surface)), transparent 67%),
+    linear-gradient(145deg, color-mix(in srgb, var(--dossier-accent) 6%, var(--dossier-surface)), var(--dossier-surface));
+}
+body.character-yutu .theme-yutu .char-portrait-canvas::before,
+body.character-yutu .theme-yutu .char-portrait-canvas::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 51%;
+  left: 50%;
+  width: min(88%, 288px);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--dossier-accent) 22%, transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+body.character-yutu .theme-yutu .char-portrait-canvas::before {
+  box-shadow: 0 0 0 17px color-mix(in srgb, var(--dossier-accent) 3%, transparent), 0 0 0 18px color-mix(in srgb, var(--dossier-accent) 12%, transparent), 0 0 0 47px color-mix(in srgb, var(--dossier-accent) 3%, transparent);
+}
+body.character-yutu .theme-yutu .char-portrait-canvas::after {
+  width: min(96%, 316px);
+  border: 0;
+  background: conic-gradient(from 20deg, transparent 0 69%, var(--dossier-accent) 70% 70.6%, transparent 71.6% 100%);
+  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
+  mask: radial-gradient(closest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px));
+}
+body.character-yutu .theme-yutu .char-portrait-img {
+  position: relative;
+  z-index: 1;
+  max-height: 330px;
+  filter: drop-shadow(0 18px 19px color-mix(in srgb, var(--dossier-accent) 20%, transparent));
+}
+body.character-yutu .portrait-index {
+  border-radius: 999px;
+  padding: 7px 9px;
+  font-size: 7.5px;
+}
+body.character-yutu .dossier-fact-rail {
+  border-top: 1px solid var(--dossier-border);
+  background: color-mix(in srgb, var(--dossier-surface) 92%, transparent);
+}
+body.character-yutu .dossier-fact {
+  position: relative;
+  border-right: 0;
+  transition: background-color .24s ease, transform .24s var(--world-ease);
+}
+body.character-yutu .dossier-fact + .dossier-fact { border-left: 1px solid var(--dossier-border); }
+body.character-yutu .dossier-fact .fact-label::before {
+  color: var(--dossier-accent);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+body.character-yutu .dossier-fact:nth-child(1) .fact-label::before { content: "01 / "; }
+body.character-yutu .dossier-fact:nth-child(2) .fact-label::before { content: "02 / "; }
+body.character-yutu .dossier-fact:nth-child(3) .fact-label::before { content: "03 / "; }
+body.character-yutu .markdown-body h2::before {
+  border-radius: 999px;
+  min-width: 34px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 3px 10px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+body.character-yutu .md-figure {
+  border-color: var(--dossier-border);
+  box-shadow: 0 12px 36px color-mix(in srgb, var(--accent) 9%, transparent);
+}
+
+/* ==========================================================================
+   FUTAN / 深渊信标与禁区档案
+   Light is a sea-glass observatory; dark is a black-water classified console.
+   ========================================================================== */
+[data-theme="light"] body.character-futan {
+  --bg-canvas: #edf1eb;
+  --bg-subtle: #e1e8df;
+  --bg-surface: #f9faf5;
+  --bg-elevated: #f1f4ec;
+  --bg-header: rgba(237, 241, 235, .92);
+  --text-primary: #18302b;
+  --text-secondary: #4c665d;
+  --text-muted: #71867c;
+  --accent: #876936;
+  --accent-strong: #674f25;
+  --accent-soft: rgba(135, 105, 54, .09);
+  --border-accent: rgba(75, 119, 104, .28);
+  --panel-glass: rgba(249, 250, 245, .84);
+  --site-grid: rgba(59, 112, 94, .03);
+  --char-accent: #3f7568;
+  --char-accent-strong: #2f5a50;
+  --char-accent-soft: rgba(63, 117, 104, .09);
+  --char-border-accent: rgba(63, 117, 104, .24);
+  --char-header-accent: #876936;
+  --char-atmosphere:
+    radial-gradient(760px 420px at 75% 8%, rgba(116, 153, 129, .16), transparent 70%),
+    linear-gradient(180deg, rgba(237, 241, 235, .35), rgba(237, 241, 235, .98)),
+    url("../img/characters/futan/abyssal-observation.jpg");
+  --char-art-opacity: .28;
+}
+[data-theme="dark"] body.character-futan {
+  --bg-canvas: #050e11;
+  --bg-subtle: #0a191c;
+  --bg-surface: #0e2022;
+  --bg-elevated: #142c2d;
+  --bg-header: rgba(5, 14, 17, .93);
+  --text-primary: #e8ede7;
+  --text-secondary: #a7b8ad;
+  --text-muted: #758a7f;
+  --accent: #d3b86f;
+  --accent-strong: #eed398;
+  --accent-soft: rgba(211, 184, 111, .1);
+  --border-accent: rgba(211, 184, 111, .3);
+  --panel-glass: rgba(10, 28, 30, .84);
+  --site-grid: rgba(211, 184, 111, .023);
+  --char-accent: #d3b86f;
+  --char-accent-strong: #eed398;
+  --char-accent-soft: rgba(211, 184, 111, .1);
+  --char-border-accent: rgba(211, 184, 111, .3);
+  --char-header-accent: #dfc47d;
+  --char-atmosphere:
+    radial-gradient(760px 420px at 73% 6%, rgba(51, 116, 111, .18), transparent 72%),
+    linear-gradient(180deg, rgba(5, 14, 17, .2), rgba(5, 14, 17, .96)),
+    url("../img/characters/futan/abyssal-observation.jpg");
+  --char-art-opacity: .47;
+}
+
+[data-theme="light"] body.character-futan .character-dossier {
+  --dossier-bg: #e6ede5;
+  --dossier-text: #18312c;
+  --dossier-muted: #4f695f;
+  --dossier-accent: #876936;
+  --dossier-border: rgba(67, 111, 96, .28);
+  --dossier-surface: rgba(244, 248, 240, .82);
+  --dossier-art-opacity: .36;
+  --dossier-overlay: linear-gradient(90deg, rgba(230, 237, 229, .98) 0%, rgba(230, 237, 229, .91) 48%, rgba(230, 237, 229, .66) 77%, rgba(230, 237, 229, .48) 100%);
+  --dossier-motif:
+    radial-gradient(ellipse 420px 300px at 82% 46%, transparent 48%, rgba(62, 116, 96, .18) 48.2% 48.6%, transparent 48.9%),
+    radial-gradient(ellipse 300px 210px at 82% 46%, transparent 48%, rgba(135, 105, 54, .16) 48.3% 48.7%, transparent 49%),
+    repeating-linear-gradient(0deg, transparent 0 13px, rgba(49, 91, 78, .035) 14px 15px);
+}
+[data-theme="dark"] body.character-futan .character-dossier {
+  --dossier-bg: #071518;
+  --dossier-text: #e8ede7;
+  --dossier-muted: #a2b5aa;
+  --dossier-accent: #dfc47d;
+  --dossier-border: rgba(211, 184, 111, .26);
+  --dossier-surface: rgba(6, 22, 25, .82);
+  --dossier-art-opacity: .84;
+  --dossier-overlay: linear-gradient(90deg, rgba(4, 14, 17, .96) 0%, rgba(4, 14, 17, .84) 44%, rgba(4, 14, 17, .48) 78%, rgba(4, 14, 17, .30) 100%), linear-gradient(180deg, rgba(4, 14, 17, .04), rgba(4, 14, 17, .38));
+  --dossier-motif:
+    radial-gradient(ellipse 420px 300px at 82% 46%, transparent 48%, rgba(93, 163, 150, .25) 48.2% 48.5%, transparent 48.8%),
+    radial-gradient(ellipse 300px 210px at 82% 46%, transparent 48%, rgba(211, 184, 111, .2) 48.3% 48.7%, transparent 49%),
+    repeating-linear-gradient(0deg, transparent 0 13px, rgba(211, 184, 111, .045) 14px 15px);
+}
+
+body.character-futan .character-dossier {
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 28px 78px rgba(3, 15, 17, .17);
+}
+body.character-futan .character-dossier::after {
+  background: var(--dossier-motif), var(--dossier-overlay);
+  background-size: auto, cover;
+  background-position: right center, center;
+}
+body.character-futan .dossier-masthead {
+  padding: 19px 0 14px;
+  border-bottom: 1px solid var(--dossier-border);
+  text-transform: uppercase;
+  letter-spacing: .2em;
+}
+body.character-futan .dossier-kicker { display: inline-flex; align-items: center; gap: 9px; }
+body.character-futan .dossier-kicker::before {
+  content: "◉";
+  color: var(--dossier-accent);
+  font-size: 13px;
+  text-shadow: 0 0 14px color-mix(in srgb, var(--dossier-accent) 45%, transparent);
+  animation: futanBeacon 3.8s ease-in-out infinite;
+}
+body.character-futan .dossier-register {
+  padding: 6px 9px;
+  border: 1px solid var(--dossier-border);
+  border-radius: 3px;
+  background: var(--dossier-surface);
+  color: var(--dossier-accent);
+  font-size: 8px;
+}
+body.character-futan .character-dossier .page-title {
+  font-family: var(--font-editorial);
+  font-size: clamp(43px, 5.4vw, 66px);
+  font-weight: 580;
+  letter-spacing: .015em;
+  text-shadow: 0 6px 36px color-mix(in srgb, var(--dossier-accent) 16%, transparent);
+}
+body.character-futan .character-dossier .page-desc {
+  max-width: 58ch;
+  padding: 11px 14px;
+  border-left: 2px solid var(--dossier-accent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--dossier-accent) 8%, transparent), transparent 88%);
+}
+body.character-futan .character-dossier .tag-pill { border-radius: 3px; }
+body.character-futan .character-dossier .dossier-kpi-card {
+  border-radius: 3px;
+  border-left: 2px solid color-mix(in srgb, var(--dossier-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--dossier-surface) 92%, transparent);
+}
+body.character-futan .character-dossier .char-portrait-stage {
+  border-radius: 3px;
+  border-color: var(--dossier-border);
+  box-shadow: 0 18px 52px rgba(0, 0, 0, .22);
+}
+body.character-futan .theme-futan .char-portrait-canvas {
+  isolation: isolate;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: #061315;
+}
+body.character-futan .theme-futan .char-portrait-canvas::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 12px;
+  border: 1px solid color-mix(in srgb, var(--dossier-accent) 48%, transparent);
+  opacity: .45;
+  pointer-events: none;
+}
+body.character-futan .theme-futan .char-portrait-canvas::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -24%;
+  right: 0;
+  left: 0;
+  height: 18%;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--dossier-accent) 15%, transparent), transparent);
+  opacity: .6;
+  pointer-events: none;
+}
+body.character-futan .theme-futan .char-portrait-img {
+  position: relative;
+  z-index: 1;
+  filter: saturate(.82) contrast(1.08);
+}
+body.character-futan .portrait-index { border-radius: 2px; }
+body.character-futan .dossier-fact-rail {
+  border-top: 1px solid var(--dossier-border);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--dossier-accent) 6%, var(--dossier-bg)), var(--dossier-surface));
+}
+body.character-futan .dossier-fact { position: relative; border-right: 0; }
+body.character-futan .dossier-fact + .dossier-fact { border-left: 1px solid var(--dossier-border); }
+body.character-futan .dossier-fact .fact-label {
+  font-family: var(--font-mono);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+body.character-futan .dossier-fact .fact-value {
+  font-family: var(--font-editorial);
+  font-size: clamp(18px, 2vw, 24px);
+  letter-spacing: -.025em;
+}
+body.character-futan .doc-sidebar {
+  border-left: 2px solid color-mix(in srgb, var(--accent) 36%, transparent);
+}
+body.character-futan .toc-item.active { border-radius: 2px; }
+body.character-futan .markdown-body h2::before { letter-spacing: .06em; }
+body.character-futan .markdown-body blockquote {
+  border-left-color: var(--dossier-accent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--dossier-accent) 9%, transparent), transparent 90%);
+}
+[data-theme="light"] body.character-futan .theme-futan .char-portrait-img {
+  filter: saturate(.56) contrast(.94) brightness(1.22);
+  mix-blend-mode: screen;
+}
+[data-theme="light"] body.character-futan .theme-futan .char-portrait-stage {
+  box-shadow: 0 16px 38px rgba(39, 77, 63, .12);
+}
+
+/* Character cards hint at their destination world, without overpowering the roster. */
+.char-card-yutu,
+.char-card-futan { transition: transform .38s var(--world-ease), box-shadow .38s var(--world-ease), border-color .26s ease; }
+.char-card-yutu .char-card-media,
+.char-card-futan .char-card-media { isolation: isolate; }
+.char-card-yutu .char-card-media::before,
+.char-card-futan .char-card-media::before { transition: transform 1s var(--world-ease), opacity .3s ease; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .char-card-yutu:hover .char-card-media::before { transform: rotate(14deg) scale(1.08); }
+  .char-card-futan:hover .char-card-media::before { transform: scale(1.09); }
+}
+
+/* Signature motion is slow and low-amplitude; never essential to understand data. */
+@keyframes yutuOrbit { to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes yutuFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes yutuFactRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes futanBeacon { 0%, 100% { opacity: .68; text-shadow: 0 0 4px transparent; } 50% { opacity: 1; text-shadow: 0 0 16px color-mix(in srgb, var(--dossier-accent) 45%, transparent); } }
+@keyframes futanSweep { to { top: 112%; } }
+@keyframes futanFactRise { from { opacity: 0; filter: blur(3px); } to { opacity: 1; filter: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  body.character-yutu .theme-yutu .char-portrait-canvas::after { animation: yutuOrbit 26s linear infinite; }
+  body.character-yutu .theme-yutu .char-portrait-img { animation: yutuFloat 7s ease-in-out infinite; }
+  body.character-yutu .dossier-fact { animation: yutuFactRise .62s var(--world-ease) both; }
+  body.character-yutu .dossier-fact:nth-child(2) { animation-delay: .10s; }
+  body.character-yutu .dossier-fact:nth-child(3) { animation-delay: .20s; }
+  body.character-futan .theme-futan .char-portrait-canvas::after { animation: futanSweep 8s linear infinite; }
+  body.character-futan .dossier-fact { animation: futanFactRise .72s var(--world-ease) both; }
+  body.character-futan .dossier-fact:nth-child(2) { animation-delay: .14s; }
+  body.character-futan .dossier-fact:nth-child(3) { animation-delay: .28s; }
+}
+
+@media (max-width: 780px) {
+  body.character-yutu .character-dossier::after,
+  body.character-futan .character-dossier::after { background-position: 70% center, center; }
+  body.character-yutu .character-dossier .page-title,
+  body.character-futan .character-dossier .page-title { font-size: clamp(40px, 11vw, 56px); }
+  body.character-yutu .dossier-fact + .dossier-fact,
+  body.character-futan .dossier-fact + .dossier-fact { border-left: 0; }
+}
+@media (max-width: 560px) {
+  body.character-yutu .dossier-masthead,
+  body.character-futan .dossier-masthead { align-items: flex-start; flex-direction: column; }
+  body.character-yutu .dossier-register,
+  body.character-futan .dossier-register { text-align: left; }
+  body.character-yutu .theme-yutu .char-portrait-canvas { min-height: 250px; }
+  body.character-yutu .theme-yutu .char-portrait-img { max-height: 246px; }
+  body.character-yutu .theme-yutu .char-portrait-canvas::before { width: 220px; }
+  body.character-yutu .theme-yutu .char-portrait-canvas::after { width: 236px; }
+  body.character-futan .theme-futan .char-portrait-canvas { aspect-ratio: 4 / 3; }
+  body.character-futan .theme-futan .char-portrait-canvas::before { inset: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body > main { animation: none; }
+  html.has-motion-reveal .motion-reveal { opacity: 1; transform: none; transition: none; }
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation-duration: .01ms; }
+}
