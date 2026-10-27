@@ -1971,3 +1971,18 @@ body.character-site .markdown-body h2::before { width:auto; height:auto; backgro
   .tier-detail-stack .tier-dossier::after { right: -190px; top: -146px; width: 240px; height: 240px; }
   .tier-detail-stack .tier-dossier .char-tags { position: relative; z-index: 2; flex-wrap: wrap; }
 }
+
+/* Keep touch scrolling for wide tables, but hide the distracting native bar. */
+@media (hover: none) and (pointer: coarse) {
+  .md-table-wrap,
+  .data-table-wrap {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .md-table-wrap::-webkit-scrollbar,
+  .data-table-wrap::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
