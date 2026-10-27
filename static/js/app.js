@@ -312,46 +312,61 @@
     const dockTocBtn = document.getElementById("dock-toc-btn");
     const mdBody = document.querySelector(".markdown-body");
 
-    const prefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, { fontSize: 15, wide: false });
-    if (mdBody && prefs.fontSize) {
-      mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
-    }
-    if (prefs.wide) {
-      document.body.classList.add("wide-doc-mode");
-    }
+    const storedPrefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, {});
+    const storedFontSize = storedPrefs && typeof storedPrefs === "object" ? storedPrefs.fontSize : undefined;
+    const parsedFontSize = Number(storedFontSize);
+    const hasStoredFontSize = storedFontSize !== undefined && storedFontSize !== null && storedFontSize !== "" && Number.isFinite(parsedFontSize);
+    const FONT_MIN = 13;
+    const FONT_MAX = 24;
+    const FONT_STEP = 1.5;
+    const FONT_BASE = 15.5;
+    const prefs = {
+      fontSize: hasStoredFontSize ? Math.min(FONT_MAX, Math.max(FONT_MIN, parsedFontSize)) : FONT_BASE,
+      wide: Boolean(storedPrefs && typeof storedPrefs === "object" && storedPrefs.wide)
+    };
+
+    const applyFontSize = () => {
+      if (!mdBody) return;
+      mdBody.style.setProperty("--doc-font-size", `${prefs.fontSize}px`);
+      mdBody.style.setProperty("--doc-font-scale", (prefs.fontSize / FONT_BASE).toFixed(4));
+    };
+    applyFontSize();
+    document.body.classList.toggle("wide-doc-mode", prefs.wide);
 
     const fontDecBtn = document.getElementById("doc-font-dec");
     const fontIncBtn = document.getElementById("doc-font-inc");
     const wideBtn = document.getElementById("doc-wide-toggle");
-    if (wideBtn) {
-      wideBtn.classList.toggle("active", Boolean(prefs.wide));
-      wideBtn.setAttribute("aria-pressed", String(Boolean(prefs.wide)));
-    }
+    const updateReaderControls = () => {
+      if (fontDecBtn) fontDecBtn.disabled = prefs.fontSize <= FONT_MIN;
+      if (fontIncBtn) fontIncBtn.disabled = prefs.fontSize >= FONT_MAX;
+      if (wideBtn) {
+        wideBtn.classList.toggle("active", prefs.wide);
+        wideBtn.setAttribute("aria-pressed", String(prefs.wide));
+      }
+    };
+    updateReaderControls();
+    safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
 
     let rebuildTocOffsets = () => {};
 
+    const setFontSize = (nextSize) => {
+      prefs.fontSize = Math.min(FONT_MAX, Math.max(FONT_MIN, Number(nextSize.toFixed(1))));
+      applyFontSize();
+      updateReaderControls();
+      safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+      rebuildTocOffsets();
+    };
     if (fontDecBtn && mdBody) {
-      fontDecBtn.addEventListener("click", () => {
-        prefs.fontSize = Math.max(13, Number((prefs.fontSize - 1).toFixed(1)));
-        mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
-        safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
-        rebuildTocOffsets();
-      });
+      fontDecBtn.addEventListener("click", () => setFontSize(prefs.fontSize - FONT_STEP));
     }
     if (fontIncBtn && mdBody) {
-      fontIncBtn.addEventListener("click", () => {
-        prefs.fontSize = Math.min(20, Number((prefs.fontSize + 1).toFixed(1)));
-        mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
-        safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
-        rebuildTocOffsets();
-      });
+      fontIncBtn.addEventListener("click", () => setFontSize(prefs.fontSize + FONT_STEP));
     }
     if (wideBtn) {
       wideBtn.addEventListener("click", () => {
         prefs.wide = !prefs.wide;
         document.body.classList.toggle("wide-doc-mode", prefs.wide);
-        wideBtn.classList.toggle("active", prefs.wide);
-        wideBtn.setAttribute("aria-pressed", String(prefs.wide));
+        updateReaderControls();
         safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
         rebuildTocOffsets();
       });
