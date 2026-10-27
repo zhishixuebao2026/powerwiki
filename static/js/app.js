@@ -562,6 +562,7 @@ function renderCard(t) {
       const charPill = cCount > 0 ? `<span class="tier-char-count">${cCount} 角色</span>` : "";
       return `
         <a class="tier-card" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
+          <span class="tier-card-art" aria-hidden="true"></span>
           <div class="tier-card-top">
             <span class="tier-badge mono">⊙ ${escapeHTML(t.code)}</span>
             <span class="tier-top-right">${charPill}<span class="tier-seq mono">${orderText}</span></span>

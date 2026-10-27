@@ -902,6 +902,7 @@ def build_tiers_page(
             char_pill = f'<span class="tier-char-count">{count} 角色</span>' if count else ""
             cards.append(f"""
                 <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
+                  <span class="tier-card-art" aria-hidden="true"></span>
                   <div class="tier-card-top">
                     <span class="tier-badge mono">⊙ {esc(t['code'])}</span>
                     <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order}</span></span>
@@ -979,6 +980,7 @@ def build_tier_detail_pages(
 
     for t in tiers:
         g = group_map.get(t["group_id"], {"title": t["group_id"], "subtitle": ""})
+        tier_art_src = f"../static/img/tiers/{esc(t['group_id'])}.jpg"
         is_unranked = bool(t.get("unranked"))
 
         prev_t = None
@@ -1075,7 +1077,7 @@ def build_tier_detail_pages(
 
           <section class="dossier-header tier-dossier">
             <div class="page-header-art" aria-hidden="true">
-              <img class="page-header-img" src="../static/img/monolith-scale.jpg" alt="">
+              <img class="page-header-img" src="{tier_art_src}" alt="">
             </div>
             <div class="dossier-body">
               <div class="dossier-top">

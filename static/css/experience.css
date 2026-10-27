@@ -587,3 +587,69 @@ body.character-futan .markdown-body blockquote {
   ::view-transition-old(root),
   ::view-transition-new(root) { animation-duration: .01ms; }
 }
+
+/* --------------------------------------------------------------------------
+   Tier-scale artwork: one restrained image per scale family, reused by its
+   cards and detail dossier so each level feels related without 98 duplicates.
+   -------------------------------------------------------------------------- */
+#group-g-micro-building { --tier-art-image: url("../img/tiers/g-micro-building.jpg"); --tier-art-position: 78% center; }
+#group-g-urban-surface { --tier-art-image: url("../img/tiers/g-urban-surface.jpg"); --tier-art-position: 76% center; }
+#group-g-planetary-stellar { --tier-art-image: url("../img/tiers/g-planetary-stellar.jpg"); --tier-art-position: 82% center; }
+#group-transition-a { --tier-art-image: url("../img/tiers/transition-a.jpg"); --tier-art-position: 80% center; }
+#group-coverage-sys { --tier-art-image: url("../img/tiers/coverage-sys.jpg"); --tier-art-position: 80% center; }
+#group-transition-b { --tier-art-image: url("../img/tiers/transition-b.jpg"); --tier-art-position: 80% center; }
+#group-coverage-deep { --tier-art-image: url("../img/tiers/coverage-deep.jpg"); --tier-art-position: 82% center; }
+#group-fgh { --tier-art-image: url("../img/tiers/fgh.jpg"); --tier-art-position: 80% center; }
+#group-beyond { --tier-art-image: url("../img/tiers/beyond.jpg"); --tier-art-position: 82% center; }
+#group-unranked { --tier-art-image: url("../img/tiers/unranked.jpg"); --tier-art-position: 78% center; }
+
+.tier-card { isolation: isolate; }
+.tier-card-art {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--tier-art-image);
+  background-position: var(--tier-art-position, center);
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: .11;
+  pointer-events: none;
+}
+.tier-card > :not(.tier-card-art) { position: relative; z-index: 3; }
+.tier-card::before,
+.tier-card::after { z-index: 2; }
+[data-theme="light"] .tier-card-art { opacity: .095; mix-blend-mode: multiply; }
+[data-theme="dark"] .tier-card-art { opacity: .16; mix-blend-mode: screen; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .tier-card-art { transition: opacity .28s ease; }
+  [data-theme="light"] .tier-card:hover .tier-card-art { opacity: .15; }
+  [data-theme="dark"] .tier-card:hover .tier-card-art { opacity: .22; }
+}
+
+.tier-detail-stack .tier-dossier .page-header-art {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.tier-detail-stack .tier-dossier .page-header-img {
+  object-position: var(--tier-art-position, 80% 46%);
+  opacity: .28;
+}
+.tier-detail-stack .tier-dossier .page-header-art::after {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--bg-surface) 99%, transparent) 0%,
+    color-mix(in srgb, var(--bg-surface) 92%, transparent) 34%,
+    color-mix(in srgb, var(--bg-surface) 56%, transparent) 60%,
+    color-mix(in srgb, var(--bg-surface) 8%, transparent) 100%
+  );
+}
+[data-theme="light"] .tier-detail-stack .tier-dossier .page-header-img { mix-blend-mode: multiply; }
+[data-theme="dark"] .tier-detail-stack .tier-dossier .page-header-img { opacity: .21; mix-blend-mode: screen; }
+@media (max-width: 780px) {
+  .tier-detail-stack .tier-dossier .page-header-img { object-position: 76% center; opacity: .22; }
+  [data-theme="dark"] .tier-detail-stack .tier-dossier .page-header-img { opacity: .18; }
+}
