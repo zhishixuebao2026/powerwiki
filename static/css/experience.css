@@ -589,8 +589,8 @@ body.character-futan .markdown-body blockquote {
 }
 
 /* --------------------------------------------------------------------------
-   Tier-scale artwork: one restrained image per scale family, reused by its
-   cards and detail dossier so each level feels related without 98 duplicates.
+   Tier artwork: prefer one image per tier; the scale-family images remain a
+   visual fallback while the independent artwork set is filled in batches.
    -------------------------------------------------------------------------- */
 #group-g-micro-building { --tier-art-image: url("../img/tiers/g-micro-building.jpg"); --tier-art-position: 78% center; }
 #group-g-urban-surface { --tier-art-image: url("../img/tiers/g-urban-surface.jpg"); --tier-art-position: 76% center; }

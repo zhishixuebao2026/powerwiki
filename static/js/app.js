@@ -560,9 +560,12 @@ function renderCard(t) {
       const orderText = t.unranked ? "待定" : `#${String(t.order).padStart(2, "0")}`;
       const cCount = charCountByTier[t.slug] || 0;
       const charPill = cCount > 0 ? `<span class="tier-char-count">${cCount} 角色</span>` : "";
+      const artMap = window.PW_TIER_ART_URLS || {};
+      const artPath = artMap[t.slug] || `static/img/tiers/${encodeURIComponent(t.group_id || "unranked")}.jpg`;
+      const artStyle = ` style="background-image:url('${escapeHTML(resolveUrl(artPath))}')"`;
       return `
         <a class="tier-card" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
-          <span class="tier-card-art" aria-hidden="true"></span>
+          <span class="tier-card-art" aria-hidden="true"${artStyle}></span>
           <div class="tier-card-top">
             <span class="tier-badge mono">⊙ ${escapeHTML(t.code)}</span>
             <span class="tier-top-right">${charPill}<span class="tier-seq mono">${orderText}</span></span>

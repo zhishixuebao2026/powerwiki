@@ -55,6 +55,12 @@ def esc(val: Any) -> str:
     return html.escape(str(val if val is not None else ""), quote=True)
 
 
+def tier_art_stem(slug: str, group_id: str) -> str:
+    """Use a tier-specific image when available, with the group art as a safe fallback."""
+    unique_art = ROOT / "static" / "img" / "tiers" / f"{slug}.jpg"
+    return slug if unique_art.is_file() else group_id
+
+
 def format_evidence_html(val: str) -> str:
     s = esc(val)
     s = s.replace("〔实〕", '<span class="ev-badge ev-confirmed">〔实〕</span>')
@@ -886,6 +892,11 @@ def build_tiers_page(
 
     ranked = sorted((t for t in tiers if not t.get("unranked")), key=lambda t: t["order"])
     all_ordered = ranked + [t for t in tiers if t.get("unranked")]
+    tier_art_urls = {
+        t["slug"]: f"static/img/tiers/{tier_art_stem(t['slug'], t['group_id'])}.jpg"
+        for t in all_ordered
+    }
+    tier_art_manifest = json.dumps(tier_art_urls, ensure_ascii=False).replace("</", "<\\/")
     ordered_gids: List[str] = []
     for t in all_ordered:
         if t["group_id"] not in ordered_gids:
@@ -899,10 +910,11 @@ def build_tiers_page(
         for t in items:
             order = "待定" if t.get("unranked") else f"#{t['order']:02d}"
             count = char_count_by_tier.get(t["slug"], 0)
+            art_url = tier_art_urls[t["slug"]]
             char_pill = f'<span class="tier-char-count">{count} 角色</span>' if count else ""
             cards.append(f"""
                 <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
-                  <span class="tier-card-art" aria-hidden="true"></span>
+                  <span class="tier-card-art" aria-hidden="true" style="background-image:url('{esc(art_url)}')"></span>
                   <div class="tier-card-top">
                     <span class="tier-badge mono">⊙ {esc(t['code'])}</span>
                     <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order}</span></span>
@@ -960,6 +972,7 @@ def build_tiers_page(
         </div>
       </div>
       <div class="content-section" id="tiers-explorer-mount">{''.join(ssr_sections)}</div>
+      <script>window.PW_TIER_ART_URLS = {tier_art_manifest};</script>
     </div>
     """
     return render_shell(title="量级天梯", page_id="tiers", active_nav="tiers", body_html=body, root_prefix="./")
@@ -980,7 +993,7 @@ def build_tier_detail_pages(
 
     for t in tiers:
         g = group_map.get(t["group_id"], {"title": t["group_id"], "subtitle": ""})
-        tier_art_src = f"../static/img/tiers/{esc(t['group_id'])}.jpg"
+        tier_art_src = f"../static/img/tiers/{esc(tier_art_stem(t['slug'], t['group_id']))}.jpg"
         is_unranked = bool(t.get("unranked"))
 
         prev_t = None
