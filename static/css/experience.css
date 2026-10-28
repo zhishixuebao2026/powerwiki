@@ -753,3 +753,24 @@ body:has(.reader-rail) .markdown-body :is(h1, h2, h3)[id] { scroll-margin-top: c
   .reader-rail .tool-btn { min-width: 40px; height: 36px; padding: 0 8px; font-size: 11px; }
   .reader-rail-readout { display: none; }
 }
+
+/* 位格栏（衡天 1.7）：与综合量级并列，另起一行，不合成、不取最大值 */
+.full-writing-box .box-rankline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed color-mix(in srgb, currentColor 22%, transparent);
+  line-height: 1.7;
+}
+.full-writing-box .box-rank-kicker {
+  align-self: start;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 9.5px;
+  letter-spacing: .12em;
+  opacity: .78;
+  white-space: nowrap;
+}

@@ -841,7 +841,7 @@ def build_home_page(
           <img class="hero-backdrop-img" src="static/img/cosmic-atlas-hero.jpg" width="1584" height="672" alt="">
         </div>
         <div class="hero-body">
-          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.25 最新基准</div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.28 最新基准（含 1.7 位格栏）</div>
           <h1 class="hero-heading" id="home-title">从昆虫到无限，<br><span>查清每一个量级。</span></h1>
           <p class="hero-desc">从物理能量到无限基数，用同一套标尺查阅量级、角色证据与规则原文。</p>
           <div class="hero-cta-row">
@@ -1344,6 +1344,13 @@ def build_character_detail_pages(
                 </div>
 
                 <div class="dossier-actions-row"><a class="text-link" href="{rule_href}">对照衡天规则原文 →</a></div>
+
+                <div class="full-writing-box">
+                  <div class="box-kicker">正式完整书写摘要</div>
+                  <div>{format_evidence_html(full_writing)}</div>
+                  {f'<div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>{format_evidence_html(c["rank_writing"])}</span></div>' if c.get("rank_writing") else ""}
+                  {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
+                </div>
               </div>
 
               <aside class="char-portrait-stage" aria-label="角色形象参考">
@@ -1385,6 +1392,7 @@ def build_character_detail_pages(
               <div class="full-writing-box">
                 <div class="box-kicker">正式完整书写摘要</div>
                 <div>{format_evidence_html(full_writing)}</div>
+                {f'<div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>{format_evidence_html(c["rank_writing"])}</span></div>' if c.get("rank_writing") else ""}
                 {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
               </div>
             </div>"""
@@ -1613,7 +1621,7 @@ def build_fulltext_doc_page(
 
     rules_tab_cls = "codex-tab active" if active_nav == "rules" else "codex-tab"
     mat_tab_cls = "codex-tab active" if active_nav == "materials" else "codex-tab"
-    version_label = "第五版 · 2026.10.25" if active_nav == "rules" else "第二版 · 物理参考"
+    version_label = "第五版 · 2026.10.28（1.7 位格栏）" if active_nav == "rules" else "第二版 · 物理参考"
 
     body = f"""
     <div class="container">
