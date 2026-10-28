@@ -74,6 +74,44 @@ READER_RAIL_HTML = """
             </aside>"""
 
 
+TIER_ART_TUNING_PATH = DATA_DIR / "tier-art-tuning.json"
+
+
+def tier_art_tuning(slug: str) -> str:
+    """Per-image crop focus + ink compensation for the 98 tier backgrounds.
+
+    Deep-space renders are nearly black while the street-level renders are pale,
+    so a single opacity makes half of them invisible and the other half noisy.
+    Missing data degrades silently to the CSS defaults.
+    """
+    if not TIER_ART_TUNING_PATH.is_file():
+        return ""
+    cache = getattr(tier_art_tuning, "_cache", None)
+    if cache is None:
+        try:
+            cache = json.loads(TIER_ART_TUNING_PATH.read_text()).get("images", {})
+        except (ValueError, OSError):
+            cache = {}
+        setattr(tier_art_tuning, "_cache", cache)
+    cfg = cache.get(slug)
+    if not isinstance(cfg, dict):
+        return ""
+    parts = []
+    x, y = cfg.get("x"), cfg.get("y")
+    if isinstance(x, (int, float)) and isinstance(y, (int, float)):
+        parts.append("--tier-art-position:%d%% %d%%" % (int(x), int(y)))
+    for key, name in (("light", "--tier-art-alpha-light"), ("dark", "--tier-art-alpha-dark")):
+        val = cfg.get(key)
+        if isinstance(val, (int, float)):
+            parts.append("%s:%.3f" % (name, float(val)))
+    light, dark = cfg.get("light"), cfg.get("dark")
+    if isinstance(light, (int, float)):
+        parts.append("--tier-art-ink:%.3f" % min(max(float(light) * 2.9, 0.20), 0.42))
+    if isinstance(dark, (int, float)):
+        parts.append("--tier-art-ink-dark:%.3f" % min(max(float(dark) * 0.9 + 0.05, 0.18), 0.34))
+    return ";".join(parts) if parts else ""
+
+
 def format_evidence_html(val: str) -> str:
     s = esc(val)
     s = s.replace("〔实〕", '<span class="ev-badge ev-confirmed">〔实〕</span>')
@@ -910,6 +948,9 @@ def build_tiers_page(
         for t in all_ordered
     }
     tier_art_manifest = json.dumps(tier_art_urls, ensure_ascii=False).replace("</", "<\\/")
+    tier_tuning_manifest = json.dumps(
+        {t["slug"]: tier_art_tuning(t["slug"]) for t in all_ordered}, ensure_ascii=False
+    ).replace("</", "<\\/")
     ordered_gids: List[str] = []
     for t in all_ordered:
         if t["group_id"] not in ordered_gids:
@@ -924,10 +965,11 @@ def build_tiers_page(
             order = "待定" if t.get("unranked") else f"#{t['order']:02d}"
             count = char_count_by_tier.get(t["slug"], 0)
             art_url = tier_art_urls[t["slug"]]
+            art_tuning = tier_art_tuning(t["slug"])
             char_pill = f'<span class="tier-char-count">{count} 角色</span>' if count else ""
             cards.append(f"""
                 <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
-                  <span class="tier-card-art" aria-hidden="true" style="background-image:url('{esc(art_url)}')"></span>
+                  <span class="tier-card-art" aria-hidden="true" style="background-image:url('{esc(art_url)}');{art_tuning}"></span>
                   <div class="tier-card-top">
                     <span class="tier-badge mono">⊙ {esc(t['code'])}</span>
                     <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order}</span></span>
@@ -985,7 +1027,7 @@ def build_tiers_page(
         </div>
       </div>
       <div class="content-section" id="tiers-explorer-mount">{''.join(ssr_sections)}</div>
-      <script>window.PW_TIER_ART_URLS = {tier_art_manifest};</script>
+      <script>window.PW_TIER_ART_URLS = {tier_art_manifest};window.PW_TIER_ART_TUNING = {tier_tuning_manifest};</script>
     </div>
     """
     return render_shell(title="量级天梯", page_id="tiers", active_nav="tiers", body_html=body, root_prefix="./")
@@ -1007,6 +1049,7 @@ def build_tier_detail_pages(
     for t in tiers:
         g = group_map.get(t["group_id"], {"title": t["group_id"], "subtitle": ""})
         tier_art_src = f"../static/img/tiers/{esc(tier_art_stem(t['slug'], t['group_id']))}.jpg"
+        tier_tuning = tier_art_tuning(t["slug"])
         is_unranked = bool(t.get("unranked"))
 
         prev_t = None
@@ -1087,7 +1130,7 @@ def build_tier_detail_pages(
         order_badge = "待定档" if is_unranked else f"序位 #{t['order']:02d} / 97"
 
         body = f"""
-        <div class="container detail-stack tier-detail-stack" id="group-{esc(t['group_id'])}">
+        <div class="container detail-stack tier-detail-stack" id="group-{esc(t['group_id'])}" style="{tier_tuning}">
           <div class="subpage-bar">
             <button type="button" class="back-btn js-smart-back" data-fallback="tiers.html" data-fallback-name="量级分类">
               {SVGS["arrow_left"]} <span class="js-back-label">返回量级分类</span>

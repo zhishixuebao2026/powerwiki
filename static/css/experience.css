@@ -589,8 +589,10 @@ body.character-futan .markdown-body blockquote {
 }
 
 /* --------------------------------------------------------------------------
-   Tier artwork: prefer one image per tier; the scale-family images remain a
-   visual fallback while the independent artwork set is filled in batches.
+   Tier artwork: every one of the 98 tiers ships its own render; the scale-family
+   images below are only the safety net for a tier whose artwork is missing.
+   --tier-art-position / --tier-art-alpha-* / --tier-art-ink* come from
+   data/tier-art-tuning.json and are written inline by build_site.py.
    -------------------------------------------------------------------------- */
 #group-g-micro-building { --tier-art-image: url("../img/tiers/g-micro-building.jpg"); --tier-art-position: 78% center; }
 #group-g-urban-surface { --tier-art-image: url("../img/tiers/g-urban-surface.jpg"); --tier-art-position: 76% center; }
@@ -619,12 +621,14 @@ body.character-futan .markdown-body blockquote {
 .tier-card > :not(.tier-card-art) { position: relative; z-index: 3; }
 .tier-card::before,
 .tier-card::after { z-index: 2; }
-[data-theme="light"] .tier-card-art { opacity: .095; mix-blend-mode: multiply; }
-[data-theme="dark"] .tier-card-art { opacity: .16; mix-blend-mode: screen; }
+/* 每张图的浓度单独补偿：深色宇宙图在浅底上要淡、浅底插画在深底上要淡，
+   否则 98 档里一半看不见、另一半发灰。数据来自实测平均亮度。 */
+[data-theme="light"] .tier-card-art { opacity: var(--tier-art-alpha-light, .095); mix-blend-mode: multiply; }
+[data-theme="dark"] .tier-card-art { opacity: var(--tier-art-alpha-dark, .16); mix-blend-mode: screen; }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .tier-card-art { transition: opacity .28s ease; }
-  [data-theme="light"] .tier-card:hover .tier-card-art { opacity: .15; }
-  [data-theme="dark"] .tier-card:hover .tier-card-art { opacity: .22; }
+  [data-theme="light"] .tier-card:hover .tier-card-art { opacity: calc(var(--tier-art-alpha-light, .095) * 1.5); }
+  [data-theme="dark"] .tier-card:hover .tier-card-art { opacity: calc(var(--tier-art-alpha-dark, .16) * 1.4); }
 }
 
 .tier-detail-stack .tier-dossier .page-header-art {
@@ -636,7 +640,7 @@ body.character-futan .markdown-body blockquote {
 }
 .tier-detail-stack .tier-dossier .page-header-img {
   object-position: var(--tier-art-position, 80% 46%);
-  opacity: .28;
+  opacity: var(--tier-art-ink, .28);
 }
 .tier-detail-stack .tier-dossier .page-header-art::after {
   background: linear-gradient(
@@ -648,10 +652,11 @@ body.character-futan .markdown-body blockquote {
   );
 }
 [data-theme="light"] .tier-detail-stack .tier-dossier .page-header-img { mix-blend-mode: multiply; }
-[data-theme="dark"] .tier-detail-stack .tier-dossier .page-header-img { opacity: .21; mix-blend-mode: screen; }
+[data-theme="dark"] .tier-detail-stack .tier-dossier .page-header-img { opacity: var(--tier-art-ink-dark, .21); mix-blend-mode: screen; }
 @media (max-width: 780px) {
-  .tier-detail-stack .tier-dossier .page-header-img { object-position: 76% center; opacity: .22; }
-  [data-theme="dark"] .tier-detail-stack .tier-dossier .page-header-img { opacity: .18; }
+  /* 手机上头图几乎不裁切，仍按每档重心取景；浓度整体压一档避免抢正文 */
+  .tier-detail-stack .tier-dossier .page-header-img { object-position: var(--tier-art-position, 76% 50%); opacity: calc(var(--tier-art-ink, .22) * .82); }
+  [data-theme="dark"] .tier-detail-stack .tier-dossier .page-header-img { opacity: calc(var(--tier-art-ink-dark, .18) * .88); }
 }
 
 /* ==========================================================================

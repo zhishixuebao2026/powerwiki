@@ -596,7 +596,10 @@ function renderCard(t) {
       const charPill = cCount > 0 ? `<span class="tier-char-count">${cCount} 角色</span>` : "";
       const artMap = window.PW_TIER_ART_URLS || {};
       const artPath = artMap[t.slug] || `static/img/tiers/${encodeURIComponent(t.group_id || "unranked")}.jpg`;
-      const artStyle = ` style="background-image:url('${escapeHTML(resolveUrl(artPath))}')"`;
+      const tuneMap = window.PW_TIER_ART_TUNING || {};
+      const tuneRaw = typeof tuneMap[t.slug] === "string" ? tuneMap[t.slug] : "";
+      const tuneDecl = tuneRaw ? ";" + tuneRaw.replace(/[^A-Za-z0-9%:;.\- ]/g, "") : "";
+      const artStyle = ` style="background-image:url('${escapeHTML(resolveUrl(artPath))}')${tuneDecl}"`;
       return `
         <a class="tier-card" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
           <span class="tier-card-art" aria-hidden="true"${artStyle}></span>

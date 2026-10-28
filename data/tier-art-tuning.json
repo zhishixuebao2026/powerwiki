@@ -1,0 +1,691 @@
+{
+ "note": "每档背景图的取景与浓度补偿。x/y＝对比度质心（object/background-position），light/dark＝卡片底图透明度（浅底用 multiply、深底用 screen，所以偏暗或偏亮的图都要单独补偿，否则 98 档浓淡不一）。由 static/img/tiers/*.jpg 实测算出，build_site.py 读取后写成 --tier-art-* 变量；文件缺失时全部回落 CSS 默认值。",
+ "images": {
+  "insect": {
+   "x": 63,
+   "y": 56,
+   "light": 0.112,
+   "dark": 0.221,
+   "mean": 104.8
+  },
+  "human-weak": {
+   "x": 64,
+   "y": 66,
+   "light": 0.125,
+   "dark": 0.201,
+   "mean": 132.6
+  },
+  "human-std": {
+   "x": 71,
+   "y": 47,
+   "light": 0.132,
+   "dark": 0.189,
+   "mean": 148.0
+  },
+  "human-strong": {
+   "x": 72,
+   "y": 53,
+   "light": 0.114,
+   "dark": 0.218,
+   "mean": 109.4
+  },
+  "human-super": {
+   "x": 72,
+   "y": 56,
+   "light": 0.12,
+   "dark": 0.209,
+   "mean": 121.7
+  },
+  "brick-weak": {
+   "x": 73,
+   "y": 54,
+   "light": 0.114,
+   "dark": 0.218,
+   "mean": 110.0
+  },
+  "brick-std": {
+   "x": 63,
+   "y": 62,
+   "light": 0.15,
+   "dark": 0.158,
+   "mean": 189.6
+  },
+  "brick-strong": {
+   "x": 66,
+   "y": 59,
+   "light": 0.103,
+   "dark": 0.237,
+   "mean": 83.8
+  },
+  "brick-super": {
+   "x": 71,
+   "y": 54,
+   "light": 0.162,
+   "dark": 0.138,
+   "mean": 216.1
+  },
+  "wall-weak": {
+   "x": 61,
+   "y": 56,
+   "light": 0.123,
+   "dark": 0.203,
+   "mean": 129.9
+  },
+  "wall-std": {
+   "x": 66,
+   "y": 51,
+   "light": 0.141,
+   "dark": 0.174,
+   "mean": 168.2
+  },
+  "wall-strong": {
+   "x": 65,
+   "y": 58,
+   "light": 0.139,
+   "dark": 0.177,
+   "mean": 164.1
+  },
+  "wall-super": {
+   "x": 67,
+   "y": 58,
+   "light": 0.134,
+   "dark": 0.184,
+   "mean": 154.0
+  },
+  "room-weak": {
+   "x": 54,
+   "y": 66,
+   "light": 0.143,
+   "dark": 0.171,
+   "mean": 172.5
+  },
+  "room-std": {
+   "x": 65,
+   "y": 64,
+   "light": 0.147,
+   "dark": 0.164,
+   "mean": 181.4
+  },
+  "room-strong": {
+   "x": 61,
+   "y": 59,
+   "light": 0.133,
+   "dark": 0.186,
+   "mean": 151.5
+  },
+  "room-super": {
+   "x": 68,
+   "y": 51,
+   "light": 0.134,
+   "dark": 0.186,
+   "mean": 152.5
+  },
+  "building-weak": {
+   "x": 66,
+   "y": 60,
+   "light": 0.146,
+   "dark": 0.166,
+   "mean": 179.0
+  },
+  "building-std": {
+   "x": 72,
+   "y": 58,
+   "light": 0.143,
+   "dark": 0.17,
+   "mean": 173.7
+  },
+  "building-strong": {
+   "x": 66,
+   "y": 54,
+   "light": 0.132,
+   "dark": 0.188,
+   "mean": 149.3
+  },
+  "building-super": {
+   "x": 78,
+   "y": 48,
+   "light": 0.088,
+   "dark": 0.261,
+   "mean": 51.4
+  },
+  "street-weak": {
+   "x": 63,
+   "y": 53,
+   "light": 0.116,
+   "dark": 0.215,
+   "mean": 113.3
+  },
+  "street-std": {
+   "x": 70,
+   "y": 53,
+   "light": 0.136,
+   "dark": 0.182,
+   "mean": 157.8
+  },
+  "street-strong": {
+   "x": 65,
+   "y": 53,
+   "light": 0.13,
+   "dark": 0.192,
+   "mean": 143.6
+  },
+  "street-super": {
+   "x": 66,
+   "y": 58,
+   "light": 0.113,
+   "dark": 0.221,
+   "mean": 106.0
+  },
+  "street-super-plus": {
+   "x": 70,
+   "y": 63,
+   "light": 0.144,
+   "dark": 0.168,
+   "mean": 176.6
+  },
+  "city-weak-minus": {
+   "x": 69,
+   "y": 66,
+   "light": 0.143,
+   "dark": 0.17,
+   "mean": 173.1
+  },
+  "city-weak": {
+   "x": 70,
+   "y": 58,
+   "light": 0.146,
+   "dark": 0.165,
+   "mean": 180.4
+  },
+  "city-std": {
+   "x": 75,
+   "y": 52,
+   "light": 0.142,
+   "dark": 0.171,
+   "mean": 172.2
+  },
+  "city-strong": {
+   "x": 63,
+   "y": 54,
+   "light": 0.13,
+   "dark": 0.192,
+   "mean": 143.9
+  },
+  "city-super": {
+   "x": 64,
+   "y": 59,
+   "light": 0.142,
+   "dark": 0.172,
+   "mean": 171.0
+  },
+  "country-weak": {
+   "x": 69,
+   "y": 52,
+   "light": 0.143,
+   "dark": 0.17,
+   "mean": 172.7
+  },
+  "country-std": {
+   "x": 68,
+   "y": 57,
+   "light": 0.14,
+   "dark": 0.175,
+   "mean": 166.6
+  },
+  "country-strong": {
+   "x": 71,
+   "y": 57,
+   "light": 0.137,
+   "dark": 0.179,
+   "mean": 160.8
+  },
+  "country-super": {
+   "x": 70,
+   "y": 62,
+   "light": 0.157,
+   "dark": 0.147,
+   "mean": 204.7
+  },
+  "continent-weak": {
+   "x": 73,
+   "y": 66,
+   "light": 0.157,
+   "dark": 0.146,
+   "mean": 205.5
+  },
+  "continent-std": {
+   "x": 67,
+   "y": 52,
+   "light": 0.133,
+   "dark": 0.187,
+   "mean": 150.4
+  },
+  "continent-strong": {
+   "x": 52,
+   "y": 61,
+   "light": 0.132,
+   "dark": 0.188,
+   "mean": 149.8
+  },
+  "continent-super": {
+   "x": 65,
+   "y": 52,
+   "light": 0.115,
+   "dark": 0.216,
+   "mean": 112.2
+  },
+  "surface-weak": {
+   "x": 64,
+   "y": 38,
+   "light": 0.119,
+   "dark": 0.211,
+   "mean": 119.1
+  },
+  "surface-std": {
+   "x": 68,
+   "y": 50,
+   "light": 0.086,
+   "dark": 0.266,
+   "mean": 45.7
+  },
+  "surface-strong": {
+   "x": 66,
+   "y": 42,
+   "light": 0.093,
+   "dark": 0.254,
+   "mean": 61.7
+  },
+  "surface-super": {
+   "x": 68,
+   "y": 44,
+   "light": 0.087,
+   "dark": 0.263,
+   "mean": 49.1
+  },
+  "planet-weak": {
+   "x": 70,
+   "y": 47,
+   "light": 0.085,
+   "dark": 0.267,
+   "mean": 44.6
+  },
+  "planet-std": {
+   "x": 65,
+   "y": 48,
+   "light": 0.084,
+   "dark": 0.268,
+   "mean": 42.1
+  },
+  "planet-strong": {
+   "x": 71,
+   "y": 44,
+   "light": 0.09,
+   "dark": 0.258,
+   "mean": 56.5
+  },
+  "planet-super": {
+   "x": 58,
+   "y": 50,
+   "light": 0.087,
+   "dark": 0.263,
+   "mean": 48.9
+  },
+  "brown-dwarf-weak": {
+   "x": 58,
+   "y": 51,
+   "light": 0.078,
+   "dark": 0.279,
+   "mean": 28.2
+  },
+  "brown-dwarf-std": {
+   "x": 67,
+   "y": 49,
+   "light": 0.084,
+   "dark": 0.268,
+   "mean": 43.2
+  },
+  "brown-dwarf-strong": {
+   "x": 62,
+   "y": 48,
+   "light": 0.081,
+   "dark": 0.274,
+   "mean": 34.6
+  },
+  "brown-dwarf-super": {
+   "x": 68,
+   "y": 52,
+   "light": 0.09,
+   "dark": 0.259,
+   "mean": 54.5
+  },
+  "star-weak": {
+   "x": 73,
+   "y": 53,
+   "light": 0.081,
+   "dark": 0.274,
+   "mean": 34.9
+  },
+  "star-std": {
+   "x": 87,
+   "y": 52,
+   "light": 0.091,
+   "dark": 0.256,
+   "mean": 58.6
+  },
+  "star-strong": {
+   "x": 53,
+   "y": 53,
+   "light": 0.092,
+   "dark": 0.255,
+   "mean": 59.4
+  },
+  "star-super": {
+   "x": 51,
+   "y": 52,
+   "light": 0.088,
+   "dark": 0.261,
+   "mean": 52.0
+  },
+  "transition-a": {
+   "x": 75,
+   "y": 52,
+   "light": 0.1,
+   "dark": 0.242,
+   "mean": 77.9
+  },
+  "system-weak": {
+   "x": 53,
+   "y": 53,
+   "light": 0.074,
+   "dark": 0.285,
+   "mean": 20.3
+  },
+  "system-std": {
+   "x": 73,
+   "y": 51,
+   "light": 0.081,
+   "dark": 0.273,
+   "mean": 35.6
+  },
+  "system-strong": {
+   "x": 52,
+   "y": 53,
+   "light": 0.09,
+   "dark": 0.259,
+   "mean": 54.5
+  },
+  "system-super": {
+   "x": 54,
+   "y": 52,
+   "light": 0.082,
+   "dark": 0.272,
+   "mean": 37.1
+  },
+  "transition-b": {
+   "x": 76,
+   "y": 50,
+   "light": 0.145,
+   "dark": 0.166,
+   "mean": 178.6
+  },
+  "cluster-weak": {
+   "x": 52,
+   "y": 53,
+   "light": 0.079,
+   "dark": 0.276,
+   "mean": 32.2
+  },
+  "cluster-std": {
+   "x": 51,
+   "y": 53,
+   "light": 0.08,
+   "dark": 0.275,
+   "mean": 33.1
+  },
+  "cluster-strong": {
+   "x": 51,
+   "y": 52,
+   "light": 0.077,
+   "dark": 0.28,
+   "mean": 27.3
+  },
+  "cluster-super": {
+   "x": 52,
+   "y": 53,
+   "light": 0.09,
+   "dark": 0.259,
+   "mean": 54.5
+  },
+  "galaxy-weak": {
+   "x": 46,
+   "y": 53,
+   "light": 0.075,
+   "dark": 0.284,
+   "mean": 21.5
+  },
+  "galaxy-std": {
+   "x": 79,
+   "y": 50,
+   "light": 0.079,
+   "dark": 0.276,
+   "mean": 32.1
+  },
+  "galaxy-strong": {
+   "x": 55,
+   "y": 51,
+   "light": 0.082,
+   "dark": 0.272,
+   "mean": 37.5
+  },
+  "galaxy-super": {
+   "x": 54,
+   "y": 53,
+   "light": 0.088,
+   "dark": 0.262,
+   "mean": 50.8
+  },
+  "galaxy-cluster-weak": {
+   "x": 51,
+   "y": 54,
+   "light": 0.077,
+   "dark": 0.279,
+   "mean": 27.4
+  },
+  "galaxy-cluster-std": {
+   "x": 64,
+   "y": 54,
+   "light": 0.08,
+   "dark": 0.275,
+   "mean": 33.1
+  },
+  "galaxy-cluster-strong": {
+   "x": 55,
+   "y": 52,
+   "light": 0.079,
+   "dark": 0.277,
+   "mean": 31.3
+  },
+  "galaxy-cluster-super": {
+   "x": 66,
+   "y": 53,
+   "light": 0.079,
+   "dark": 0.277,
+   "mean": 30.5
+  },
+  "structure-weak": {
+   "x": 53,
+   "y": 52,
+   "light": 0.087,
+   "dark": 0.264,
+   "mean": 48.4
+  },
+  "structure-std": {
+   "x": 52,
+   "y": 50,
+   "light": 0.075,
+   "dark": 0.283,
+   "mean": 22.9
+  },
+  "structure-strong": {
+   "x": 51,
+   "y": 55,
+   "light": 0.079,
+   "dark": 0.277,
+   "mean": 30.1
+  },
+  "structure-super": {
+   "x": 64,
+   "y": 53,
+   "light": 0.087,
+   "dark": 0.263,
+   "mean": 49.8
+  },
+  "universe-weak": {
+   "x": 51,
+   "y": 47,
+   "light": 0.087,
+   "dark": 0.263,
+   "mean": 49.2
+  },
+  "universe-std": {
+   "x": 51,
+   "y": 52,
+   "light": 0.081,
+   "dark": 0.274,
+   "mean": 34.9
+  },
+  "universe-strong": {
+   "x": 66,
+   "y": 53,
+   "light": 0.096,
+   "dark": 0.248,
+   "mean": 69.5
+  },
+  "universe-extreme": {
+   "x": 71,
+   "y": 53,
+   "light": 0.094,
+   "dark": 0.251,
+   "mean": 65.0
+  },
+  "universe-super": {
+   "x": 65,
+   "y": 51,
+   "light": 0.084,
+   "dark": 0.268,
+   "mean": 42.6
+  },
+  "fgh-tower": {
+   "x": 66,
+   "y": 44,
+   "light": 0.084,
+   "dark": 0.269,
+   "mean": 41.8
+  },
+  "fgh-arrow": {
+   "x": 69,
+   "y": 46,
+   "light": 0.089,
+   "dark": 0.26,
+   "mean": 52.8
+  },
+  "fgh-ackermann": {
+   "x": 61,
+   "y": 64,
+   "light": 0.093,
+   "dark": 0.254,
+   "mean": 61.5
+  },
+  "fgh-graham": {
+   "x": 73,
+   "y": 51,
+   "light": 0.087,
+   "dark": 0.263,
+   "mean": 49.7
+  },
+  "fgh-goodstein": {
+   "x": 69,
+   "y": 41,
+   "light": 0.092,
+   "dark": 0.255,
+   "mean": 59.5
+  },
+  "fgh-ordinal": {
+   "x": 65,
+   "y": 53,
+   "light": 0.117,
+   "dark": 0.214,
+   "mean": 115.0
+  },
+  "fgh-top": {
+   "x": 62,
+   "y": 36,
+   "light": 0.092,
+   "dark": 0.256,
+   "mean": 59.0
+  },
+  "beyond-gate": {
+   "x": 67,
+   "y": 47,
+   "light": 0.081,
+   "dark": 0.274,
+   "mean": 34.9
+  },
+  "beyond-line3": {
+   "x": 71,
+   "y": 51,
+   "light": 0.083,
+   "dark": 0.27,
+   "mean": 39.9
+  },
+  "beyond-line2": {
+   "x": 60,
+   "y": 48,
+   "light": 0.081,
+   "dark": 0.274,
+   "mean": 34.5
+  },
+  "beyond-line1": {
+   "x": 80,
+   "y": 51,
+   "light": 0.086,
+   "dark": 0.265,
+   "mean": 47.3
+  },
+  "beyond-sky-low": {
+   "x": 63,
+   "y": 59,
+   "light": 0.087,
+   "dark": 0.263,
+   "mean": 48.9
+  },
+  "beyond-sky-mid": {
+   "x": 68,
+   "y": 64,
+   "light": 0.088,
+   "dark": 0.262,
+   "mean": 50.8
+  },
+  "beyond-sky-high": {
+   "x": 70,
+   "y": 54,
+   "light": 0.095,
+   "dark": 0.249,
+   "mean": 67.4
+  },
+  "beyond-sky-top": {
+   "x": 61,
+   "y": 52,
+   "light": 0.094,
+   "dark": 0.251,
+   "mean": 65.4
+  },
+  "pending": {
+   "x": 62,
+   "y": 46,
+   "light": 0.095,
+   "dark": 0.25,
+   "mean": 66.5
+  }
+ }
+}
