@@ -61,6 +61,19 @@ def tier_art_stem(slug: str, group_id: str) -> str:
     return slug if unique_art.is_file() else group_id
 
 
+# Reading controls live in a right-hand rail so they never float over the article text.
+READER_RAIL_HTML = """
+            <aside class="reader-rail" role="group" aria-label="阅读显示设置">
+              <span class="reader-rail-label mono" aria-hidden="true">字号</span>
+              <div class="reader-rail-btns">
+                <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+                <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+                <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
+              </div>
+              <span class="reader-rail-readout mono" id="doc-font-readout">15.5px</span>
+            </aside>"""
+
+
 def format_evidence_html(val: str) -> str:
     s = esc(val)
     s = s.replace("〔实〕", '<span class="ev-badge ev-confirmed">〔实〕</span>')
@@ -1426,17 +1439,13 @@ def build_character_detail_pages(
                   <span>·</span>
                   <span>{doc_basis_label}</span>
                 </div>
-                <div class="doc-tools" role="group" aria-label="阅读显示设置">
-                  <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
-                  <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
-                  <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
-                </div>
               </div>
 
               <div class="markdown-body">
                 {rendered_doc_html}
               </div>
             </article>
+            {READER_RAIL_HTML}
           </div>"""
         else:
             dims = c.get("dims") or {}
@@ -1627,15 +1636,11 @@ def build_fulltext_doc_page(
         </aside>
         <article class="doc-panel">
           <div class="doc-toolbar">
-            <div class="doc-source-info"><span>阅读设置</span></div>
-            <div class="doc-tools" role="group" aria-label="阅读显示设置">
-              <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
-              <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
-              <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
-            </div>
+            <div class="doc-source-info"><span>衡天档案</span></div>
           </div>
           <div class="markdown-body">{rendered_html}</div>
         </article>
+        {READER_RAIL_HTML}
       </div>
     </div>
     """

@@ -336,9 +336,11 @@
     const fontDecBtn = document.getElementById("doc-font-dec");
     const fontIncBtn = document.getElementById("doc-font-inc");
     const wideBtn = document.getElementById("doc-wide-toggle");
+    const fontReadout = document.getElementById("doc-font-readout");
     const updateReaderControls = () => {
       if (fontDecBtn) fontDecBtn.disabled = prefs.fontSize <= FONT_MIN;
       if (fontIncBtn) fontIncBtn.disabled = prefs.fontSize >= FONT_MAX;
+      if (fontReadout) fontReadout.textContent = `${prefs.fontSize.toFixed(1)}px`;
       if (wideBtn) {
         wideBtn.classList.toggle("active", prefs.wide);
         wideBtn.setAttribute("aria-pressed", String(prefs.wide));
@@ -369,6 +371,23 @@
         updateReaderControls();
         safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
         rebuildTocOffsets();
+      });
+    }
+
+    // On tablet/phone the rail floats, so it fades out while the page is being scrolled
+    // and returns to full opacity as soon as the reader stops to look at the text.
+    const readerRail = document.querySelector(".reader-rail");
+    if (readerRail) {
+      let railIdleTimer = 0;
+      const fadeRail = () => {
+        readerRail.classList.add("is-scrolling");
+        window.clearTimeout(railIdleTimer);
+        railIdleTimer = window.setTimeout(() => readerRail.classList.remove("is-scrolling"), 620);
+      };
+      window.addEventListener("scroll", fadeRail, { passive: true });
+      readerRail.addEventListener("pointerdown", () => {
+        window.clearTimeout(railIdleTimer);
+        readerRail.classList.remove("is-scrolling");
       });
     }
 
