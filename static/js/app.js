@@ -865,8 +865,8 @@ function renderCard(t) {
         const imageUrl = resolveUrl(c.image_url);
         const sizeAttrs = c.image_w && c.image_h ? ` width="${Number(c.image_w)}" height="${Number(c.image_h)}"` : "";
         return `
-        <a class="char-card has-media media-top" href="${resolveUrl("character/" + c.slug + ".html")}">
-          <div class="char-card-media is-${shape}" data-art-label="${escapeHTML((c.pinyin || c.slug).toUpperCase())}" style="--char-image:url('${escapeHTML(imageUrl)}')"><img class="char-card-img" src="${escapeHTML(imageUrl)}" alt="${escapeHTML(c.name)}"${sizeAttrs} loading="lazy"></div>
+        <a class="char-card has-media media-top char-card-${escapeHTML(c.slug)}" href="${resolveUrl("character/" + c.slug + ".html")}">
+          <div class="char-card-media is-${shape}" data-art-label="${escapeHTML((c.pinyin || c.slug).toUpperCase())}"><span class="char-card-ambience" aria-hidden="true" style="background-image:url('${escapeHTML(imageUrl)}')"></span><img class="char-card-img" src="${escapeHTML(imageUrl)}" alt="${escapeHTML(c.name)}"${sizeAttrs} loading="lazy"></div>
           <div class="char-card-body">
             <div class="char-head">
               <div class="char-meta"><h3 class="char-name">${escapeHTML(c.name)}</h3><div class="char-origin">${originLine}</div></div>

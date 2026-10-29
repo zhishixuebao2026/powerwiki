@@ -828,7 +828,8 @@ def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, A
         size_attrs = f' width="{int(c["image_w"])}" height="{int(c["image_h"])}"' if c.get("image_w") and c.get("image_h") else ""
         return f"""
     <a class="char-card has-media media-top char-card-{esc(c['slug'])}" data-character="{esc(c['slug'])}" href="{href_prefix}character/{esc(c['slug'])}.html">
-      <div class="char-card-media is-{shape}" data-art-label="{esc(c.get('pinyin') or c['slug']).upper()}" style="--char-image:url('{esc(img_src)}')">
+      <div class="char-card-media is-{shape}" data-art-label="{esc(c.get('pinyin') or c['slug']).upper()}">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('{esc(img_src)}')"></span>
         <img class="char-card-img" src="{esc(img_src)}" alt="{esc(c['name'])}"{size_attrs} loading="lazy">
       </div>
       <div class="char-card-body">
@@ -1361,6 +1362,7 @@ def build_character_detail_pages(
                 <div class="char-tags">
                   <span class="tag-pill accent">{esc(group_badge_label)}</span>
                   <span class="tag-pill">{esc(c.get('series') or '未标注出处')}</span>
+                  {mod_chips_html}
                 </div>
 
                 <div>

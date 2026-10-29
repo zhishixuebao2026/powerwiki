@@ -3706,17 +3706,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-bottom: 1px solid var(--border-subtle);
   background: #e8ede8;
 }
-.char-card-media::before {
-  content: "";
+/* 环境光晕：内联 background-image 才能按文档基准解析 URL；
+   自定义属性里的 url() 会按消费它的样式表（static/css/）解析，导致 404。 */
+.char-card-ambience {
   position: absolute;
   z-index: 0;
   inset: -28px;
-  background-image: var(--char-image);
   background-position: center;
   background-size: cover;
+  background-repeat: no-repeat;
   filter: blur(28px) saturate(0.7);
   opacity: 0.18;
   transform: scale(1.12);
+  pointer-events: none;
 }
 .char-card-media::after {
   content: attr(data-art-label);

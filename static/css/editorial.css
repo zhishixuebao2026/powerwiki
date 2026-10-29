@@ -1343,7 +1343,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   object-fit:cover; object-position:center 44%;
   filter: saturate(.88) contrast(1.04) brightness(.98);
 }
-.char-card-futan .char-card-media::before { opacity:.16; filter: blur(22px) saturate(.7); }
+.char-card-futan .char-card-ambience { opacity:.16; filter: blur(22px) saturate(.7); }
 .char-card-futan .char-card-media::after { color: rgba(232,237,232,.78); text-shadow:0 1px 10px rgba(0,0,0,.65); letter-spacing:.28em; }
 [data-theme="light"] .char-card-futan .char-card-media.is-landscape { background:#0a1a1c; }
 [data-theme="light"] .char-card-futan .char-card-media::after { color: rgba(255,255,255,.82); }

@@ -533,11 +533,11 @@ body.character-futan .markdown-body blockquote {
 .char-card-futan { transition: transform .38s var(--world-ease), box-shadow .38s var(--world-ease), border-color .26s ease; }
 .char-card-yutu .char-card-media,
 .char-card-futan .char-card-media { isolation: isolate; }
-.char-card-yutu .char-card-media::before,
-.char-card-futan .char-card-media::before { transition: transform 1s var(--world-ease), opacity .3s ease; }
+.char-card-yutu .char-card-ambience,
+.char-card-futan .char-card-ambience { transition: transform 1s var(--world-ease), opacity .3s ease; }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .char-card-yutu:hover .char-card-media::before { transform: rotate(14deg) scale(1.08); }
-  .char-card-futan:hover .char-card-media::before { transform: scale(1.09); }
+  .char-card-yutu:hover .char-card-ambience { transform: rotate(14deg) scale(1.08); }
+  .char-card-futan:hover .char-card-ambience { transform: scale(1.09); }
 }
 
 /* Signature motion is slow and low-amplitude; never essential to understand data. */
