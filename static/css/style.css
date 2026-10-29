@@ -2785,34 +2785,6 @@ code {
   flex-wrap: wrap;
 }
 
-.doc-find-box {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.doc-find-input {
-  width: 140px;
-  height: 28px;
-  padding: 0 9px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border-default);
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  font-size: 12px;
-  outline: none;
-}
-
-.doc-find-input:focus {
-  border-color: var(--border-accent);
-}
-
-.doc-find-count {
-  font-size: 11px;
-  color: var(--accent);
-  min-width: 28px;
-}
-
 .tool-btn {
   height: 28px;
   padding: 0 9px;
@@ -3052,15 +3024,6 @@ code {
 
 .markdown-body tr:last-child td {
   border-bottom: none;
-}
-
-.flash-highlight {
-  animation: pulseHighlight 1.8s ease;
-}
-
-@keyframes pulseHighlight {
-  0% { background-color: var(--accent-soft); border-radius: 4px; }
-  100% { background-color: transparent; }
 }
 
 /* --------------------------------------------------------------------------
@@ -3743,17 +3706,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-bottom: 1px solid var(--border-subtle);
   background: #e8ede8;
 }
-.char-card-media::before {
-  content: "";
+/* 环境光晕：内联 background-image 才能按文档基准解析 URL；
+   自定义属性里的 url() 会按消费它的样式表（static/css/）解析，导致 404。 */
+.char-card-ambience {
   position: absolute;
   z-index: 0;
   inset: -28px;
-  background-image: var(--char-image);
   background-position: center;
   background-size: cover;
+  background-repeat: no-repeat;
   filter: blur(28px) saturate(0.7);
   opacity: 0.18;
   transform: scale(1.12);
+  pointer-events: none;
 }
 .char-card-media::after {
   content: attr(data-art-label);
@@ -3913,8 +3878,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .codex-tab { flex: 1; justify-content: center; font-size: 12px; }
   .doc-source-info { display: none; }
   .doc-tools { width: 100%; }
-  .doc-find-box { flex: 1; }
-  .doc-find-input { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3982,10 +3945,10 @@ h1, h2, h3,
   box-shadow: 0 8px 28px rgba(25,35,30,.035);
 }
 .seg-group { padding: 3px; border-radius: 10px; }
-.search-input, .select-control, .toc-filter, .doc-find-input {
+.search-input, .select-control, .toc-filter {
   transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
 }
-.search-input:focus, .select-control:focus, .toc-filter:focus, .doc-find-input:focus {
+.search-input:focus, .select-control:focus, .toc-filter:focus {
   border-color: var(--border-accent);
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
@@ -4063,7 +4026,7 @@ h1, h2, h3,
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
-.tool-btn, .doc-find-box { border-radius: 8px; }
+.tool-btn { border-radius: 8px; }
 .toc-item { transition: color .16s ease, background-color .16s ease, padding-left .16s ease; }
 .toc-item.active { font-weight: 550; }
 .markdown-body { font-kerning: normal; }

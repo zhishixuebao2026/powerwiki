@@ -30,14 +30,16 @@
 ```text
 data/
 ├── characters.json        # 角色元数据、视觉主题、图片映射与摘要
+├── tier-art-tuning.json   # 98 张档位配图的取景重心与浓淡补偿（按图实测，缺失时回落 CSS 默认值）
 ├── tiers.json             # 量级和分组定义
 └── docs/                  # 完整 Markdown 原文
 static/
 ├── css/style.css          # 功能样式与基础设计系统
 ├── css/editorial.css      # 全站外壳与角色明暗设计
+├── css/experience.css     # 阅读工具栏与档位配图等体验层样式
 ├── fonts/                 # 本地可变字体与 SIL OFL 许可证
 ├── js/app.js              # 筛选、搜索、目录与阅读工具
-└── img/                   # 本地图片与角色主题美术
+└── img/                   # 本地图片与角色主题美术（`img/tiers/<slug>.jpg` 为每档独立配图，16:9；缺图时回落同名分组图）
 ```
 
 修改数据或文档后，在仓库根目录执行：

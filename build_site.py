@@ -55,6 +55,63 @@ def esc(val: Any) -> str:
     return html.escape(str(val if val is not None else ""), quote=True)
 
 
+def tier_art_stem(slug: str, group_id: str) -> str:
+    """Use a tier-specific image when available, with the group art as a safe fallback."""
+    unique_art = ROOT / "static" / "img" / "tiers" / f"{slug}.jpg"
+    return slug if unique_art.is_file() else group_id
+
+
+# Reading controls live in a right-hand rail so they never float over the article text.
+READER_RAIL_HTML = """
+            <aside class="reader-rail" role="group" aria-label="阅读显示设置">
+              <span class="reader-rail-label mono" aria-hidden="true">字号</span>
+              <div class="reader-rail-btns">
+                <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+                <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+                <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
+              </div>
+              <span class="reader-rail-readout mono" id="doc-font-readout">15.5px</span>
+            </aside>"""
+
+
+TIER_ART_TUNING_PATH = DATA_DIR / "tier-art-tuning.json"
+
+
+def tier_art_tuning(slug: str) -> str:
+    """Per-image crop focus + ink compensation for the 98 tier backgrounds.
+
+    Deep-space renders are nearly black while the street-level renders are pale,
+    so a single opacity makes half of them invisible and the other half noisy.
+    Missing data degrades silently to the CSS defaults.
+    """
+    if not TIER_ART_TUNING_PATH.is_file():
+        return ""
+    cache = getattr(tier_art_tuning, "_cache", None)
+    if cache is None:
+        try:
+            cache = json.loads(TIER_ART_TUNING_PATH.read_text()).get("images", {})
+        except (ValueError, OSError):
+            cache = {}
+        setattr(tier_art_tuning, "_cache", cache)
+    cfg = cache.get(slug)
+    if not isinstance(cfg, dict):
+        return ""
+    parts = []
+    x, y = cfg.get("x"), cfg.get("y")
+    if isinstance(x, (int, float)) and isinstance(y, (int, float)):
+        parts.append("--tier-art-position:%d%% %d%%" % (int(x), int(y)))
+    for key, name in (("light", "--tier-art-alpha-light"), ("dark", "--tier-art-alpha-dark")):
+        val = cfg.get(key)
+        if isinstance(val, (int, float)):
+            parts.append("%s:%.3f" % (name, float(val)))
+    light, dark = cfg.get("light"), cfg.get("dark")
+    if isinstance(light, (int, float)):
+        parts.append("--tier-art-ink:%.3f" % min(max(float(light) * 2.9, 0.20), 0.42))
+    if isinstance(dark, (int, float)):
+        parts.append("--tier-art-ink-dark:%.3f" % min(max(float(dark) * 0.9 + 0.05, 0.18), 0.34))
+    return ";".join(parts) if parts else ""
+
+
 def format_evidence_html(val: str) -> str:
     s = esc(val)
     s = s.replace("〔实〕", '<span class="ev-badge ev-confirmed">〔实〕</span>')
@@ -582,6 +639,7 @@ def render_shell(
   <link rel="stylesheet" href="{r}static/fonts/noto-serif-sc/index.css">
   <link rel="stylesheet" href="{r}static/css/style.css">
   <link rel="stylesheet" href="{r}static/css/editorial.css">
+  <link rel="stylesheet" href="{r}static/css/experience.css">
 </head>
 <body class="{esc(shell_body_class)}">
   <header class="site-header">
@@ -770,7 +828,8 @@ def render_char_card_html(c: Dict[str, Any], tier_by_slug: Dict[str, Dict[str, A
         size_attrs = f' width="{int(c["image_w"])}" height="{int(c["image_h"])}"' if c.get("image_w") and c.get("image_h") else ""
         return f"""
     <a class="char-card has-media media-top char-card-{esc(c['slug'])}" data-character="{esc(c['slug'])}" href="{href_prefix}character/{esc(c['slug'])}.html">
-      <div class="char-card-media is-{shape}" data-art-label="{esc(c.get('pinyin') or c['slug']).upper()}" style="--char-image:url('{esc(img_src)}')">
+      <div class="char-card-media is-{shape}" data-art-label="{esc(c.get('pinyin') or c['slug']).upper()}">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('{esc(img_src)}')"></span>
         <img class="char-card-img" src="{esc(img_src)}" alt="{esc(c['name'])}"{size_attrs} loading="lazy">
       </div>
       <div class="char-card-body">
@@ -821,7 +880,7 @@ def build_home_page(
           <img class="hero-backdrop-img" src="static/img/cosmic-atlas-hero.jpg" width="1584" height="672" alt="">
         </div>
         <div class="hero-body">
-          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.25 最新基准</div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.28 最新基准（含 1.7 位格栏）</div>
           <h1 class="hero-heading" id="home-title">从昆虫到无限，<br><span>查清每一个量级。</span></h1>
           <p class="hero-desc">从物理能量到无限基数，用同一套标尺查阅量级、角色证据与规则原文。</p>
           <div class="hero-cta-row">
@@ -857,7 +916,7 @@ def build_home_page(
           </a>
           <div class="portal-card portal-library">
             <div class="portal-top"><span class="portal-heading"><span class="portal-glyph">{SVGS["library"]}</span><span class="portal-num mono">03 / LIBRARY</span></span></div>
-            <div><h3 class="portal-title">规则与资料</h3><p class="portal-text">保留完整原文、目录与页内定位，适合逐条核对。</p></div>
+            <div><h3 class="portal-title">规则与资料</h3><p class="portal-text">保留完整原文与章节目录，方便逐条核对。</p></div>
             <div class="library-links">
               <a href="rules.html"><span>衡天量级体系</span><span class="mono">第五版 →</span></a>
               <a href="materials.html"><span>材质与破坏能量</span><span class="mono">第二版 →</span></a>
@@ -885,6 +944,14 @@ def build_tiers_page(
 
     ranked = sorted((t for t in tiers if not t.get("unranked")), key=lambda t: t["order"])
     all_ordered = ranked + [t for t in tiers if t.get("unranked")]
+    tier_art_urls = {
+        t["slug"]: f"static/img/tiers/{tier_art_stem(t['slug'], t['group_id'])}.jpg"
+        for t in all_ordered
+    }
+    tier_art_manifest = json.dumps(tier_art_urls, ensure_ascii=False).replace("</", "<\\/")
+    tier_tuning_manifest = json.dumps(
+        {t["slug"]: tier_art_tuning(t["slug"]) for t in all_ordered}, ensure_ascii=False
+    ).replace("</", "<\\/")
     ordered_gids: List[str] = []
     for t in all_ordered:
         if t["group_id"] not in ordered_gids:
@@ -898,9 +965,12 @@ def build_tiers_page(
         for t in items:
             order = "待定" if t.get("unranked") else f"#{t['order']:02d}"
             count = char_count_by_tier.get(t["slug"], 0)
+            art_url = tier_art_urls[t["slug"]]
+            art_tuning = tier_art_tuning(t["slug"])
             char_pill = f'<span class="tier-char-count">{count} 角色</span>' if count else ""
             cards.append(f"""
                 <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
+                  <span class="tier-card-art" aria-hidden="true" style="background-image:url('{esc(art_url)}');{art_tuning}"></span>
                   <div class="tier-card-top">
                     <span class="tier-badge mono">⊙ {esc(t['code'])}</span>
                     <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order}</span></span>
@@ -958,6 +1028,7 @@ def build_tiers_page(
         </div>
       </div>
       <div class="content-section" id="tiers-explorer-mount">{''.join(ssr_sections)}</div>
+      <script>window.PW_TIER_ART_URLS = {tier_art_manifest};window.PW_TIER_ART_TUNING = {tier_tuning_manifest};</script>
     </div>
     """
     return render_shell(title="量级天梯", page_id="tiers", active_nav="tiers", body_html=body, root_prefix="./")
@@ -978,6 +1049,8 @@ def build_tier_detail_pages(
 
     for t in tiers:
         g = group_map.get(t["group_id"], {"title": t["group_id"], "subtitle": ""})
+        tier_art_src = f"../static/img/tiers/{esc(tier_art_stem(t['slug'], t['group_id']))}.jpg"
+        tier_tuning = tier_art_tuning(t["slug"])
         is_unranked = bool(t.get("unranked"))
 
         prev_t = None
@@ -1058,7 +1131,7 @@ def build_tier_detail_pages(
         order_badge = "待定档" if is_unranked else f"序位 #{t['order']:02d} / 97"
 
         body = f"""
-        <div class="container detail-stack">
+        <div class="container detail-stack tier-detail-stack" id="group-{esc(t['group_id'])}" style="{tier_tuning}">
           <div class="subpage-bar">
             <button type="button" class="back-btn js-smart-back" data-fallback="tiers.html" data-fallback-name="量级分类">
               {SVGS["arrow_left"]} <span class="js-back-label">返回量级分类</span>
@@ -1072,9 +1145,9 @@ def build_tier_detail_pages(
             </nav>
           </div>
 
-          <section class="dossier-header">
+          <section class="dossier-header tier-dossier">
             <div class="page-header-art" aria-hidden="true">
-              <img class="page-header-img" src="../static/img/monolith-scale.jpg" alt="">
+              <img class="page-header-img" src="{tier_art_src}" alt="">
             </div>
             <div class="dossier-body">
               <div class="dossier-top">
@@ -1082,7 +1155,7 @@ def build_tier_detail_pages(
                   <div class="char-tags">
                     <span class="tier-badge gold mono">⊙ {esc(t['code'])}</span>
                     <span class="count-badge mono">{order_badge}</span>
-                    <span class="tag-pill">{esc(g.get('short_title') or g['title'])}</span>
+                    <span class="tag-pill tier-group-pill"><span class="tier-group-mark" aria-hidden="true"></span>{esc(g.get('short_title') or g['title'])}</span>
                   </div>
                   <h1 class="page-title">{esc(t['name'])} · {esc(t['family'])}系</h1>
                   <p class="page-desc">{esc(t.get('notes', ''))}</p>
@@ -1289,6 +1362,7 @@ def build_character_detail_pages(
                 <div class="char-tags">
                   <span class="tag-pill accent">{esc(group_badge_label)}</span>
                   <span class="tag-pill">{esc(c.get('series') or '未标注出处')}</span>
+                  {mod_chips_html}
                 </div>
 
                 <div>
@@ -1315,6 +1389,13 @@ def build_character_detail_pages(
                 </div>
 
                 <div class="dossier-actions-row"><a class="text-link" href="{rule_href}">对照衡天规则原文 →</a></div>
+
+                <div class="full-writing-box">
+                  <div class="box-kicker">正式完整书写摘要</div>
+                  <div>{format_evidence_html(full_writing)}</div>
+                  {f'<div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>{format_evidence_html(c["rank_writing"])}</span></div>' if c.get("rank_writing") else ""}
+                  {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
+                </div>
               </div>
 
               <aside class="char-portrait-stage" aria-label="角色形象参考">
@@ -1356,6 +1437,7 @@ def build_character_detail_pages(
               <div class="full-writing-box">
                 <div class="box-kicker">正式完整书写摘要</div>
                 <div>{format_evidence_html(full_writing)}</div>
+                {f'<div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>{format_evidence_html(c["rank_writing"])}</span></div>' if c.get("rank_writing") else ""}
                 {f'<div class="box-subnote">证据链核验摘要：{format_evidence_html(c["credibility"])}</div>' if c.get("credibility") else ""}
               </div>
             </div>"""
@@ -1410,22 +1492,13 @@ def build_character_detail_pages(
                   <span>·</span>
                   <span>{doc_basis_label}</span>
                 </div>
-                <div class="doc-tools">
-                  <div class="doc-find-box">
-                    <input type="search" class="doc-find-input" id="doc-find-input" placeholder="页内定位词句…">
-                    <button type="button" class="tool-btn" id="doc-find-next" title="跳转到下一处匹配">定位</button>
-                    <span class="doc-find-count mono" id="doc-find-count"></span>
-                  </div>
-                  <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A-</button>
-                  <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
-                  <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
-                </div>
               </div>
 
               <div class="markdown-body">
                 {rendered_doc_html}
               </div>
             </article>
+            {READER_RAIL_HTML}
           </div>"""
         else:
             dims = c.get("dims") or {}
@@ -1593,7 +1666,7 @@ def build_fulltext_doc_page(
 
     rules_tab_cls = "codex-tab active" if active_nav == "rules" else "codex-tab"
     mat_tab_cls = "codex-tab active" if active_nav == "materials" else "codex-tab"
-    version_label = "第五版 · 2026.10.25" if active_nav == "rules" else "第二版 · 物理参考"
+    version_label = "第五版 · 2026.10.28（1.7 位格栏）" if active_nav == "rules" else "第二版 · 物理参考"
 
     body = f"""
     <div class="container">
@@ -1616,16 +1689,11 @@ def build_fulltext_doc_page(
         </aside>
         <article class="doc-panel">
           <div class="doc-toolbar">
-            <div class="doc-source-info"><span>阅读工具</span></div>
-            <div class="doc-tools">
-              <div class="doc-find-box"><input type="search" class="doc-find-input" id="doc-find-input" placeholder="在本文中查找…"><button type="button" class="tool-btn" id="doc-find-next">查找</button><span class="doc-find-count mono" id="doc-find-count"></span></div>
-              <button type="button" class="tool-btn" id="doc-font-dec" title="缩小正文字号">A−</button>
-              <button type="button" class="tool-btn" id="doc-font-inc" title="放大正文字号">A+</button>
-              <button type="button" class="tool-btn" id="doc-wide-toggle" title="切换宽屏表格阅读模式">宽屏</button>
-            </div>
+            <div class="doc-source-info"><span>衡天档案</span></div>
           </div>
           <div class="markdown-body">{rendered_html}</div>
         </article>
+        {READER_RAIL_HTML}
       </div>
     </div>
     """

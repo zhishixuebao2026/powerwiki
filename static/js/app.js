@@ -120,13 +120,33 @@
     updateIcon();
     if (btn) {
       btn.addEventListener("click", () => {
-        const cur = document.documentElement.getAttribute("data-theme") || "dark";
+        const root = document.documentElement;
+        const cur = root.getAttribute("data-theme") || "dark";
         const next = cur === "dark" ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", next);
-        try {
-          localStorage.setItem(STORAGE_KEYS.theme, next);
-        } catch (_) {}
-        updateIcon();
+        const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const applyTheme = () => {
+          root.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem(STORAGE_KEYS.theme, next);
+          } catch (_) {}
+          updateIcon();
+        };
+
+        if (!reduceMotion && typeof document.startViewTransition === "function") {
+          try {
+            document.startViewTransition(applyTheme);
+            return;
+          } catch (_) {}
+        }
+
+        if (!reduceMotion) {
+          root.classList.add("theme-transitioning");
+          void root.offsetWidth;
+        }
+        applyTheme();
+        if (!reduceMotion) {
+          window.setTimeout(() => root.classList.remove("theme-transitioning"), 420);
+        }
       });
     }
   }
@@ -283,7 +303,7 @@
   }
 
   /* --------------------------------------------------------------------------
-     4. Full-Text Document Reader (TOC ScrollSpy + Finder + Font/Wide Prefs)
+     4. Full-Text Document Reader (TOC ScrollSpy + Font/Wide Prefs)
      -------------------------------------------------------------------------- */
   function initDocumentReader() {
     const sidebar = document.getElementById("doc-sidebar");
@@ -292,93 +312,83 @@
     const dockTocBtn = document.getElementById("dock-toc-btn");
     const mdBody = document.querySelector(".markdown-body");
 
-    const prefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, { fontSize: 15, wide: false });
-    if (mdBody && prefs.fontSize) {
-      mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
-    }
-    if (prefs.wide) {
-      document.body.classList.add("wide-doc-mode");
-    }
+    const storedPrefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, {});
+    const storedFontSize = storedPrefs && typeof storedPrefs === "object" ? storedPrefs.fontSize : undefined;
+    const parsedFontSize = Number(storedFontSize);
+    const hasStoredFontSize = storedFontSize !== undefined && storedFontSize !== null && storedFontSize !== "" && Number.isFinite(parsedFontSize);
+    const FONT_MIN = 13;
+    const FONT_MAX = 24;
+    const FONT_STEP = 1.5;
+    const FONT_BASE = 15.5;
+    const prefs = {
+      fontSize: hasStoredFontSize ? Math.min(FONT_MAX, Math.max(FONT_MIN, parsedFontSize)) : FONT_BASE,
+      wide: Boolean(storedPrefs && typeof storedPrefs === "object" && storedPrefs.wide)
+    };
+
+    const applyFontSize = () => {
+      if (!mdBody) return;
+      mdBody.style.setProperty("--doc-font-size", `${prefs.fontSize}px`);
+      mdBody.style.setProperty("--doc-font-scale", (prefs.fontSize / FONT_BASE).toFixed(4));
+    };
+    applyFontSize();
+    document.body.classList.toggle("wide-doc-mode", prefs.wide);
 
     const fontDecBtn = document.getElementById("doc-font-dec");
     const fontIncBtn = document.getElementById("doc-font-inc");
     const wideBtn = document.getElementById("doc-wide-toggle");
-    if (wideBtn) wideBtn.classList.toggle("active", Boolean(prefs.wide));
+    const fontReadout = document.getElementById("doc-font-readout");
+    const updateReaderControls = () => {
+      if (fontDecBtn) fontDecBtn.disabled = prefs.fontSize <= FONT_MIN;
+      if (fontIncBtn) fontIncBtn.disabled = prefs.fontSize >= FONT_MAX;
+      if (fontReadout) fontReadout.textContent = `${prefs.fontSize.toFixed(1)}px`;
+      if (wideBtn) {
+        wideBtn.classList.toggle("active", prefs.wide);
+        wideBtn.setAttribute("aria-pressed", String(prefs.wide));
+      }
+    };
+    updateReaderControls();
+    safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
 
     let rebuildTocOffsets = () => {};
 
+    const setFontSize = (nextSize) => {
+      prefs.fontSize = Math.min(FONT_MAX, Math.max(FONT_MIN, Number(nextSize.toFixed(1))));
+      applyFontSize();
+      updateReaderControls();
+      safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+      rebuildTocOffsets();
+    };
     if (fontDecBtn && mdBody) {
-      fontDecBtn.addEventListener("click", () => {
-        prefs.fontSize = Math.max(13, Number((prefs.fontSize - 1).toFixed(1)));
-        mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
-        safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
-        rebuildTocOffsets();
-      });
+      fontDecBtn.addEventListener("click", () => setFontSize(prefs.fontSize - FONT_STEP));
     }
     if (fontIncBtn && mdBody) {
-      fontIncBtn.addEventListener("click", () => {
-        prefs.fontSize = Math.min(20, Number((prefs.fontSize + 1).toFixed(1)));
-        mdBody.style.setProperty("--doc-font-size", prefs.fontSize + "px");
-        safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
-        rebuildTocOffsets();
-      });
+      fontIncBtn.addEventListener("click", () => setFontSize(prefs.fontSize + FONT_STEP));
     }
     if (wideBtn) {
       wideBtn.addEventListener("click", () => {
         prefs.wide = !prefs.wide;
         document.body.classList.toggle("wide-doc-mode", prefs.wide);
-        wideBtn.classList.toggle("active", prefs.wide);
+        updateReaderControls();
         safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
         rebuildTocOffsets();
       });
     }
 
-    const findInput = document.getElementById("doc-find-input");
-    const findNextBtn = document.getElementById("doc-find-next");
-    const findCountEl = document.getElementById("doc-find-count");
-    let findMatches = [];
-    let findIdx = -1;
-
-    function runDocFind(jump) {
-      if (!findInput || !mdBody) return;
-      const q = findInput.value.trim().toLowerCase();
-      if (!q) {
-        findMatches = [];
-        findIdx = -1;
-        if (findCountEl) findCountEl.textContent = "";
-        return;
-      }
-      const blocks = Array.from(mdBody.querySelectorAll("h1, h2, h3, p, li, tr, figcaption"));
-      findMatches = blocks.filter((el) => el.textContent.toLowerCase().includes(q));
-      if (findMatches.length === 0) {
-        if (findCountEl) findCountEl.textContent = "0 处";
-        return;
-      }
-      if (jump) {
-        findIdx = (findIdx + 1) % findMatches.length;
-        const target = findMatches[findIdx];
-        scrollToElementWithOffset(target, true);
-        target.classList.remove("flash-highlight");
-        void target.offsetWidth;
-        target.classList.add("flash-highlight");
-        if (findCountEl) findCountEl.textContent = `${findIdx + 1}/${findMatches.length}`;
-      } else {
-        findIdx = -1;
-        if (findCountEl) findCountEl.textContent = `${findMatches.length} 处`;
-      }
-    }
-
-    if (findInput) {
-      findInput.addEventListener("input", () => runDocFind(false));
-      findInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          runDocFind(true);
-        }
+    // On tablet/phone the rail floats, so it fades out while the page is being scrolled
+    // and returns to full opacity as soon as the reader stops to look at the text.
+    const readerRail = document.querySelector(".reader-rail");
+    if (readerRail) {
+      let railIdleTimer = 0;
+      const fadeRail = () => {
+        readerRail.classList.add("is-scrolling");
+        window.clearTimeout(railIdleTimer);
+        railIdleTimer = window.setTimeout(() => readerRail.classList.remove("is-scrolling"), 620);
+      };
+      window.addEventListener("scroll", fadeRail, { passive: true });
+      readerRail.addEventListener("pointerdown", () => {
+        window.clearTimeout(railIdleTimer);
+        readerRail.classList.remove("is-scrolling");
       });
-    }
-    if (findNextBtn) {
-      findNextBtn.addEventListener("click", () => runDocFind(true));
     }
 
     document.querySelectorAll(".heading-anchor").forEach((anchor) => {
@@ -584,8 +594,15 @@ function renderCard(t) {
       const orderText = t.unranked ? "待定" : `#${String(t.order).padStart(2, "0")}`;
       const cCount = charCountByTier[t.slug] || 0;
       const charPill = cCount > 0 ? `<span class="tier-char-count">${cCount} 角色</span>` : "";
+      const artMap = window.PW_TIER_ART_URLS || {};
+      const artPath = artMap[t.slug] || `static/img/tiers/${encodeURIComponent(t.group_id || "unranked")}.jpg`;
+      const tuneMap = window.PW_TIER_ART_TUNING || {};
+      const tuneRaw = typeof tuneMap[t.slug] === "string" ? tuneMap[t.slug] : "";
+      const tuneDecl = tuneRaw ? ";" + tuneRaw.replace(/[^A-Za-z0-9%:;.\- ]/g, "") : "";
+      const artStyle = ` style="background-image:url('${escapeHTML(resolveUrl(artPath))}')${tuneDecl}"`;
       return `
         <a class="tier-card" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
+          <span class="tier-card-art" aria-hidden="true"${artStyle}></span>
           <div class="tier-card-top">
             <span class="tier-badge mono">⊙ ${escapeHTML(t.code)}</span>
             <span class="tier-top-right">${charPill}<span class="tier-seq mono">${orderText}</span></span>
@@ -848,8 +865,8 @@ function renderCard(t) {
         const imageUrl = resolveUrl(c.image_url);
         const sizeAttrs = c.image_w && c.image_h ? ` width="${Number(c.image_w)}" height="${Number(c.image_h)}"` : "";
         return `
-        <a class="char-card has-media media-top" href="${resolveUrl("character/" + c.slug + ".html")}">
-          <div class="char-card-media is-${shape}" data-art-label="${escapeHTML((c.pinyin || c.slug).toUpperCase())}" style="--char-image:url('${escapeHTML(imageUrl)}')"><img class="char-card-img" src="${escapeHTML(imageUrl)}" alt="${escapeHTML(c.name)}"${sizeAttrs} loading="lazy"></div>
+        <a class="char-card has-media media-top char-card-${escapeHTML(c.slug)}" href="${resolveUrl("character/" + c.slug + ".html")}">
+          <div class="char-card-media is-${shape}" data-art-label="${escapeHTML((c.pinyin || c.slug).toUpperCase())}"><span class="char-card-ambience" aria-hidden="true" style="background-image:url('${escapeHTML(imageUrl)}')"></span><img class="char-card-img" src="${escapeHTML(imageUrl)}" alt="${escapeHTML(c.name)}"${sizeAttrs} loading="lazy"></div>
           <div class="char-card-body">
             <div class="char-head">
               <div class="char-meta"><h3 class="char-name">${escapeHTML(c.name)}</h3><div class="char-origin">${originLine}</div></div>
@@ -1327,6 +1344,31 @@ function renderCard(t) {
     });
   }
 
+  function initMotionReveal() {
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion || !("IntersectionObserver" in window)) return;
+
+    const targets = document.querySelectorAll(
+      ".portal-card, .tier-card, .char-card, .spec-card, .neighbor-row, .pager-card"
+    );
+    if (!targets.length) return;
+
+    const observer = new IntersectionObserver((entries, activeObserver) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in-view");
+        activeObserver.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px 0px -36px 0px", threshold: 0.06 });
+
+    targets.forEach((target, index) => {
+      target.classList.add("motion-reveal");
+      target.style.setProperty("--reveal-delay", `${(index % 4) * 55}ms`);
+      observer.observe(target);
+    });
+    requestAnimationFrame(() => document.documentElement.classList.add("has-motion-reveal"));
+  }
+
   /* --------------------------------------------------------------------------
      Boot — Render synchronous DOM lists FIRST, then restore cached scrollY
      -------------------------------------------------------------------------- */
@@ -1341,6 +1383,7 @@ function renderCard(t) {
     initBrowsingCacheAndBack();
     initGlobalSearchModal();
     initHorizontalRails();
+    initMotionReveal();
   }
 
   if (document.readyState === "loading") {
