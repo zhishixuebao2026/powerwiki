@@ -890,7 +890,7 @@ def build_home_page(
           <img class="hero-backdrop-img" src="static/img/cosmic-atlas-hero.jpg" width="1584" height="672" alt="">
         </div>
         <div class="hero-body">
-          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.28 最新基准（含 1.7 位格栏）</div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.30 最新基准（含 1.7 位格栏 · 5.6 / 8.3 修订）</div>
           <h1 class="hero-heading" id="home-title">从昆虫到无限，<br><span>查清每一个量级。</span></h1>
           <p class="hero-desc">从物理能量到无限基数，用同一套标尺查阅量级、角色证据与规则原文。</p>
           <div class="hero-cta-row">
@@ -1688,7 +1688,7 @@ def build_fulltext_doc_page(
 
     rules_tab_cls = "codex-tab active" if active_nav == "rules" else "codex-tab"
     mat_tab_cls = "codex-tab active" if active_nav == "materials" else "codex-tab"
-    version_label = "第五版 · 2026.10.28（1.7 位格栏）" if active_nav == "rules" else "第二版 · 物理参考"
+    version_label = "第五版 · 2026.10.30（1.7 · 5.6 / 8.3）" if active_nav == "rules" else "第二版 · 物理参考"
 
     body = f"""
     <div class="container">
