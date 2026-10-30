@@ -214,6 +214,21 @@
       closeAllDrawersAndModals();
     });
 
+    // Esc closes whichever panel is on top, so a drawer never traps the page.
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const openModal = document.querySelector(".modal-backdrop.open");
+      if (openModal) return; // the search modal handles its own Esc.
+      const sidebarOpen = document.getElementById("doc-sidebar")?.classList.contains("drawer-open");
+      const navOpen = drawer && drawer.classList.contains("open");
+      if (sidebarOpen || navOpen) {
+        closeAllDrawersAndModals();
+        if (sidebarOpen && document.getElementById("dock-toc-btn")) {
+          document.getElementById("dock-toc-btn").focus();
+        }
+      }
+    });
+
     window.addEventListener("resize", () => {
       if (window.innerWidth > 1080) {
         if (drawer && drawer.classList.contains("open")) drawer.classList.remove("open");
@@ -329,6 +344,26 @@
     const tocFilter = document.getElementById("toc-filter-input");
     const dockTocBtn = document.getElementById("dock-toc-btn");
     const mdBody = document.querySelector(".markdown-body");
+
+    /* The chapter drawer sits inside <main>, which is its own stacking context.
+       On touch layouts it is a fixed slide-over, so we lift it up to <body> to
+       keep it above the page veil — otherwise the veil dims it and swallows
+       every tap, which reads as "the button does nothing". */
+    if (sidebar) {
+      const sidebarHome = sidebar.parentElement;
+      const sidebarAnchor = sidebar.nextElementSibling;
+      const isDrawerMode = () => window.matchMedia("(max-width: 1080px)").matches;
+      const portalSidebar = () => {
+        if (isDrawerMode()) {
+          if (sidebar.parentElement !== document.body) document.body.appendChild(sidebar);
+        } else if (sidebar.parentElement === document.body && sidebarHome) {
+          sidebarHome.insertBefore(sidebar, sidebarAnchor);
+        }
+      };
+      portalSidebar();
+      window.addEventListener("resize", portalSidebar);
+      window.addEventListener("orientationchange", portalSidebar);
+    }
 
     const storedPrefs = safeGetJSON(storageFor("local"), STORAGE_KEYS.readerPrefs, {});
     const storedFontSize = storedPrefs && typeof storedPrefs === "object" ? storedPrefs.fontSize : undefined;
@@ -525,11 +560,50 @@
       });
     }
 
+    const syncTocTriggerState = () => {
+      if (!dockTocBtn) return;
+      const open = sidebar.classList.contains("drawer-open");
+      dockTocBtn.classList.toggle("is-active", open);
+      dockTocBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+
     if (dockTocBtn) {
+      dockTocBtn.setAttribute("aria-controls", "doc-sidebar");
+      dockTocBtn.setAttribute("aria-expanded", "false");
       dockTocBtn.addEventListener("click", () => {
         const drawer = document.getElementById("site-drawer");
         if (drawer) drawer.classList.remove("open");
         sidebar.classList.toggle("drawer-open");
+        syncScrollLock();
+        syncTocTriggerState();
+        if (sidebar.classList.contains("drawer-open")) {
+          const filter = sidebar.querySelector(".toc-filter");
+          if (filter && window.matchMedia("(hover: none)").matches) filter.blur();
+        }
+      });
+      // Reflect state changes triggered elsewhere (backdrop tap, Esc, resize).
+      const tocStateObserver = new MutationObserver(syncTocTriggerState);
+      tocStateObserver.observe(sidebar, { attributes: true, attributeFilter: ["class"] });
+      syncTocTriggerState();
+    }
+
+    const tocCloseBtn = document.getElementById("toc-drawer-close");
+    if (tocCloseBtn) {
+      tocCloseBtn.addEventListener("click", () => {
+        sidebar.classList.remove("drawer-open");
+        syncScrollLock();
+        if (dockTocBtn) dockTocBtn.focus();
+      });
+    }
+
+    // From the chapter drawer, hand over to the full-site navigation drawer so the
+    // bottom-right button always leads somewhere.
+    const tocOpenNavBtn = document.getElementById("toc-open-nav-btn");
+    if (tocOpenNavBtn) {
+      tocOpenNavBtn.addEventListener("click", () => {
+        sidebar.classList.remove("drawer-open");
+        const navDrawer = document.getElementById("site-drawer");
+        if (navDrawer) navDrawer.classList.add("open");
         syncScrollLock();
       });
     }

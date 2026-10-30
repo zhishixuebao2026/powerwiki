@@ -321,95 +321,118 @@ body.character-yutu .md-figure {
 }
 
 /* ==========================================================================
-   FUTAN / 深渊信标与禁区档案
-   Light is a sea-glass observatory; dark is a black-water classified console.
+   FUTAN / 弗坦 · 深渊观测档案
+   One accent per mode. Reading surfaces are opaque so the text never sits on
+   a photographic haze; the abyss shows up as a restrained gradient, a brass
+   register mark and hairlines — not as a page-wide dark wash.
+     light → cold paper, sea-teal accent, brass only for register/kickers
+     dark  → black water, brass accent, sea-glass as a quiet secondary
    ========================================================================== */
 [data-theme="light"] body.character-futan {
-  --bg-canvas: #edf1eb;
-  --bg-subtle: #e1e8df;
-  --bg-surface: #f9faf5;
-  --bg-elevated: #f1f4ec;
-  --bg-header: rgba(237, 241, 235, .92);
-  --text-primary: #18302b;
-  --text-secondary: #4c665d;
-  --text-muted: #71867c;
-  --accent: #876936;
-  --accent-strong: #674f25;
-  --accent-soft: rgba(135, 105, 54, .09);
-  --border-accent: rgba(75, 119, 104, .28);
-  --panel-glass: rgba(249, 250, 245, .84);
-  --site-grid: rgba(59, 112, 94, .03);
-  --char-accent: #3f7568;
-  --char-accent-strong: #2f5a50;
-  --char-accent-soft: rgba(63, 117, 104, .09);
-  --char-border-accent: rgba(63, 117, 104, .24);
-  --char-header-accent: #876936;
+  --bg-canvas: #eceee7;
+  --bg-subtle: #e3e7de;
+  --bg-surface: #fbfcf7;
+  --bg-elevated: #f3f5ee;
+  --bg-header: rgba(251, 252, 247, .95);
+  --text-primary: #10241f;
+  --text-secondary: #3c544c;
+  --text-muted: #5f766d;
+  --accent: #1f5b50;
+  --accent-strong: #15463d;
+  --accent-soft: rgba(31, 91, 80, .085);
+  --border-accent: rgba(31, 91, 80, .26);
+  --border-subtle: rgba(16, 36, 31, .10);
+  --border-default: rgba(16, 36, 31, .16);
+  --panel-glass: #fbfcf7;
+  --site-grid: rgba(16, 36, 31, .035);
+  --char-accent: #1f5b50;
+  --char-accent-strong: #15463d;
+  --char-accent-soft: rgba(31, 91, 80, .085);
+  --char-border-accent: rgba(31, 91, 80, .26);
+  --char-header-accent: #8a6a2f;
+  --char-art-opacity: 1;
   --char-atmosphere:
-    radial-gradient(760px 420px at 75% 8%, rgba(116, 153, 129, .16), transparent 70%),
-    linear-gradient(180deg, rgba(237, 241, 235, .35), rgba(237, 241, 235, .98)),
-    url("../img/characters/futan/abyssal-observation.jpg");
-  --char-art-opacity: .28;
+    radial-gradient(940px 460px at 76% -12%, rgba(31, 91, 80, .10), transparent 72%),
+    linear-gradient(180deg, #eceee7, #eceee7);
+  /* dock / drawer surfaces */
+  --abyss-glass: #fbfcf7;
+  --abyss-stroke: rgba(16, 36, 31, .14);
+  --abyss-glow: rgba(138, 106, 47, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(16, 36, 31, .26);
 }
 [data-theme="dark"] body.character-futan {
-  --bg-canvas: #050e11;
-  --bg-subtle: #0a191c;
-  --bg-surface: #0e2022;
-  --bg-elevated: #142c2d;
-  --bg-header: rgba(5, 14, 17, .93);
-  --text-primary: #e8ede7;
-  --text-secondary: #a7b8ad;
-  --text-muted: #758a7f;
-  --accent: #d3b86f;
-  --accent-strong: #eed398;
-  --accent-soft: rgba(211, 184, 111, .1);
-  --border-accent: rgba(211, 184, 111, .3);
-  --panel-glass: rgba(10, 28, 30, .84);
-  --site-grid: rgba(211, 184, 111, .023);
-  --char-accent: #d3b86f;
-  --char-accent-strong: #eed398;
-  --char-accent-soft: rgba(211, 184, 111, .1);
-  --char-border-accent: rgba(211, 184, 111, .3);
-  --char-header-accent: #dfc47d;
+  --bg-canvas: #05100f;
+  --bg-subtle: #0a1917;
+  --bg-surface: #0c1e1b;
+  --bg-elevated: #122724;
+  --bg-header: rgba(6, 17, 16, .95);
+  --text-primary: #e9eee8;
+  --text-secondary: #a8bcb3;
+  --text-muted: #7d938a;
+  --accent: #d8bc7b;
+  --accent-strong: #efd79b;
+  --accent-soft: rgba(216, 188, 123, .10);
+  --border-accent: rgba(216, 188, 123, .28);
+  --border-subtle: rgba(233, 238, 232, .085);
+  --border-default: rgba(233, 238, 232, .15);
+  --panel-glass: #0c1e1b;
+  --site-grid: rgba(216, 188, 123, .022);
+  --char-accent: #d8bc7b;
+  --char-accent-strong: #efd79b;
+  --char-accent-soft: rgba(216, 188, 123, .10);
+  --char-border-accent: rgba(216, 188, 123, .28);
+  --char-header-accent: #d8bc7b;
+  --char-art-opacity: 1;
   --char-atmosphere:
-    radial-gradient(760px 420px at 73% 6%, rgba(51, 116, 111, .18), transparent 72%),
-    linear-gradient(180deg, rgba(5, 14, 17, .2), rgba(5, 14, 17, .96)),
-    url("../img/characters/futan/abyssal-observation.jpg");
-  --char-art-opacity: .47;
+    radial-gradient(960px 480px at 74% -12%, rgba(47, 112, 100, .18), transparent 74%),
+    linear-gradient(180deg, #071615, #05100f);
+  --abyss-glass: #0c1e1b;
+  --abyss-stroke: rgba(216, 188, 123, .18);
+  --abyss-glow: rgba(216, 188, 123, .40);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(2, 8, 8, .58);
 }
 
 [data-theme="light"] body.character-futan .character-dossier {
-  --dossier-bg: #e6ede5;
-  --dossier-text: #18312c;
-  --dossier-muted: #4f695f;
-  --dossier-accent: #876936;
-  --dossier-border: rgba(67, 111, 96, .28);
-  --dossier-surface: rgba(244, 248, 240, .82);
-  --dossier-art-opacity: .36;
-  --dossier-overlay: linear-gradient(90deg, rgba(230, 237, 229, .98) 0%, rgba(230, 237, 229, .91) 48%, rgba(230, 237, 229, .66) 77%, rgba(230, 237, 229, .48) 100%);
+  --dossier-bg: #f7f9f4;
+  --dossier-text: #10241f;
+  --dossier-muted: #435c54;
+  --dossier-accent: #8a6a2f;
+  --dossier-border: rgba(16, 36, 31, .14);
+  --dossier-surface: #fdfef9;
+  --dossier-art-opacity: .16;
+  --dossier-overlay: linear-gradient(90deg, rgba(247, 249, 244, .985) 0%, rgba(247, 249, 244, .95) 44%, rgba(247, 249, 244, .80) 76%, rgba(247, 249, 244, .58) 100%);
   --dossier-motif:
-    radial-gradient(ellipse 420px 300px at 82% 46%, transparent 48%, rgba(62, 116, 96, .18) 48.2% 48.6%, transparent 48.9%),
-    radial-gradient(ellipse 300px 210px at 82% 46%, transparent 48%, rgba(135, 105, 54, .16) 48.3% 48.7%, transparent 49%),
-    repeating-linear-gradient(0deg, transparent 0 13px, rgba(49, 91, 78, .035) 14px 15px);
+    radial-gradient(ellipse 420px 300px at 82% 46%, transparent 48%, rgba(31, 91, 80, .14) 48.2% 48.6%, transparent 48.9%),
+    radial-gradient(ellipse 300px 210px at 82% 46%, transparent 48%, rgba(138, 106, 47, .14) 48.3% 48.7%, transparent 49%),
+    repeating-linear-gradient(0deg, transparent 0 13px, rgba(16, 36, 31, .028) 14px 15px);
 }
 [data-theme="dark"] body.character-futan .character-dossier {
-  --dossier-bg: #071518;
-  --dossier-text: #e8ede7;
-  --dossier-muted: #a2b5aa;
-  --dossier-accent: #dfc47d;
-  --dossier-border: rgba(211, 184, 111, .26);
-  --dossier-surface: rgba(6, 22, 25, .82);
-  --dossier-art-opacity: .84;
-  --dossier-overlay: linear-gradient(90deg, rgba(4, 14, 17, .96) 0%, rgba(4, 14, 17, .84) 44%, rgba(4, 14, 17, .48) 78%, rgba(4, 14, 17, .30) 100%), linear-gradient(180deg, rgba(4, 14, 17, .04), rgba(4, 14, 17, .38));
+  --dossier-bg: #081715;
+  --dossier-text: #e9eee8;
+  --dossier-muted: #a8bcb3;
+  --dossier-accent: #d8bc7b;
+  --dossier-border: rgba(216, 188, 123, .18);
+  --dossier-surface: #0b1d1a;
+  --dossier-art-opacity: .52;
+  --dossier-overlay:
+    linear-gradient(90deg, rgba(8, 23, 21, .97) 0%, rgba(8, 23, 21, .90) 44%, rgba(8, 23, 21, .62) 78%, rgba(8, 23, 21, .45) 100%),
+    linear-gradient(180deg, rgba(8, 23, 21, .05), rgba(8, 23, 21, .35));
   --dossier-motif:
-    radial-gradient(ellipse 420px 300px at 82% 46%, transparent 48%, rgba(93, 163, 150, .25) 48.2% 48.5%, transparent 48.8%),
-    radial-gradient(ellipse 300px 210px at 82% 46%, transparent 48%, rgba(211, 184, 111, .2) 48.3% 48.7%, transparent 49%),
-    repeating-linear-gradient(0deg, transparent 0 13px, rgba(211, 184, 111, .045) 14px 15px);
+    radial-gradient(ellipse 420px 300px at 82% 46%, transparent 48%, rgba(93, 163, 150, .22) 48.2% 48.5%, transparent 48.8%),
+    radial-gradient(ellipse 300px 210px at 82% 46%, transparent 48%, rgba(216, 188, 123, .18) 48.3% 48.7%, transparent 49%),
+    repeating-linear-gradient(0deg, transparent 0 13px, rgba(216, 188, 123, .04) 14px 15px);
 }
 
 body.character-futan .character-dossier {
   border-radius: 4px;
+  border: 1px solid var(--dossier-border);
   overflow: hidden;
-  box-shadow: 0 28px 78px rgba(3, 15, 17, .17);
+  box-shadow: 0 26px 70px rgba(3, 15, 17, .16);
+}
+[data-theme="light"] body.character-futan .character-dossier {
+  box-shadow: 0 22px 60px rgba(16, 36, 31, .08);
 }
 body.character-futan .character-dossier::after {
   background: var(--dossier-motif), var(--dossier-overlay);
@@ -443,7 +466,8 @@ body.character-futan .character-dossier .page-title {
   font-size: clamp(43px, 5.4vw, 66px);
   font-weight: 580;
   letter-spacing: .015em;
-  text-shadow: 0 6px 36px color-mix(in srgb, var(--dossier-accent) 16%, transparent);
+  color: var(--dossier-text);
+  text-shadow: 0 6px 36px color-mix(in srgb, var(--dossier-accent) 14%, transparent);
 }
 body.character-futan .character-dossier .page-desc {
   max-width: 58ch;
@@ -454,8 +478,12 @@ body.character-futan .character-dossier .page-desc {
 body.character-futan .character-dossier .tag-pill { border-radius: 3px; }
 body.character-futan .character-dossier .dossier-kpi-card {
   border-radius: 3px;
-  border-left: 2px solid color-mix(in srgb, var(--dossier-accent) 45%, transparent);
-  background: color-mix(in srgb, var(--dossier-surface) 92%, transparent);
+  border: 1px solid var(--dossier-border);
+  border-left: 2px solid color-mix(in srgb, var(--dossier-accent) 55%, transparent);
+  background: var(--dossier-surface);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 body.character-futan .character-dossier .char-portrait-stage {
   border-radius: 3px;
@@ -497,7 +525,9 @@ body.character-futan .theme-futan .char-portrait-img {
 body.character-futan .portrait-index { border-radius: 2px; }
 body.character-futan .dossier-fact-rail {
   border-top: 1px solid var(--dossier-border);
-  background: linear-gradient(90deg, color-mix(in srgb, var(--dossier-accent) 6%, var(--dossier-bg)), var(--dossier-surface));
+  background: var(--dossier-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 body.character-futan .dossier-fact { position: relative; border-right: 0; }
 body.character-futan .dossier-fact + .dossier-fact { border-left: 1px solid var(--dossier-border); }
@@ -510,9 +540,7 @@ body.character-futan .dossier-fact .fact-value {
   font-family: var(--font-editorial);
   font-size: clamp(18px, 2vw, 24px);
   letter-spacing: -.025em;
-}
-body.character-futan .doc-sidebar {
-  border-left: 2px solid color-mix(in srgb, var(--accent) 36%, transparent);
+  color: var(--dossier-text);
 }
 body.character-futan .toc-item.active { border-radius: 2px; }
 body.character-futan .markdown-body h2::before { letter-spacing: .06em; }
@@ -521,12 +549,135 @@ body.character-futan .markdown-body blockquote {
   background: linear-gradient(90deg, color-mix(in srgb, var(--dossier-accent) 9%, transparent), transparent 90%);
 }
 [data-theme="light"] body.character-futan .theme-futan .char-portrait-img {
-  filter: saturate(.56) contrast(.94) brightness(1.22);
-  mix-blend-mode: screen;
+  filter: saturate(.72) contrast(1.02);
 }
 [data-theme="light"] body.character-futan .theme-futan .char-portrait-stage {
   box-shadow: 0 16px 38px rgba(39, 77, 63, .12);
 }
+
+/* ---------- 弗坦 · 阅读与工具：实心底面，清楚边界 ---------- */
+[data-theme="light"] body.character-futan { --futan-shadow: 0 10px 30px rgba(16, 36, 31, .08); }
+[data-theme="dark"] body.character-futan { --futan-shadow: 0 12px 34px rgba(0, 0, 0, .34); }
+
+body.character-futan .doc-sidebar,
+body.character-futan .doc-toolbar,
+body.character-futan .reader-rail,
+body.character-futan .doc-panel,
+body.character-futan .md-table-wrap,
+body.character-futan .md-figure,
+body.character-futan .char-info-panel,
+body.character-futan .pager-card,
+body.character-futan .back-btn,
+body.character-futan .site-drawer,
+body.character-futan .modal-panel,
+body.character-futan .search-modal-head,
+body.character-futan .search-btn,
+body.character-futan .icon-btn {
+  background: var(--bg-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: var(--border-default);
+  box-shadow: none;
+}
+body.character-futan .doc-sidebar {
+  border: 1px solid var(--border-default);
+  border-left: 2px solid color-mix(in srgb, var(--accent) 42%, transparent);
+  border-radius: 4px;
+  box-shadow: var(--futan-shadow);
+}
+body.character-futan .doc-toolbar {
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  box-shadow: none;
+}
+body.character-futan .reader-rail {
+  border-radius: 6px;
+  box-shadow: var(--futan-shadow);
+}
+body.character-futan .char-info-panel {
+  border-radius: 4px;
+  border: 1px solid var(--border-default);
+  box-shadow: var(--futan-shadow);
+}
+body.character-futan .site-header {
+  background: var(--bg-header);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid var(--border-default);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 10%, transparent);
+}
+body.character-futan .site-drawer {
+  border-right: 1px solid var(--border-default);
+  box-shadow: 0 24px 70px rgba(3, 15, 17, .34);
+}
+body.character-futan .modal-panel { box-shadow: 0 30px 90px rgba(0, 0, 0, .38); }
+body.character-futan .toc-head {
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+body.character-futan .toc-filter { background: var(--bg-surface); border-color: var(--border-default); }
+body.character-futan .toc-item { border-radius: 2px; }
+body.character-futan .toc-item.active {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-left-color: var(--accent);
+  color: var(--accent);
+}
+body.character-futan .markdown-body .md-table-wrap,
+body.character-futan .markdown-body .md-figure {
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+}
+body.character-futan .markdown-body th {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+body.character-futan .markdown-body td { border-bottom: 1px solid var(--border-subtle); }
+body.character-futan .markdown-body tbody tr:hover td {
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+body.character-futan .dock-btn {
+  background: var(--bg-surface);
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+  box-shadow: var(--futan-shadow);
+}
+body.character-futan .dock-btn:hover,
+body.character-futan .dock-btn.is-active {
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg-surface));
+  border-color: var(--border-accent);
+  color: var(--accent);
+}
+body.character-futan .char-dim {
+  background: color-mix(in srgb, var(--char-accent) 7%, var(--bg-surface));
+  border-color: color-mix(in srgb, var(--char-accent) 24%, transparent);
+}
+body.character-futan .char-fact {
+  background: color-mix(in srgb, var(--char-accent) 6%, var(--bg-surface));
+}
+body.character-futan .char-info-note {
+  background: color-mix(in srgb, var(--char-accent) 9%, var(--bg-surface));
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+/* 信息图只服务窄屏；桌面已有更完整的档案三栏，不在正文上方重复一遍 */
+@media (min-width: 1081px) {
+  body.character-futan .char-info-panel { display: none; }
+}
+@media (max-width: 1080px) {
+  /* 档案事实栏已经列过同样的三项，窄屏信息图不再重复 */
+  body.character-futan .char-info-panel .char-facts { display: none; }
+  body.character-futan .char-info-note { display: inline-block; line-height: 1.6; }
+}
+
+/* 正文起首的分隔线不再顶出一大片空白 */
+body.character-futan .doc-panel { padding: 22px 30px 56px; }
+body.character-futan .doc-panel > .markdown-body > hr:first-child { display: none; }
+body.character-futan .doc-panel > .markdown-body > hr { margin: 26px 0; }
+body.character-futan .doc-panel > .markdown-body > h2:first-of-type { margin-top: 12px; }
+body.character-futan .toc-item { color: var(--text-secondary); }
+body.character-futan .toc-item:hover { color: var(--text-primary); }
+body.character-futan .toc-item.active { color: var(--accent); }
 
 /* Character cards hint at their destination world, without overpowering the roster. */
 .char-card-yutu,
@@ -998,7 +1149,6 @@ body.character-yutu .char-identity-fx span:nth-child(3) {
 @keyframes yutuFloatC { 0%,100% { transform: translate(0,0) scale(.95); } 50% { transform: translate(7vw,-9vh) scale(1.12); } }
 
 body.character-yutu .site-header,
-body.character-yutu .floating-dock,
 body.character-yutu .doc-sidebar,
 body.character-yutu .char-info-panel,
 body.character-yutu .tier-card,
@@ -1034,20 +1184,7 @@ body.character-yutu .tier-chip {
   box-shadow: 0 6px 18px color-mix(in srgb, var(--char-accent) 35%, transparent), inset 0 1px 0 rgba(255,255,255,.35);
 }
 
-/* ---------- FUTAN · 深渊信标 — 深海沉静 + 金线 ---------- */
-[data-theme="light"] body.character-futan {
-  --abyss-deep: rgba(6, 26, 28, .28);
-  --abyss-glow: rgba(196, 168, 104, .45);
-  --abyss-glass: rgba(249, 251, 247, .52);
-  --abyss-stroke: rgba(74, 118, 104, .30);
-}
-[data-theme="dark"] body.character-futan {
-  --abyss-deep: rgba(2, 12, 14, .86);
-  --abyss-glow: rgba(226, 198, 120, .5);
-  --abyss-glass: rgba(9, 26, 29, .5);
-  --abyss-stroke: rgba(120, 200, 178, .22);
-}
-
+/* ---------- FUTAN · 环境光：只在页首留一层极淡的深海反光 ---------- */
 body.character-futan { position: relative; isolation: isolate; }
 
 body.character-futan .char-identity-fx {
@@ -1057,41 +1194,46 @@ body.character-futan .char-identity-fx {
   pointer-events: none;
   overflow: hidden;
   background:
-    radial-gradient(120% 70% at 50% -10%, transparent 38%, var(--abyss-deep) 100%),
-    radial-gradient(80% 50% at 50% 115%, transparent 42%, rgba(8, 30, 32, .35) 100%);
+    radial-gradient(760px 340px at 64% -10%, rgba(31, 91, 80, .10), transparent 72%),
+    radial-gradient(600px 280px at 18% -14%, rgba(138, 106, 47, .07), transparent 74%);
 }
-body.character-futan .char-identity-fx::after {
-  content: "";
-  position: absolute;
-  inset: 0;
+[data-theme="dark"] body.character-futan .char-identity-fx {
   background:
-    radial-gradient(circle at 22% 30%, rgba(196,168,104,.10), transparent 40%),
-    radial-gradient(circle at 78% 62%, rgba(80,150,132,.10), transparent 42%);
-  animation: futanBreath 14s ease-in-out infinite;
+    radial-gradient(820px 380px at 64% -12%, rgba(47, 112, 100, .20), transparent 74%),
+    radial-gradient(620px 300px at 16% -16%, rgba(216, 188, 123, .09), transparent 76%);
 }
-@keyframes futanBreath { 0%,100% { opacity: .55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
+body.character-futan .char-identity-fx::after { content: none; }
 
-body.character-futan .site-header,
-body.character-futan .floating-dock,
+body.character-futan .site-header {
+  background: var(--bg-header);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid var(--border-default);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 10%, transparent);
+}
 body.character-futan .doc-sidebar,
 body.character-futan .char-info-panel,
+body.character-futan .site-drawer,
+body.character-futan .modal-panel,
 body.character-futan .tier-card,
-body.character-futan .spec-card,
-body.character-futan .site-modal .modal-panel,
-body.character-futan .site-drawer {
-  background: var(--abyss-glass);
-  -webkit-backdrop-filter: blur(16px) saturate(1.3);
-  backdrop-filter: blur(16px) saturate(1.3);
-  border-color: var(--abyss-stroke);
-  box-shadow: 0 16px 40px rgba(4, 16, 18, .30), inset 0 1px 0 rgba(255,255,255,.06);
+body.character-futan .spec-card {
+  background: var(--bg-surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: var(--border-default);
 }
-body.character-futan .site-header { border-bottom: 1px solid var(--abyss-stroke); }
 body.character-futan .tag-pill.accent,
-body.character-futan .tier-chip { border-color: var(--abyss-glow); }
-body.character-futan .char-info-main { text-shadow: 0 6px 30px var(--abyss-glow); }
+body.character-futan .tier-chip { border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+/* 标签跟随页面主色，只有登记号、§编号用黄铜色，避免同一行里两个强调色打架 */
+body.character-futan .character-dossier .tag-pill.accent {
+  background: var(--accent-soft);
+  border-color: var(--border-accent);
+  color: var(--accent);
+}
+body.character-futan .char-info-main { text-shadow: 0 6px 30px color-mix(in srgb, var(--accent) 35%, transparent); }
 body.character-futan .tier-card:hover,
 body.character-futan .spec-card:hover {
-  box-shadow: 0 16px 40px rgba(4,16,18,.35), 0 0 0 1px var(--abyss-glow);
+  box-shadow: 0 16px 40px rgba(4, 16, 18, .28), 0 0 0 1px var(--border-accent);
 }
 
 /* ---------- 移动端信息图 / CHARACTER INFOGRAPHIC ---------- */

@@ -1486,13 +1486,20 @@ def build_character_detail_pages(
               <div class="toc-head">
                 <div class="toc-head-row">
                   <span>档案章节目录</span>
-                  <span class="mono">{len(doc_renderer.toc)} 节</span>
+                  <span class="mono toc-count">{len(doc_renderer.toc)} 节</span>
+                  <button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭章节目录">
+                    <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
                 </div>
                 <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
               </div>
               <nav class="toc-list" id="toc-nav">
                 {toc_links_html}
               </nav>
+              <div class="toc-foot">
+                <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+                <a class="toc-foot-btn" href="../search.html">全站检索</a>
+              </div>
             </aside>
 
             <article class="doc-panel">
@@ -1699,8 +1706,12 @@ def build_fulltext_doc_page(
 
       <div class="doc-layout">
         <aside class="doc-sidebar" id="doc-sidebar" aria-label="全文目录">
-          <div class="toc-head"><div class="toc-head-row"><span>本文目录</span><span class="mono">{len(renderer.toc)}</span></div><input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off"></div>
+          <div class="toc-head"><div class="toc-head-row"><span>本文目录</span><span class="mono toc-count">{len(renderer.toc)}</span><button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭目录"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off"></div>
           <nav class="toc-list" id="toc-nav">{''.join(toc_links)}</nav>
+          <div class="toc-foot">
+            <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+            <a class="toc-foot-btn" href="search.html">全站检索</a>
+          </div>
         </aside>
         <article class="doc-panel">
           <div class="doc-toolbar">

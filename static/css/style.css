@@ -11,6 +11,7 @@
   --bg-elevated: #181d2a;
   --bg-header: rgba(9, 11, 16, 0.84);
   --bg-backdrop: rgba(4, 6, 10, 0.76);
+  --drawer-veil: rgba(3, 7, 10, 0.55);
 
   --border-subtle: rgba(255, 255, 255, 0.07);
   --border-default: rgba(255, 255, 255, 0.12);
@@ -77,6 +78,7 @@
   --bg-elevated: #f3f1eb;
   --bg-header: rgba(245, 244, 240, 0.88);
   --bg-backdrop: rgba(15, 18, 24, 0.42);
+  --drawer-veil: rgba(22, 28, 26, 0.28);
 
   --border-subtle: rgba(17, 24, 39, 0.07);
   --border-default: rgba(17, 24, 39, 0.12);
@@ -159,6 +161,15 @@ body {
 
 body.is-scroll-locked {
   overflow: hidden !important;
+}
+
+/* When a drawer or modal is up, the page's own floating tools step aside so
+   they never peek out from behind the panel. */
+body.is-scroll-locked .floating-dock,
+body.is-scroll-locked .reader-rail {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease;
 }
 
 main {
@@ -460,15 +471,16 @@ code {
   position: fixed;
   inset: 0;
   z-index: 1180;
-  background: var(--bg-backdrop);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: var(--drawer-veil, rgba(6, 12, 16, 0.45));
   display: none;
 }
 
 .drawer-backdrop.open {
   display: block;
+  animation: pwVeilIn 0.2s ease both;
 }
+
+@keyframes pwVeilIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* Standalone Slide-Over Navigation Drawer (Immune to Header Backdrop-Filter Trap) */
 .site-drawer {
@@ -2690,6 +2702,45 @@ code {
   margin-bottom: 8px;
 }
 
+/* Drawer footer shortcuts — only meaningful inside the mobile TOC drawer. */
+.toc-foot { display: none; }
+.toc-foot-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--border-default);
+  border-radius: 9px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+.toc-foot-btn:hover { color: var(--accent); border-color: var(--border-accent); }
+
+/* Close affordance for the mobile TOC drawer; hidden on desktop. */
+.toc-close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-left: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.toc-close:hover { color: var(--accent); border-color: var(--border-accent); }
+.toc-head-row .toc-count { margin-left: auto; margin-right: 2px; }
+
 .toc-filter {
   width: 100%;
   height: 30px;
@@ -3029,6 +3080,8 @@ code {
 /* --------------------------------------------------------------------------
    10. Search Modal, Dedicated Search Hits, Floating Dock & Footer
    -------------------------------------------------------------------------- */
+/* The dock is a bare wrapper: it must never paint its own surface, otherwise
+   an empty plate floats above the page whenever the buttons are hidden. */
 .floating-dock {
   position: fixed;
   right: 20px;
@@ -3036,27 +3089,49 @@ code {
   z-index: 950;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 8px;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
 }
 
 .dock-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--r-md);
-  background: var(--bg-elevated);
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--bg-surface);
   border: 1px solid var(--border-default);
   color: var(--text-secondary);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 6px 18px rgba(15, 24, 20, 0.12);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: background-color 0.16s ease, border-color 0.16s ease,
+    color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
 }
+
+.dock-btn .svg-icon { width: 18px; height: 18px; }
 
 .dock-btn:hover {
   border-color: var(--border-accent);
   color: var(--accent);
+  box-shadow: 0 10px 24px rgba(15, 24, 20, 0.16);
+}
+
+.dock-btn:active { transform: translateY(1px); }
+
+.dock-btn.is-active {
+  border-color: var(--border-accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.dock-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .dock-btn.is-hidden {
@@ -3123,6 +3198,14 @@ code {
   outline: none;
 }
 
+/* The panel is a flex column: keep the chrome rows at their natural height so
+   long result lists never squash the tabs or the footer. */
+.search-modal-head,
+.search-modal-tabs,
+.search-modal-foot {
+  flex: 0 0 auto;
+}
+
 .search-modal-tabs {
   display: flex;
   gap: 6px;
@@ -3141,8 +3224,11 @@ code {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 8px 10px;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
 }
+
+.search-modal-tabs .chip-btn { flex: 0 0 auto; white-space: nowrap; }
 
 .search-modal-empty {
   padding: 32px 16px;
@@ -3318,17 +3404,34 @@ mark {
     top: var(--header-h);
     left: 0;
     bottom: 0;
-    width: min(300px, 85%);
+    width: min(320px, 88%);
     max-height: none;
     z-index: 1190;
-    border-radius: 0 var(--r-lg) var(--r-lg) 0;
+    border: 0;
+    border-right: 1px solid var(--border-default);
+    border-radius: 0 16px 16px 0;
+    background: var(--bg-surface);
+    box-shadow: 0 24px 70px rgba(6, 16, 14, 0.34);
     transform: translateX(-105%);
-    transition: transform 0.22s ease;
-    box-shadow: var(--shadow-lg);
+    visibility: hidden;
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.22s ease;
+    overscroll-behavior: contain;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .doc-sidebar.drawer-open {
     transform: translateX(0);
+    visibility: visible;
+  }
+
+  .doc-sidebar .toc-close { display: inline-flex; }
+  .doc-sidebar .toc-foot {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-subtle);
   }
 
   .dock-toc-trigger {
@@ -4033,7 +4136,8 @@ h1, h2, h3,
 .markdown-body h1, .markdown-body h2, .markdown-body h3 { font-family: var(--font-display); }
 .md-table-wrap, .md-figure { box-shadow: 0 6px 24px rgba(25,35,30,.03); }
 
-/* Character-scoped accents continue through the evidence reader. */
+/* Character-scoped accents continue through the evidence reader.
+   Fután keeps a single accent per mode: deep sea-teal in daylight, brass at night. */
 .character-yutu {
   --accent: #386484;
   --accent-strong: #294b66;
@@ -4041,10 +4145,10 @@ h1, h2, h3,
   --border-accent: rgba(56,100,132,.28);
 }
 .character-futan {
-  --accent: #336f65;
-  --accent-strong: #24534c;
-  --accent-soft: rgba(51,111,101,.09);
-  --border-accent: rgba(51,111,101,.28);
+  --accent: #1f5b50;
+  --accent-strong: #15463d;
+  --accent-soft: rgba(31,91,80,.09);
+  --border-accent: rgba(31,91,80,.26);
 }
 [data-theme="dark"] .character-yutu {
   --accent: #94b9d8;
@@ -4053,10 +4157,10 @@ h1, h2, h3,
   --border-accent: rgba(148,185,216,.30);
 }
 [data-theme="dark"] .character-futan {
-  --accent: #8cbcaf;
-  --accent-strong: #b7d6cc;
-  --accent-soft: rgba(140,188,175,.11);
-  --border-accent: rgba(140,188,175,.30);
+  --accent: #d8bc7b;
+  --accent-strong: #efd79b;
+  --accent-soft: rgba(216,188,123,.11);
+  --border-accent: rgba(216,188,123,.30);
 }
 .character-detail .doc-toolbar { border-bottom-color: var(--border-accent); }
 .character-detail .markdown-body h2 { padding-bottom: 10px; border-bottom: 1px solid var(--border-subtle); }
