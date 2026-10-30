@@ -111,6 +111,11 @@
      -------------------------------------------------------------------------- */
   function initTheme() {
     const btn = document.getElementById("theme-toggle-btn");
+    const syncThemeMeta = () => {
+      const cur = document.documentElement.getAttribute("data-theme") || "dark";
+      const mc = document.getElementById("theme-color-meta");
+      if (mc) mc.setAttribute("content", cur === "dark" ? "#090b10" : "#f6f7f4");
+    };
     const updateIcon = () => {
       if (!btn) return;
       const cur = document.documentElement.getAttribute("data-theme") || "dark";
@@ -118,6 +123,7 @@
       btn.setAttribute("title", cur === "dark" ? "切换至浅色主题" : "切换至深色主题");
     };
     updateIcon();
+    syncThemeMeta();
     if (btn) {
       btn.addEventListener("click", () => {
         const root = document.documentElement;
@@ -130,6 +136,7 @@
             localStorage.setItem(STORAGE_KEYS.theme, next);
           } catch (_) {}
           updateIcon();
+          syncThemeMeta();
         };
 
         if (!reduceMotion && typeof document.startViewTransition === "function") {

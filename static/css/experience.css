@@ -779,3 +779,159 @@ body:has(.reader-rail) .markdown-body :is(h1, h2, h3)[id] { scroll-margin-top: c
   opacity: .78;
   white-space: nowrap;
 }
+
+/* ==========================================================================
+   PowerWiki v9.2 — Mobile Hardening, Safe-Area & Print Refinement
+   A quiet, additive pass: touch ergonomics, notched-device insets,
+   very-small-screen tuning and clean print output. No new flourishes.
+   ========================================================================== */
+
+/* --- Prevent tap-highlight flash and double-tap zoom latency --- */
+a, button, input, select, textarea, summary, [role="button"], [contenteditable] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* --- Keep the user's text size across rotation (iOS auto-zoom guard) --- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* --- Notched devices: honour safe-area insets (viewport-fit=cover) --- */
+.site-footer {
+  padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+}
+.floating-dock {
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  right: max(20px, env(safe-area-inset-right, 0px));
+}
+.site-drawer {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* --- Larger touch targets for the floating dock / menu on touch devices --- */
+@media (hover: none) and (pointer: coarse) {
+  .dock-btn {
+    width: 46px;
+    height: 46px;
+  }
+  .mobile-menu-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* --- Very small screens: tighten type and avoid negative-margin overflow --- */
+@media (max-width: 380px) {
+  .hero-heading { font-size: 31px; }
+  .hero-desc { font-size: 13.5px; }
+  .portal-card { padding: 20px 16px; }
+  .home-stats { margin-left: -16px; margin-right: -16px; }
+  .tier-grid { grid-template-columns: 1fr; }
+  .char-grid { grid-template-columns: 1fr; }
+}
+
+/* --- Print: hide chrome, flatten surfaces, keep content readable --- */
+@page { margin: 18mm; }
+@media print {
+  :root { color-scheme: light; }
+  .site-header,
+  .site-footer,
+  .floating-dock,
+  .doc-sidebar,
+  .doc-toolbar,
+  .reading-progress,
+  .modal-backdrop,
+  .site-drawer,
+  .drawer-backdrop,
+  .subpage-bar,
+  .pager-grid,
+  .neighbor-stack,
+  .back-btn,
+  .control-panel,
+  .dock-toc-trigger,
+  .toc-dock {
+    display: none !important;
+  }
+  html, body {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  body { padding: 0 !important; }
+  .doc-layout { grid-template-columns: minmax(0, 1fr) !important; }
+  .markdown-body,
+  .markdown-body p,
+  .markdown-body li {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  a { color: #111111 !important; text-decoration: underline; }
+  .md-table-wrap,
+  .data-table-wrap {
+    overflow: visible !important;
+    border: 1px solid #cccccc !important;
+    background: #ffffff !important;
+  }
+  h1, h2, h3, h4, h5 { break-after: avoid; }
+  pre, table, figure, .md-figure, .spec-card, .dossier-kpi-card, .portal-card {
+    break-inside: avoid;
+  }
+  .tier-grid, .char-grid, .portal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ==========================================================================
+   PowerWiki v9.3 — Quiet Depth Pass
+   Small, deliberate touches: subtle depth on primary actions, gentle
+   lift on interactive tiles, dashed empty states and clear keyboard focus.
+   No new motion, no new decoration.
+   ========================================================================== */
+
+/* Primary action: a touch of depth without going glossy. */
+.btn-primary {
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 26%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 32%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+/* Home stat tiles lift gently on hover. */
+.home-stat {
+  transition: transform 0.2s var(--world-ease, ease), border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.home-stat:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-sm);
+}
+/* Tier cards take their hover border from the group's domain colour. */
+.tier-card:hover {
+  border-color: color-mix(in srgb, var(--dom-color, var(--accent)) 30%, var(--border-subtle));
+}
+
+/* Consistent keyboard focus on the main interactive surfaces. */
+.tier-card:focus-visible,
+.char-card:focus-visible,
+.portal-card:focus-visible,
+.home-stat:focus-visible,
+.neighbor-row:focus-visible,
+.pager-card:focus-visible,
+.spec-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Empty states read as deliberate placeholders rather than errors. */
+.empty-state-box {
+  border-style: dashed;
+}
