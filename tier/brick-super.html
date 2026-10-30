@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="tier-brick-super">
+<html lang="zh-CN" data-theme="light" data-skin="default" data-root="../" data-page-id="tier-brick-super">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -19,8 +19,28 @@
         } catch (e) { t = 'light'; }
       }
       document.documentElement.setAttribute('data-theme', t);
+
+      /* appearance skin: ?skin= wins, then the remembered choice, then the default */
+      var SKINS = ["default", "paper", "blueprint"];
+      var SKIN_COLORS = {"default": {"light": "#f6f7f4", "dark": "#090b10"}, "paper": {"light": "#f2ece0", "dark": "#16120c"}, "blueprint": {"light": "#eaeef2", "dark": "#070d13"}};
+      window.PW_SKIN_THEME_COLORS = SKIN_COLORS;
+      var s = null;
+      try {
+        var hit = location.search.match(/[?&]skin=([A-Za-z0-9_-]+)/);
+        if (hit && SKINS.indexOf(hit[1]) > -1) {
+          s = hit[1];
+          try { localStorage.setItem('pw_skin_v1', s); } catch (e) {}
+        }
+        if (!s) s = localStorage.getItem('pw_skin_v1');
+      } catch (e) {}
+      if (SKINS.indexOf(s) < 0) s = 'default';
+      document.documentElement.setAttribute('data-skin', s);
+
       var mc = document.getElementById('theme-color-meta');
-      if (mc) mc.setAttribute('content', t === 'dark' ? '#090b10' : '#f6f7f4');
+      if (mc) {
+        var pair = SKIN_COLORS[s] || {};
+        mc.setAttribute('content', pair[t] || (t === 'dark' ? '#090b10' : '#f6f7f4'));
+      }
     })();
   </script>
   <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -30,6 +50,7 @@
   <link rel="stylesheet" href="../static/css/style.css">
   <link rel="stylesheet" href="../static/css/editorial.css">
   <link rel="stylesheet" href="../static/css/experience.css">
+  <link rel="stylesheet" href="../static/css/skins.css">
 </head>
 <body class="site-tiers">
   <header class="site-header">
@@ -58,6 +79,7 @@
           <span class="search-btn-label">检索…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
+        <div class="skin-switch" id="skin-switch"><button type="button" class="icon-btn" id="skin-toggle-btn" aria-label="切换外观皮肤" aria-haspopup="true" aria-expanded="false" aria-controls="skin-panel" title="切换外观皮肤"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18h1.4a2 2 0 0 0 0-4H13a2 2 0 0 1 0-4h4.6A3.4 3.4 0 0 0 21 9.6C21 5.9 17 3 12 3Z"/><circle cx="7.6" cy="9.2" r=".9" fill="currentColor" stroke="none"/><circle cx="11" cy="6.6" r=".9" fill="currentColor" stroke="none"/><circle cx="15.4" cy="7.6" r=".9" fill="currentColor" stroke="none"/></svg></button><div class="skin-panel" id="skin-panel" hidden><div class="skin-panel-head"><span class="skin-panel-title">外观皮肤</span><span class="skin-panel-hint">记住选择</span></div><div class="skin-options" role="radiogroup" aria-label="外观皮肤列表"><button type="button" class="skin-option" role="radio" aria-checked="true" data-skin-id="default"><span class="skin-swatch" aria-hidden="true"><i style="background:#f5f4f0"></i><i style="background:#946615"></i><i style="background:#090b10"></i></span><span class="skin-meta"><span class="skin-name">默认 · 建筑感</span><span class="skin-note">v6.0 原设计</span></span><span class="skin-check" aria-hidden="true"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span></button><button type="button" class="skin-option" role="radio" aria-checked="false" data-skin-id="paper"><span class="skin-swatch" aria-hidden="true"><i style="background:#f2ece0"></i><i style="background:#8a5a1f"></i><i style="background:#211b13"></i></span><span class="skin-meta"><span class="skin-name">纸本 · 衬线</span><span class="skin-note">样例皮肤 · 暖米纸 + 直角</span></span><span class="skin-check" aria-hidden="true"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span></button><button type="button" class="skin-option" role="radio" aria-checked="false" data-skin-id="blueprint"><span class="skin-swatch" aria-hidden="true"><i style="background:#eaeef2"></i><i style="background:#1f5f8b"></i><i style="background:#0e1822"></i></span><span class="skin-meta"><span class="skin-name">蓝图 · 网格</span><span class="skin-note">样例皮肤 · 冷调制图 + 零圆角</span></span><span class="skin-check" aria-hidden="true"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg></span></button></div></div></div>
         <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
         </button>

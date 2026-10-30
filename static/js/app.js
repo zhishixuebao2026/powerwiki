@@ -14,7 +14,8 @@
     pageCache: "pw_page_cache_v6",
     tierPrefs: "pw_tier_prefs_v6",
     charPrefs: "pw_char_prefs_v6",
-    readerPrefs: "pw_reader_prefs_v6"
+    readerPrefs: "pw_reader_prefs_v6",
+    skin: "pw_skin_v1"
   };
 
   const ICONS = {
@@ -119,12 +120,19 @@
   /* --------------------------------------------------------------------------
      2. Theme Toggle & Mobile Menu
      -------------------------------------------------------------------------- */
+  function themeColorFor(theme, skin) {
+    const map = window.PW_SKIN_THEME_COLORS || {};
+    const pair = map[skin] || map.default || {};
+    return pair[theme] || (theme === "dark" ? "#090b10" : "#f6f7f4");
+  }
+
   function initTheme() {
     const btn = document.getElementById("theme-toggle-btn");
     const syncThemeMeta = () => {
       const cur = document.documentElement.getAttribute("data-theme") || "dark";
+      const skin = document.documentElement.getAttribute("data-skin") || "default";
       const mc = document.getElementById("theme-color-meta");
-      if (mc) mc.setAttribute("content", cur === "dark" ? "#090b10" : "#f6f7f4");
+      if (mc) mc.setAttribute("content", themeColorFor(cur, skin));
     };
     const updateIcon = () => {
       if (!btn) return;
@@ -167,6 +175,93 @@
         }
       });
     }
+  }
+
+  /* --------------------------------------------------------------------------
+     2b. Appearance Skin Switcher (data-skin axis, orthogonal to light/dark)
+     -------------------------------------------------------------------------- */
+  function initSkinSwitcher() {
+    const wrap = document.getElementById("skin-switch");
+    const btn = document.getElementById("skin-toggle-btn");
+    const panel = document.getElementById("skin-panel");
+    if (!wrap || !btn || !panel || btn.dataset.skinBound === "1") return;
+
+    const root = document.documentElement;
+    const options = Array.prototype.slice.call(panel.querySelectorAll(".skin-option"));
+    if (!options.length) return;
+
+    const current = () => root.getAttribute("data-skin") || options[0].dataset.skinId;
+    const syncMeta = () => {
+      const mc = document.getElementById("theme-color-meta");
+      if (!mc) return;
+      mc.setAttribute("content", themeColorFor(root.getAttribute("data-theme") || "light", current()));
+    };
+    const sync = () => {
+      const cur = current();
+      options.forEach((opt) => opt.setAttribute("aria-checked", String(opt.dataset.skinId === cur)));
+    };
+    const setOpen = (open) => {
+      panel.hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      wrap.classList.toggle("is-open", open);
+      if (open) sync();
+    };
+
+    btn.dataset.skinBound = "1";
+    sync();
+    syncMeta();
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen(panel.hidden);
+    });
+
+    options.forEach((opt) => {
+      opt.addEventListener("click", () => {
+        const id = opt.dataset.skinId;
+        const apply = () => {
+          root.setAttribute("data-skin", id);
+          try {
+            const ls = storageFor("local");
+            if (ls) ls.setItem(STORAGE_KEYS.skin, id);
+          } catch (_) {}
+          try {
+            if (window.location.search.indexOf("skin=") > -1) {
+              const url = new URL(window.location.href);
+              url.searchParams.delete("skin");
+              window.history.replaceState(null, "", url);
+            }
+          } catch (_) {}
+          sync();
+          syncMeta();
+          document.dispatchEvent(new CustomEvent("pw:skin-change", { detail: { skin: id } }));
+        };
+        const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!reduceMotion && typeof document.startViewTransition === "function") {
+          try {
+            document.startViewTransition(apply);
+          } catch (_) {
+            apply();
+          }
+        } else {
+          apply();
+        }
+        setOpen(false);
+        btn.focus({ preventScroll: true });
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (panel.hidden) return;
+      if (!wrap.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !panel.hidden) {
+        setOpen(false);
+        btn.focus({ preventScroll: true });
+      }
+    });
   }
 
   function initMobileNav() {
@@ -1466,6 +1561,7 @@ function renderCard(t) {
      -------------------------------------------------------------------------- */
   function bootAll() {
     initTheme();
+    initSkinSwitcher();
     initMobileNav();
     initTiersExplorer();
     initCharactersExplorer();

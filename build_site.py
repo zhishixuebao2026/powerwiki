@@ -23,6 +23,77 @@ JS_OUT_DIR = ROOT / "static" / "js"
 
 RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第五版·最新】.md"
 MATERIALS_MD_PATH = DOCS_DIR / "材质与破坏能量数据库（新）.md"
+SKINS_PATH = DATA_DIR / "skins.json"
+_SKINS_CACHE: Optional[Dict[str, Any]] = None
+
+
+def skins_manifest() -> Dict[str, Any]:
+    """Appearance-skin registry (data/skins.json) — drives the header switcher and the inline boot script."""
+    global _SKINS_CACHE
+    if _SKINS_CACHE is None:
+        try:
+            payload = json.loads(SKINS_PATH.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            payload = {"default": "default", "skins": [{"id": "default", "name": "默认", "note": "", "swatch": []}]}
+        skins = [s for s in payload.get("skins", []) if s.get("id")]
+        if not skins:
+            skins = [{"id": "default", "name": "默认", "note": "", "swatch": []}]
+        default_id = payload.get("default") or skins[0]["id"]
+        if default_id not in {s["id"] for s in skins}:
+            default_id = skins[0]["id"]
+        _SKINS_CACHE = {"default": default_id, "skins": skins}
+    return _SKINS_CACHE
+
+
+def build_skin_switch_html() -> str:
+    """Header palette button + popover listing every registered skin."""
+    manifest = skins_manifest()
+    skins = manifest["skins"]
+    active_id = manifest["default"]
+    rows = []
+    for skin in skins:
+        swatch = "".join(
+            f'<i style="background:{esc(color)}"></i>' for color in (skin.get("swatch") or [])[:3]
+        )
+        checked = "true" if skin["id"] == active_id else "false"
+        rows.append(
+            f'<button type="button" class="skin-option" role="radio" aria-checked="{checked}" data-skin-id="{esc(skin["id"])}">'
+            f'<span class="skin-swatch" aria-hidden="true">{swatch}</span>'
+            f'<span class="skin-meta">'
+            f'<span class="skin-name">{esc(skin.get("name") or skin["id"])}</span>'
+            f'<span class="skin-note">{esc(skin.get("note") or "")}</span>'
+            f"</span>"
+            f'<span class="skin-check" aria-hidden="true">{SVGS["check"]}</span>'
+            f"</button>"
+        )
+    if not rows:  # pragma: no cover - manifest always has at least one skin
+        return ""
+    return (
+        '<div class="skin-switch" id="skin-switch">'
+        f'<button type="button" class="icon-btn" id="skin-toggle-btn" aria-label="切换外观皮肤" aria-haspopup="true" aria-expanded="false" aria-controls="skin-panel" title="切换外观皮肤">'
+        f'{SVGS["palette"]}</button>'
+        '<div class="skin-panel" id="skin-panel" hidden>'
+        '<div class="skin-panel-head"><span class="skin-panel-title">外观皮肤</span>'
+        '<span class="skin-panel-hint">记住选择</span></div>'
+        f'<div class="skin-options" role="radiogroup" aria-label="外观皮肤列表">{"".join(rows)}</div>'
+        "</div></div>"
+    )
+
+
+def skin_boot_payload() -> Tuple[str, str, str]:
+    """(json id list, json theme-color map, default id) embedded in the inline <head> boot script."""
+    manifest = skins_manifest()
+    ids = [s["id"] for s in manifest["skins"]]
+    colors = {
+        s["id"]: s.get("theme_color") or {}
+        for s in manifest["skins"]
+        if isinstance(s.get("theme_color"), dict)
+    }
+    return (
+        json.dumps(ids, ensure_ascii=False),
+        json.dumps(colors, ensure_ascii=False),
+        manifest["default"],
+    )
 
 SVGS = {
     "search": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
@@ -38,6 +109,8 @@ SVGS = {
     "atlas": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg>',
     "dossier": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg>',
     "library": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg>',
+    "palette": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18h1.4a2 2 0 0 0 0-4H13a2 2 0 0 1 0-4h4.6A3.4 3.4 0 0 0 21 9.6C21 5.9 17 3 12 3Z"/><circle cx="7.6" cy="9.2" r=".9" fill="currentColor" stroke="none"/><circle cx="11" cy="6.6" r=".9" fill="currentColor" stroke="none"/><circle cx="15.4" cy="7.6" r=".9" fill="currentColor" stroke="none"/></svg>',
+    "check": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg>',
 }
 
 DIM_META = [
@@ -618,8 +691,11 @@ def render_shell(
         else ""
     )
 
+    skin_ids_json, skin_colors_json, skin_default_id = skin_boot_payload()
+    skin_switch_html = build_skin_switch_html()
+
     page = f"""<!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}">
+<html lang="zh-CN" data-theme="light" data-skin="{esc(skin_default_id)}" data-root="{r}" data-page-id="{esc(page_id)}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -639,8 +715,28 @@ def render_shell(
         }} catch (e) {{ t = 'light'; }}
       }}
       document.documentElement.setAttribute('data-theme', t);
+
+      /* appearance skin: ?skin= wins, then the remembered choice, then the default */
+      var SKINS = {skin_ids_json};
+      var SKIN_COLORS = {skin_colors_json};
+      window.PW_SKIN_THEME_COLORS = SKIN_COLORS;
+      var s = null;
+      try {{
+        var hit = location.search.match(/[?&]skin=([A-Za-z0-9_-]+)/);
+        if (hit && SKINS.indexOf(hit[1]) > -1) {{
+          s = hit[1];
+          try {{ localStorage.setItem('pw_skin_v1', s); }} catch (e) {{}}
+        }}
+        if (!s) s = localStorage.getItem('pw_skin_v1');
+      }} catch (e) {{}}
+      if (SKINS.indexOf(s) < 0) s = '{skin_default_id}';
+      document.documentElement.setAttribute('data-skin', s);
+
       var mc = document.getElementById('theme-color-meta');
-      if (mc) mc.setAttribute('content', t === 'dark' ? '#090b10' : '#f6f7f4');
+      if (mc) {{
+        var pair = SKIN_COLORS[s] || {{}};
+        mc.setAttribute('content', pair[t] || (t === 'dark' ? '#090b10' : '#f6f7f4'));
+      }}
     }})();
   </script>
   <link rel="preload" href="{r}static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -650,6 +746,7 @@ def render_shell(
   <link rel="stylesheet" href="{r}static/css/style.css">
   <link rel="stylesheet" href="{r}static/css/editorial.css">
   <link rel="stylesheet" href="{r}static/css/experience.css">
+  <link rel="stylesheet" href="{r}static/css/skins.css">
 </head>
 <body class="{esc(shell_body_class)}">
   <header class="site-header">
@@ -678,6 +775,7 @@ def render_shell(
           <span class="search-btn-label">检索…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
+        {skin_switch_html}
         <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
           {SVGS["sun"]}
         </button>
