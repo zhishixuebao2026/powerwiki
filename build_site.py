@@ -622,15 +622,25 @@ def render_shell(
 <html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" id="theme-color-meta" content="#f6f7f4">
+  <meta name="color-scheme" content="light dark">
   <title>{esc(title)} · 衡天⊙ PowerWiki</title>
   <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {{
-      try {{
-        var t = localStorage.getItem('pw_theme_v2');
-        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
-      }} catch (e) {{}}
+      var t = null;
+      try {{ t = localStorage.getItem('pw_theme_v2'); }} catch (e) {{}}
+      if (t !== 'light' && t !== 'dark') {{
+        try {{
+          var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          t = dark ? 'dark' : 'light';
+          localStorage.setItem('pw_theme_v2', t);
+        }} catch (e) {{ t = 'light'; }}
+      }}
+      document.documentElement.setAttribute('data-theme', t);
+      var mc = document.getElementById('theme-color-meta');
+      if (mc) mc.setAttribute('content', t === 'dark' ? '#090b10' : '#f6f7f4');
     }})();
   </script>
   <link rel="preload" href="{r}static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -1595,6 +1605,9 @@ def build_character_detail_pages(
           </section>"""
         )
 
+        char_fx_html = char_identity_fx_html(c["slug"])
+        infographic_html = render_character_infographic(c)
+
         body = f"""
         <div class="container detail-stack character-detail character-{esc(c['slug'])}">
           <div class="subpage-bar">
@@ -1619,6 +1632,8 @@ def build_character_detail_pages(
             {dossier_fact_rail_html}
           </section>
 
+          {char_fx_html}
+          {infographic_html}
           {center_content_html}
           {tier_anchor_section}
 
@@ -1699,6 +1714,102 @@ def build_fulltext_doc_page(
     """
     full_html = render_shell(title=title, page_id=page_id, active_nav=active_nav, body_html=body, root_prefix="./", has_toc_button=True)
     return full_html, renderer.sections_for_index, title_to_id
+
+# ---------------------------------------------------------------------------
+# 角色信息图（移动端免滚动阅读）与角色专属氛围层
+# ---------------------------------------------------------------------------
+_TIERS_CACHE: Optional[List[Dict[str, Any]]] = None
+
+
+def _tiers_list() -> List[Dict[str, Any]]:
+    """惰性加载量级表，供信息图计算刻度位置。"""
+    global _TIERS_CACHE
+    if _TIERS_CACHE is None:
+        with open(ROOT / "data" / "tiers.json", encoding="utf-8") as fh:
+            _TIERS_CACHE = (json.load(fh).get("tiers") or [])
+    return _TIERS_CACHE
+
+
+def _dim_chip_label(text: str) -> str:
+    """从维度说明里提取一个紧凑标签：量级代字〔置信度〕 / 数值〔置信度〕 / 〔置信度〕。"""
+    s = (text or "").strip()
+    m = re.search(r"(?:[⊙◎◯○◇△☆★]\s*)?([\u4e00-\u9fff]{1,2})\s*([△☆○◇★])\s*〔([^〕]*)〕", s)
+    if m:
+        return f"{m.group(1)}{m.group(2)}〔{m.group(3)}〕"
+    m3 = re.search(r"([0-9.]+～[0-9.]+)\s*(?:倍?光速|\bc)?\s*〔([^〕]*)〕", s)
+    if m3:
+        return f"{m3.group(1)}〔{m3.group(2)}〕"
+    m2 = re.search(r"〔([^〕]*)〕", s)
+    if m2:
+        return f"〔{m2.group(1)}〕"
+    return s[:8]
+
+
+def _pct(order: int, max_order: int) -> int:
+    if max_order <= 0:
+        return 50
+    return max(3, min(97, round(order / max_order * 100)))
+
+
+def char_identity_fx_html(slug: str) -> str:
+    """角色专属氛围层：御兔为漂浮液态光斑，弗坦由 CSS ::after 渲染。"""
+    if slug == "yutu":
+        return '<div class="char-identity-fx" aria-hidden="true"><span></span><span></span><span></span></div>'
+    return '<div class="char-identity-fx" aria-hidden="true"></div>'
+
+
+def render_character_infographic(entry: Dict[str, Any]) -> str:
+    """把长文档里的关键结论压成一张免滚动的信息图：刻度 + 维度 + 关键数字。"""
+    tiers = _tiers_list()
+    tier = next((t for t in tiers if t.get("slug") == entry.get("tier_slug")), None)
+    main_code = (tier or {}).get("code") or entry.get("floor_tier") or "—"
+    max_order = max((t.get("order") or 0) for t in tiers) or 1
+    order = (tier or {}).get("order") or 0
+    pos = _pct(order, max_order)
+
+    landmarks = ["城", "国", "恒", "宇", "超", "无", "论外"]
+    labels_html = ""
+    for lm in landmarks:
+        hit = next((x for x in tiers if (x.get("code") or "").startswith(lm)), None)
+        if hit and hit.get("order"):
+            labels_html += f'<span style="left:{_pct(hit["order"], max_order)}%">{lm}</span>'
+
+    dims = entry.get("dims") or {}
+    dim_html = []
+    for key in ("破", "控", "域", "御", "速", "算", "性"):
+        label = _dim_chip_label(dims.get(key, "")) if dims.get(key) else "〔缺〕"
+        miss = "is-missing" if label == "〔缺〕" else ""
+        dim_html.append(f'<div class="char-dim {miss}"><b>{key}</b><span>{esc(label)}</span></div>')
+    dims_html = "".join(dim_html)
+
+    facts = (entry.get("visual") or {}).get("facts") or []
+    facts_html = "".join(
+        f'<div class="char-fact"><span class="char-fact-k">{esc(str(f.get("label", "")))}</span>'
+        f'<span class="char-fact-v">{esc(str(f.get("value", "")))}</span></div>'
+        for f in facts[:3]
+    )
+
+    modifiers = entry.get("modifiers") or []
+    mod_html = f'<span class="char-info-note">{esc(" · ".join(modifiers[:4]))}</span>' if modifiers else ""
+
+    return f"""
+        <section class="char-info-panel" aria-label="量级信息图">
+          <div class="char-info-kicker">量级刻度 / TIER SCALE</div>
+          <div class="char-info-head">
+            <span class="char-info-main">⊙ {esc(main_code)}<span class="char-info-code">〔主档〕</span></span>
+            {mod_html}
+          </div>
+          <div class="char-scale">
+            <div class="char-scale-track">
+              <span class="char-scale-fill" style="--pos:{pos}%"></span>
+              <i class="char-scale-mark" style="--pos:{pos}%"></i>
+            </div>
+            <div class="char-scale-labels">{labels_html}</div>
+          </div>
+          <div class="char-dims">{dims_html}</div>
+          {f'<div class="char-facts">{facts_html}</div>' if facts_html else ""}
+        </section>"""
+
 
 def build_search_page() -> str:
     body = f"""

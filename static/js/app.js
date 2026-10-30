@@ -27,8 +27,17 @@
   const PAGE_ID = document.documentElement.getAttribute("data-page-id") || location.pathname;
   const PAGE_TITLE = document.title.replace(/\s*[·|-]\s*衡天.*$/, "").trim() || document.title;
 
+  function storageFor(kind) {
+    try {
+      return kind === "session" ? window.sessionStorage : window.localStorage;
+    } catch (_) {
+      return null;
+    }
+  }
+
   function safeGetJSON(storage, key, fallback) {
     try {
+      if (!storage) return fallback;
       const raw = storage.getItem(key);
       return raw ? JSON.parse(raw) : fallback;
     } catch (_) {
@@ -38,6 +47,7 @@
 
   function safeSetJSON(storage, key, val) {
     try {
+      if (!storage) return;
       storage.setItem(key, JSON.stringify(val));
     } catch (_) {}
   }
@@ -111,6 +121,11 @@
      -------------------------------------------------------------------------- */
   function initTheme() {
     const btn = document.getElementById("theme-toggle-btn");
+    const syncThemeMeta = () => {
+      const cur = document.documentElement.getAttribute("data-theme") || "dark";
+      const mc = document.getElementById("theme-color-meta");
+      if (mc) mc.setAttribute("content", cur === "dark" ? "#090b10" : "#f6f7f4");
+    };
     const updateIcon = () => {
       if (!btn) return;
       const cur = document.documentElement.getAttribute("data-theme") || "dark";
@@ -118,6 +133,7 @@
       btn.setAttribute("title", cur === "dark" ? "切换至浅色主题" : "切换至深色主题");
     };
     updateIcon();
+    syncThemeMeta();
     if (btn) {
       btn.addEventListener("click", () => {
         const root = document.documentElement;
@@ -127,9 +143,11 @@
         const applyTheme = () => {
           root.setAttribute("data-theme", next);
           try {
-            localStorage.setItem(STORAGE_KEYS.theme, next);
+            const _ls = storageFor("local");
+            if (_ls) _ls.setItem(STORAGE_KEYS.theme, next);
           } catch (_) {}
           updateIcon();
+          syncThemeMeta();
         };
 
         if (!reduceMotion && typeof document.startViewTransition === "function") {
@@ -213,8 +231,8 @@
      -------------------------------------------------------------------------- */
   function initBrowsingCacheAndBack() {
     const currentUrl = location.href.split("#")[0];
-    let stack = safeGetJSON(sessionStorage, STORAGE_KEYS.navStack, []);
-    const pageCache = safeGetJSON(sessionStorage, STORAGE_KEYS.pageCache, {});
+    let stack = safeGetJSON(storageFor("session"), STORAGE_KEYS.navStack, []);
+    const pageCache = safeGetJSON(storageFor("session"), STORAGE_KEYS.pageCache, {});
 
     if (!location.hash && pageCache[PAGE_ID] && typeof pageCache[PAGE_ID].scrollY === "number") {
       const targetY = pageCache[PAGE_ID].scrollY;
@@ -228,7 +246,7 @@
     if (stack.length === 0 || stack[stack.length - 1].url !== currentUrl) {
       stack.push({ url: currentUrl, pageId: PAGE_ID, title: PAGE_TITLE });
       if (stack.length > 35) stack = stack.slice(-35);
-      safeSetJSON(sessionStorage, STORAGE_KEYS.navStack, stack);
+      safeSetJSON(storageFor("session"), STORAGE_KEYS.navStack, stack);
     }
 
     const backTopBtn = document.getElementById("dock-top-btn");
@@ -242,12 +260,12 @@
     let cacheTimer = null;
     const persistScroll = () => {
       cacheTimer = null;
-      const map = safeGetJSON(sessionStorage, STORAGE_KEYS.pageCache, {});
+      const map = safeGetJSON(storageFor("session"), STORAGE_KEYS.pageCache, {});
       map[PAGE_ID] = Object.assign(map[PAGE_ID] || {}, {
         scrollY: Math.round(window.scrollY || 0),
         ts: Date.now()
       });
-      safeSetJSON(sessionStorage, STORAGE_KEYS.pageCache, map);
+      safeSetJSON(storageFor("session"), STORAGE_KEYS.pageCache, map);
     };
 
     window.addEventListener(
@@ -289,11 +307,11 @@
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         persistScroll();
-        const curStack = safeGetJSON(sessionStorage, STORAGE_KEYS.navStack, []);
+        const curStack = safeGetJSON(storageFor("session"), STORAGE_KEYS.navStack, []);
         if (curStack.length >= 2) {
           curStack.pop();
           const target = curStack[curStack.length - 1];
-          safeSetJSON(sessionStorage, STORAGE_KEYS.navStack, curStack);
+          safeSetJSON(storageFor("session"), STORAGE_KEYS.navStack, curStack);
           location.href = target.url;
         } else {
           location.href = resolveUrl(fallbackRel);
@@ -312,7 +330,7 @@
     const dockTocBtn = document.getElementById("dock-toc-btn");
     const mdBody = document.querySelector(".markdown-body");
 
-    const storedPrefs = safeGetJSON(localStorage, STORAGE_KEYS.readerPrefs, {});
+    const storedPrefs = safeGetJSON(storageFor("local"), STORAGE_KEYS.readerPrefs, {});
     const storedFontSize = storedPrefs && typeof storedPrefs === "object" ? storedPrefs.fontSize : undefined;
     const parsedFontSize = Number(storedFontSize);
     const hasStoredFontSize = storedFontSize !== undefined && storedFontSize !== null && storedFontSize !== "" && Number.isFinite(parsedFontSize);
@@ -347,7 +365,7 @@
       }
     };
     updateReaderControls();
-    safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+    safeSetJSON(storageFor("local"), STORAGE_KEYS.readerPrefs, prefs);
 
     let rebuildTocOffsets = () => {};
 
@@ -355,7 +373,7 @@
       prefs.fontSize = Math.min(FONT_MAX, Math.max(FONT_MIN, Number(nextSize.toFixed(1))));
       applyFontSize();
       updateReaderControls();
-      safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+      safeSetJSON(storageFor("local"), STORAGE_KEYS.readerPrefs, prefs);
       rebuildTocOffsets();
     };
     if (fontDecBtn && mdBody) {
@@ -369,7 +387,7 @@
         prefs.wide = !prefs.wide;
         document.body.classList.toggle("wide-doc-mode", prefs.wide);
         updateReaderControls();
-        safeSetJSON(localStorage, STORAGE_KEYS.readerPrefs, prefs);
+        safeSetJSON(storageFor("local"), STORAGE_KEYS.readerPrefs, prefs);
         rebuildTocOffsets();
       });
     }
@@ -535,8 +553,8 @@
     });
 
     const savedPrefs =
-      safeGetJSON(sessionStorage, STORAGE_KEYS.tierPrefs, null) ||
-      safeGetJSON(localStorage, STORAGE_KEYS.tierPrefs, {});
+      safeGetJSON(storageFor("session"), STORAGE_KEYS.tierPrefs, null) ||
+      safeGetJSON(storageFor("local"), STORAGE_KEYS.tierPrefs, {});
     const params = new URLSearchParams(location.search);
 
     const validSegs = ["all", "terrestrial", "stellar", "transition", "cosmic", "fgh", "beyond", "unranked"];
@@ -557,12 +575,12 @@
     if (filterInput && state.query) filterInput.value = state.query;
 
     function persistPrefs() {
-      safeSetJSON(sessionStorage, STORAGE_KEYS.tierPrefs, {
+      safeSetJSON(storageFor("session"), STORAGE_KEYS.tierPrefs, {
         segment: state.segment,
         view: state.view,
         query: state.query
       });
-      safeSetJSON(localStorage, STORAGE_KEYS.tierPrefs, {
+      safeSetJSON(storageFor("local"), STORAGE_KEYS.tierPrefs, {
         segment: state.segment,
         view: state.view
       });
@@ -789,8 +807,8 @@ function renderCard(t) {
     tiers.forEach((t) => (tierBySlug[t.slug] = t));
 
     const cached =
-      safeGetJSON(sessionStorage, STORAGE_KEYS.charPrefs, null) ||
-      safeGetJSON(localStorage, STORAGE_KEYS.charPrefs, {});
+      safeGetJSON(storageFor("session"), STORAGE_KEYS.charPrefs, null) ||
+      safeGetJSON(storageFor("local"), STORAGE_KEYS.charPrefs, {});
     const params = new URLSearchParams(location.search);
 
     const initSort = params.get("sort") || cached.sort || "asc";
@@ -815,13 +833,13 @@ function renderCard(t) {
     if (filterInput && state.query) filterInput.value = state.query;
 
     function persistPrefs() {
-      safeSetJSON(sessionStorage, STORAGE_KEYS.charPrefs, {
+      safeSetJSON(storageFor("session"), STORAGE_KEYS.charPrefs, {
         sort: state.sort,
         series: state.series,
         domain: state.domain,
         query: state.query
       });
-      safeSetJSON(localStorage, STORAGE_KEYS.charPrefs, { sort: state.sort });
+      safeSetJSON(storageFor("local"), STORAGE_KEYS.charPrefs, { sort: state.sort });
     }
 
     const pool = (allCharacters || []).map((c) => {

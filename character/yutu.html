@@ -2,15 +2,25 @@
 <html lang="zh-CN" data-theme="light" data-root="../" data-page-id="char-yutu">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" id="theme-color-meta" content="#f6f7f4">
+  <meta name="color-scheme" content="light dark">
   <title>御兔 · 角色战力档案 · 衡天⊙ PowerWiki</title>
   <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {
-      try {
-        var t = localStorage.getItem('pw_theme_v2');
-        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
-      } catch (e) {}
+      var t = null;
+      try { t = localStorage.getItem('pw_theme_v2'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        try {
+          var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          t = dark ? 'dark' : 'light';
+          localStorage.setItem('pw_theme_v2', t);
+        } catch (e) { t = 'light'; }
+      }
+      document.documentElement.setAttribute('data-theme', t);
+      var mc = document.getElementById('theme-color-meta');
+      if (mc) mc.setAttribute('content', t === 'dark' ? '#090b10' : '#f6f7f4');
     })();
   </script>
   <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -204,6 +214,24 @@
             <div class="dossier-fact-rail"><div class="dossier-fact"><span class="fact-label">综合主档</span><strong class="fact-value">⊙国△〔实〕</strong><span class="fact-note">终局火球 · 覆盖面积 / 两人分担</span></div><div class="dossier-fact"><span class="fact-label">火球直径</span><strong class="fact-value">1,800–2,400 km</strong><span class="fact-note">稳健门槛约 1,430 km</span></div><div class="dossier-fact"><span class="fact-label">城级保底</span><strong class="fact-value">1.8–3.4×10¹⁷ J</strong><span class="fact-note">击飞虎力至月球 · ⊙城△<span class="ev-badge ev-confirmed">〔实〕</span></span></div></div>
           </section>
 
+          <div class="char-identity-fx" aria-hidden="true"><span></span><span></span><span></span></div>
+
+        <section class="char-info-panel" aria-label="量级信息图">
+          <div class="char-info-kicker">量级刻度 / TIER SCALE</div>
+          <div class="char-info-head">
+            <span class="char-info-main">⊙ 国△<span class="char-info-code">〔主档〕</span></span>
+            <span class="char-info-note">主档 ⊙国△〔实〕 · 保底 ⊙城△〔实〕 · 全力上限〔隐〕 · 投送 0.23～0.27c〔推〕</span>
+          </div>
+          <div class="char-scale">
+            <div class="char-scale-track">
+              <span class="char-scale-fill" style="--pos:35%"></span>
+              <i class="char-scale-mark" style="--pos:35%"></i>
+            </div>
+            <div class="char-scale-labels"><span style="left:28%">城</span><span style="left:33%">国</span><span style="left:53%">恒</span><span style="left:80%">宇</span></div>
+          </div>
+          <div class="char-dims"><div class="char-dim "><b>破</b><span>国△〔实〕</span></div><div class="char-dim is-missing"><b>控</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>域</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>御</b><span>〔缺〕</span></div><div class="char-dim "><b>速</b><span>0.23～0.27〔推〕</span></div><div class="char-dim is-missing"><b>算</b><span>〔缺〕</span></div><div class="char-dim "><b>性</b><span>〔实〕</span></div></div>
+          <div class="char-facts"><div class="char-fact"><span class="char-fact-k">综合主档</span><span class="char-fact-v">⊙国△〔实〕</span></div><div class="char-fact"><span class="char-fact-k">火球直径</span><span class="char-fact-v">1,800–2,400 km</span></div><div class="char-fact"><span class="char-fact-k">城级保底</span><span class="char-fact-v">1.8–3.4×10¹⁷ J</span></div></div>
+        </section>
 
           <div class="doc-layout">
             <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
