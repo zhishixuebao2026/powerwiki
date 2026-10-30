@@ -161,7 +161,6 @@ html[data-skin="paper"][data-theme="dark"] {
 /* 纸本的组件级签名：书页感靠"边框 + 无阴影 + 纸纹"三件事 */
 html[data-skin="paper"] body {
   background-image: radial-gradient(circle at 18% 0%, rgba(138, 90, 31, 0.055), transparent 52%);
-  background-attachment: fixed;
 }
 
 html[data-skin="paper"] .site-header::before {
@@ -306,7 +305,6 @@ html[data-skin="blueprint"] body {
     linear-gradient(90deg, rgba(31, 95, 139, 0.055) 1px, transparent 1px);
   background-size: 32px 32px;
   background-position: center top;
-  background-attachment: fixed;
 }
 
 html[data-skin="blueprint"][data-theme="dark"] body {

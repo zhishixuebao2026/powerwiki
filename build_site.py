@@ -732,11 +732,12 @@ def render_shell(
       if (SKINS.indexOf(s) < 0) s = '{skin_default_id}';
       document.documentElement.setAttribute('data-skin', s);
 
+      var pair = SKIN_COLORS[s] || {{}};
+      var canvas = pair[t] || (t === 'dark' ? '#090b10' : '#f6f7f4');
       var mc = document.getElementById('theme-color-meta');
-      if (mc) {{
-        var pair = SKIN_COLORS[s] || {{}};
-        mc.setAttribute('content', pair[t] || (t === 'dark' ? '#090b10' : '#f6f7f4'));
-      }}
+      if (mc) mc.setAttribute('content', canvas);
+      /* Paint the canvas before the stylesheets land, otherwise the first frame is plain white. */
+      document.documentElement.style.backgroundColor = canvas;
     }})();
   </script>
   <link rel="preload" href="{r}static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>

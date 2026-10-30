@@ -237,16 +237,9 @@
           syncMeta();
           document.dispatchEvent(new CustomEvent("pw:skin-change", { detail: { skin: id } }));
         };
-        const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (!reduceMotion && typeof document.startViewTransition === "function") {
-          try {
-            document.startViewTransition(apply);
-          } catch (_) {
-            apply();
-          }
-        } else {
-          apply();
-        }
+        /* 皮肤是整页换装：走 view transition 会整屏交叉淡入，看起来像闪一下，
+           这里直接瞬时切换，不产生全屏快照。 */
+        apply();
         setOpen(false);
         btn.focus({ preventScroll: true });
       });
