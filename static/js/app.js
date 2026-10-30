@@ -14,7 +14,8 @@
     pageCache: "pw_page_cache_v6",
     tierPrefs: "pw_tier_prefs_v6",
     charPrefs: "pw_char_prefs_v6",
-    readerPrefs: "pw_reader_prefs_v6"
+    readerPrefs: "pw_reader_prefs_v6",
+    skin: "pw_skin_v1"
   };
 
   const ICONS = {
@@ -119,12 +120,19 @@
   /* --------------------------------------------------------------------------
      2. Theme Toggle & Mobile Menu
      -------------------------------------------------------------------------- */
+  function themeColorFor(theme, skin) {
+    const map = window.PW_SKIN_THEME_COLORS || {};
+    const pair = map[skin] || map.default || {};
+    return pair[theme] || (theme === "dark" ? "#090b10" : "#f6f7f4");
+  }
+
   function initTheme() {
     const btn = document.getElementById("theme-toggle-btn");
     const syncThemeMeta = () => {
       const cur = document.documentElement.getAttribute("data-theme") || "dark";
+      const skin = document.documentElement.getAttribute("data-skin") || "default";
       const mc = document.getElementById("theme-color-meta");
-      if (mc) mc.setAttribute("content", cur === "dark" ? "#090b10" : "#f6f7f4");
+      if (mc) mc.setAttribute("content", themeColorFor(cur, skin));
     };
     const updateIcon = () => {
       if (!btn) return;
@@ -167,6 +175,93 @@
         }
       });
     }
+  }
+
+  /* --------------------------------------------------------------------------
+     2b. Appearance Skin Switcher (data-skin axis, orthogonal to light/dark)
+     -------------------------------------------------------------------------- */
+  function initSkinSwitcher() {
+    const wrap = document.getElementById("skin-switch");
+    const btn = document.getElementById("skin-toggle-btn");
+    const panel = document.getElementById("skin-panel");
+    if (!wrap || !btn || !panel || btn.dataset.skinBound === "1") return;
+
+    const root = document.documentElement;
+    const options = Array.prototype.slice.call(panel.querySelectorAll(".skin-option"));
+    if (!options.length) return;
+
+    const current = () => root.getAttribute("data-skin") || options[0].dataset.skinId;
+    const syncMeta = () => {
+      const mc = document.getElementById("theme-color-meta");
+      if (!mc) return;
+      mc.setAttribute("content", themeColorFor(root.getAttribute("data-theme") || "light", current()));
+    };
+    const sync = () => {
+      const cur = current();
+      options.forEach((opt) => opt.setAttribute("aria-checked", String(opt.dataset.skinId === cur)));
+    };
+    const setOpen = (open) => {
+      panel.hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      wrap.classList.toggle("is-open", open);
+      if (open) sync();
+    };
+
+    btn.dataset.skinBound = "1";
+    sync();
+    syncMeta();
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen(panel.hidden);
+    });
+
+    options.forEach((opt) => {
+      opt.addEventListener("click", () => {
+        const id = opt.dataset.skinId;
+        const apply = () => {
+          root.setAttribute("data-skin", id);
+          try {
+            const ls = storageFor("local");
+            if (ls) ls.setItem(STORAGE_KEYS.skin, id);
+          } catch (_) {}
+          try {
+            if (window.location.search.indexOf("skin=") > -1) {
+              const url = new URL(window.location.href);
+              url.searchParams.delete("skin");
+              window.history.replaceState(null, "", url);
+            }
+          } catch (_) {}
+          sync();
+          syncMeta();
+          document.dispatchEvent(new CustomEvent("pw:skin-change", { detail: { skin: id } }));
+        };
+        const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!reduceMotion && typeof document.startViewTransition === "function") {
+          try {
+            document.startViewTransition(apply);
+          } catch (_) {
+            apply();
+          }
+        } else {
+          apply();
+        }
+        setOpen(false);
+        btn.focus({ preventScroll: true });
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (panel.hidden) return;
+      if (!wrap.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !panel.hidden) {
+        setOpen(false);
+        btn.focus({ preventScroll: true });
+      }
+    });
   }
 
   function initMobileNav() {
@@ -212,6 +307,21 @@
 
     window.addEventListener("pageshow", () => {
       closeAllDrawersAndModals();
+    });
+
+    // Esc closes whichever panel is on top, so a drawer never traps the page.
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const openModal = document.querySelector(".modal-backdrop.open");
+      if (openModal) return; // the search modal handles its own Esc.
+      const sidebarOpen = document.getElementById("doc-sidebar")?.classList.contains("drawer-open");
+      const navOpen = drawer && drawer.classList.contains("open");
+      if (sidebarOpen || navOpen) {
+        closeAllDrawersAndModals();
+        if (sidebarOpen && document.getElementById("dock-toc-btn")) {
+          document.getElementById("dock-toc-btn").focus();
+        }
+      }
     });
 
     window.addEventListener("resize", () => {
@@ -329,6 +439,26 @@
     const tocFilter = document.getElementById("toc-filter-input");
     const dockTocBtn = document.getElementById("dock-toc-btn");
     const mdBody = document.querySelector(".markdown-body");
+
+    /* The chapter drawer sits inside <main>, which is its own stacking context.
+       On touch layouts it is a fixed slide-over, so we lift it up to <body> to
+       keep it above the page veil — otherwise the veil dims it and swallows
+       every tap, which reads as "the button does nothing". */
+    if (sidebar) {
+      const sidebarHome = sidebar.parentElement;
+      const sidebarAnchor = sidebar.nextElementSibling;
+      const isDrawerMode = () => window.matchMedia("(max-width: 1080px)").matches;
+      const portalSidebar = () => {
+        if (isDrawerMode()) {
+          if (sidebar.parentElement !== document.body) document.body.appendChild(sidebar);
+        } else if (sidebar.parentElement === document.body && sidebarHome) {
+          sidebarHome.insertBefore(sidebar, sidebarAnchor);
+        }
+      };
+      portalSidebar();
+      window.addEventListener("resize", portalSidebar);
+      window.addEventListener("orientationchange", portalSidebar);
+    }
 
     const storedPrefs = safeGetJSON(storageFor("local"), STORAGE_KEYS.readerPrefs, {});
     const storedFontSize = storedPrefs && typeof storedPrefs === "object" ? storedPrefs.fontSize : undefined;
@@ -525,11 +655,50 @@
       });
     }
 
+    const syncTocTriggerState = () => {
+      if (!dockTocBtn) return;
+      const open = sidebar.classList.contains("drawer-open");
+      dockTocBtn.classList.toggle("is-active", open);
+      dockTocBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+
     if (dockTocBtn) {
+      dockTocBtn.setAttribute("aria-controls", "doc-sidebar");
+      dockTocBtn.setAttribute("aria-expanded", "false");
       dockTocBtn.addEventListener("click", () => {
         const drawer = document.getElementById("site-drawer");
         if (drawer) drawer.classList.remove("open");
         sidebar.classList.toggle("drawer-open");
+        syncScrollLock();
+        syncTocTriggerState();
+        if (sidebar.classList.contains("drawer-open")) {
+          const filter = sidebar.querySelector(".toc-filter");
+          if (filter && window.matchMedia("(hover: none)").matches) filter.blur();
+        }
+      });
+      // Reflect state changes triggered elsewhere (backdrop tap, Esc, resize).
+      const tocStateObserver = new MutationObserver(syncTocTriggerState);
+      tocStateObserver.observe(sidebar, { attributes: true, attributeFilter: ["class"] });
+      syncTocTriggerState();
+    }
+
+    const tocCloseBtn = document.getElementById("toc-drawer-close");
+    if (tocCloseBtn) {
+      tocCloseBtn.addEventListener("click", () => {
+        sidebar.classList.remove("drawer-open");
+        syncScrollLock();
+        if (dockTocBtn) dockTocBtn.focus();
+      });
+    }
+
+    // From the chapter drawer, hand over to the full-site navigation drawer so the
+    // bottom-right button always leads somewhere.
+    const tocOpenNavBtn = document.getElementById("toc-open-nav-btn");
+    if (tocOpenNavBtn) {
+      tocOpenNavBtn.addEventListener("click", () => {
+        sidebar.classList.remove("drawer-open");
+        const navDrawer = document.getElementById("site-drawer");
+        if (navDrawer) navDrawer.classList.add("open");
         syncScrollLock();
       });
     }
@@ -1392,6 +1561,7 @@ function renderCard(t) {
      -------------------------------------------------------------------------- */
   function bootAll() {
     initTheme();
+    initSkinSwitcher();
     initMobileNav();
     initTiersExplorer();
     initCharactersExplorer();

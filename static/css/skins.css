@@ -1,0 +1,326 @@
+/* ==========================================================================
+   衡天⊙ PowerWiki — Appearance Skins (the `data-skin` axis)
+   --------------------------------------------------------------------------
+   两轴模型：
+     html[data-theme="light|dark"]  ← 明暗，由右上角太阳/月亮按钮控制
+     html[data-skin="..."]          ← 外观皮肤，由调色板按钮控制
+   两轴正交：每套皮肤都必须自己声明 light 与 dark 两组变量。
+
+   ── 新增皮肤（含 Arena code battle 产物落地）的 4 步 ──────────────────────
+   1. 在 data/skins.json 的 skins[] 里加一条 {id, name, note, swatch, theme_color}
+   2. 在本文件末尾加两块：
+        html[data-skin="<id>"] { …light 变量… }
+        html[data-skin="<id>"][data-theme="dark"] { …dark 变量… }
+   3. 运行 python3 build_site.py —— 按钮列表与首屏脚本自动生成
+   4. 逐页回归：首页 / tiers / characters / 角色页 / rules / materials / 390 宽
+
+   ── 必须覆盖的变量（漏了就会"串味"） ─────────────────────────────────────
+     --bg-canvas --bg-subtle --bg-surface --bg-elevated --bg-header
+     --bg-backdrop --drawer-veil
+     --border-subtle --border-default --border-strong --border-accent
+     --text-primary --text-secondary --text-muted --text-on-accent
+     --accent --accent-strong --accent-soft
+     --dom-*（7 个领域色） --ev-*（5 种证据态 × bg/fg）
+     --hero-fade-h --hero-fade-v --banner-fade-h
+     --hero-art-opacity --banner-art-opacity
+     --shadow-sm --shadow-md --shadow-lg
+     可选：--r-sm --r-md --r-lg --r-pill --font-display --font-sans
+
+   说明：hero/banner 的渐变是"预先烘焙"了底色的线性渐变，只改 --bg-surface
+   而不改 --hero-fade-*，首屏就会露出旧底色的色块 —— 这是最常见的翻车点。
+
+   优先级：html[data-skin="x"] = (0,1,1) > [data-theme="x"] = (0,1,0)，
+   所以皮肤总是压在明暗主题之上；本文件又排在 style/editorial/experience 之后，
+   同级选择器也由它取胜。
+   ========================================================================== */
+
+/* 默认皮肤 = 不覆盖任何变量，走 style.css 的 v6.0 原定义 */
+html[data-skin="default"] {
+  --skin-id: "default";
+}
+
+/* ==========================================================================
+   样例皮肤 A · 纸本 / Paper
+   暖米纸底、棕色系强调、衬线标题、直角、几乎无阴影 —— 想读"书"的时候用。
+   ========================================================================== */
+html[data-skin="paper"] {
+  --skin-id: "paper";
+
+  --bg-canvas: #f2ece0;
+  --bg-subtle: #e9e1d1;
+  --bg-surface: #fbf6ea;
+  --bg-elevated: #f0e8d7;
+  --bg-header: rgba(242, 236, 224, 0.9);
+  --bg-backdrop: rgba(38, 28, 16, 0.42);
+  --drawer-veil: rgba(38, 28, 16, 0.28);
+
+  --border-subtle: rgba(74, 56, 32, 0.1);
+  --border-default: rgba(74, 56, 32, 0.18);
+  --border-strong: rgba(74, 56, 32, 0.3);
+  --border-accent: rgba(140, 90, 34, 0.42);
+
+  --text-primary: #241c12;
+  --text-secondary: #5c4f3c;
+  --text-muted: #8b7c63;
+  --text-on-accent: #fffaf0;
+
+  --accent: #8a5a1f;
+  --accent-strong: #6c4314;
+  --accent-soft: rgba(138, 90, 31, 0.1);
+
+  --dom-terrestrial: #2f6b5e;
+  --dom-stellar: #8a5a1f;
+  --dom-transition: #7a6a52;
+  --dom-cosmic: #34558c;
+  --dom-fgh: #6a4a86;
+  --dom-beyond: #9c3f45;
+  --dom-unranked: #8b7c63;
+
+  --ev-confirmed-bg: rgba(47, 107, 94, 0.1);
+  --ev-confirmed-fg: #2f6b5e;
+  --ev-lower-bg: rgba(52, 85, 140, 0.1);
+  --ev-lower-fg: #34558c;
+  --ev-inferred-bg: rgba(138, 90, 31, 0.12);
+  --ev-inferred-fg: #7c5015;
+  --ev-hidden-bg: rgba(106, 74, 134, 0.1);
+  --ev-hidden-fg: #6a4a86;
+  --ev-missing-bg: rgba(139, 124, 99, 0.12);
+  --ev-missing-fg: #5c4f3c;
+
+  --hero-art-opacity: 0;
+  --banner-art-opacity: 0;
+  --hero-fade-h: linear-gradient(135deg, #fbf6ea 0%, #f1e7d2 100%);
+  --hero-fade-v: none;
+  --banner-fade-h: linear-gradient(135deg, #fbf6ea 0%, #f1e7d2 100%);
+
+  --shadow-sm: 0 1px 2px rgba(74, 56, 32, 0.06);
+  --shadow-md: 0 6px 18px rgba(74, 56, 32, 0.1);
+  --shadow-lg: 0 16px 40px rgba(74, 56, 32, 0.16);
+
+  --r-sm: 2px;
+  --r-md: 3px;
+  --r-lg: 4px;
+  --r-pill: 3px;
+
+  --font-display: "Noto Serif SC Variable", "Noto Serif SC", "Space Grotesk Variable", serif;
+}
+
+html[data-skin="paper"][data-theme="dark"] {
+  --bg-canvas: #16120c;
+  --bg-subtle: #1b1610;
+  --bg-surface: #211b13;
+  --bg-elevated: #2a2318;
+  --bg-header: rgba(22, 18, 12, 0.86);
+  --bg-backdrop: rgba(8, 6, 3, 0.74);
+  --drawer-veil: rgba(8, 6, 3, 0.55);
+
+  --border-subtle: rgba(233, 220, 196, 0.09);
+  --border-default: rgba(233, 220, 196, 0.16);
+  --border-strong: rgba(233, 220, 196, 0.26);
+  --border-accent: rgba(201, 148, 85, 0.45);
+
+  --text-primary: #efe5d2;
+  --text-secondary: #b3a488;
+  --text-muted: #857961;
+  --text-on-accent: #16120c;
+
+  --accent: #c99455;
+  --accent-strong: #e0b174;
+  --accent-soft: rgba(201, 148, 85, 0.14);
+
+  --dom-terrestrial: #6fbfae;
+  --dom-stellar: #c99455;
+  --dom-transition: #9a8d76;
+  --dom-cosmic: #86a9e6;
+  --dom-fgh: #b79ade;
+  --dom-beyond: #e08a90;
+  --dom-unranked: #857961;
+
+  --ev-confirmed-bg: rgba(111, 191, 174, 0.14);
+  --ev-confirmed-fg: #82d3c2;
+  --ev-lower-bg: rgba(134, 169, 230, 0.14);
+  --ev-lower-fg: #a5c2f2;
+  --ev-inferred-bg: rgba(201, 148, 85, 0.16);
+  --ev-inferred-fg: #e2b57e;
+  --ev-hidden-bg: rgba(183, 154, 222, 0.14);
+  --ev-hidden-fg: #cbb3ec;
+  --ev-missing-bg: rgba(133, 121, 97, 0.18);
+  --ev-missing-fg: #b3a488;
+
+  --hero-art-opacity: 0.42;
+  --banner-art-opacity: 0.26;
+  --hero-fade-h: linear-gradient(90deg, #211b13 0%, #211b13 38%, rgba(33, 27, 19, 0.62) 68%, rgba(33, 27, 19, 0.18) 100%);
+  --hero-fade-v: linear-gradient(180deg, rgba(33, 27, 19, 0.25) 0%, rgba(33, 27, 19, 0.05) 60%, #211b13 100%);
+  --banner-fade-h: linear-gradient(90deg, #211b13 0%, #211b13 50%, rgba(33, 27, 19, 0.58) 80%, rgba(33, 27, 19, 0.25) 100%);
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 26px rgba(0, 0, 0, 0.42);
+  --shadow-lg: 0 22px 54px rgba(0, 0, 0, 0.58);
+}
+
+/* 纸本的组件级签名：书页感靠"边框 + 无阴影 + 纸纹"三件事 */
+html[data-skin="paper"] body {
+  background-image: radial-gradient(circle at 18% 0%, rgba(138, 90, 31, 0.055), transparent 52%);
+  background-attachment: fixed;
+}
+
+html[data-skin="paper"] .site-header::before {
+  box-shadow: none;
+  border-bottom: 1px solid var(--border-default);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+html[data-skin="paper"] .brand-name,
+html[data-skin="paper"] .page-title {
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+html[data-skin="paper"] .brand-mark {
+  border-radius: 2px;
+  font-family: "Noto Serif SC Variable", serif;
+}
+
+/* ==========================================================================
+   样例皮肤 B · 蓝图 / Blueprint
+   冷调制图底、钢青强调、零圆角、细网格 —— 想看"工程图"的时候用。
+   ========================================================================== */
+html[data-skin="blueprint"] {
+  --skin-id: "blueprint";
+
+  --bg-canvas: #eaeef2;
+  --bg-subtle: #e0e6ec;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f1f4f8;
+  --bg-header: rgba(234, 238, 242, 0.9);
+  --bg-backdrop: rgba(9, 24, 36, 0.4);
+  --drawer-veil: rgba(9, 24, 36, 0.26);
+
+  --border-subtle: rgba(13, 42, 64, 0.1);
+  --border-default: rgba(13, 42, 64, 0.18);
+  --border-strong: rgba(13, 42, 64, 0.3);
+  --border-accent: rgba(31, 95, 139, 0.45);
+
+  --text-primary: #0d2233;
+  --text-secondary: #40556b;
+  --text-muted: #6c8095;
+  --text-on-accent: #ffffff;
+
+  --accent: #1f5f8b;
+  --accent-strong: #164a6d;
+  --accent-soft: rgba(31, 95, 139, 0.09);
+
+  --dom-terrestrial: #0f766e;
+  --dom-stellar: #1f5f8b;
+  --dom-transition: #5b7288;
+  --dom-cosmic: #1d4ed8;
+  --dom-fgh: #6d28d9;
+  --dom-beyond: #be123c;
+  --dom-unranked: #6c8095;
+
+  --ev-confirmed-bg: rgba(15, 118, 110, 0.1);
+  --ev-confirmed-fg: #0f766e;
+  --ev-lower-bg: rgba(29, 78, 216, 0.1);
+  --ev-lower-fg: #1d4ed8;
+  --ev-inferred-bg: rgba(31, 95, 139, 0.1);
+  --ev-inferred-fg: #1b5478;
+  --ev-hidden-bg: rgba(109, 40, 217, 0.1);
+  --ev-hidden-fg: #6d28d9;
+  --ev-missing-bg: rgba(108, 128, 149, 0.12);
+  --ev-missing-fg: #40556b;
+
+  --hero-art-opacity: 0;
+  --banner-art-opacity: 0;
+  --hero-fade-h: linear-gradient(135deg, #ffffff 0%, #e8eef4 100%);
+  --hero-fade-v: none;
+  --banner-fade-h: linear-gradient(135deg, #ffffff 0%, #e8eef4 100%);
+
+  --shadow-sm: 0 1px 0 rgba(13, 42, 64, 0.06);
+  --shadow-md: 0 6px 16px rgba(13, 42, 64, 0.1);
+  --shadow-lg: 0 14px 36px rgba(13, 42, 64, 0.16);
+
+  --r-sm: 0;
+  --r-md: 0;
+  --r-lg: 0;
+  --r-pill: 0;
+}
+
+html[data-skin="blueprint"][data-theme="dark"] {
+  --bg-canvas: #070d13;
+  --bg-subtle: #0b131b;
+  --bg-surface: #0e1822;
+  --bg-elevated: #132230;
+  --bg-header: rgba(7, 13, 19, 0.88);
+  --bg-backdrop: rgba(2, 6, 10, 0.76);
+  --drawer-veil: rgba(2, 6, 10, 0.56);
+
+  --border-subtle: rgba(126, 176, 204, 0.1);
+  --border-default: rgba(126, 176, 204, 0.18);
+  --border-strong: rgba(126, 176, 204, 0.3);
+  --border-accent: rgba(79, 179, 217, 0.45);
+
+  --text-primary: #dbe7f0;
+  --text-secondary: #90a7ba;
+  --text-muted: #64798b;
+  --text-on-accent: #04121c;
+
+  --accent: #4fb3d9;
+  --accent-strong: #7fd0ee;
+  --accent-soft: rgba(79, 179, 217, 0.13);
+
+  --dom-terrestrial: #5ec2b0;
+  --dom-stellar: #4fb3d9;
+  --dom-transition: #8a9cad;
+  --dom-cosmic: #7aa8f0;
+  --dom-fgh: #a98ef0;
+  --dom-beyond: #e57e94;
+  --dom-unranked: #64798b;
+
+  --ev-confirmed-bg: rgba(94, 194, 176, 0.14);
+  --ev-confirmed-fg: #6ee0cb;
+  --ev-lower-bg: rgba(122, 168, 240, 0.14);
+  --ev-lower-fg: #93bcff;
+  --ev-inferred-bg: rgba(79, 179, 217, 0.15);
+  --ev-inferred-fg: #8fd6f0;
+  --ev-hidden-bg: rgba(169, 142, 240, 0.15);
+  --ev-hidden-fg: #c6b2ff;
+  --ev-missing-bg: rgba(100, 121, 139, 0.18);
+  --ev-missing-fg: #90a7ba;
+
+  --hero-art-opacity: 0.5;
+  --banner-art-opacity: 0.3;
+  --hero-fade-h: linear-gradient(90deg, #0e1822 0%, #0e1822 38%, rgba(14, 24, 34, 0.62) 68%, rgba(14, 24, 34, 0.18) 100%);
+  --hero-fade-v: linear-gradient(180deg, rgba(14, 24, 34, 0.25) 0%, rgba(14, 24, 34, 0.05) 60%, #0e1822 100%);
+  --banner-fade-h: linear-gradient(90deg, #0e1822 0%, #0e1822 50%, rgba(14, 24, 34, 0.58) 80%, rgba(14, 24, 34, 0.25) 100%);
+
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.34);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.46);
+  --shadow-lg: 0 22px 58px rgba(0, 0, 0, 0.62);
+}
+
+/* 蓝图的组件级签名：网格纸 + 直角 + 细描边 */
+html[data-skin="blueprint"] body {
+  background-image:
+    linear-gradient(rgba(31, 95, 139, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 95, 139, 0.055) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center top;
+  background-attachment: fixed;
+}
+
+html[data-skin="blueprint"][data-theme="dark"] body {
+  background-image:
+    linear-gradient(rgba(79, 179, 217, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 179, 217, 0.07) 1px, transparent 1px);
+}
+
+html[data-skin="blueprint"] .site-header::before {
+  box-shadow: none;
+  border-bottom: 1px solid var(--border-accent);
+}
+
+html[data-skin="blueprint"] .brand-mark,
+html[data-skin="blueprint"] .brand-name {
+  letter-spacing: 0.02em;
+}
