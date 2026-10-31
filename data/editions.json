@@ -1,0 +1,43 @@
+{
+  "_note": "页面皮肤登记表。每套皮肤 = 一份整页设计；source 为空表示用主站生成器产出的页面（默认皮肤）。新增皮肤：把整页 HTML 放进 skins/_source/，在这里加一条，然后 python3 build_site.py。",
+  "default": "default",
+  "storage_key": "pw_edition_v1",
+  "editions": [
+    {
+      "id": "default",
+      "name": "默认",
+      "tag": "DEFAULT · v6.0",
+      "note": "建筑感栅格，98 档量级 + 角色 + 规则 + 材质全站",
+      "source": null,
+      "thumb": "static/img/editions/default.jpg",
+      "pages": {
+        "materials": "materials.html",
+        "home": "index.html"
+      }
+    },
+    {
+      "id": "vol",
+      "name": "卷宗",
+      "tag": "VOL · ARCHIVE",
+      "note": "左侧索引目录、细线分隔、衬线大标题的文献排版",
+      "source": "skins/_source/vol.html",
+      "section": "materials",
+      "thumb": "static/img/editions/vol.jpg",
+      "pages": {
+        "materials": "skins/vol/materials.html"
+      }
+    },
+    {
+      "id": "poster",
+      "name": "图鉴",
+      "tag": "POSTER · ATLAS",
+      "note": "巨字标题、球形主视觉、浮动卡片的海报排版",
+      "source": "skins/_source/poster.html",
+      "section": "materials",
+      "thumb": "static/img/editions/poster.jpg",
+      "pages": {
+        "materials": "skins/poster/materials.html"
+      }
+    }
+  ]
+}

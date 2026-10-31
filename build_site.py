@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import html
 import json
+import posixpath
 import re
 import struct
 from pathlib import Path
@@ -23,77 +24,108 @@ JS_OUT_DIR = ROOT / "static" / "js"
 
 RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第五版·最新】.md"
 MATERIALS_MD_PATH = DOCS_DIR / "材质与破坏能量数据库（新）.md"
-SKINS_PATH = DATA_DIR / "skins.json"
-_SKINS_CACHE: Optional[Dict[str, Any]] = None
+EDITIONS_PATH = DATA_DIR / "editions.json"
+SKINS_OUT_DIR = ROOT / "skins"
+_EDITIONS_CACHE: Optional[Dict[str, Any]] = None
 
 
-def skins_manifest() -> Dict[str, Any]:
-    """Appearance-skin registry (data/skins.json) — drives the header switcher and the inline boot script."""
-    global _SKINS_CACHE
-    if _SKINS_CACHE is None:
+def editions_manifest() -> Dict[str, Any]:
+    """Page-skin registry (data/editions.json). One entry == one whole-page design."""
+    global _EDITIONS_CACHE
+    if _EDITIONS_CACHE is None:
         try:
-            payload = json.loads(SKINS_PATH.read_text(encoding="utf-8"))
+            payload = json.loads(EDITIONS_PATH.read_text(encoding="utf-8"))
         except FileNotFoundError:
-            payload = {"default": "default", "skins": [{"id": "default", "name": "默认", "note": "", "swatch": []}]}
-        skins = [s for s in payload.get("skins", []) if s.get("id")]
-        if not skins:
-            skins = [{"id": "default", "name": "默认", "note": "", "swatch": []}]
-        default_id = payload.get("default") or skins[0]["id"]
-        if default_id not in {s["id"] for s in skins}:
-            default_id = skins[0]["id"]
-        _SKINS_CACHE = {"default": default_id, "skins": skins}
-    return _SKINS_CACHE
+            payload = {"default": "default", "editions": [{"id": "default", "name": "默认", "pages": {"home": "index.html"}}]}
+        eds = [e for e in payload.get("editions", []) if e.get("id") and e.get("pages")]
+        if not eds:
+            eds = [{"id": "default", "name": "默认", "pages": {"home": "index.html"}}]
+        default_id = payload.get("default") or eds[0]["id"]
+        if default_id not in {e["id"] for e in eds}:
+            default_id = eds[0]["id"]
+        _EDITIONS_CACHE = {"default": default_id, "editions": eds}
+    return _EDITIONS_CACHE
 
 
-def build_skin_switch_html() -> str:
-    """Header palette button + popover listing every registered skin."""
-    manifest = skins_manifest()
-    skins = manifest["skins"]
-    active_id = manifest["default"]
-    rows = []
-    for skin in skins:
-        swatch = "".join(
-            f'<i style="background:{esc(color)}"></i>' for color in (skin.get("swatch") or [])[:3]
+def _rel_from(page_dir: str, target: str) -> str:
+    """Relative URL from a page directory ('' or 'tier') to a repo-root-relative target."""
+    start = page_dir.strip("/") or "."
+    return posixpath.relpath(target, start)
+
+
+def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str] = None) -> str:
+    manifest = editions_manifest()
+    current = current_id or manifest["default"]
+    cards = []
+    for ed in manifest["editions"]:
+        pages = ed.get("pages") or {}
+        # 这套皮肤没有当前栏目时，退回到它唯一/第一个页面，并打上"仅某页"标记
+        target = pages.get(section) or (next(iter(pages.values())) if pages else "index.html")
+        href = _rel_from(page_dir, target)
+        is_current = ed["id"] == current
+        thumb = ed.get("thumb")
+        thumb_html = (
+            f'<span class="pw-edition-thumb"><img src="{esc(_rel_from(page_dir, thumb))}" alt="" loading="lazy" decoding="async"></span>'
+            if thumb
+            else '<span class="pw-edition-thumb"></span>'
         )
-        checked = "true" if skin["id"] == active_id else "false"
-        rows.append(
-            f'<button type="button" class="skin-option" role="radio" aria-checked="{checked}" data-skin-id="{esc(skin["id"])}">'
-            f'<span class="skin-swatch" aria-hidden="true">{swatch}</span>'
-            f'<span class="skin-meta">'
-            f'<span class="skin-name">{esc(skin.get("name") or skin["id"])}</span>'
-            f'<span class="skin-note">{esc(skin.get("note") or "")}</span>'
-            f"</span>"
-            f'<span class="skin-check" aria-hidden="true">{SVGS["check"]}</span>'
-            f"</button>"
+        card_cls = "pw-edition-card is-current" if is_current else "pw-edition-card"
+        aria = ' aria-current="page"' if is_current else ""
+        now_badge = '<span class="pw-edition-now">当前</span>' if is_current else ""
+        if not is_current and section not in pages:
+            now_badge = '<span class="pw-edition-only">仅材质页</span>'
+        cards.append(
+            f'<a class="{card_cls}" data-edition-id="{esc(ed["id"])}" href="{esc(href)}"{aria}>'
+            + thumb_html
+            + '<span class="pw-edition-meta">'
+            + f'<span class="pw-edition-name">{esc(ed.get("name") or ed["id"])}{now_badge}</span>'
+            + f'<span class="pw-edition-tag">{esc(ed.get("tag") or "")}</span>'
+            + f'<span class="pw-edition-note">{esc(ed.get("note") or "")}</span>'
+            + "</span></a>"
         )
-    if not rows:  # pragma: no cover - manifest always has at least one skin
-        return ""
+    count = len(manifest["editions"])
     return (
-        '<div class="skin-switch" id="skin-switch">'
-        f'<button type="button" class="icon-btn" id="skin-toggle-btn" aria-label="切换外观皮肤" aria-haspopup="true" aria-expanded="false" aria-controls="skin-panel" title="切换外观皮肤">'
-        f'{SVGS["palette"]}</button>'
-        '<div class="skin-panel" id="skin-panel" hidden>'
-        '<div class="skin-panel-head"><span class="skin-panel-title">外观皮肤</span>'
-        '<span class="skin-panel-hint">记住选择</span></div>'
-        f'<div class="skin-options" role="radiogroup" aria-label="外观皮肤列表">{"".join(rows)}</div>'
+        '<div class="pw-edition-dock" id="pw-edition-dock">'
+        '<button type="button" class="pw-edition-toggle" id="pw-edition-toggle" aria-expanded="false" aria-controls="pw-edition-panel" title="切换页面皮肤">'
+        '<span class="pw-edition-glyph" aria-hidden="true">⊙</span><span>皮肤</span></button>'
+        f'<div class="pw-edition-panel" id="pw-edition-panel" data-current-edition="{esc(current)}" hidden>'
+        '<div class="pw-edition-head"><span class="pw-edition-title">页面皮肤</span>'
+        f'<span class="pw-edition-sub">整页换设计 · {count} 套</span></div>'
+        f'<div class="pw-edition-list">{"".join(cards)}</div>'
+        '<div class="pw-edition-foot">每套皮肤是独立的一份整页设计；内容一致，版式不同。</div>'
         "</div></div>"
     )
 
 
-def skin_boot_payload() -> Tuple[str, str, str]:
-    """(json id list, json theme-color map, default id) embedded in the inline <head> boot script."""
-    manifest = skins_manifest()
-    ids = [s["id"] for s in manifest["skins"]]
-    colors = {
-        s["id"]: s.get("theme_color") or {}
-        for s in manifest["skins"]
-        if isinstance(s.get("theme_color"), dict)
-    }
-    return (
-        json.dumps(ids, ensure_ascii=False),
-        json.dumps(colors, ensure_ascii=False),
-        manifest["default"],
-    )
+def build_skin_editions() -> int:
+    """Take each skins/_source/*.html, inject the launcher, write skins/<id>/<section>.html."""
+    built = 0
+    for ed in editions_manifest()["editions"]:
+        source = ed.get("source")
+        if not source:
+            continue
+        src_path = ROOT / source
+        if not src_path.exists():
+            print(f"[WARN] edition source missing: {source}")
+            continue
+        section = ed.get("section") or "home"
+        out_dir = SKINS_OUT_DIR / ed["id"]
+        out_dir.mkdir(parents=True, exist_ok=True)
+        page_dir = f"skins/{ed['id']}"
+        inject = (
+            f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
+            f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
+            f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
+        )
+        doc = src_path.read_text(encoding="utf-8", errors="replace")
+        if "</body>" in doc:
+            doc = doc.replace("</body>", inject + "</body>", 1)
+        else:
+            doc = doc + inject
+        (out_dir / f"{section}.html").write_text(doc, encoding="utf-8")
+        built += 1
+    return built
+
 
 SVGS = {
     "search": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
@@ -109,8 +141,6 @@ SVGS = {
     "atlas": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg>',
     "dossier": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg>',
     "library": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg>',
-    "palette": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18h1.4a2 2 0 0 0 0-4H13a2 2 0 0 1 0-4h4.6A3.4 3.4 0 0 0 21 9.6C21 5.9 17 3 12 3Z"/><circle cx="7.6" cy="9.2" r=".9" fill="currentColor" stroke="none"/><circle cx="11" cy="6.6" r=".9" fill="currentColor" stroke="none"/><circle cx="15.4" cy="7.6" r=".9" fill="currentColor" stroke="none"/></svg>',
-    "check": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg>',
 }
 
 DIM_META = [
@@ -691,11 +721,12 @@ def render_shell(
         else ""
     )
 
-    skin_ids_json, skin_colors_json, skin_default_id = skin_boot_payload()
-    skin_switch_html = build_skin_switch_html()
+    # r 只表达"回根目录要走几层"，用等深的占位目录即可算出正确的相对链接
+    _page_dir = "/".join(["x"] * r.count("../"))
+    edition_launcher = edition_launcher_html(_page_dir, active_nav)
 
     page = f"""<!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-skin="{esc(skin_default_id)}" data-root="{r}" data-page-id="{esc(page_id)}">
+<html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -715,28 +746,10 @@ def render_shell(
         }} catch (e) {{ t = 'light'; }}
       }}
       document.documentElement.setAttribute('data-theme', t);
-
-      /* appearance skin: ?skin= wins, then the remembered choice, then the default */
-      var SKINS = {skin_ids_json};
-      var SKIN_COLORS = {skin_colors_json};
-      window.PW_SKIN_THEME_COLORS = SKIN_COLORS;
-      var s = null;
-      try {{
-        var hit = location.search.match(/[?&]skin=([A-Za-z0-9_-]+)/);
-        if (hit && SKINS.indexOf(hit[1]) > -1) {{
-          s = hit[1];
-          try {{ localStorage.setItem('pw_skin_v1', s); }} catch (e) {{}}
-        }}
-        if (!s) s = localStorage.getItem('pw_skin_v1');
-      }} catch (e) {{}}
-      if (SKINS.indexOf(s) < 0) s = '{skin_default_id}';
-      document.documentElement.setAttribute('data-skin', s);
-
-      var pair = SKIN_COLORS[s] || {{}};
-      var canvas = pair[t] || (t === 'dark' ? '#090b10' : '#f6f7f4');
+      /* 样式表到达前先刷一次画布底色，避免白屏闪一下 */
+      var canvas = t === 'dark' ? '#090b10' : '#f6f7f4';
       var mc = document.getElementById('theme-color-meta');
       if (mc) mc.setAttribute('content', canvas);
-      /* Paint the canvas before the stylesheets land, otherwise the first frame is plain white. */
       document.documentElement.style.backgroundColor = canvas;
     }})();
   </script>
@@ -747,7 +760,7 @@ def render_shell(
   <link rel="stylesheet" href="{r}static/css/style.css">
   <link rel="stylesheet" href="{r}static/css/editorial.css">
   <link rel="stylesheet" href="{r}static/css/experience.css">
-  <link rel="stylesheet" href="{r}static/css/skins.css">
+  <link rel="stylesheet" href="{r}static/css/editions.css">
 </head>
 <body class="{esc(shell_body_class)}">
   <header class="site-header">
@@ -776,7 +789,6 @@ def render_shell(
           <span class="search-btn-label">检索…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
-        {skin_switch_html}
         <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
           {SVGS["sun"]}
         </button>
@@ -904,6 +916,8 @@ def render_shell(
 
   <script src="{r}static/js/search-index.js"></script>
   <script src="{r}static/js/app.js"></script>
+  {edition_launcher}
+  <script src="{r}static/js/editions.js"></script>
 </body>
 </html>
 """
@@ -2119,12 +2133,15 @@ def main() -> None:
     )
     (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
 
+    editions_built = build_skin_editions()
+
     print(
         f"[OK] PowerWiki v9.1 built successfully:\n"
         f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
         f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
         f"  - Standalone Character pages: {len(all_chars)} files in character/*.html ({len(char_doc_sections)} full-text sections indexed)\n"
-        f"  - Rules v5 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections"
+        f"  - Rules v5 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections\n"
+        f"  - Page skins (editions): {editions_built} standalone builds in skins/*/"
     )
 
 
