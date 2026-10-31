@@ -60,8 +60,11 @@ python3 build_site.py
 | id | 名称 | 来源 | 覆盖页面 |
 | --- | --- | --- | --- |
 | `default` | 默认 | 本仓库生成器（`build_site.py`） | 全站：首页 / 98 档量级 / 角色 / 规则 / 材质 |
-| `vol` | 卷宗 | `skins/_source/vol.html`（Arena 产物，整页自包含） | 材质页 |
-| `poster` | 图鉴 | `skins/_source/poster.html`（Arena 产物，整页自包含） | 材质页 |
+| `archive` | 卷宗 | `skins/_source/archive.html`（Arena 产物，整页自包含） | 材质页 |
+| `atlas` | 星图 | `skins/_source/atlas.html`（Arena 产物，整页自包含） | 材质页 |
+
+规则：**切换器只列出"当前栏目真有对应页面"的皮肤**。首页只有 `default` 有页面，所以首页不出现切换器；
+材质页三套都有，才出现。站在别的皮肤上时，左下角常驻一个回主站首页的按钮。
 
 明暗仍由右上角的太阳 / 月亮控制，与皮肤是两个独立的轴；皮肤内部若自带明暗，以皮肤为准。
 
@@ -72,21 +75,28 @@ python3 build_site.py
 
 ```json
 {
-  "id": "poster",
-  "name": "图鉴",
-  "tag": "POSTER · ATLAS",
-  "note": "巨字标题、球形主视觉、浮动卡片的海报排版",
-  "source": "skins/_source/poster.html",
+  "id": "archive",
+  "name": "卷宗",
+  "tag": "ARCHIVE",
+  "note": "米纸底、左侧索引栏、细线分隔与衬线巨标题的档案排版",
+  "source": "skins/_source/archive.html",
   "section": "materials",
-  "thumb": "static/img/editions/poster.jpg",
-  "pages": { "materials": "skins/poster/materials.html" }
+  "thumb": "static/img/editions/archive.jpg",
+  "patch": "skins/patches/archive.js",
+  "pages": { "materials": "skins/archive/materials.html" }
 }
 ```
 
 3. `python3 build_site.py` —— 生成器会把 HTML 复制到 `skins/<id>/<section>.html`，并在 `</body>` 前注入切换器和它的 CSS/JS；主站所有页面也会自动挂上切换器；
 4. 截一张缩略图存到 `static/img/editions/<id>.jpg`（16:10 裁切、宽 640）。
 
-`pages` 里没有登记的栏目，切换器会退回到该皮肤的第一个页面，并标注「仅 xx 页」——目前两份 Arena 产物只有材质页，所以从首页点进去会落到材质页。
+`pages` 里没有登记的栏目，这套皮肤就不会出现在那一栏的切换器里（不会把用户带去别的页面）。
+
+### 产物补丁（`patch`）
+
+产物是别人的整页设计，偶尔有"按单页生成、但按多页站点写的"部件。`patch` 指向一个小脚本，在注入时跟在切换器后面加载，只做结构调整，不改产物本体：
+
+- `skins/patches/archive.js` —— 把 12 条「上一章 / 下一章」翻页条换成「章节分隔 + 01/12 进度 + 章节目录」；整页是连续滚动，翻页跳锚点没有意义。顺带把左下角切换器抬到该页固定工具栏之上。
 
 ### 实现要点
 

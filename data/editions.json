@@ -1,5 +1,5 @@
 {
-  "_note": "页面皮肤登记表。每套皮肤 = 一份整页设计；source 为空表示用主站生成器产出的页面（默认皮肤）。新增皮肤：把整页 HTML 放进 skins/_source/，在这里加一条，然后 python3 build_site.py。",
+  "_note": "页面皮肤登记表。每套皮肤 = 一份整页设计，只在 pages 里登记了当前栏目的皮肤才会出现在切换器里。新增皮肤：整页 HTML 放进 skins/_source/，这里加一条，然后 python3 build_site.py。",
   "default": "default",
   "storage_key": "pw_edition_v1",
   "editions": [
@@ -11,32 +11,33 @@
       "source": null,
       "thumb": "static/img/editions/default.jpg",
       "pages": {
-        "materials": "materials.html",
-        "home": "index.html"
+        "home": "index.html",
+        "materials": "materials.html"
       }
     },
     {
-      "id": "vol",
+      "id": "archive",
       "name": "卷宗",
-      "tag": "VOL · ARCHIVE",
-      "note": "左侧索引目录、细线分隔、衬线大标题的文献排版",
-      "source": "skins/_source/vol.html",
+      "tag": "ARCHIVE",
+      "note": "米纸底、左侧索引栏、细线分隔与衬线巨标题的档案排版",
+      "source": "skins/_source/archive.html",
       "section": "materials",
-      "thumb": "static/img/editions/vol.jpg",
+      "thumb": "static/img/editions/archive.jpg",
+      "patch": "skins/patches/archive.js",
       "pages": {
-        "materials": "skins/vol/materials.html"
+        "materials": "skins/archive/materials.html"
       }
     },
     {
-      "id": "poster",
-      "name": "图鉴",
-      "tag": "POSTER · ATLAS",
-      "note": "巨字标题、球形主视觉、浮动卡片的海报排版",
-      "source": "skins/_source/poster.html",
+      "id": "atlas",
+      "name": "星图",
+      "tag": "ATLAS",
+      "note": "大留白、描边巨字、裂星主视觉与浮动卡片的图版排版",
+      "source": "skins/_source/atlas.html",
       "section": "materials",
-      "thumb": "static/img/editions/poster.jpg",
+      "thumb": "static/img/editions/atlas.jpg",
       "pages": {
-        "materials": "skins/poster/materials.html"
+        "materials": "skins/atlas/materials.html"
       }
     }
   ]

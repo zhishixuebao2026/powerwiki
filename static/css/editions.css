@@ -4,13 +4,41 @@
    ========================================================================== */
 
 .pw-edition-dock {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
   position: fixed;
   left: max(16px, env(safe-area-inset-left, 0px));
-  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(18px + var(--pw-edition-dock-offset, 0px) + env(safe-area-inset-bottom, 0px));
   z-index: 1400;
   font-family: "Noto Sans SC Variable", "Noto Sans SC", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
+.pw-edition-home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 6px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  color: #3a3a38;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.pw-edition-home-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 0, 0, 0.26);
+  color: #a9762c;
+}
+
+.pw-edition-home-btn .svg-icon { width: 15px; height: 15px; }
 
 .pw-edition-toggle {
   display: inline-flex;
@@ -61,7 +89,32 @@
   transform: rotate(180deg);
 }
 
-.pw-edition-dock.is-open .pw-edition-toggle {
+.pw-edition-dock.is-open .pw-edition-home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 6px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  color: #3a3a38;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.pw-edition-home-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 0, 0, 0.26);
+  color: #a9762c;
+}
+
+.pw-edition-home-btn .svg-icon { width: 15px; height: 15px; }
+
+.pw-edition-toggle {
   border-color: rgba(0, 0, 0, 0.24);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
 }
@@ -84,6 +137,12 @@
 
 .pw-edition-panel[hidden] {
   display: none;
+}
+
+.pw-edition-panel {
+  max-height: min(72vh, 620px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 @keyframes pw-edition-rise {
@@ -208,18 +267,73 @@
 }
 
 .pw-edition-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   padding: 10px 4px 0;
+  margin-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
   font-size: 10px;
   color: #9a9a94;
   line-height: 1.5;
 }
 
+.pw-edition-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #17181a;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.14s ease, background-color 0.14s ease;
+}
+
+.pw-edition-home:hover {
+  border-color: #c9a25c;
+  background: #fdf6e8;
+}
+
+.pw-edition-foot-note {
+  font-size: 9.5px;
+  color: #a3a39d;
+}
+
 @media (max-width: 520px) {
   .pw-edition-dock {
     left: 12px;
-    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(12px + var(--pw-edition-dock-offset, 0px) + env(safe-area-inset-bottom, 0px));
   }
-  .pw-edition-toggle {
+  .pw-edition-home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 6px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  color: #3a3a38;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.pw-edition-home-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 0, 0, 0.26);
+  color: #a9762c;
+}
+
+.pw-edition-home-btn .svg-icon { width: 15px; height: 15px; }
+
+.pw-edition-toggle {
     height: 34px;
     padding: 0 11px 0 7px;
     font-size: 11.5px;

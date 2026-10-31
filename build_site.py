@@ -54,13 +54,23 @@ def _rel_from(page_dir: str, target: str) -> str:
 
 
 def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str] = None) -> str:
+    """只在"当前栏目真有对应页面"的皮肤之间提供切换；不足两套就不挂切换器。"""
     manifest = editions_manifest()
     current = current_id or manifest["default"]
-    cards = []
+
+    applicable = []
     for ed in manifest["editions"]:
         pages = ed.get("pages") or {}
-        # 这套皮肤没有当前栏目时，退回到它唯一/第一个页面，并打上"仅某页"标记
-        target = pages.get(section) or (next(iter(pages.values())) if pages else "index.html")
+        target = pages.get(section)
+        if not target:
+            continue  # 这套皮肤没有这一栏，不列出来，避免把用户带到别的页面
+        applicable.append((ed, target))
+
+    if len(applicable) < 2:
+        return ""
+
+    cards = []
+    for ed, target in applicable:
         href = _rel_from(page_dir, target)
         is_current = ed["id"] == current
         thumb = ed.get("thumb")
@@ -72,8 +82,6 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
         card_cls = "pw-edition-card is-current" if is_current else "pw-edition-card"
         aria = ' aria-current="page"' if is_current else ""
         now_badge = '<span class="pw-edition-now">当前</span>' if is_current else ""
-        if not is_current and section not in pages:
-            now_badge = '<span class="pw-edition-only">仅材质页</span>'
         cards.append(
             f'<a class="{card_cls}" data-edition-id="{esc(ed["id"])}" href="{esc(href)}"{aria}>'
             + thumb_html
@@ -83,16 +91,28 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
             + f'<span class="pw-edition-note">{esc(ed.get("note") or "")}</span>'
             + "</span></a>"
         )
-    count = len(manifest["editions"])
+
+    # 站在别的皮肤上时，永远留一条回主站的路
+    home_href = _rel_from(page_dir, "index.html")
+    back_home = ""
+    if current != manifest["default"]:
+        back_home = (
+            f'<a class="pw-edition-home" href="{esc(home_href)}">'
+            '<span aria-hidden="true">←</span> 返回主站首页</a>'
+        )
+
+    count = len(applicable)
     return (
         '<div class="pw-edition-dock" id="pw-edition-dock">'
+        f'<a class="pw-edition-home-btn" href="{esc(home_href)}" title="返回主站首页" aria-label="返回主站首页">{SVGS["home"]}</a>'
         '<button type="button" class="pw-edition-toggle" id="pw-edition-toggle" aria-expanded="false" aria-controls="pw-edition-panel" title="切换页面皮肤">'
         '<span class="pw-edition-glyph" aria-hidden="true">⊙</span><span>皮肤</span></button>'
         f'<div class="pw-edition-panel" id="pw-edition-panel" data-current-edition="{esc(current)}" hidden>'
-        '<div class="pw-edition-head"><span class="pw-edition-title">页面皮肤</span>'
-        f'<span class="pw-edition-sub">整页换设计 · {count} 套</span></div>'
+        '<div class="pw-edition-head"><span class="pw-edition-title">本页皮肤</span>'
+        f'<span class="pw-edition-sub">同一内容 · {count} 种版式</span></div>'
         f'<div class="pw-edition-list">{"".join(cards)}</div>'
-        '<div class="pw-edition-foot">每套皮肤是独立的一份整页设计；内容一致，版式不同。</div>'
+        f'<div class="pw-edition-foot">{back_home}'
+        '<span class="pw-edition-foot-note">只列出与本页对应的皮肤；换页后入口随页面走。</span></div>'
         "</div></div>"
     )
 
@@ -112,10 +132,15 @@ def build_skin_editions() -> int:
         out_dir = SKINS_OUT_DIR / ed["id"]
         out_dir.mkdir(parents=True, exist_ok=True)
         page_dir = f"skins/{ed['id']}"
+        patch = ed.get("patch")
+        patch_tag = (
+            f'<script src="{_rel_from(page_dir, patch)}" defer></script>\n' if patch else ""
+        )
         inject = (
             f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
             f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
             f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
+            f'{patch_tag}'
         )
         doc = src_path.read_text(encoding="utf-8", errors="replace")
         if "</body>" in doc:

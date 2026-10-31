@@ -152,7 +152,10 @@
 
         if (!reduceMotion && typeof document.startViewTransition === "function") {
           try {
-            document.startViewTransition(applyTheme);
+            const vt = document.startViewTransition(applyTheme);
+            /* 跳转/切页时这个 transition 会被中断，吞掉它的 promise，避免控制台报错 */
+            if (vt && vt.finished && typeof vt.finished.catch === "function") vt.finished.catch(() => {});
+            if (vt && vt.ready && typeof vt.ready.catch === "function") vt.ready.catch(() => {});
             return;
           } catch (_) {}
         }
