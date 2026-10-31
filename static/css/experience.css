@@ -745,8 +745,8 @@ body.character-futan .toc-item.active { color: var(--accent); }
    --tier-art-position / --tier-art-alpha-* / --tier-art-ink* come from
    data/tier-art-tuning.json and are written inline by build_site.py.
    -------------------------------------------------------------------------- */
-#group-g-micro-building { --tier-art-image: url("../img/tiers/g-micro-building.jpg"); --tier-art-position: 78% center; }
-#group-g-urban-surface { --tier-art-image: url("../img/tiers/g-urban-surface.jpg"); --tier-art-position: 76% center; }
+#group-g-micro-building { --tier-art-image: url("../img/tiers/card/g-micro-building.webp"); --tier-art-position: 78% center; }
+#group-g-urban-surface { --tier-art-image: url("../img/tiers/card/g-urban-surface.webp"); --tier-art-position: 76% center; }
 #group-g-planetary-stellar { --tier-art-image: url("../img/tiers/g-planetary-stellar.jpg"); --tier-art-position: 82% center; }
 #group-transition-a { --tier-art-image: url("../img/tiers/transition-a.jpg"); --tier-art-position: 80% center; }
 #group-coverage-sys { --tier-art-image: url("../img/tiers/coverage-sys.jpg"); --tier-art-position: 80% center; }
@@ -1320,4 +1320,18 @@ body.character-futan .spec-card:hover {
 @media (prefers-reduced-motion: reduce) {
   body.character-yutu .char-identity-fx span,
   body.character-futan .char-identity-fx::after { animation: none; }
+}
+
+/* 配图从 CSS background 改成 <img loading="lazy">：
+   原来 98 张原图（15.5 MB）首次打开全部拉取解码；现在按需加载卡片版 webp（1.5 MB 全站）。
+   视觉一致——取景重心与浓淡补偿仍走同一组变量。 */
+.tier-card-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--tier-art-position, center);
+  display: block;
+  pointer-events: none;
 }

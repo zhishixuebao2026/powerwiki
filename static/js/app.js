@@ -694,10 +694,10 @@ function renderCard(t) {
       const tuneMap = window.PW_TIER_ART_TUNING || {};
       const tuneRaw = typeof tuneMap[t.slug] === "string" ? tuneMap[t.slug] : "";
       const tuneDecl = tuneRaw ? ";" + tuneRaw.replace(/[^A-Za-z0-9%:;.\- ]/g, "") : "";
-      const artStyle = ` style="background-image:url('${escapeHTML(resolveUrl(artPath))}')${tuneDecl}"`;
+      const artImg = `<img src="${escapeHTML(resolveUrl(artPath))}" alt="" loading="lazy" decoding="async">`;
       return `
         <a class="tier-card" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
-          <span class="tier-card-art" aria-hidden="true"${artStyle}></span>
+          <span class="tier-card-art" aria-hidden="true" style="${tuneDecl.replace(/^;/, "")}">${artImg}</span>
           <div class="tier-card-top">
             <span class="tier-badge mono">⊙ ${escapeHTML(t.code)}</span>
             <span class="tier-top-right">${charPill}<span class="tier-seq mono">${orderText}</span></span>
@@ -1154,6 +1154,25 @@ function renderCard(t) {
   /* --------------------------------------------------------------------------
      7. Global Search Modal (Ctrl+K) & Dedicated Search Page
      -------------------------------------------------------------------------- */
+  /* 索引包（约 400 KB）在非探索器页面里改为按需加载：
+     第一次打开检索时才注入 <script>，加载完再渲染结果，功能完全一致。 */
+  let indexLoadPromise = null;
+  function ensureSearchData() {
+    if (window.__POWERWIKI_INDEX__) return Promise.resolve();
+    if (indexLoadPromise) return indexLoadPromise;
+    const src = window.__PW_INDEX_SRC__;
+    if (!src) return Promise.resolve();
+    indexLoadPromise = new Promise((resolve) => {
+      const tag = document.createElement("script");
+      tag.src = src;
+      tag.async = true;
+      tag.onload = resolve;
+      tag.onerror = resolve;
+      document.head.appendChild(tag);
+    });
+    return indexLoadPromise;
+  }
+
   function runSearchQuery(rawQuery, typeFilter) {
     const index = window.__POWERWIKI_INDEX__ || [];
     const q = (rawQuery || "").trim().toLowerCase();
@@ -1283,8 +1302,14 @@ function renderCard(t) {
       if (sidebar) sidebar.classList.remove("drawer-open");
       backdrop.classList.add("open");
       syncScrollLock();
-      renderHits();
       setTimeout(() => input.focus(), 25);
+      /* 索引还没到就先给个占位，加载完再渲染，弹窗本身不等待 */
+      if (!window.__POWERWIKI_INDEX__) {
+        body.innerHTML = '<div class="search-modal-empty">正在载入索引…</div>';
+        ensureSearchData().then(renderHits);
+      } else {
+        renderHits();
+      }
     }
 
     triggers.forEach((t) => t.addEventListener("click", openModal));

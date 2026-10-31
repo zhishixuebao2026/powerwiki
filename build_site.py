@@ -106,7 +106,7 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
         '<div class="pw-edition-dock" id="pw-edition-dock">'
         f'<a class="pw-edition-home-btn" href="{esc(home_href)}" title="返回主站首页" aria-label="返回主站首页">{SVGS["home"]}</a>'
         '<button type="button" class="pw-edition-toggle" id="pw-edition-toggle" aria-expanded="false" aria-controls="pw-edition-panel" title="切换页面皮肤">'
-        '<span class="pw-edition-glyph" aria-hidden="true">⊙</span><span>皮肤</span></button>'
+        '<span class="pw-edition-glyph" aria-hidden="true">⊙</span><span class="pw-edition-label">皮肤</span></button>'
         f'<div class="pw-edition-panel" id="pw-edition-panel" data-current-edition="{esc(current)}" hidden>'
         '<div class="pw-edition-head"><span class="pw-edition-title">本页皮肤</span>'
         f'<span class="pw-edition-sub">同一内容 · {count} 种版式</span></div>'
@@ -143,6 +143,8 @@ def build_skin_editions() -> int:
             f'{patch_tag}'
         )
         doc = src_path.read_text(encoding="utf-8", errors="replace")
+        # 标记这是皮肤页面，editions.css 用它做合成层校正（不改外观）
+        doc = doc.replace("<html", '<html data-pw-edition="' + esc(ed["id"]) + '"', 1)
         if "</body>" in doc:
             doc = doc.replace("</body>", inject + "</body>", 1)
         else:
@@ -749,6 +751,12 @@ def render_shell(
     # r 只表达"回根目录要走几层"，用等深的占位目录即可算出正确的相对链接
     _page_dir = "/".join(["x"] * r.count("../"))
     edition_launcher = edition_launcher_html(_page_dir, active_nav)
+    # 404 KB 的索引包只有量级探索器、角色探索器、检索页首屏真的需要；
+    # 其余页面改为第一次打开检索时才加载（app.js 的 ensureSearchData）。
+    if page_id in ("tiers", "characters", "search"):
+        search_index_tag = f'<script src="{r}static/js/search-index.js"></script>'
+    else:
+        search_index_tag = f'<script>window.__PW_INDEX_SRC__ = "{r}static/js/search-index.js";</script>'
 
     page = f"""<!DOCTYPE html>
 <html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}">
@@ -939,7 +947,7 @@ def render_shell(
     </div>
   </footer>
 
-  <script src="{r}static/js/search-index.js"></script>
+  {search_index_tag}
   <script src="{r}static/js/app.js"></script>
   {edition_launcher}
   <script src="{r}static/js/editions.js"></script>
@@ -1096,7 +1104,12 @@ def build_tiers_page(
         t["slug"]: f"static/img/tiers/{tier_art_stem(t['slug'], t['group_id'])}.jpg"
         for t in all_ordered
     }
-    tier_art_manifest = json.dumps(tier_art_urls, ensure_ascii=False).replace("</", "<\\/")
+    # 卡片用的是 560px 宽的 webp（98 张 15.5 MB → 1.5 MB）；原图留给详情页页头与灯箱。
+    tier_card_art_urls = {}
+    for slug, url in tier_art_urls.items():
+        webp = url.rsplit(".", 1)[0].replace("static/img/tiers/", "static/img/tiers/card/") + ".webp"
+        tier_card_art_urls[slug] = webp if (ROOT / webp).is_file() else url
+    tier_art_manifest = json.dumps(tier_card_art_urls, ensure_ascii=False).replace("</", "<\\/")
     tier_tuning_manifest = json.dumps(
         {t["slug"]: tier_art_tuning(t["slug"]) for t in all_ordered}, ensure_ascii=False
     ).replace("</", "<\\/")
@@ -1113,12 +1126,12 @@ def build_tiers_page(
         for t in items:
             order = "待定" if t.get("unranked") else f"#{t['order']:02d}"
             count = char_count_by_tier.get(t["slug"], 0)
-            art_url = tier_art_urls[t["slug"]]
+            art_url = tier_card_art_urls[t["slug"]]
             art_tuning = tier_art_tuning(t["slug"])
             char_pill = f'<span class="tier-char-count">{count} 角色</span>' if count else ""
             cards.append(f"""
                 <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
-                  <span class="tier-card-art" aria-hidden="true" style="background-image:url('{esc(art_url)}');{art_tuning}"></span>
+                  <span class="tier-card-art" aria-hidden="true" style="{art_tuning}"><img src="{esc(art_url)}" alt="" loading="lazy" decoding="async"></span>
                   <div class="tier-card-top">
                     <span class="tier-badge mono">⊙ {esc(t['code'])}</span>
                     <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order}</span></span>

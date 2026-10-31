@@ -124,39 +124,3 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();
-
-/* 这个页面底部自带一条固定工具栏（nav.mobile-dock），把角落切换器抬上去，别叠在一起 */
-(function () {
-  "use strict";
-  function detectBar() {
-    var vh = window.innerHeight;
-    var best = 0;
-    var all = document.querySelectorAll("body *");
-    for (var i = 0; i < all.length; i++) {
-      var el = all[i];
-      var cs = getComputedStyle(el);
-      if (cs.position !== "fixed" || cs.visibility === "hidden") continue;
-      if (el.classList.contains("pw-edition-dock") || el.closest(".pw-edition-dock")) continue;
-      var r = el.getBoundingClientRect();
-      if (r.height < 36 || r.height > 180) continue;
-      if (r.width < window.innerWidth * 0.5) continue;
-      if (r.bottom < vh - 26) continue;
-      if (r.top > vh) continue;
-      best = Math.max(best, r.height);
-    }
-    return best;
-  }
-  function lift() {
-    var bar = detectBar();
-    document.documentElement.style.setProperty(
-      "--pw-edition-dock-offset",
-      (bar ? Math.round(bar + 10) : 0) + "px"
-    );
-  }
-  function boot() {
-    [600, 1400, 2800].forEach(function (t) { setTimeout(lift, t); });
-    window.addEventListener("resize", lift);
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-  else boot();
-})();
