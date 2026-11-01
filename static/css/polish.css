@@ -183,11 +183,10 @@ button,
   transform: scale(0.96);
 }
 
-/* 统一的键盘焦点环，鼠标点击时不出现 */
+/* 统一的键盘焦点环，鼠标点击时不出现（不改元素自身的圆角） */
 :where(a, button, [tabindex]):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 6px;
 }
 
 /* --------------------------------------------------------------------------
