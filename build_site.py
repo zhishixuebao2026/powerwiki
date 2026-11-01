@@ -138,8 +138,10 @@ def build_skin_editions() -> int:
         )
         inject = (
             f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
+            f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/polish.css")}">\n'
             f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
             f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
+            f'<script src="{_rel_from(page_dir, "static/js/chrome.js")}" defer></script>\n'
             f'{patch_tag}'
         )
         doc = src_path.read_text(encoding="utf-8", errors="replace")
@@ -794,6 +796,7 @@ def render_shell(
   <link rel="stylesheet" href="{r}static/css/editorial.css">
   <link rel="stylesheet" href="{r}static/css/experience.css">
   <link rel="stylesheet" href="{r}static/css/editions.css">
+  <link rel="stylesheet" href="{r}static/css/polish.css">
 </head>
 <body class="{esc(shell_body_class)}">
   <header class="site-header">
@@ -950,6 +953,7 @@ def render_shell(
   {search_index_tag}
   <script src="{r}static/js/app.js"></script>
   {edition_launcher}
+  <script src="{r}static/js/chrome.js"></script>
   <script src="{r}static/js/editions.js"></script>
 </body>
 </html>
@@ -1831,6 +1835,14 @@ def build_fulltext_doc_page(
     rendered_html = renderer.render(md_text)
     line_count = len(md_text.splitlines())
 
+    # 正文第一行往往是和页头重复的大标题。把它收进页头：id 搬到大标题上，
+    # 目录第一条仍然能跳（跳到页头），正文不再重复出现同一句话。
+    folio_id = ""
+    first_h1 = re.match(r'\s*<h1 id="([^"]+)"[^>]*>.*?</h1>\s*', rendered_html, re.S)
+    if first_h1:
+        folio_id = first_h1.group(1)
+        rendered_html = rendered_html[first_h1.end():]
+
     toc_links: List[str] = []
     title_to_id: Dict[str, str] = {}
     for item in renderer.toc:
@@ -1850,7 +1862,7 @@ def build_fulltext_doc_page(
         </nav>
         <div class="codex-folio">
           <div class="codex-folio-kicker"><span class="codex-folio-badge mono">{version_label}</span><span>完整原文 · {len(renderer.toc)} 节</span></div>
-          <h1 class="codex-folio-title">{esc(title)}</h1>
+          <h1 class="codex-folio-title"{' id="' + esc(folio_id) + '"' if folio_id else ''}>{esc(title)}</h1>
           <p class="codex-folio-desc">{esc(subtitle)}</p>
         </div>
       </header>

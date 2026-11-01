@@ -34,6 +34,7 @@
   <link rel="stylesheet" href="./static/css/editorial.css">
   <link rel="stylesheet" href="./static/css/experience.css">
   <link rel="stylesheet" href="./static/css/editions.css">
+  <link rel="stylesheet" href="./static/css/polish.css">
 </head>
 <body class="site-materials">
   <header class="site-header">
@@ -150,7 +151,7 @@
         </nav>
         <div class="codex-folio">
           <div class="codex-folio-kicker"><span class="codex-folio-badge mono">第二版 · 物理参考</span><span>完整原文 · 35 节</span></div>
-          <h1 class="codex-folio-title">材质与破坏能量数据库（第二版·全文）</h1>
+          <h1 class="codex-folio-title" id="sec-材质与破坏能量数据库-第二版">材质与破坏能量数据库（第二版·全文）</h1>
           <p class="codex-folio-desc">岩石、金属、生物与天体材质的破坏能量参考。</p>
         </div>
       </header>
@@ -168,8 +169,7 @@
           <div class="doc-toolbar">
             <div class="doc-source-info"><span>衡天档案</span></div>
           </div>
-          <div class="markdown-body"><h1 id="sec-材质与破坏能量数据库-第二版">材质与破坏能量数据库（第二版）<a class="heading-anchor" href="#sec-材质与破坏能量数据库-第二版" data-target-id="sec-材质与破坏能量数据库-第二版" title="复制本节锚点链接">#</a></h1>
-<blockquote><p>本文件是《衡天⊙多维战力量级体系》（下称"衡天"）的配套数据参考，回答"某种材质或天体被破坏到某种程度需要多少能量"，以及"某种材质能扛住多大的力"。<br>所有数值标注来源，可交叉核实。使用前先看第零部分，确定应查哪张表。按需查表即可，不需要通读。长篇作品的分批流程见衡天"使用流程与分批处理"。</p></blockquote>
+          <div class="markdown-body"><blockquote><p>本文件是《衡天⊙多维战力量级体系》（下称"衡天"）的配套数据参考，回答"某种材质或天体被破坏到某种程度需要多少能量"，以及"某种材质能扛住多大的力"。<br>所有数值标注来源，可交叉核实。使用前先看第零部分，确定应查哪张表。按需查表即可，不需要通读。长篇作品的分批流程见衡天"使用流程与分批处理"。</p></blockquote>
 <hr>
 <h1 id="sec-第二版修订要点">第二版修订要点<a class="heading-anchor" href="#sec-第二版修订要点" data-target-id="sec-第二版修订要点" title="复制本节锚点链接">#</a></h1>
 <ol><li><strong>白矮星束缚能更正</strong>：旧版把白矮星半径取为太阳的 0.001 倍（约 696 km），比真实值小一个数量级；按真实半径重算后，典型白矮星的引力束缚能约为 6×10⁴² 至 9×10⁴² J，不是 9.5×10⁴³ J（4.4）。</li><li><strong>Ia 型超新星校准案例重写</strong>：改用 Woosley 等人（2007）的能量收支模型，并说明"实际输出是下限的 2–3 倍"只对<strong>净束缚能</strong>成立，对引力束缚能本身不成立（4.1）。</li><li><strong>撕星标度律更正</strong>：两半球之间的引力与密度的平方、半径的四次方成正比，不是线性（4.5）。</li><li><strong>相变表口径统一</strong>：熔化、汽化两列改为只列潜热；含升温的总能量单列；花岗岩"加热到汽化点"的数据移出熔化列（3.1）。</li><li><strong>汽化/粉碎比值重算</strong>：玄武岩 224–291 倍，花岗岩 482–1090 倍（3.2）。</li><li><strong>碎块与粉碎口径统一</strong>：大块碎块对应衡天 2.2 的碎块刻度（0.4–5.2 J/cc），粉碎对应第一部分的粉碎表（40–1200 J/cc）（0.1）。</li><li><strong>振星数值标为存疑</strong>：原值未经复核，按弹性能粗估可能偏低一个到两个数量级（4.5）。</li><li><strong>新增材质</strong>：冰、木材、人骨，以及作为防御高端锚点的中子星外壳（第二部分）。</li><li><strong>新增第八部分</strong>：爆炸半径与当量、云层计算的数据表（方法见衡天第十部分）。</li><li><strong>章节引用</strong>：统一改为衡天的章节编号。</li></ol>
@@ -378,6 +378,7 @@
   <script>window.__PW_INDEX_SRC__ = "./static/js/search-index.js";</script>
   <script src="./static/js/app.js"></script>
   <div class="pw-edition-dock" id="pw-edition-dock"><a class="pw-edition-home-btn" href="index.html" title="返回主站首页" aria-label="返回主站首页"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></a><button type="button" class="pw-edition-toggle" id="pw-edition-toggle" aria-expanded="false" aria-controls="pw-edition-panel" title="切换页面皮肤"><span class="pw-edition-glyph" aria-hidden="true">⊙</span><span class="pw-edition-label">皮肤</span></button><div class="pw-edition-panel" id="pw-edition-panel" data-current-edition="default" hidden><div class="pw-edition-head"><span class="pw-edition-title">本页皮肤</span><span class="pw-edition-sub">同一内容 · 3 种版式</span></div><div class="pw-edition-list"><a class="pw-edition-card is-current" data-edition-id="default" href="materials.html" aria-current="page"><span class="pw-edition-thumb"><img src="static/img/editions/default.jpg" alt="" loading="lazy" decoding="async"></span><span class="pw-edition-meta"><span class="pw-edition-name">默认<span class="pw-edition-now">当前</span></span><span class="pw-edition-tag">DEFAULT · v6.0</span><span class="pw-edition-note">建筑感栅格，98 档量级 + 角色 + 规则 + 材质全站</span></span></a><a class="pw-edition-card" data-edition-id="archive" href="skins/archive/materials.html"><span class="pw-edition-thumb"><img src="static/img/editions/archive.jpg" alt="" loading="lazy" decoding="async"></span><span class="pw-edition-meta"><span class="pw-edition-name">卷宗</span><span class="pw-edition-tag">ARCHIVE</span><span class="pw-edition-note">米纸底、左侧索引栏、细线分隔与衬线巨标题的档案排版</span></span></a><a class="pw-edition-card" data-edition-id="atlas" href="skins/atlas/materials.html"><span class="pw-edition-thumb"><img src="static/img/editions/atlas.jpg" alt="" loading="lazy" decoding="async"></span><span class="pw-edition-meta"><span class="pw-edition-name">星图</span><span class="pw-edition-tag">ATLAS</span><span class="pw-edition-note">大留白、描边巨字、裂星主视觉与浮动卡片的图版排版</span></span></a></div><div class="pw-edition-foot"><span class="pw-edition-foot-note">只列出与本页对应的皮肤；换页后入口随页面走。</span></div></div></div>
+  <script src="./static/js/chrome.js"></script>
   <script src="./static/js/editions.js"></script>
 </body>
 </html>

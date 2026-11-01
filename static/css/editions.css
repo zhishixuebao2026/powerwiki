@@ -165,6 +165,12 @@
   transform-origin: bottom right;
 }
 
+/* 上方放不下时，面板向下弹（editions.js 加 .is-dropdown） */
+.pw-edition-dock.is-dropdown .pw-edition-panel {
+  top: calc(100% + 10px);
+  bottom: auto;
+}
+
 .pw-edition-panel[hidden] {
   display: none;
 }
@@ -384,4 +390,71 @@ html[data-pw-edition] .aurora {
   transform: translateZ(0);
   contain: strict;
   pointer-events: none;
+}
+
+/* ── 深色主题：印章面板与按钮跟着变暗，别在夜里发白 ─────────────────── */
+[data-theme="dark"] .pw-edition-toggle,
+[data-theme="dark"] .pw-edition-home-btn {
+  background: rgba(32, 37, 35, 0.94);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #d9d4c7;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .pw-edition-toggle:hover,
+[data-theme="dark"] .pw-edition-home-btn:hover {
+  border-color: rgba(212, 175, 106, 0.5);
+  color: #e6dcc4;
+}
+
+[data-theme="dark"] .pw-edition-dock.is-dim {
+  opacity: 0.2;
+}
+
+[data-theme="dark"] .pw-edition-panel {
+  background: #1a1e1d;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ece7dc;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+}
+
+[data-theme="dark"] .pw-edition-title,
+[data-theme="dark"] .pw-edition-name {
+  color: #f0ebdf;
+}
+
+[data-theme="dark"] .pw-edition-sub,
+[data-theme="dark"] .pw-edition-tag,
+[data-theme="dark"] .pw-edition-note,
+[data-theme="dark"] .pw-edition-foot-note {
+  color: #9d9a90;
+}
+
+[data-theme="dark"] .pw-edition-card {
+  background: #222725;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .pw-edition-card:hover {
+  border-color: rgba(212, 175, 106, 0.45);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .pw-edition-card.is-current {
+  background: linear-gradient(180deg, #262a24, #20241f);
+  border-color: rgba(212, 175, 106, 0.55);
+}
+
+[data-theme="dark"] .pw-edition-now {
+  background: rgba(212, 175, 106, 0.18);
+  color: #e2c894;
+  border-color: rgba(212, 175, 106, 0.35);
+}
+
+[data-theme="dark"] .pw-edition-foot {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .pw-edition-home {
+  color: #d9b877;
 }
