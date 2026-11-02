@@ -490,3 +490,12 @@ select:focus-visible {
     row-gap: 6px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   23. 皮肤页顶栏的毛玻璃只有 -webkit- 前缀那一份，Chrome 里实测没生效，
+       顶栏只剩 68% 底色，正文从条里透出来糊成一团。这里补回标准写法。
+   -------------------------------------------------------------------------- */
+html[data-pw-edition] .topbar {
+  -webkit-backdrop-filter: blur(16px) saturate(1.35);
+  backdrop-filter: blur(16px) saturate(1.35);
+}
