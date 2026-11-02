@@ -139,6 +139,18 @@ python3 build_site.py
 
 验证脚本：`qa2/overlap.js`（在 390 / 768 / 1440 三档宽度下枚举固定元素并两两求交，必须打印 `TOTAL OVERLAPS: 0`）。
 
+## 修掉的排版 bug（2026-11-02）
+
+- **卷宗皮肤「空了一大块」**：`.hero-footnote` 在 ≤420px 变成 `14px minmax(0,1fr)` 两列网格，
+  但脚注有 4 个 span，第 4 个（「全文逐字收录 · 未删改原文」）自动落进 14px 那一列，
+  被挤成一字一行、撑出 220px 高的空白。现在第 4 段 `grid-column: 1 / -1` 横跨整行。
+- **皮肤页顶栏发糊**：原始页面只写了 `-webkit-backdrop-filter`，Chrome 里标准属性缺失，
+  顶栏只剩 68% 底色，正文从条里透出来。`polish.css` 给 `html[data-pw-edition] .topbar` 补回标准写法。
+- **滚动进入会锁在透明态**：之前用 `animation-timeline: view()`，整页截图 / 打印时卡片停在 opacity 0。
+  改成 `IntersectionObserver` 加 `.pw-in` 类（`chrome.js`），元素一旦出现就不再隐藏。
+- 验证脚本：`qa2/vscan.js`（逐屏截图统计空白行占比，≥62% 视为异常屏）、`qa2/vert.js`（找被挤成竖排的文字）、
+  `qa2/overlap.js`（固定元素两两求交，必须 `TOTAL OVERLAPS: 0`）。
+
 ## 界面打磨（2026-11-02）
 
 - **悬浮层地板线**：`chrome.js` 实测页面底部的整条固定栏，写进 `--pw-floor`；阅读工具条、工具坞、
