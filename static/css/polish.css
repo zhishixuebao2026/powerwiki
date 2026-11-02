@@ -461,22 +461,32 @@ select:focus-visible {
 }
 
 /* --------------------------------------------------------------------------
-   21. 滚动进入：卡片随视口推进淡入上浮（滚动驱动的原生动画，不占主线程）
-       只动 opacity / translate，不影响 hover 的 transform
+   21. 滚动进入：用 IntersectionObserver 加 .pw-in 类（见 chrome.js）
+       不用 animation-timeline: view() —— 整页截图 / 打印时会把卡片锁在透明态。
    -------------------------------------------------------------------------- */
 @keyframes pw-rise-in {
-  from { opacity: 0.001; translate: 0 18px; }
+  /* 只动 opacity / translate，把 transform 留给 hover 的抬升 */
+  from { opacity: 0; translate: 0 16px; }
   to { opacity: 1; translate: 0 0; }
 }
 
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .tier-card,
-    .portal-card,
-    .char-card {
-      animation: pw-rise-in 1ms linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 62%;
-    }
+@media (prefers-reduced-motion: no-preference) {
+  .pw-will-rise { opacity: 0; }
+  .pw-will-rise.pw-in {
+    animation: pw-rise-in 0.5s var(--pw-chrome-ease) both;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   22. 卷宗皮肤在 ≤420px 时把脚注排成 14px + 1fr 两列，
+       但第 4 个 span（"全文逐字收录 · 未删改原文"）落进了 14px 那一列，
+       被挤成一字一行、撑出两百多像素的空白。让它横跨整行。
+   -------------------------------------------------------------------------- */
+@media (max-width: 420px) {
+  .hero-footnote > span:last-child {
+    grid-column: 1 / -1;
+  }
+  .hero-footnote {
+    row-gap: 6px;
   }
 }

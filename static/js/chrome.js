@@ -32,6 +32,39 @@
   }
   window.addEventListener("load", initRails);
 
+
+  /* ── 滚动进入：给首屏之外的卡片加一点上浮淡入 ─────────────────────────
+     只用 IntersectionObserver 加类，CSS 决定动画；元素一旦显示就不再隐藏，
+     所以打印、整页截图、关闭动效时都不会出现空白。 */
+  function initRise() {
+    if (!("IntersectionObserver" in window)) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var scope = document.querySelector(".tier-grid") ? ".tier-grid > .tier-card" : null;
+    if (!scope) return;
+    var cards = document.querySelectorAll(scope);
+    if (cards.length < 6) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("pw-in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+
+    for (var i = 0; i < cards.length; i++) {
+      if (i < 4) continue;
+      cards[i].classList.add("pw-will-rise");
+      io.observe(cards[i]);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () { setTimeout(initRise, 300); });
+  } else {
+    setTimeout(initRise, 300);
+  }
+
   if (document.documentElement.hasAttribute("data-pw-edition")) return;
 
   var OUR_SELECTORS = [".reader-rail", ".floating-dock", "#pw-edition-dock", ".reading-progress"];
