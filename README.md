@@ -70,6 +70,22 @@ python3 build_site.py
 
 明暗仍由右上角的太阳 / 月亮控制，与皮肤是两个独立的轴；皮肤内部若自带明暗，以皮肤为准。
 
+### 已有皮肤
+
+| id | 名称 | 栏目 | 说明 |
+|---|---|---|---|
+| `default` | 默认 | 首页 / 材质 / 规则 | 建筑感栅格，全站 |
+| `archive` | 卷宗 | 材质 | 米纸底、左侧索引栏的档案排版 |
+| `atlas` | 星图 | 材质 | 大留白、描边巨字、裂星主视觉 |
+| `kalmia` | KALMIA | 规则 | 夜观 / 昼测双主题、二十八宿衡天仪、全链对数天梯 |
+
+KALMIA 的原产物（`KALMIA衡天量级体系.zip`）自带五个 `woff2` 子集字体，
+但 ZIP 里没有 `assets/fonts/` 目录，缺字体时整页会退成方框。
+所以它在 `data/editions.json` 里标了 `"font_rewrite": true`：
+构建时把 `HT Sans / HT Serif / HT Brush / HT Mono` 四个族改指站内自托管的
+思源黑体 / 思源宋体 / Space Grotesk，并去掉指向缺失文件的 `@font-face`。
+新增同类产物时记得加这个开关。
+
 ### 新增一套皮肤
 
 1. 把整页 HTML 放进 `skins/_source/`（自包含最好：字体、图片内联或相对路径）；

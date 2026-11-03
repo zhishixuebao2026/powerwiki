@@ -117,6 +117,38 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
     )
 
 
+SKIN_FONT_STACKS = {
+    # 皮肤自带的子集字体在 ZIP 里没有随包发出，缺文件时整页会退成方框。
+    # 构建时把四个字体族改指站内自托管的思源黑体 / 思源宋体 / Space Grotesk。
+    "HT Sans": '"Noto Sans SC Variable","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif',
+    "HT Serif": '"Noto Serif SC Variable","Noto Serif SC","Songti SC",serif',
+    "HT Brush": '"Noto Serif SC Variable","Noto Serif SC","Songti SC",serif',
+    "HT Mono": '"Space Grotesk Variable","Noto Sans SC Variable",ui-monospace,monospace',
+}
+
+SKIN_FONT_SHEETS = [
+    "static/fonts/noto-sans-sc/index.css",
+    "static/fonts/noto-serif-sc/index.css",
+    "static/fonts/space-grotesk/index.css",
+]
+
+
+def patch_skin_fonts(doc: str) -> str:
+    """Rewrite a skin's font families to the site's self-hosted fonts."""
+    # 1. 去掉指向不存在的 ./assets/fonts/*.woff2 的 @font-face
+    doc = re.sub(r"@font-face\{[^{}]*?\.\/assets\/fonts\/[^{}]*?\}", "", doc)
+    # 2. HT Sans / HT Serif / HT Brush / HT Mono -> 站内字体栈
+    #    先换长的名字，避免 "HT Sans" 先于 "HT Sans SC" 之类被误伤
+    for name in sorted(SKIN_FONT_STACKS, key=len, reverse=True):
+        stack = SKIN_FONT_STACKS[name]
+        doc = re.sub(
+            r"(?<=font-family:)" + re.escape(name) + r"(?=\s*[,;}\"'])",
+            stack,
+            doc,
+        )
+    return doc
+
+
 def build_skin_editions() -> int:
     """Take each skins/_source/*.html, inject the launcher, write skins/<id>/<section>.html."""
     built = 0
@@ -136,8 +168,15 @@ def build_skin_editions() -> int:
         patch_tag = (
             f'<script src="{_rel_from(page_dir, patch)}" defer></script>\n' if patch else ""
         )
+        font_tags = ""
+        if ed.get("font_rewrite"):
+            font_tags = "".join(
+                f'<link rel="stylesheet" href="{_rel_from(page_dir, sheet)}">\n' for sheet in SKIN_FONT_SHEETS
+            )
+        thumb_img = ed.get("thumb")
         inject = (
-            f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
+            font_tags
+            + f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
             f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/polish.css")}">\n'
             f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
             f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
@@ -145,6 +184,8 @@ def build_skin_editions() -> int:
             f'{patch_tag}'
         )
         doc = src_path.read_text(encoding="utf-8", errors="replace")
+        if ed.get("font_rewrite"):
+            doc = patch_skin_fonts(doc)
         # 标记这是皮肤页面，editions.css 用它做合成层校正（不改外观）
         doc = doc.replace("<html", '<html data-pw-edition="' + esc(ed["id"]) + '"', 1)
         if "</body>" in doc:

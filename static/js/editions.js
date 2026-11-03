@@ -79,8 +79,18 @@
         if (!r.width || !r.height || r.height < 16) continue;
         // 铺满视口的装饰层（纹理、渐晕、极光）不算障碍
         if (r.width > vw * 0.92 && r.height > vh * 0.6) continue;
-        // 完全在视口外
-        if (r.right <= 4 || r.left >= vw - 4 || r.bottom <= 4 || r.top >= vh - 4) continue;
+        // 屏幕外的底栏：不少皮肤把底栏停在视口下方、"滚动后滑进来"，
+        // 量的时候看不见，滚起来就压住印章。按它的 bottom 值还原落脚位置。
+        if (r.top >= vh - 4) {
+          var parkedBar = r.width >= vw * 0.4 && r.height >= 24 && r.height <= 200 && r.top < vh + 260;
+          if (!parkedBar) continue;
+          var bottomPx = parseFloat(cs.bottom);
+          if (!isFinite(bottomPx)) continue;
+          out.push({ top: vh - bottomPx - r.height, bottom: vh - bottomPx, left: r.left, right: r.right });
+          continue;
+        }
+        // 其余完全在视口外的
+        if (r.right <= 4 || r.left >= vw - 4 || r.bottom <= 4) continue;
         out.push({ top: r.top, bottom: r.bottom, left: r.left, right: r.right });
       }
       return out;
