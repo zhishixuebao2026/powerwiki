@@ -86,6 +86,13 @@ KALMIA 的原产物（`KALMIA衡天量级体系.zip`）自带五个 `woff2` 子�
 思源黑体 / 思源宋体 / Space Grotesk，并去掉指向缺失文件的 `@font-face`。
 新增同类产物时记得加这个开关。
 
+整页产物原本是「单向门」：进去以后没有任何回主站的入口。
+`skins/patches/kalmia.js` 因此往侧栏（`aside.rail` 的 `.rail-sticky`，插在
+「目录 · CONTENTS」标题之前）和移动端抽屉（`.drawer-scroll` 顶部）各挂一组
+「站内其他栏目」链接，把量级分类 / 角色档案 / 规则原文 / 材质数据库 / 首页连回去。
+React 侧的壳在 `DOMContentLoaded` 之后才挂载，所以挂载用定时重试 + `MutationObserver`，
+不是一次 `querySelector` 就完事。
+
 ### 新增一套皮肤
 
 1. 把整页 HTML 放进 `skins/_source/`（自包含最好：字体、图片内联或相对路径）；
