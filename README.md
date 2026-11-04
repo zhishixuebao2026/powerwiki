@@ -71,7 +71,7 @@ python3 build_site.py
 | 文件 | 作用 |
 |---|---|
 | `manifest.webmanifest` | 名称、`standalone` 显示模式、`scope`、4 个图标（含 maskable）、4 个快捷方式 |
-| `service-worker.js` | 离线缓存：壳层预缓存 + 导航网络优先 + 静态资源分级策略（当前 `pw-v4`） |
+| `service-worker.js` | 离线缓存：壳层预缓存 + 导航网络优先 + 静态资源分级策略（当前 `pw-v6`） |
 | `offline.html` | 断网且没缓存时的兜底页（纯系统字体，不依赖任何网络资源） |
 | `static/js/app.js` | 站内交互引擎：搜索 / 筛选 / 目录 / 阅读工具 / 回到顶部 |
 | `static/js/pwa.js` | 静默注册 SW、预热常用页面、独立窗口安全区、左边缘返回手势 |
@@ -83,8 +83,8 @@ python3 build_site.py
 顶栏高度与底部留白据此调整；主屏幕启动时接管左边缘滑动返回。
 
 **注意**：service worker 只在 https / localhost 下注册，`file://` 直接打开不受影响。
-`docs/需求与约定.md` 的「一·五、装成 App 的验收」仍保留原文，与本次「不做安装提示」
-的决策不一致，待确认后再改规则文档。
+`docs/需求与约定.md` 的「一·五、装成 App 的验收」已按「不做安装提示」的决策更新：
+保留 manifest / 独立窗口等能力给想自己加主屏的人用，但全站不出现任何安装引导入口。
 
 ## 页面皮肤（整页换设计）
 
