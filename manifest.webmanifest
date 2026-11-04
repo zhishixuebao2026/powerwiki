@@ -1,0 +1,28 @@
+{
+  "name": "衡天⊙ PowerWiki",
+  "short_name": "衡天 Wiki",
+  "description": "基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。",
+  "id": "./",
+  "start_url": "./index.html?src=app",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "any",
+  "background_color": "#f6f7f4",
+  "theme_color": "#0e1119",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "categories": ["books", "education", "reference"],
+  "icons": [
+    { "src": "static/img/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "static/img/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "static/img/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "static/img/icons/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "量级天梯", "short_name": "量级", "url": "./tiers.html", "description": "98 档量级总表" },
+    { "name": "角色档案", "short_name": "角色", "url": "./characters.html", "description": "定级结论与证据原文" },
+    { "name": "衡天体系全文", "short_name": "规则", "url": "./rules.html", "description": "第五版规则原文" },
+    { "name": "材质能量库", "short_name": "材质", "url": "./materials.html", "description": "材质与破坏能量" }
+  ]
+}

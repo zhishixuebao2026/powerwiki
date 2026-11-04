@@ -61,6 +61,31 @@ python3 build_site.py
 
 生成器仅使用 Python 3 标准库，会重新生成所有静态页面及 `static/js/search-index.js`。`pelican.html` 是独立的单文件动画，不参与主站构建。
 
+## 装成 App（PWA）
+
+站点可以「添加到主屏幕」，装好以后从图标打开是全屏独立窗口，没有地址栏；
+装过一次之后断网也能打开已经缓存的页面。
+
+| 文件 | 作用 |
+|---|---|
+| `manifest.webmanifest` | 名称、`standalone` 显示模式、`scope`、4 个图标（含 maskable）、4 个快捷方式 |
+| `service-worker.js` | 离线缓存：壳层预缓存 + 导航网络优先 + 静态资源分级策略 |
+| `offline.html` | 断网且没缓存时的兜底页（纯系统字体，不依赖任何网络资源） |
+| `static/js/app.js` | 注册 SW、安装入口、iOS 图文引导、独立窗口适配 |
+| `static/css/app.css` | 安装按钮、引导面板、安全区与状态栏留白 |
+| `static/img/icons/` | 192 / 512 / maskable 512 / apple-touch-icon 180 / favicon 32 |
+
+**iOS 与安卓的差别**：安卓 / 桌面 Chrome 走 `beforeinstallprompt`，点「装成 App」弹原生安装框；
+iOS Safari 没有这个 API，`display: standalone` 由 `apple-mobile-web-app-capable` 承担，
+所以点按钮给的是「分享 → 添加到主屏幕」三步引导。两条路装出来的图标都是同一个。
+
+**独立窗口适配**：`html[data-standalone]` 由 `app.js` 判断后写入，随后把实测的顶栏安全边距
+写进 `--pw-top-inset`（`env(safe-area-inset-top)` 在很多机型上是 0，不能只靠它），
+顶栏高度与底部留白据此调整；主屏幕启动时接管左边缘滑动返回。
+
+**注意**：service worker 只在 https / localhost 下注册，`file://` 直接打开不受影响；
+`raw.githack` 那类只在 https 上，同样可用。
+
 ## 页面皮肤（整页换设计）
 
 一套皮肤 = 一份完整的整页设计。左下角的「⊙ 皮肤」印章可以在它们之间跳转，每张卡片带缩略图、名称和"当前"标记。

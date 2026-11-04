@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f7f4">
+  <title>暂时离线 · 衡天⊙ PowerWiki</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./static/img/icons/apple-touch-icon.png">
+  <style>
+    @font-face {
+      font-family: "PW Offline Sans";
+      src: local("PingFang SC"), local("Hiragino Sans GB"), local("Microsoft YaHei"),
+           local("Noto Sans CJK SC"), local("Source Han Sans SC"), local("Heiti SC"), local("SimHei");
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 32px;
+      text-align: center;
+      background: #f6f7f4;
+      color: #23261f;
+      /* 离线兜底页优先用系统自带的黑体：断网时它一定在，站内字体只作为后备 */
+      font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+                   "Noto Sans CJK SC", "Source Han Sans SC", "Noto Sans SC Variable",
+                   "Noto Sans SC", "PW Offline Sans", sans-serif;
+    }
+    .mark {
+      width: 84px; height: 84px; border-radius: 22px;
+      display: grid; place-items: center;
+      background: radial-gradient(circle at 50% 35%, #1b2030, #080a10 72%);
+      color: #e3c483; font-size: 40px; line-height: 1;
+      box-shadow: 0 18px 40px rgba(12, 16, 24, .28);
+    }
+    h1 { font-size: 20px; margin: 0; letter-spacing: .02em; }
+    p { margin: 0; max-width: 34em; line-height: 1.7; color: #5b6058; font-size: 14px; }
+    .hint { font-size: 12.5px; color: #8a8e84; }
+    a.btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 20px; border-radius: 999px;
+      background: #171a12; color: #f6f7f4; text-decoration: none;
+      font-size: 14px; font-weight: 600;
+      box-shadow: 0 10px 26px rgba(20, 24, 16, .22);
+    }
+    a.btn:active { transform: translateY(1px); }
+    @media (prefers-color-scheme: dark) {
+      body { background: #090b10; color: #eceee6; }
+      p { color: #a8ada5; }
+      .hint { color: #767b73; }
+      a.btn { background: #e3c483; color: #14170f; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mark" aria-hidden="true">
+    <svg viewBox="0 0 32 32" width="46" height="46" fill="none">
+      <circle cx="16" cy="16" r="10.5" stroke="#e3c483" stroke-width="2.4"/>
+      <circle cx="16" cy="16" r="2.6" fill="#e3c483"/>
+      <ellipse cx="16" cy="16" rx="15" ry="5.2" stroke="#c9a35a" stroke-width="1" opacity=".45" transform="rotate(-28 16 16)"/>
+    </svg>
+  </div>
+  <h1>现在没有网络</h1>
+  <p>衡天 PowerWiki 已经装在这台设备上了，但这一页还没缓存过。已读过的页面离线也能打开。</p>
+  <a class="btn" href="./index.html">回到首页</a>
+  <p class="hint">连上网再打开，之后的页面会自动存到本地。</p>
+</body>
+</html>
