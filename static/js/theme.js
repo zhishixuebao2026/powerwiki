@@ -3,8 +3,9 @@
    与「页面皮肤」是两条独立的轴：皮肤换整页设计，这里只切明暗。
    <head> 里的内联脚本负责首帧（读 localStorage / 系统偏好并刷底色），
    本脚本负责之后的交互：点击、多标签同步、按钮状态。
-   底色一律从 html 的 data-boot-bg-* 读，与首帧用的是同一组值，
-   避免切主题时 html 的 inline 底色还停在旧色、又整屏换一次颜色。
+   底色由 <head> 内联 <style> 按 html[data-theme] 属性选择器给出，用的是
+   同一组 data-boot-bg-* 值；切主题只改 data-theme，不再写 inline 底色，
+   杜绝 JS 与 CSS 两处颜色不同步造成的整屏换色。
    ========================================================================== */
 (function () {
   "use strict";
@@ -24,8 +25,8 @@
     if (theme !== "light" && theme !== "dark") theme = "light";
     root.setAttribute("data-theme", theme);
     var canvas = canvasFor(theme);
-    // html 的 inline 底色必须跟着换：body 比视口短时露出来的就是它
-    root.style.backgroundColor = canvas;
+    // 底色由 <head> 内联 <style> 的 [data-theme] 属性选择器接管，
+    // 改 data-theme 即自动换色；这里不再写 inline 底色，避免两处不同步。
     var meta = document.getElementById("theme-color-meta");
     if (meta) meta.setAttribute("content", canvas);
     btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");

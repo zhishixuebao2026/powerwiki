@@ -48,7 +48,7 @@ static/
 ├── css/editions.css       # 皮肤切换器的样式
 ├── css/polish.css         # 打磨层：悬浮层地板线、排版、响应式细节（最后加载，只覆盖）
 ├── fonts/                 # 本地可变字体与 SIL OFL 许可证
-├── js/theme.js            # 明暗主题切换（首帧底色、图标、多标签同步）
+├── js/theme.js            # 明暗主题切换（只改 data-theme / 状态栏 / 图标 / 多标签同步）
 ├── js/app.js              # 筛选、搜索、目录与阅读工具（交互引擎）
 ├── js/pwa.js              # 静默离线：注册 SW、预热页面、独立窗口适配
 ├── js/chrome.js           # 量底部固定栏写入 --pw-floor；筛选条的滑到头提示
@@ -102,7 +102,7 @@ python3 build_site.py
 材质页三套都有（默认 / 卷宗 / 星图），规则页两套（默认 / 观象台），御兔角色页两套（默认 / 月面）。
 站在别的皮肤上时，左下角常驻一个回主站首页的按钮。
 
-明暗仍由右上角的太阳 / 月亮控制（`static/js/theme.js`），与皮肤是两个独立的轴；皮肤内部若自带明暗，以皮肤为准。首帧底色按页面写在 `html` 的 `data-boot-bg-light/dark` 上，`<head>` 内联脚本与主题脚本共用同一组值，避免样式表到达时整屏换色。
+明暗仍由右上角的太阳 / 月亮控制（`static/js/theme.js`），与皮肤是两个独立的轴；皮肤内部若自带明暗，以皮肤为准。首帧底色按页面写在 `html` 的 `data-boot-bg-light/dark` 上，由 `<head>` 里一段 `:where()` 内联 CSS 直接画到 html/body（优先级 0，外链样式表到达后自动接管）；切主题只改 `data-theme`，属性选择器随之换色，JS 不再写 inline 底色，三层底色始终一致。
 
 皮肤名按设计语言起，不沿用原产物里写着的名字（那些是模型名，不是样式名）：
 `观象台` 来自 `KALMIA衡天量级体系.zip`（夜观 / 昼测 / 衡天仪），
@@ -243,4 +243,5 @@ React 侧的壳在 `DOMContentLoaded` 之后才挂载，所以挂载用定时重
   统一 hover 抬升与按压反馈；键盘焦点环只在键盘操作时出现。
 - **滚动进入**：`animation-timeline: view()` 驱动卡片淡入上浮（只动 `opacity`/`translate`，
   不影响 hover 的 `transform`；`prefers-reduced-motion` 下关闭）。
-- **跨页过渡**：不做原生 cross-document 全屏交叉淡入（新旧快照淡化会露出白底，见需求 #6 与 `8507c08`），只保留 `main` 的 `pw-page-arrive` 入场动效；主题切换的短过渡由 `html.theme-transitioning` 提供。
+- **不做任何整屏入场动效**：既不做原生 cross-document 全屏交叉淡入（新旧快照淡化会露出白底，见需求 #6 与 `8507c08`），也**不再做 `main` 的 opacity 淡入**。后者每次加载都让整屏先暗一下再亮起来，其 transform 还会把 `position:fixed` 的悬浮控件锁进 `main` 的包含块——这是「御兔页反复闪屏」一直没修干净的根因。现在首帧即终态；主题切换的短过渡仍由 `html.theme-transitioning` 提供（用户主动触发）。
+- **首屏加载**：两个中文可变字体 CSS（各约 99 KB，只含 `@font-face`、全带 `font-display: swap`）改为非阻塞加载，把阻塞首次绘制的样式表从 469 KB 降到约 271 KB；站点 CSS 仍保持阻塞，保证布局不闪。

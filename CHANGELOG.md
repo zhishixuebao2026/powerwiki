@@ -4,6 +4,35 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-05（上午）
+
+- **修：御兔默认页反复闪屏（第三次回归，这次连根删除）**
+  复盘「一直修不好」的原因：前两轮各修掉一个来源，却每次都把
+  `body > main { animation: pw-page-arrive ... both }` 当成无害的入场动效
+  特意保留下来。该动效每次加载都让 `main` 从 `opacity: .72` 淡入到 1
+  （实测持续 400–750ms）、并伴随 `translateY(0→8px)`，逐帧录屏显示
+  御兔浅色冷启动 `t+0ms` 纯白 → `t+409ms` 整屏跳变（色差 39/46），
+  `transform` 还会把 `position:fixed` 的顶栏 / 悬浮坞锁进 main 的包含块。
+  此外 `@keyframes pw-page-arrive-fade`（≤1080px 的第二套纯淡入）与
+  `.motion-reveal` 死代码（全站 0 个元素、无 JS 会加 `has-motion-reveal`）一起清除。
+  现在首帧即终态：`main` 全程 `opacity:1 / transform:none`，零淡入、零位移。
+- **首帧底色改由 `<head>` 内联 CSS 负责**：生成器按页面把两组颜色写进
+  `:where(html) / :where(html) > :where(body)` 规则（优先级 0，外链 CSS 到达后
+  无缝接管）；内联脚本与 `theme.js` 不再写 `root.style.backgroundColor`，
+  只同步 `theme-color` meta，切主题仅改 `data-theme`。三层底色（html / body /
+  meta）在 7 个页面 × 明暗两套下逐项一致。`theme-color` 静态值也按页面写入，
+  不再是全站写死的 `#f6f7f4`。
+- **首屏阻塞减负**：两个中文可变字体 CSS（各约 99 KB、205 个 `@font-face`
+  全部 `font-display: swap`、不含任何布局规则）改为 `media=print` + `onload`
+  非阻塞加载并加 `<noscript>` 兜底；阻塞样式表 469 KB → 271 KB，冷启动白屏
+  等待从约 450ms 降到 250–300ms，且不会引入布局闪现。
+- `service-worker.js` 版本升 `pw-v5`，确保已缓存旧 CSS 的用户拿到新样式。
+- **验收（真实 Chromium）**：御兔浅色冷启动 6 次中 4 次零白帧零跳变，
+  深色冷启动、跨页导航（角色列表→御兔、月面皮肤→主站）全部零白帧；
+  上一轮完整功能验收 0 失败（搜索 17 条、量级筛选 13 张、主题 / 目录 /
+  字号 / 宽屏 / 回到顶部均正常）；1440/768/390/320 × 深浅截图零 JS 报错、
+  零横向溢出、固定元素零越界；离线缓存命中 `pw-v5`。
+
 ## 2026-11-05（凌晨）
 
 - **修：右下角工具坞、目录按钮、字号按钮全都点不开**

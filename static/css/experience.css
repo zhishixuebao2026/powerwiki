@@ -8,23 +8,15 @@
   --world-ease-spring: cubic-bezier(.2, .82, .24, 1.18);
 }
 
-/* 不做原生 cross-document 视图过渡：新旧快照全屏交叉淡入会露出浏览器默认
-   白底，冷启动 / 从皮肤切回默认页时就是闪屏（需求 #6、8507c08）。
-   主题切换的短过渡由下面的 html.theme-transitioning 提供，页面入场用
-   pw-page-arrive，只作用在 main 上，不铺满整屏。 */
+/* 不做任何整屏入场 / 换页动效。历史教训（8507c08 及之后两次回归）：
+   @view-transition 的交叉淡入会露出浏览器默认白底；body > main 的
+   opacity .72→1 入场动效每次加载都让整屏先暗一下再亮起来，其 transform
+   还会把 position:fixed 的悬浮控件锁进 main 的包含块、动画结束跳回原位。
+   两者都是「闪屏」来源，一律删除：首帧即终态，不做淡入、不做位移。
+   主题切换的短过渡仍由下面的 html.theme-transitioning 提供（用户主动触发）。
+   原先的 .motion-reveal 规则也一并移除：全站没有元素带这个类，也没有 JS
+   会加 has-motion-reveal，留着只会在将来误触发大面积内容隐藏。 */
 @view-transition { navigation: none; }
-@keyframes pw-page-arrive { from { opacity: .72; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-body > main { transform-origin: 50% 0; animation: pw-page-arrive .42s var(--world-ease) both; }
-
-/* Scroll reveal is opt-in from app.js: no-JS and unsupported browsers keep
-   their content visible, and reduced-motion users skip the entrance effects. */
-html.has-motion-reveal .motion-reveal {
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity .52s var(--world-ease), transform .52s var(--world-ease);
-  transition-delay: var(--reveal-delay, 0ms);
-}
-html.has-motion-reveal .motion-reveal.is-in-view { opacity: 1; transform: none; }
 
 /* Shared site finish: sharper focus, more tactile states, cleaner controls. */
 .nav-link.active { position: relative; }
@@ -730,8 +722,9 @@ body.character-futan .toc-item.active { color: var(--accent); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body > main { animation: none; }
-  html.has-motion-reveal .motion-reveal { opacity: 1; transform: none; transition: none; }
+  /* 入场动效已整体移除，无需再单独关闭；主题切换过渡在此一并收短 */
+  html.theme-transitioning,
+  html.theme-transitioning body { transition-duration: .01ms; }
 }
 
 /* --------------------------------------------------------------------------
@@ -871,9 +864,7 @@ body.wide-doc-mode .doc-layout:has(.reader-rail) {
 body:has(.reader-rail) .markdown-body :is(h1, h2, h3)[id] { scroll-margin-top: calc(var(--header-h) + 24px); }
 
 @media (max-width: 1080px) {
-  /* main 的入场 transform 会把 fixed 元素锁在 main 内，手机上改为纯淡入 */
-  @keyframes pw-page-arrive-fade { from { opacity: .72; } to { opacity: 1; } }
-  body > main { animation-name: pw-page-arrive-fade; }
+  /* 入场动效已整体移除：窄屏也不做整屏淡入，避免加载时的明暗跳变。 */
   body:not(.wide-doc-mode) .doc-layout:has(.reader-rail),
   body.wide-doc-mode .doc-layout:has(.reader-rail) { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .reader-rail {
