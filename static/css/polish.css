@@ -206,21 +206,20 @@ button,
 }
 
 /* --------------------------------------------------------------------------
-   8. 页面切换：支持的浏览器走原生 cross-document view transition，其余忽略
+   8. 页面切换：不做原生 cross-document 全屏交叉淡入
+   新旧快照交叉淡入会露出浏览器默认白底，冷启动 / 从皮肤切回默认页时
+   表现为闪屏（需求 #6、8507c08）。入场动效仍由 experience.css 的
+   pw-page-arrive 提供，只动 main，不铺满整屏。
    -------------------------------------------------------------------------- */
 @view-transition {
-  navigation: auto;
+  navigation: none;
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.28s;
-  animation-timing-function: var(--pw-chrome-ease);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  @view-transition { navigation: none; }
-}
+/* 主题按钮：两套图标随 data-theme 显隐，JS 只改属性不碰 DOM */
+.pw-theme-icon { display: inline-flex; align-items: center; justify-content: center; }
+.pw-icon-moon { display: none !important; }
+[data-theme="dark"] .pw-icon-sun { display: none !important; }
+[data-theme="dark"] .pw-icon-moon { display: inline-flex !important; }
 
 /* --------------------------------------------------------------------------
    9. 皮肤印章：位置由 editions.js 实测决定（内联 left/bottom），

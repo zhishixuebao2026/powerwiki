@@ -48,6 +48,7 @@ static/
 ├── css/editions.css       # 皮肤切换器的样式
 ├── css/polish.css         # 打磨层：悬浮层地板线、排版、响应式细节（最后加载，只覆盖）
 ├── fonts/                 # 本地可变字体与 SIL OFL 许可证
+├── js/theme.js            # 明暗主题切换（首帧底色、图标、多标签同步）
 ├── js/app.js              # 筛选、搜索、目录与阅读工具
 ├── js/chrome.js           # 量底部固定栏写入 --pw-floor；筛选条的滑到头提示
 └── img/                   # 本地图片与角色主题美术（`img/tiers/<slug>.jpg` 为每档独立配图，16:9；缺图时回落同名分组图）
@@ -102,7 +103,7 @@ iOS Safari 没有这个 API，`display: standalone` 由 `apple-mobile-web-app-ca
 材质页三套都有（默认 / 卷宗 / 星图），规则页两套（默认 / 观象台），御兔角色页两套（默认 / 月面）。
 站在别的皮肤上时，左下角常驻一个回主站首页的按钮。
 
-明暗仍由右上角的太阳 / 月亮控制，与皮肤是两个独立的轴；皮肤内部若自带明暗，以皮肤为准。
+明暗仍由右上角的太阳 / 月亮控制（`static/js/theme.js`），与皮肤是两个独立的轴；皮肤内部若自带明暗，以皮肤为准。首帧底色按页面写在 `html` 的 `data-boot-bg-light/dark` 上，`<head>` 内联脚本与主题脚本共用同一组值，避免样式表到达时整屏换色。
 
 皮肤名按设计语言起，不沿用原产物里写着的名字（那些是模型名，不是样式名）：
 `观象台` 来自 `KALMIA衡天量级体系.zip`（夜观 / 昼测 / 衡天仪），
@@ -243,4 +244,4 @@ React 侧的壳在 `DOMContentLoaded` 之后才挂载，所以挂载用定时重
   统一 hover 抬升与按压反馈；键盘焦点环只在键盘操作时出现。
 - **滚动进入**：`animation-timeline: view()` 驱动卡片淡入上浮（只动 `opacity`/`translate`，
   不影响 hover 的 `transform`；`prefers-reduced-motion` 下关闭）。
-- **跨页过渡**：支持 `@view-transition` 的浏览器走原生 cross-document 过渡。
+- **跨页过渡**：不做原生 cross-document 全屏交叉淡入（新旧快照淡化会露出白底，见需求 #6 与 `8507c08`），只保留 `main` 的 `pw-page-arrive` 入场动效；主题切换的短过渡由 `html.theme-transitioning` 提供。

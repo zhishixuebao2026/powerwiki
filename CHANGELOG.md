@@ -4,6 +4,28 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-04（晚）
+
+- **修：默认皮肤全站换不了明暗主题**
+  顶栏的太阳按钮一直在，但点了没反应：`static/js/app.js` 在 PWA 改造时被重写成只管
+  安装 / 离线，主题切换的事件绑定整段丢了（CSS 里 `html.theme-transitioning` 还留着，
+  却没人再加这个类）。现在拆出独立的 `static/js/theme.js`：点击切 `data-theme`、写
+  `pw_theme_v2`、同步 `theme-color` meta 与 html 首帧底色、切太阳 / 月亮图标和 aria 状态，
+  多标签通过 `storage` 事件跟随；`theme-transitioning` 的短过渡这下真正生效。
+  首页 / 量级 / 角色 / 规则 / 材质 / 检索 / 档位详情页逐个点过，全部能切。
+- **修：御兔默认页又闪屏**
+  两个叠加原因：`<head>` 内联脚本把首帧底色写死成 `#f6f7f4 / #090b10`，而页面最终生效的
+  `--bg-canvas` 是 `#f1f2ed / #080d11`，御兔页更被 `experience.css` 覆盖成
+  `#edf3f6 / #071320`，样式表一到达就整屏换一次色；11-02 加的
+  `@view-transition { navigation: auto }` 又把跨页切换做成全屏交叉淡入，
+  正好把这次换色放大（需求 #6、`8507c08` 修过的老问题回归）。现在生成器按页面把两组
+  底色写进 `data-boot-bg-light/dark`，首帧脚本与 `theme.js` 共用；
+  `experience.css` / `polish.css` 的跨文档过渡一律关掉，只保留 `main` 的
+  `pw-page-arrive` 入场动效。实测 9 个页面 × 明暗两套首帧底色与最终底色完全一致，
+  32 张截图 × 四档宽度无白闪、无 JS 报错、无横向溢出。
+- **离线壳层补上主题脚本**：`service-worker.js` 的 `SHELL` 加 `theme.js`，`VERSION`
+  升到 `pw-v3`，装到主屏后断网也能换主题（实测缓存命中、controller 接管）。
+
 ## 2026-11-04（下午）
 
 - **可以装到 iPhone 主屏幕，打开是全屏 App 而不是浏览器**

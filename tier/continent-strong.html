@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="tier-continent-strong">
+<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="tier-continent-strong" data-boot-bg-light="#f1f2ed" data-boot-bg-dark="#080d11">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -18,6 +18,7 @@
   <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {
+      var root = document.documentElement;
       var t = null;
       try { t = localStorage.getItem('pw_theme_v2'); } catch (e) {}
       if (t !== 'light' && t !== 'dark') {
@@ -27,12 +28,15 @@
           localStorage.setItem('pw_theme_v2', t);
         } catch (e) { t = 'light'; }
       }
-      document.documentElement.setAttribute('data-theme', t);
-      /* 样式表到达前先刷一次画布底色，避免白屏闪一下 */
-      var canvas = t === 'dark' ? '#090b10' : '#f6f7f4';
+      root.setAttribute('data-theme', t);
+      /* 样式表到达前先刷画布底色：必须等于这一页最终生效的 --bg-canvas，
+         否则 CSS 一到就整屏换色（闪屏）。颜色由生成器写在 html 上，
+         theme.js 切主题时读同一组属性，切完底色依旧连贯。 */
+      var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
+        || (t === 'dark' ? '#080d11' : '#f1f2ed');
       var mc = document.getElementById('theme-color-meta');
       if (mc) mc.setAttribute('content', canvas);
-      document.documentElement.style.backgroundColor = canvas;
+      root.style.backgroundColor = canvas;
     })();
   </script>
   <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -76,8 +80,9 @@
         <button type="button" class="install-btn" data-pw-install hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11"/><path d="m7.5 9.5 4.5 4.5 4.5-4.5"/><path d="M4.5 16.5V18a3 3 0 0 0 3 3h9a3 3 0 0 0 3-3v-1.5"/></svg><span class="pw-install-text">装成 App</span>
         </button>
-        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
-          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题" aria-pressed="false">
+          <span class="pw-theme-icon pw-icon-sun"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
+          <span class="pw-theme-icon pw-icon-moon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
         </button>
       </div>
     </div>
@@ -300,6 +305,7 @@
   </div>
 
   <script>window.__PW_INDEX_SRC__ = "../static/js/search-index.js";</script>
+  <script src="../static/js/theme.js"></script>
   <script src="../static/js/app.js"></script>
 
   <script src="../static/js/chrome.js"></script>

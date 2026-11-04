@@ -8,14 +8,11 @@
   --world-ease-spring: cubic-bezier(.2, .82, .24, 1.18);
 }
 
-/* Cross-document page changes and the theme switch use the browser's native
-   snapshot transition when supported; every effect still has a CSS fallback. */
-@view-transition { navigation: auto; }
-::view-transition-group(root) { animation-duration: .42s; }
-::view-transition-old(root) { animation: pw-view-out .22s ease both; }
-::view-transition-new(root) { animation: pw-view-in .34s var(--world-ease) both; }
-@keyframes pw-view-out { to { opacity: .72; filter: blur(2px); } }
-@keyframes pw-view-in { from { opacity: .72; filter: blur(2px); } to { opacity: 1; filter: none; } }
+/* 不做原生 cross-document 视图过渡：新旧快照全屏交叉淡入会露出浏览器默认
+   白底，冷启动 / 从皮肤切回默认页时就是闪屏（需求 #6、8507c08）。
+   主题切换的短过渡由下面的 html.theme-transitioning 提供，页面入场用
+   pw-page-arrive，只作用在 main 上，不铺满整屏。 */
+@view-transition { navigation: none; }
 @keyframes pw-page-arrive { from { opacity: .72; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 body > main { transform-origin: 50% 0; animation: pw-page-arrive .42s var(--world-ease) both; }
 
@@ -67,6 +64,7 @@ html.has-motion-reveal .motion-reveal.is-in-view { opacity: 1; transform: none; 
   .spec-card:hover { transform: translateY(-3px); }
 }
 
+html.theme-transitioning { transition: background-color .34s ease; }
 html.theme-transitioning body,
 html.theme-transitioning main,
 html.theme-transitioning .site-header,
@@ -734,9 +732,6 @@ body.character-futan .toc-item.active { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) {
   body > main { animation: none; }
   html.has-motion-reveal .motion-reveal { opacity: 1; transform: none; transition: none; }
-  ::view-transition-group(root),
-  ::view-transition-old(root),
-  ::view-transition-new(root) { animation-duration: .01ms; }
 }
 
 /* --------------------------------------------------------------------------

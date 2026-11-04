@@ -225,6 +225,7 @@ SVGS = {
     "menu": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>',
     "close": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
     "sun": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+    "moon": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
     "arrow_left": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
     "arrow_up": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
     "arrow_up_right": '<svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
@@ -235,6 +236,22 @@ SVGS = {
     "dossier": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg>',
     "library": '<svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg>',
 }
+
+# 首帧底色必须与页面最终生效的 --bg-canvas 完全一致，否则样式表到达时
+# 会整屏换一次颜色（表现为闪屏）。加载顺序：style.css → editorial.css →
+# experience.css（角色页在最后覆盖）。改这些 CSS 的 canvas 时同步这里。
+BOOT_BG_DEFAULT = ("#f1f2ed", "#080d11")
+BOOT_BG_CHARACTERS = {
+    "character-yutu": ("#edf3f6", "#071320"),
+    "character-futan": ("#eceee7", "#05100f"),
+}
+
+
+def boot_bg_pair(shell_body_class: str) -> tuple[str, str]:
+    for marker, pair in BOOT_BG_CHARACTERS.items():
+        if marker in shell_body_class:
+            return pair
+    return BOOT_BG_DEFAULT
 
 DIM_META = [
     ("破", "破坏能量", "单次作用直接瓦解、打爆目标结构的实测或推定能量阈值"),
@@ -809,6 +826,7 @@ def render_shell(
     )
 
     shell_body_class = f"site-{active_nav} {body_class}".strip()
+    boot_light, boot_dark = boot_bg_pair(shell_body_class)
     reading_progress_html = (
         '\n  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>'
         if has_toc_button
@@ -828,7 +846,7 @@ def render_shell(
         search_index_tag = f'<script>window.__PW_INDEX_SRC__ = "{r}static/js/search-index.js";</script>'
 
     page = f"""<!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}">
+<html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}" data-boot-bg-light="{boot_light}" data-boot-bg-dark="{boot_dark}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -847,6 +865,7 @@ def render_shell(
   <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
     (function() {{
+      var root = document.documentElement;
       var t = null;
       try {{ t = localStorage.getItem('pw_theme_v2'); }} catch (e) {{}}
       if (t !== 'light' && t !== 'dark') {{
@@ -856,12 +875,15 @@ def render_shell(
           localStorage.setItem('pw_theme_v2', t);
         }} catch (e) {{ t = 'light'; }}
       }}
-      document.documentElement.setAttribute('data-theme', t);
-      /* 样式表到达前先刷一次画布底色，避免白屏闪一下 */
-      var canvas = t === 'dark' ? '#090b10' : '#f6f7f4';
+      root.setAttribute('data-theme', t);
+      /* 样式表到达前先刷画布底色：必须等于这一页最终生效的 --bg-canvas，
+         否则 CSS 一到就整屏换色（闪屏）。颜色由生成器写在 html 上，
+         theme.js 切主题时读同一组属性，切完底色依旧连贯。 */
+      var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
+        || (t === 'dark' ? '#080d11' : '#f1f2ed');
       var mc = document.getElementById('theme-color-meta');
       if (mc) mc.setAttribute('content', canvas);
-      document.documentElement.style.backgroundColor = canvas;
+      root.style.backgroundColor = canvas;
     }})();
   </script>
   <link rel="preload" href="{r}static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -905,8 +927,9 @@ def render_shell(
         <button type="button" class="install-btn" data-pw-install hidden>
           {INSTALL_ICON}<span class="pw-install-text">装成 App</span>
         </button>
-        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
-          {SVGS["sun"]}
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题" aria-pressed="false">
+          <span class="pw-theme-icon pw-icon-sun">{SVGS["sun"]}</span>
+          <span class="pw-theme-icon pw-icon-moon">{SVGS["moon"]}</span>
         </button>
       </div>
     </div>
@@ -1051,6 +1074,7 @@ def render_shell(
   </div>
 
   {search_index_tag}
+  <script src="{r}static/js/theme.js"></script>
   <script src="{r}static/js/app.js"></script>
   {edition_launcher}
   <script src="{r}static/js/chrome.js"></script>
