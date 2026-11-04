@@ -18,7 +18,7 @@
   z-index: 1400;
   display: flex;
   align-items: flex-end;
-  gap: 7px;
+  gap: 6px;
   opacity: 0.62;
   transition: opacity 0.26s ease;
   font-family: "Noto Sans SC Variable", "Noto Sans SC", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -45,14 +45,18 @@
 .pw-edition-toggle {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 30px;
   height: 30px;
-  padding: 0 8px;
+  padding: 0;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.9);
   color: #1a1a1a;
   font: inherit;
   font-size: 11.5px;
+  white-space: nowrap;
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -60,6 +64,14 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+}
+
+/* 悬停 / 聚焦 / 展开时才放文字出来，收起态始终是 30×30 的正圆 */
+.pw-edition-dock:hover .pw-edition-toggle,
+.pw-edition-dock:focus-within .pw-edition-toggle,
+.pw-edition-dock.is-open .pw-edition-toggle {
+  width: auto;
+  padding: 0 9px;
 }
 
 .pw-edition-toggle:hover {
@@ -115,8 +127,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
@@ -338,6 +351,7 @@
 }
 
 @media (max-width: 720px) {
+  /* 尺寸不再随宽度变化：皮肤页与主站、桌面与手机共用同一组 30×30 圆钮 */
   .pw-edition-dock {
     left: 10px;
     gap: 6px;
@@ -345,20 +359,6 @@
   .pw-edition-dock.is-flipped {
     left: auto;
     right: 10px;
-  }
-  .pw-edition-toggle {
-    height: 28px;
-    padding: 0 7px;
-    font-size: 11px;
-  }
-  .pw-edition-glyph {
-    width: 17px;
-    height: 17px;
-    font-size: 10px;
-  }
-  .pw-edition-home-btn {
-    width: 24px;
-    height: 24px;
   }
   .pw-edition-panel {
     padding: 8px;

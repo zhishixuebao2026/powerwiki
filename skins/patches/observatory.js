@@ -34,8 +34,6 @@
     return (
       '<div class="pw-site-nav" data-pw-site-nav="1">' +
       '<p class="pw-site-cap">站内其他栏目</p>' + items +
-      '<button type="button" class="pw-site-app" data-pw-install hidden>' +
-      '<span class="pw-site-dot" aria-hidden="true"></span>装成 App</button>' +
       "</div>"
     );
   }
@@ -96,10 +94,6 @@
       ".pw-site-link:hover,.pw-site-link:focus-visible{background:var(--surface2,rgba(255,255,255,.05));color:var(--brass,#c9a35a)}",
       ".pw-site-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.45;flex:0 0 auto}",
       ".pw-site-link:hover .pw-site-dot{opacity:1}",
-      // 「装成 App」：外观跟着站内链接走，省得和皮肤自己的按钮打架
-      ".pw-site-app{display:flex;align-items:center;gap:9px;width:100%;margin:2px 0 0;padding:6px 10px;border:0;border-radius:6px;background:transparent;color:var(--ink,#1c1915);font:inherit;font-size:12.5px;line-height:1.35;opacity:.82;text-align:left;cursor:pointer;appearance:none;-webkit-appearance:none;border:0;outline-offset:2px}",
-      ".pw-site-app:hover,.pw-site-app:focus-visible{background:rgba(128,128,128,.12);opacity:1}",
-      ".pw-site-app[hidden]{display:none!important}",
       /* 印章在深色顶栏上有一层发光底，和皮肤的圆角金属件对齐 */
       "html[data-pw-edition='observatory'] .pw-edition-toggle,",
       "html[data-pw-edition='observatory'] .pw-edition-home-btn{",

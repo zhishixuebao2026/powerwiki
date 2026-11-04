@@ -1,6 +1,6 @@
 /* ==========================================================================
    衡天⊙ PowerWiki — 离线缓存
-   目标：装到主屏幕以后断网也能打开已看过的页面，并且打开就有壳，不用等网络。
+   目标：断网也能打开已看过的页面，并且打开就有壳，不用等网络。全站无安装提示。
    策略：
      - 页面导航：先走网络，失败回缓存，再失败回 offline.html（永不白屏）
      - 样式 / 脚本 / manifest：先走网络（保证改完立刻生效），断网回缓存
@@ -8,7 +8,7 @@
      - 站内资源随看随缓存，离线时可用的页面会越来越多
    注意：service worker 只在 https 或 localhost 下注册，本地 file:// 打开不受影响。
    ========================================================================== */
-const VERSION = "pw-v3";
+const VERSION = "pw-v4";
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 
@@ -29,6 +29,7 @@ const SHELL = [
   "./static/css/app.css",
   "./static/js/theme.js",
   "./static/js/app.js",
+  "./static/js/pwa.js",
   "./static/js/chrome.js",
   "./static/js/editions.js",
   "./static/img/icons/icon-192.png",

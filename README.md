@@ -49,7 +49,8 @@ static/
 ├── css/polish.css         # 打磨层：悬浮层地板线、排版、响应式细节（最后加载，只覆盖）
 ├── fonts/                 # 本地可变字体与 SIL OFL 许可证
 ├── js/theme.js            # 明暗主题切换（首帧底色、图标、多标签同步）
-├── js/app.js              # 筛选、搜索、目录与阅读工具
+├── js/app.js              # 筛选、搜索、目录与阅读工具（交互引擎）
+├── js/pwa.js              # 静默离线：注册 SW、预热页面、独立窗口适配
 ├── js/chrome.js           # 量底部固定栏写入 --pw-floor；筛选条的滑到头提示
 └── img/                   # 本地图片与角色主题美术（`img/tiers/<slug>.jpg` 为每档独立配图，16:9；缺图时回落同名分组图）
 ```
@@ -62,30 +63,28 @@ python3 build_site.py
 
 生成器仅使用 Python 3 标准库，会重新生成所有静态页面及 `static/js/search-index.js`。`pelican.html` 是独立的单文件动画，不参与主站构建。
 
-## 装成 App（PWA）
+## 离线可用（静默，无安装提示）
 
-站点可以「添加到主屏幕」，装好以后从图标打开是全屏独立窗口，没有地址栏；
-装过一次之后断网也能打开已经缓存的页面。
+站点照常支持断网阅读，但**全站不提供任何「装成 App / 下载本地 / 添加到主屏幕」
+的按钮、气泡或引导面板**——不需要也不希望看到这类提示，离线能力完全静默运行。
 
 | 文件 | 作用 |
 |---|---|
 | `manifest.webmanifest` | 名称、`standalone` 显示模式、`scope`、4 个图标（含 maskable）、4 个快捷方式 |
-| `service-worker.js` | 离线缓存：壳层预缓存 + 导航网络优先 + 静态资源分级策略 |
+| `service-worker.js` | 离线缓存：壳层预缓存 + 导航网络优先 + 静态资源分级策略（当前 `pw-v4`） |
 | `offline.html` | 断网且没缓存时的兜底页（纯系统字体，不依赖任何网络资源） |
-| `static/js/app.js` | 注册 SW、安装入口、iOS 图文引导、独立窗口适配 |
-| `static/css/app.css` | 安装按钮、引导面板、安全区与状态栏留白 |
+| `static/js/app.js` | 站内交互引擎：搜索 / 筛选 / 目录 / 阅读工具 / 回到顶部 |
+| `static/js/pwa.js` | 静默注册 SW、预热常用页面、独立窗口安全区、左边缘返回手势 |
+| `static/css/app.css` | 仅剩独立窗口的安全区与状态栏留白（已无任何安装按钮样式） |
 | `static/img/icons/` | 192 / 512 / maskable 512 / apple-touch-icon 180 / favicon 32 |
 
-**iOS 与安卓的差别**：安卓 / 桌面 Chrome 走 `beforeinstallprompt`，点「装成 App」弹原生安装框；
-iOS Safari 没有这个 API，`display: standalone` 由 `apple-mobile-web-app-capable` 承担，
-所以点按钮给的是「分享 → 添加到主屏幕」三步引导。两条路装出来的图标都是同一个。
-
-**独立窗口适配**：`html[data-standalone]` 由 `app.js` 判断后写入，随后把实测的顶栏安全边距
+**独立窗口适配**：`html[data-standalone]` 由 `pwa.js` 判断后写入，随后把实测的顶栏安全边距
 写进 `--pw-top-inset`（`env(safe-area-inset-top)` 在很多机型上是 0，不能只靠它），
 顶栏高度与底部留白据此调整；主屏幕启动时接管左边缘滑动返回。
 
-**注意**：service worker 只在 https / localhost 下注册，`file://` 直接打开不受影响；
-`raw.githack` 那类只在 https 上，同样可用。
+**注意**：service worker 只在 https / localhost 下注册，`file://` 直接打开不受影响。
+`docs/需求与约定.md` 的「一·五、装成 App 的验收」仍保留原文，与本次「不做安装提示」
+的决策不一致，待确认后再改规则文档。
 
 ## 页面皮肤（整页换设计）
 

@@ -105,8 +105,6 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
     return (
         '<div class="pw-edition-dock" id="pw-edition-dock">'
         f'<a class="pw-edition-home-btn" href="{esc(home_href)}" title="返回主站首页" aria-label="返回主站首页">{SVGS["home"]}</a>'
-        # 皮肤页没有站内顶栏，安装入口放在印章这一组里，跟着它一起避让浮层
-        f'<button type="button" class="pw-edition-install" data-pw-install hidden title="把本站装到主屏幕" aria-label="把本站装到主屏幕">{INSTALL_ICON}</button>'
         '<button type="button" class="pw-edition-toggle" id="pw-edition-toggle" aria-expanded="false" aria-controls="pw-edition-panel" title="切换页面皮肤">'
         '<span class="pw-edition-glyph" aria-hidden="true">⊙</span><span class="pw-edition-label">皮肤</span></button>'
         f'<div class="pw-edition-panel" id="pw-edition-panel" data-current-edition="{esc(current)}" hidden>'
@@ -176,7 +174,7 @@ def build_skin_editions() -> int:
                 f'<link rel="stylesheet" href="{_rel_from(page_dir, sheet)}">\n' for sheet in SKIN_FONT_SHEETS
             )
         thumb_img = ed.get("thumb")
-        # 装到主屏幕：皮肤页也是站内页面，manifest / 图标 / app 样式与逻辑一样要带上
+        # 静默离线：皮肤页也是站内页面，manifest / 图标 / 安全区样式一样要带上
         app_tags = (
             f'<link rel="manifest" href="{_rel_from(page_dir, "manifest.webmanifest")}">\n'
             f'<link rel="apple-touch-icon" sizes="180x180" href="{_rel_from(page_dir, "static/img/icons/apple-touch-icon.png")}">\n'
@@ -195,7 +193,7 @@ def build_skin_editions() -> int:
             f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
             f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
             f'<script src="{_rel_from(page_dir, "static/js/chrome.js")}" defer></script>\n'
-            f'<script src="{_rel_from(page_dir, "static/js/app.js")}" defer></script>\n'
+            f'<script src="{_rel_from(page_dir, "static/js/pwa.js")}" defer></script>\n'
             f'{patch_tag}'
         )
         doc = src_path.read_text(encoding="utf-8", errors="replace")
@@ -212,13 +210,7 @@ def build_skin_editions() -> int:
     return built
 
 
-# 装到主屏幕用的图标（「分享 → 添加到主屏幕」那一类）
-INSTALL_ICON = (
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
-    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-    '<path d="M12 3v11"/><path d="m7.5 9.5 4.5 4.5 4.5-4.5"/>'
-    '<path d="M4.5 16.5V18a3 3 0 0 0 3 3h9a3 3 0 0 0 3-3v-1.5"/></svg>'
-)
+# 全站不提供安装入口：不生成任何「装成 App / 下载本地」按钮、气泡或引导面板。
 
 SVGS = {
     "search": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
@@ -924,9 +916,6 @@ def render_shell(
           <span class="search-btn-label">检索…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
         </button>
-        <button type="button" class="install-btn" data-pw-install hidden>
-          {INSTALL_ICON}<span class="pw-install-text">装成 App</span>
-        </button>
         <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题" aria-pressed="false">
           <span class="pw-theme-icon pw-icon-sun">{SVGS["sun"]}</span>
           <span class="pw-theme-icon pw-icon-moon">{SVGS["moon"]}</span>
@@ -961,9 +950,6 @@ def render_shell(
         <div class="drawer-group-label">快捷导航</div>
         {drawer_doc("home", "index.html", "返回首页总览")}
         {drawer_doc("search", "search.html", "全站即时检索")}
-        <button type="button" class="drawer-install-btn" data-pw-install hidden>
-          {INSTALL_ICON}<span>装成 App（可离线阅读）</span>
-        </button>
       </div>
     </div>
   </aside>
@@ -1056,26 +1042,10 @@ def render_shell(
     </div>
   </footer>
 
-  <div class="pw-sheet" id="pw-install-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="pw-sheet-title">
-    <div class="pw-sheet-veil" data-pw-sheet-close></div>
-    <div class="pw-sheet-card" role="document">
-      <div class="pw-sheet-head">
-        <span class="pw-sheet-mark" aria-hidden="true">⊙</span>
-        <h2 class="pw-sheet-title" id="pw-sheet-title">把衡天 PowerWiki 装到主屏幕</h2>
-        <button type="button" class="pw-sheet-close" data-pw-sheet-close aria-label="关闭">×</button>
-      </div>
-      <ol class="pw-sheet-steps">
-        <li><span class="pw-sheet-step-num">1</span><span>点底部的「分享」按钮（Safari 是方框里一支向上箭头）。</span></li>
-        <li><span class="pw-sheet-step-num">2</span><span>在菜单里往下滑，选「添加到主屏幕」。</span></li>
-        <li><span class="pw-sheet-step-num">3</span><span>点右上角「添加」。图标出现在主屏幕上，之后打开就是全屏 App，没有地址栏。</span></li>
-      </ol>
-      <p class="pw-sheet-note">安卓 / 桌面 Chrome 会直接弹出安装框；Safari 只能按上面的步骤手动添加。装好以后已读过的页面断网也能打开。</p>
-    </div>
-  </div>
-
   {search_index_tag}
   <script src="{r}static/js/theme.js"></script>
   <script src="{r}static/js/app.js"></script>
+  <script src="{r}static/js/pwa.js"></script>
   {edition_launcher}
   <script src="{r}static/js/chrome.js"></script>
   <script src="{r}static/js/editions.js"></script>
