@@ -38,6 +38,7 @@
         } catch (e) { t = 'light'; }
       }
       root.setAttribute('data-theme', t);
+      root.classList.add('js');
       /* 首帧底色已由 <head> 内联 <style> 按 data-theme 画好，这里只同步状态栏颜色。
          不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
          data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
@@ -48,7 +49,7 @@
     })();
   </script>
   <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
+    <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
        子集各约 99 KB，原本与站点 CSS 一起阻塞首次绘制，是冷启动白屏主因。
        font-display:swap 已保证文字始终先用系统字体可见、字体到位后平滑替换，
        不会出现无样式内容闪现；noscript 环境仍按普通样式表加载。 -->

@@ -788,6 +788,7 @@ def render_shell(
     has_toc_button: bool = False,
     body_class: str = "",
     skin_section: Optional[str] = None,
+    extra_head_links: str = "",
 ) -> str:
     r = root_prefix
 
@@ -877,6 +878,7 @@ def render_shell(
         }} catch (e) {{ t = 'light'; }}
       }}
       root.setAttribute('data-theme', t);
+      root.classList.add('js');
       /* 首帧底色已由 <head> 内联 <style> 按 data-theme 画好，这里只同步状态栏颜色。
          不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
          data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
@@ -887,7 +889,7 @@ def render_shell(
     }})();
   </script>
   <link rel="preload" href="{r}static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
+  {extra_head_links}  <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
        子集各约 99 KB，原本与站点 CSS 一起阻塞首次绘制，是冷启动白屏主因。
        font-display:swap 已保证文字始终先用系统字体可见、字体到位后平滑替换，
        不会出现无样式内容闪现；noscript 环境仍按普通样式表加载。 -->
@@ -1676,7 +1678,7 @@ def build_character_detail_pages(
               <aside class="char-portrait-stage" aria-label="角色形象参考">
                 <div class="char-portrait-canvas">
                   {portrait_index_html}
-                  <img class="char-portrait-img" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）形象参考"{p_dim_attrs}>
+                  <img class="char-portrait-img fade-on-load" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）形象参考"{p_dim_attrs}>
                 </div>
                 <div class="char-portrait-caption">{portrait_caption}</div>
               </aside>
@@ -1897,7 +1899,7 @@ def build_character_detail_pages(
 
           <section class="{header_class}">
             <div class="page-header-art" aria-hidden="true">
-              <img class="page-header-img" src="{esc(header_art_src)}" alt="">
+              <img class="page-header-img fade-on-load" src="{esc(header_art_src)}" alt="">
             </div>
             {dossier_masthead_html}
             {dossier_body_html}
@@ -1916,8 +1918,14 @@ def build_character_detail_pages(
         </div>
         """
 
+        preload_links = ""
+        if header_art_src:
+            preload_links += f'  <link rel="preload" as="image" href="{esc(header_art_src)}">\n'
+        if portrait_src:
+            preload_links += f'  <link rel="preload" as="image" href="{esc(portrait_src)}">\n'
         page_html = render_shell(
             title=f"{c['name']} · 角色战力档案",
+            extra_head_links=preload_links,
             page_id=f"char-{c['slug']}",
             active_nav="characters",
             body_html=body,

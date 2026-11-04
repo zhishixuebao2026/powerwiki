@@ -354,6 +354,21 @@ body.character-site::before {
   mask-image: linear-gradient(to bottom, #000, transparent 82%);
 }
 
+/* 首屏图片（页头大气图 + 角色立绘）：预加载 + 占位底色 + 极轻淡入。
+   不加 html.js 时（无 JS）图片以最终透明度直接显示，不会损坏；加上 js 类后
+   先 opacity:0，图片就绪再淡入，避免图片晚到时整块「啪」地亮起来 —— 即用户
+   反馈的「左手光团背景 / 右手月亮附近」局部闪。淡入只有 0.2s，是平滑出现而非闪烁；
+   无 js 类或 JS 失效时此段规则不生效，图片照常立即显示。 */
+.js .fade-on-load { opacity: 0; transition: opacity .2s ease; }
+.js .page-header-img.fade-on-load.is-loaded { opacity: var(--banner-art-opacity); }
+.js .char-portrait-img.fade-on-load.is-loaded { opacity: 1; }
+.js body.character-site::before { opacity: 0; transition: opacity .28s ease; }
+.js body.character-site.atmosphere-ready::before { opacity: var(--char-art-opacity); }
+/* 页头图容器占位：与图片最终偏蓝的色调接近，残差换色也轻微 */
+.character-dossier .page-header-art {
+  background: radial-gradient(120% 95% at 78% 28%, rgba(64, 104, 138, .16), transparent 70%);
+}
+
 /* Shared function, visibly different material and typographic languages. */
 body.character-yutu .character-dossier { border-radius: 28px 10px 28px 10px; }
 body.character-yutu .char-portrait-stage,

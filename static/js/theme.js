@@ -12,6 +12,44 @@
 
   var KEY = "pw_theme_v2";
   var root = document.documentElement;
+  // 首屏图片：预加载 + 占位底色已就绪，这里只负责「就绪后淡入」以及大气背景层
+  // 的淡入。html.js 在首帧前由 <head> 内联脚本加上，无 JS 时图片直接显示，不损坏。
+  function pwFadeImages() {
+    var imgs = document.querySelectorAll("img.fade-on-load");
+    imgs.forEach(function (img) {
+      if (img.complete && img.naturalWidth > 0) {
+        img.classList.add("is-loaded");
+      } else {
+        img.addEventListener("load", function () { img.classList.add("is-loaded"); }, { once: true });
+        img.addEventListener("error", function () { img.classList.add("is-loaded"); }, { once: true });
+      }
+    });
+    // 大气背景层（body::before）：与页头图是同一张图（lunar-observatory.jpg，
+    // 由 <link rel=preload> 已预取），且 CSS 中 url("../img/...") 是相对 CSS 文件
+    // 解析的，不能在这里当成相对文档的路径去 new Image().src 二次预取（会 404）。
+    // 直接复用页头图的 load 事件来点亮 atmosphere-ready 即可，背景图此时已在缓存。
+    var headerImg = document.querySelector(".page-header-img.fade-on-load");
+    var mark = function () { document.body.classList.add("atmosphere-ready"); };
+    if (headerImg && headerImg.complete && headerImg.naturalWidth > 0) {
+      mark();
+    } else if (headerImg) {
+      headerImg.addEventListener("load", mark, { once: true });
+      headerImg.addEventListener("error", mark, { once: true });
+    } else {
+      mark();
+    }
+    // 兜底：2.5s 后强制显示，避免任何情况下图片永久不可见
+    setTimeout(function () {
+      document.querySelectorAll("img.fade-on-load").forEach(function (i) { i.classList.add("is-loaded"); });
+      document.body.classList.add("atmosphere-ready");
+    }, 2500);
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", pwFadeImages);
+  } else {
+    pwFadeImages();
+  }
+
   var btn = document.getElementById("theme-toggle-btn");
   if (!btn) return;                          // 皮肤页没有主站顶栏
   if (root.hasAttribute("data-pw-edition")) return;
