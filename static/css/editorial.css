@@ -343,56 +343,6 @@ body.character-site .pager-card { background: var(--panel-glass); }
   --char-art-opacity: .34;
 }
 
-[data-theme="light"] body.character-futan {
-  --bg-canvas: #e8edE8;
-  --bg-subtle: #dce5de;
-  --bg-surface: #f5f7f2;
-  --bg-elevated: #edf1eb;
-  --bg-header: rgba(232, 237, 232, 0.88);
-  --text-primary: #152b27;
-  --text-secondary: #48615a;
-  --text-muted: #74877f;
-  --char-accent: #316d62;
-  --char-accent-strong: #214f47;
-  --char-accent-soft: rgba(49, 109, 98, 0.09);
-  --char-border-accent: rgba(49, 109, 98, 0.28);
-  --char-header-accent: #d2b77a;
-  --accent: var(--char-accent);
-  --accent-strong: var(--char-accent-strong);
-  --accent-soft: var(--char-accent-soft);
-  --border-accent: var(--char-border-accent);
-  --border-subtle: rgba(31, 70, 60, 0.08);
-  --border-default: rgba(31, 70, 60, 0.14);
-  --panel-glass: rgba(245, 247, 242, 0.75);
-  --site-grid: rgba(49, 109, 98, 0.03);
-  --char-atmosphere: linear-gradient(180deg, rgba(232,237,232,.65), rgba(232,237,232,.99)), url("../img/characters/futan/abyssal-observation.jpg");
-  --char-art-opacity: .28;
-}
-[data-theme="dark"] body.character-futan {
-  --bg-canvas: #040c0f;
-  --bg-subtle: #091619;
-  --bg-surface: #0b1a1c;
-  --bg-elevated: #112527;
-  --bg-header: rgba(4, 12, 15, 0.90);
-  --text-primary: #e7ede6;
-  --text-secondary: #9fb2a9;
-  --text-muted: #708a80;
-  --char-accent: #c9ae70;
-  --char-accent-strong: #e4ca91;
-  --char-accent-soft: rgba(201, 174, 112, 0.105);
-  --char-border-accent: rgba(201, 174, 112, 0.29);
-  --char-header-accent: #d2b77a;
-  --accent: var(--char-accent);
-  --accent-strong: var(--char-accent-strong);
-  --accent-soft: var(--char-accent-soft);
-  --border-accent: var(--char-border-accent);
-  --border-subtle: rgba(195, 215, 202, 0.075);
-  --border-default: rgba(195, 215, 202, 0.135);
-  --panel-glass: rgba(11, 26, 28, 0.80);
-  --site-grid: rgba(201, 174, 112, 0.022);
-  --char-atmosphere: linear-gradient(180deg, rgba(4,12,15,.12), rgba(4,12,15,.94)), url("../img/characters/futan/abyssal-observation.jpg");
-  --char-art-opacity: .52;
-}
 
 body.character-site::before {
   background: var(--char-atmosphere);
@@ -1423,56 +1373,6 @@ body.character-yutu .md-figure-frame { border-radius:8px; overflow:hidden; borde
 body.character-yutu .dossier-fact-rail { background: color-mix(in srgb, var(--panel-glass) 86%, transparent); }
 
 /* 弗坦世界 — 深渊观测站 */
-[data-theme="light"] body.character-futan {
-  --bg-canvas:#e8ede9;
-  --bg-subtle:#dce6df;
-  --bg-surface:#f6f8f5;
-  --bg-elevated:#eef3ee;
-  --bg-header:rgba(232,237,233,.88);
-  --text-primary:#152a26;
-  --text-secondary:#4a625c;
-  --text-muted:#7a8e87;
-  --char-accent:#2f5e55;
-  --char-accent-strong:#234a43;
-  --char-accent-soft:rgba(47,94,85,.075);
-  --char-border-accent:rgba(47,94,85,.20);
-  --char-header-accent:#c9ae70;
-  --accent: var(--char-accent); --accent-soft: var(--char-accent-soft); --border-accent: var(--char-border-accent);
-  --border-subtle: rgba(47,94,85,.08);
-  --border-default: rgba(47,94,85,.13);
-  --panel-glass: rgba(246,248,245,.78);
-  --site-grid: rgba(47,94,85,.032);
-  --char-atmosphere:
-    radial-gradient(680px 340px at 68% 4%, rgba(47,94,85,.07), transparent 68%),
-    linear-gradient(180deg, rgba(232,237,233,.38), rgba(232,237,233,.98)),
-    url("../img/characters/futan/abyssal-observation.jpg");
-  --char-art-opacity:.26;
-}
-[data-theme="dark"] body.character-futan {
-  --bg-canvas:#040c0f;
-  --bg-subtle:#091619;
-  --bg-surface:#0e1e21;
-  --bg-elevated:#132a2e;
-  --bg-header: rgba(4,12,15,.90);
-  --text-primary:#e7ede6;
-  --text-secondary:#a0b8b0;
-  --text-muted:#759189;
-  --char-accent:#c9ae70;
-  --char-accent-strong:#e4c98f;
-  --char-accent-soft:rgba(201,174,112,.09);
-  --char-border-accent:rgba(201,174,112,.22);
-  --char-header-accent:#d4b87a;
-  --accent: var(--char-accent); --accent-soft: var(--char-accent-soft); --border-accent: var(--char-border-accent);
-  --border-subtle: rgba(201,174,112,.07);
-  --border-default: rgba(201,174,112,.13);
-  --panel-glass: rgba(14,30,33,.80);
-  --site-grid: rgba(201,174,112,.022);
-  --char-atmosphere:
-    radial-gradient(720px 360px at 68% 6%, rgba(201,174,112,.07), transparent 72%),
-    linear-gradient(180deg, rgba(4,12,15,.22), rgba(4,12,15,.96)),
-    url("../img/characters/futan/abyssal-observation.jpg");
-  --char-art-opacity:.44;
-}
 body.character-futan .character-dossier { border-radius: 6px; }
 body.character-futan .character-dossier .page-title { font-family: var(--font-editorial); letter-spacing:.015em; font-weight:620; }
 body.character-futan .markdown-body { letter-spacing:.015em; }

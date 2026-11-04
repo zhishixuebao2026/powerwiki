@@ -1,0 +1,460 @@
+/* ==========================================================================
+   衡天⊙ PowerWiki — 页面皮肤切换器（Edition Launcher）
+   一套皮肤 = 一份整页设计。角落这枚小印章负责在它们之间跳转。
+
+   形态：默认只有 30px 的 ⊙ 圆点（半透明 · 不抢视线）
+         hover / 聚焦 → 展开成「⊙ 皮肤」
+         滚动时 → 淡到 14%，停下 600ms 后恢复
+         点击 → 向上弹出皮肤面板
+   避让：脚本实测页面自带的固定栏（左侧栏、底部工具栏），
+         用 --pw-edition-safe-left / -bottom 把印章推出去，并可在左侧
+         有固定栏时翻到右下角（.is-flipped）。
+   ========================================================================== */
+
+.pw-edition-dock {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left, 0px));
+  bottom: calc(18px + var(--pw-edition-safe-bottom, 0px) + env(safe-area-inset-bottom, 0px));
+  z-index: 1400;
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  opacity: 0.62;
+  transition: opacity 0.26s ease;
+  font-family: "Noto Sans SC Variable", "Noto Sans SC", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 脚本实测到左侧有固定侧栏时，整组翻到右下角 */
+.pw-edition-dock.is-flipped {
+  left: auto;
+  right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.pw-edition-dock.is-dim {
+  opacity: 0.14;
+}
+
+.pw-edition-dock:hover,
+.pw-edition-dock:focus-within,
+.pw-edition-dock.is-open {
+  opacity: 1;
+}
+
+/* ── 圆点按钮（可展开成胶囊） ─────────────────────────────────────────── */
+.pw-edition-toggle {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1a1a1a;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+}
+
+.pw-edition-toggle:hover {
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.pw-edition-toggle:focus-visible {
+  outline: 2px solid #d4af6a;
+  outline-offset: 3px;
+}
+
+.pw-edition-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4af6a, #a9762c);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  flex: 0 0 auto;
+  transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pw-edition-dock.is-open .pw-edition-glyph {
+  transform: rotate(180deg);
+}
+
+/* 文字平时收成 0 宽，hover / 打开时才让出来 */
+.pw-edition-label {
+  display: block;
+  max-width: 0;
+  margin-left: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition: max-width 0.24s ease, opacity 0.16s ease, margin-left 0.24s ease;
+}
+
+.pw-edition-dock:hover .pw-edition-label,
+.pw-edition-dock:focus-within .pw-edition-label,
+.pw-edition-dock.is-open .pw-edition-label {
+  max-width: 46px;
+  margin-left: 6px;
+  opacity: 1;
+}
+
+/* ── 回主站首页的小按钮 ───────────────────────────────────────────────── */
+.pw-edition-home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: #4a4a46;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.pw-edition-home-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 0, 0, 0.24);
+  color: #a9762c;
+}
+
+.pw-edition-home-btn .svg-icon {
+  width: 13px;
+  height: 13px;
+}
+
+/* ── 面板 ─────────────────────────────────────────────────────────────── */
+.pw-edition-panel {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  width: min(352px, calc(100vw - 24px));
+  max-height: min(66vh, 560px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(250, 250, 248, 0.98);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #17181a;
+  transform-origin: bottom left;
+  animation: pw-edition-rise 0.16s ease-out both;
+}
+
+.pw-edition-dock.is-flipped .pw-edition-panel {
+  left: auto;
+  right: 0;
+  transform-origin: bottom right;
+}
+
+/* 上方放不下时，面板向下弹（editions.js 加 .is-dropdown） */
+.pw-edition-dock.is-dropdown .pw-edition-panel {
+  top: calc(100% + 10px);
+  bottom: auto;
+}
+
+.pw-edition-panel[hidden] {
+  display: none;
+}
+
+@keyframes pw-edition-rise {
+  from { opacity: 0; transform: translateY(6px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pw-edition-panel { animation: none; }
+  .pw-edition-toggle,
+  .pw-edition-glyph,
+  .pw-edition-home-btn,
+  .pw-edition-dock,
+  .pw-edition-label { transition: none; }
+}
+
+.pw-edition-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 4px 8px;
+}
+
+.pw-edition-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #17181a;
+}
+
+.pw-edition-sub {
+  font-size: 10px;
+  color: #8a8a86;
+  letter-spacing: 0.02em;
+}
+
+.pw-edition-list {
+  display: grid;
+  gap: 6px;
+}
+
+.pw-edition-card {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.14s ease, transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.pw-edition-card:hover {
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.09);
+}
+
+.pw-edition-card.is-current {
+  border-color: #c9a25c;
+  background: linear-gradient(180deg, #fffdf7, #fdf6e8);
+}
+
+.pw-edition-thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #eeeae0;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pw-edition-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.pw-edition-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.pw-edition-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.pw-edition-now {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #17181a;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.pw-edition-tag {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #a08050;
+  text-transform: uppercase;
+}
+
+.pw-edition-note {
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: #6f6f6a;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.pw-edition-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px 4px 0;
+  margin-top: 7px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  font-size: 9.5px;
+  color: #9a9a94;
+  line-height: 1.5;
+}
+
+.pw-edition-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #17181a;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.14s ease, background-color 0.14s ease;
+}
+
+.pw-edition-home:hover {
+  border-color: #c9a25c;
+  background: #fdf6e8;
+}
+
+.pw-edition-foot-note {
+  font-size: 9px;
+  color: #a3a39d;
+}
+
+@media (max-width: 720px) {
+  .pw-edition-dock {
+    left: 10px;
+    gap: 6px;
+  }
+  .pw-edition-dock.is-flipped {
+    left: auto;
+    right: 10px;
+  }
+  .pw-edition-toggle {
+    height: 28px;
+    padding: 0 7px;
+    font-size: 11px;
+  }
+  .pw-edition-glyph {
+    width: 17px;
+    height: 17px;
+    font-size: 10px;
+  }
+  .pw-edition-home-btn {
+    width: 24px;
+    height: 24px;
+  }
+  .pw-edition-panel {
+    padding: 8px;
+    border-radius: 12px;
+  }
+  .pw-edition-card {
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 8px;
+    padding: 5px;
+  }
+  .pw-edition-note {
+    -webkit-line-clamp: 1;
+  }
+}
+
+/* ==========================================================================
+   皮肤页面（Arena 产物）的性能校正
+   只动合成方式，不动外观。实测结论（软件渲染环境，逐段滚动计时）：
+
+     · 卷宗页的整屏 fixed 网格纹理：给它加 will-change/translateZ 反而更慢
+       （全屏层交给合成器重栅格化），所以这里不做提升，保持原样。
+     · 星图页的极光层是 2000×1300 的持续位移动画：交给合成器后
+       每步滚动 114ms → 62ms，长帧数 6 → 5，外观完全一致。
+     · 侧栏/底部栏的渐变背景提升无收益，已去掉，避免无谓的合成层。
+   ========================================================================== */
+
+html[data-pw-edition] .aurora {
+  will-change: transform;
+  transform: translateZ(0);
+  contain: strict;
+  pointer-events: none;
+}
+
+/* ── 深色主题：印章面板与按钮跟着变暗，别在夜里发白 ─────────────────── */
+[data-theme="dark"] .pw-edition-toggle,
+[data-theme="dark"] .pw-edition-home-btn {
+  background: rgba(32, 37, 35, 0.94);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #d9d4c7;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .pw-edition-toggle:hover,
+[data-theme="dark"] .pw-edition-home-btn:hover {
+  border-color: rgba(212, 175, 106, 0.5);
+  color: #e6dcc4;
+}
+
+[data-theme="dark"] .pw-edition-dock.is-dim {
+  opacity: 0.2;
+}
+
+[data-theme="dark"] .pw-edition-panel {
+  background: #1a1e1d;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ece7dc;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+}
+
+[data-theme="dark"] .pw-edition-title,
+[data-theme="dark"] .pw-edition-name {
+  color: #f0ebdf;
+}
+
+[data-theme="dark"] .pw-edition-sub,
+[data-theme="dark"] .pw-edition-tag,
+[data-theme="dark"] .pw-edition-note,
+[data-theme="dark"] .pw-edition-foot-note {
+  color: #9d9a90;
+}
+
+[data-theme="dark"] .pw-edition-card {
+  background: #222725;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .pw-edition-card:hover {
+  border-color: rgba(212, 175, 106, 0.45);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .pw-edition-card.is-current {
+  background: linear-gradient(180deg, #262a24, #20241f);
+  border-color: rgba(212, 175, 106, 0.55);
+}
+
+[data-theme="dark"] .pw-edition-now {
+  background: rgba(212, 175, 106, 0.18);
+  color: #e2c894;
+  border-color: rgba(212, 175, 106, 0.35);
+}
+
+[data-theme="dark"] .pw-edition-foot {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .pw-edition-home {
+  color: #d9b877;
+}

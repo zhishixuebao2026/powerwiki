@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import html
 import json
+import posixpath
 import re
 import struct
 from pathlib import Path
@@ -23,6 +24,178 @@ JS_OUT_DIR = ROOT / "static" / "js"
 
 RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第五版·最新】.md"
 MATERIALS_MD_PATH = DOCS_DIR / "材质与破坏能量数据库（新）.md"
+EDITIONS_PATH = DATA_DIR / "editions.json"
+SKINS_OUT_DIR = ROOT / "skins"
+_EDITIONS_CACHE: Optional[Dict[str, Any]] = None
+
+
+def editions_manifest() -> Dict[str, Any]:
+    """Page-skin registry (data/editions.json). One entry == one whole-page design."""
+    global _EDITIONS_CACHE
+    if _EDITIONS_CACHE is None:
+        try:
+            payload = json.loads(EDITIONS_PATH.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            payload = {"default": "default", "editions": [{"id": "default", "name": "默认", "pages": {"home": "index.html"}}]}
+        eds = [e for e in payload.get("editions", []) if e.get("id") and e.get("pages")]
+        if not eds:
+            eds = [{"id": "default", "name": "默认", "pages": {"home": "index.html"}}]
+        default_id = payload.get("default") or eds[0]["id"]
+        if default_id not in {e["id"] for e in eds}:
+            default_id = eds[0]["id"]
+        _EDITIONS_CACHE = {"default": default_id, "editions": eds}
+    return _EDITIONS_CACHE
+
+
+def _rel_from(page_dir: str, target: str) -> str:
+    """Relative URL from a page directory ('' or 'tier') to a repo-root-relative target."""
+    start = page_dir.strip("/") or "."
+    return posixpath.relpath(target, start)
+
+
+def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str] = None) -> str:
+    """只在"当前栏目真有对应页面"的皮肤之间提供切换；不足两套就不挂切换器。"""
+    manifest = editions_manifest()
+    current = current_id or manifest["default"]
+
+    applicable = []
+    for ed in manifest["editions"]:
+        pages = ed.get("pages") or {}
+        target = pages.get(section)
+        if not target:
+            continue  # 这套皮肤没有这一栏，不列出来，避免把用户带到别的页面
+        applicable.append((ed, target))
+
+    if len(applicable) < 2:
+        return ""
+
+    cards = []
+    for ed, target in applicable:
+        href = _rel_from(page_dir, target)
+        is_current = ed["id"] == current
+        thumb = ed.get("thumb")
+        thumb_html = (
+            f'<span class="pw-edition-thumb"><img src="{esc(_rel_from(page_dir, thumb))}" alt="" loading="lazy" decoding="async"></span>'
+            if thumb
+            else '<span class="pw-edition-thumb"></span>'
+        )
+        card_cls = "pw-edition-card is-current" if is_current else "pw-edition-card"
+        aria = ' aria-current="page"' if is_current else ""
+        now_badge = '<span class="pw-edition-now">当前</span>' if is_current else ""
+        cards.append(
+            f'<a class="{card_cls}" data-edition-id="{esc(ed["id"])}" href="{esc(href)}"{aria}>'
+            + thumb_html
+            + '<span class="pw-edition-meta">'
+            + f'<span class="pw-edition-name">{esc(ed.get("name") or ed["id"])}{now_badge}</span>'
+            + f'<span class="pw-edition-tag">{esc(ed.get("tag") or "")}</span>'
+            + f'<span class="pw-edition-note">{esc(ed.get("note") or "")}</span>'
+            + "</span></a>"
+        )
+
+    # 站在别的皮肤上时，永远留一条回主站的路
+    home_href = _rel_from(page_dir, "index.html")
+    back_home = ""
+    if current != manifest["default"]:
+        back_home = (
+            f'<a class="pw-edition-home" href="{esc(home_href)}">'
+            '<span aria-hidden="true">←</span> 返回主站首页</a>'
+        )
+
+    count = len(applicable)
+    return (
+        '<div class="pw-edition-dock" id="pw-edition-dock">'
+        f'<a class="pw-edition-home-btn" href="{esc(home_href)}" title="返回主站首页" aria-label="返回主站首页">{SVGS["home"]}</a>'
+        '<button type="button" class="pw-edition-toggle" id="pw-edition-toggle" aria-expanded="false" aria-controls="pw-edition-panel" title="切换页面皮肤">'
+        '<span class="pw-edition-glyph" aria-hidden="true">⊙</span><span class="pw-edition-label">皮肤</span></button>'
+        f'<div class="pw-edition-panel" id="pw-edition-panel" data-current-edition="{esc(current)}" hidden>'
+        '<div class="pw-edition-head"><span class="pw-edition-title">本页皮肤</span>'
+        f'<span class="pw-edition-sub">同一内容 · {count} 种版式</span></div>'
+        f'<div class="pw-edition-list">{"".join(cards)}</div>'
+        f'<div class="pw-edition-foot">{back_home}'
+        '<span class="pw-edition-foot-note">只列出与本页对应的皮肤；换页后入口随页面走。</span></div>'
+        "</div></div>"
+    )
+
+
+SKIN_FONT_STACKS = {
+    # 皮肤自带的子集字体在 ZIP 里没有随包发出，缺文件时整页会退成方框。
+    # 构建时把四个字体族改指站内自托管的思源黑体 / 思源宋体 / Space Grotesk。
+    "HT Sans": '"Noto Sans SC Variable","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif',
+    "HT Serif": '"Noto Serif SC Variable","Noto Serif SC","Songti SC",serif',
+    "HT Brush": '"Noto Serif SC Variable","Noto Serif SC","Songti SC",serif',
+    "HT Mono": '"Space Grotesk Variable","Noto Sans SC Variable",ui-monospace,monospace',
+}
+
+SKIN_FONT_SHEETS = [
+    "static/fonts/noto-sans-sc/index.css",
+    "static/fonts/noto-serif-sc/index.css",
+    "static/fonts/space-grotesk/index.css",
+]
+
+
+def patch_skin_fonts(doc: str) -> str:
+    """Rewrite a skin's font families to the site's self-hosted fonts."""
+    # 1. 去掉指向不存在的 ./assets/fonts/*.woff2 的 @font-face
+    doc = re.sub(r"@font-face\{[^{}]*?\.\/assets\/fonts\/[^{}]*?\}", "", doc)
+    # 2. HT Sans / HT Serif / HT Brush / HT Mono -> 站内字体栈
+    #    先换长的名字，避免 "HT Sans" 先于 "HT Sans SC" 之类被误伤
+    for name in sorted(SKIN_FONT_STACKS, key=len, reverse=True):
+        stack = SKIN_FONT_STACKS[name]
+        doc = re.sub(
+            r"(?<=font-family:)" + re.escape(name) + r"(?=\s*[,;}\"'])",
+            stack,
+            doc,
+        )
+    return doc
+
+
+def build_skin_editions() -> int:
+    """Take each skins/_source/*.html, inject the launcher, write skins/<id>/<section>.html."""
+    built = 0
+    for ed in editions_manifest()["editions"]:
+        source = ed.get("source")
+        if not source:
+            continue
+        src_path = ROOT / source
+        if not src_path.exists():
+            print(f"[WARN] edition source missing: {source}")
+            continue
+        section = ed.get("section") or "home"
+        out_dir = SKINS_OUT_DIR / ed["id"]
+        out_dir.mkdir(parents=True, exist_ok=True)
+        page_dir = f"skins/{ed['id']}"
+        patch = ed.get("patch")
+        patch_tag = (
+            f'<script src="{_rel_from(page_dir, patch)}" defer></script>\n' if patch else ""
+        )
+        font_tags = ""
+        if ed.get("font_rewrite"):
+            font_tags = "".join(
+                f'<link rel="stylesheet" href="{_rel_from(page_dir, sheet)}">\n' for sheet in SKIN_FONT_SHEETS
+            )
+        thumb_img = ed.get("thumb")
+        inject = (
+            font_tags
+            + f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
+            f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/polish.css")}">\n'
+            f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
+            f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
+            f'<script src="{_rel_from(page_dir, "static/js/chrome.js")}" defer></script>\n'
+            f'{patch_tag}'
+        )
+        doc = src_path.read_text(encoding="utf-8", errors="replace")
+        if ed.get("font_rewrite"):
+            doc = patch_skin_fonts(doc)
+        # 标记这是皮肤页面，editions.css 用它做合成层校正（不改外观）
+        doc = doc.replace("<html", '<html data-pw-edition="' + esc(ed["id"]) + '"', 1)
+        if "</body>" in doc:
+            doc = doc.replace("</body>", inject + "</body>", 1)
+        else:
+            doc = doc + inject
+        (out_dir / f"{section}.html").write_text(doc, encoding="utf-8")
+        built += 1
+    return built
+
 
 SVGS = {
     "search": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
@@ -582,6 +755,7 @@ def render_shell(
     root_prefix: str = "./",
     has_toc_button: bool = False,
     body_class: str = "",
+    skin_section: Optional[str] = None,
 ) -> str:
     r = root_prefix
 
@@ -618,6 +792,18 @@ def render_shell(
         else ""
     )
 
+    # r 只表达"回根目录要走几层"，用等深的占位目录即可算出正确的相对链接
+    _page_dir = "/".join(["x"] * r.count("../"))
+    # 皮肤可以登记到某个具体页面上（例如某个角色的整页皮肤），
+    # 这时用 skin_section 覆盖栏目名，栏目本身仍旧只有 active_nav。
+    edition_launcher = edition_launcher_html(_page_dir, skin_section or active_nav)
+    # 404 KB 的索引包只有量级探索器、角色探索器、检索页首屏真的需要；
+    # 其余页面改为第一次打开检索时才加载（app.js 的 ensureSearchData）。
+    if page_id in ("tiers", "characters", "search"):
+        search_index_tag = f'<script src="{r}static/js/search-index.js"></script>'
+    else:
+        search_index_tag = f'<script>window.__PW_INDEX_SRC__ = "{r}static/js/search-index.js";</script>'
+
     page = f"""<!DOCTYPE html>
 <html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}">
 <head>
@@ -639,8 +825,11 @@ def render_shell(
         }} catch (e) {{ t = 'light'; }}
       }}
       document.documentElement.setAttribute('data-theme', t);
+      /* 样式表到达前先刷一次画布底色，避免白屏闪一下 */
+      var canvas = t === 'dark' ? '#090b10' : '#f6f7f4';
       var mc = document.getElementById('theme-color-meta');
-      if (mc) mc.setAttribute('content', t === 'dark' ? '#090b10' : '#f6f7f4');
+      if (mc) mc.setAttribute('content', canvas);
+      document.documentElement.style.backgroundColor = canvas;
     }})();
   </script>
   <link rel="preload" href="{r}static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -650,6 +839,8 @@ def render_shell(
   <link rel="stylesheet" href="{r}static/css/style.css">
   <link rel="stylesheet" href="{r}static/css/editorial.css">
   <link rel="stylesheet" href="{r}static/css/experience.css">
+  <link rel="stylesheet" href="{r}static/css/editions.css">
+  <link rel="stylesheet" href="{r}static/css/polish.css">
 </head>
 <body class="{esc(shell_body_class)}">
   <header class="site-header">
@@ -803,8 +994,11 @@ def render_shell(
     </div>
   </footer>
 
-  <script src="{r}static/js/search-index.js"></script>
+  {search_index_tag}
   <script src="{r}static/js/app.js"></script>
+  {edition_launcher}
+  <script src="{r}static/js/chrome.js"></script>
+  <script src="{r}static/js/editions.js"></script>
 </body>
 </html>
 """
@@ -890,7 +1084,7 @@ def build_home_page(
           <img class="hero-backdrop-img" src="static/img/cosmic-atlas-hero.jpg" width="1584" height="672" alt="">
         </div>
         <div class="hero-body">
-          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.28 最新基准（含 1.7 位格栏）</div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.30 最新基准（含 1.7 位格栏 · 5.6 / 8.3 修订）</div>
           <h1 class="hero-heading" id="home-title">从昆虫到无限，<br><span>查清每一个量级。</span></h1>
           <p class="hero-desc">从物理能量到无限基数，用同一套标尺查阅量级、角色证据与规则原文。</p>
           <div class="hero-cta-row">
@@ -958,7 +1152,12 @@ def build_tiers_page(
         t["slug"]: f"static/img/tiers/{tier_art_stem(t['slug'], t['group_id'])}.jpg"
         for t in all_ordered
     }
-    tier_art_manifest = json.dumps(tier_art_urls, ensure_ascii=False).replace("</", "<\\/")
+    # 卡片用的是 560px 宽的 webp（98 张 15.5 MB → 1.5 MB）；原图留给详情页页头与灯箱。
+    tier_card_art_urls = {}
+    for slug, url in tier_art_urls.items():
+        webp = url.rsplit(".", 1)[0].replace("static/img/tiers/", "static/img/tiers/card/") + ".webp"
+        tier_card_art_urls[slug] = webp if (ROOT / webp).is_file() else url
+    tier_art_manifest = json.dumps(tier_card_art_urls, ensure_ascii=False).replace("</", "<\\/")
     tier_tuning_manifest = json.dumps(
         {t["slug"]: tier_art_tuning(t["slug"]) for t in all_ordered}, ensure_ascii=False
     ).replace("</", "<\\/")
@@ -975,12 +1174,12 @@ def build_tiers_page(
         for t in items:
             order = "待定" if t.get("unranked") else f"#{t['order']:02d}"
             count = char_count_by_tier.get(t["slug"], 0)
-            art_url = tier_art_urls[t["slug"]]
+            art_url = tier_card_art_urls[t["slug"]]
             art_tuning = tier_art_tuning(t["slug"])
             char_pill = f'<span class="tier-char-count">{count} 角色</span>' if count else ""
             cards.append(f"""
                 <a class="tier-card" data-domain="{esc(t['domain'])}" href="tier/{esc(t['slug'])}.html">
-                  <span class="tier-card-art" aria-hidden="true" style="background-image:url('{esc(art_url)}');{art_tuning}"></span>
+                  <span class="tier-card-art" aria-hidden="true" style="{art_tuning}"><img src="{esc(art_url)}" alt="" loading="lazy" decoding="async"></span>
                   <div class="tier-card-top">
                     <span class="tier-badge mono">⊙ {esc(t['code'])}</span>
                     <span class="tier-top-right">{char_pill}<span class="tier-seq mono">{order}</span></span>
@@ -1486,13 +1685,20 @@ def build_character_detail_pages(
               <div class="toc-head">
                 <div class="toc-head-row">
                   <span>档案章节目录</span>
-                  <span class="mono">{len(doc_renderer.toc)} 节</span>
+                  <span class="mono toc-count">{len(doc_renderer.toc)} 节</span>
+                  <button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭章节目录">
+                    <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
                 </div>
                 <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
               </div>
               <nav class="toc-list" id="toc-nav">
                 {toc_links_html}
               </nav>
+              <div class="toc-foot">
+                <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+                <a class="toc-foot-btn" href="../search.html">全站检索</a>
+              </div>
             </aside>
 
             <article class="doc-panel">
@@ -1652,6 +1858,7 @@ def build_character_detail_pages(
             root_prefix="../",
             has_toc_button=has_full_doc,
             body_class=f"character-site character-{c['slug']}",
+            skin_section=f"character-{c['slug']}",
         )
         (CHAR_OUT_DIR / f"{c['slug']}.html").write_text(page_html, encoding="utf-8")
 
@@ -1673,6 +1880,14 @@ def build_fulltext_doc_page(
     rendered_html = renderer.render(md_text)
     line_count = len(md_text.splitlines())
 
+    # 正文第一行往往是和页头重复的大标题。把它收进页头：id 搬到大标题上，
+    # 目录第一条仍然能跳（跳到页头），正文不再重复出现同一句话。
+    folio_id = ""
+    first_h1 = re.match(r'\s*<h1 id="([^"]+)"[^>]*>.*?</h1>\s*', rendered_html, re.S)
+    if first_h1:
+        folio_id = first_h1.group(1)
+        rendered_html = rendered_html[first_h1.end():]
+
     toc_links: List[str] = []
     title_to_id: Dict[str, str] = {}
     for item in renderer.toc:
@@ -1681,7 +1896,7 @@ def build_fulltext_doc_page(
 
     rules_tab_cls = "codex-tab active" if active_nav == "rules" else "codex-tab"
     mat_tab_cls = "codex-tab active" if active_nav == "materials" else "codex-tab"
-    version_label = "第五版 · 2026.10.28（1.7 位格栏）" if active_nav == "rules" else "第二版 · 物理参考"
+    version_label = "第五版 · 2026.10.30（1.7 · 5.6 / 8.3）" if active_nav == "rules" else "第二版 · 物理参考"
 
     body = f"""
     <div class="container">
@@ -1692,15 +1907,19 @@ def build_fulltext_doc_page(
         </nav>
         <div class="codex-folio">
           <div class="codex-folio-kicker"><span class="codex-folio-badge mono">{version_label}</span><span>完整原文 · {len(renderer.toc)} 节</span></div>
-          <h1 class="codex-folio-title">{esc(title)}</h1>
+          <h1 class="codex-folio-title"{' id="' + esc(folio_id) + '"' if folio_id else ''}>{esc(title)}</h1>
           <p class="codex-folio-desc">{esc(subtitle)}</p>
         </div>
       </header>
 
       <div class="doc-layout">
         <aside class="doc-sidebar" id="doc-sidebar" aria-label="全文目录">
-          <div class="toc-head"><div class="toc-head-row"><span>本文目录</span><span class="mono">{len(renderer.toc)}</span></div><input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off"></div>
+          <div class="toc-head"><div class="toc-head-row"><span>本文目录</span><span class="mono toc-count">{len(renderer.toc)}</span><button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭目录"><svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div><input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off"></div>
           <nav class="toc-list" id="toc-nav">{''.join(toc_links)}</nav>
+          <div class="toc-foot">
+            <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+            <a class="toc-foot-btn" href="search.html">全站检索</a>
+          </div>
         </aside>
         <article class="doc-panel">
           <div class="doc-toolbar">
@@ -2009,12 +2228,15 @@ def main() -> None:
     )
     (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
 
+    editions_built = build_skin_editions()
+
     print(
         f"[OK] PowerWiki v9.1 built successfully:\n"
         f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
         f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
         f"  - Standalone Character pages: {len(all_chars)} files in character/*.html ({len(char_doc_sections)} full-text sections indexed)\n"
-        f"  - Rules v5 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections"
+        f"  - Rules v5 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections\n"
+        f"  - Page skins (editions): {editions_built} standalone builds in skins/*/"
     )
 
 

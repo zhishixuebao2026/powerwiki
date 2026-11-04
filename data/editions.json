@@ -1,0 +1,73 @@
+{
+  "_note": "页面皮肤登记表。每套皮肤 = 一份整页设计，只在 pages 里登记了当前栏目的皮肤才会出现在切换器里。新增皮肤：整页 HTML 放进 skins/_source/，这里加一条，然后 python3 build_site.py。",
+  "default": "default",
+  "storage_key": "pw_edition_v1",
+  "editions": [
+    {
+      "id": "default",
+      "name": "默认",
+      "tag": "DEFAULT · v6.0",
+      "note": "建筑感栅格，98 档量级 + 角色 + 规则 + 材质全站",
+      "source": null,
+      "thumb": "static/img/editions/default.jpg",
+      "pages": {
+        "home": "index.html",
+        "materials": "materials.html",
+        "rules": "rules.html",
+        "character-yutu": "character/yutu.html"
+      }
+    },
+    {
+      "id": "archive",
+      "name": "卷宗",
+      "tag": "ARCHIVE",
+      "note": "米纸底、左侧索引栏、细线分隔与衬线巨标题的档案排版",
+      "source": "skins/_source/archive.html",
+      "section": "materials",
+      "thumb": "static/img/editions/archive.jpg",
+      "patch": "skins/patches/archive.js",
+      "pages": {
+        "materials": "skins/archive/materials.html"
+      }
+    },
+    {
+      "id": "atlas",
+      "name": "星图",
+      "tag": "ATLAS",
+      "note": "大留白、描边巨字、裂星主视觉与浮动卡片的图版排版",
+      "source": "skins/_source/atlas.html",
+      "section": "materials",
+      "thumb": "static/img/editions/atlas.jpg",
+      "pages": {
+        "materials": "skins/atlas/materials.html"
+      }
+    },
+    {
+      "id": "observatory",
+      "name": "观象台",
+      "tag": "OBSERVATORY · 观象台",
+      "note": "夜观 / 昼测双主题、二十八宿衡天仪、全链对数天梯的观象台排版",
+      "source": "skins/_source/observatory.html",
+      "section": "rules",
+      "thumb": "static/img/editions/observatory.jpg",
+      "font_rewrite": true,
+      "pages": {
+        "rules": "skins/observatory/rules.html"
+      },
+      "patch": "skins/patches/observatory.js"
+    },
+    {
+      "id": "moonfile",
+      "name": "月面",
+      "tag": "LUNA · 月面卷宗",
+      "note": "米纸底、墨笔巨字、月面插图与红色印章的卷宗排版",
+      "source": "skins/_source/moonfile.html",
+      "section": "character-yutu",
+      "thumb": "static/img/editions/moonfile.jpg",
+      "pages": {
+        "character-yutu": "skins/moonfile/character-yutu.html"
+      },
+      "patch": "skins/patches/moonfile.js"
+    }
+  ]
+}

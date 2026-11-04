@@ -152,7 +152,10 @@
 
         if (!reduceMotion && typeof document.startViewTransition === "function") {
           try {
-            document.startViewTransition(applyTheme);
+            const vt = document.startViewTransition(applyTheme);
+            /* 跳转/切页时这个 transition 会被中断，吞掉它的 promise，避免控制台报错 */
+            if (vt && vt.finished && typeof vt.finished.catch === "function") vt.finished.catch(() => {});
+            if (vt && vt.ready && typeof vt.ready.catch === "function") vt.ready.catch(() => {});
             return;
           } catch (_) {}
         }
@@ -212,6 +215,21 @@
 
     window.addEventListener("pageshow", () => {
       closeAllDrawersAndModals();
+    });
+
+    // Esc closes whichever panel is on top, so a drawer never traps the page.
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const openModal = document.querySelector(".modal-backdrop.open");
+      if (openModal) return; // the search modal handles its own Esc.
+      const sidebarOpen = document.getElementById("doc-sidebar")?.classList.contains("drawer-open");
+      const navOpen = drawer && drawer.classList.contains("open");
+      if (sidebarOpen || navOpen) {
+        closeAllDrawersAndModals();
+        if (sidebarOpen && document.getElementById("dock-toc-btn")) {
+          document.getElementById("dock-toc-btn").focus();
+        }
+      }
     });
 
     window.addEventListener("resize", () => {
@@ -329,6 +347,26 @@
     const tocFilter = document.getElementById("toc-filter-input");
     const dockTocBtn = document.getElementById("dock-toc-btn");
     const mdBody = document.querySelector(".markdown-body");
+
+    /* The chapter drawer sits inside <main>, which is its own stacking context.
+       On touch layouts it is a fixed slide-over, so we lift it up to <body> to
+       keep it above the page veil — otherwise the veil dims it and swallows
+       every tap, which reads as "the button does nothing". */
+    if (sidebar) {
+      const sidebarHome = sidebar.parentElement;
+      const sidebarAnchor = sidebar.nextElementSibling;
+      const isDrawerMode = () => window.matchMedia("(max-width: 1080px)").matches;
+      const portalSidebar = () => {
+        if (isDrawerMode()) {
+          if (sidebar.parentElement !== document.body) document.body.appendChild(sidebar);
+        } else if (sidebar.parentElement === document.body && sidebarHome) {
+          sidebarHome.insertBefore(sidebar, sidebarAnchor);
+        }
+      };
+      portalSidebar();
+      window.addEventListener("resize", portalSidebar);
+      window.addEventListener("orientationchange", portalSidebar);
+    }
 
     const storedPrefs = safeGetJSON(storageFor("local"), STORAGE_KEYS.readerPrefs, {});
     const storedFontSize = storedPrefs && typeof storedPrefs === "object" ? storedPrefs.fontSize : undefined;
@@ -525,11 +563,50 @@
       });
     }
 
+    const syncTocTriggerState = () => {
+      if (!dockTocBtn) return;
+      const open = sidebar.classList.contains("drawer-open");
+      dockTocBtn.classList.toggle("is-active", open);
+      dockTocBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+
     if (dockTocBtn) {
+      dockTocBtn.setAttribute("aria-controls", "doc-sidebar");
+      dockTocBtn.setAttribute("aria-expanded", "false");
       dockTocBtn.addEventListener("click", () => {
         const drawer = document.getElementById("site-drawer");
         if (drawer) drawer.classList.remove("open");
         sidebar.classList.toggle("drawer-open");
+        syncScrollLock();
+        syncTocTriggerState();
+        if (sidebar.classList.contains("drawer-open")) {
+          const filter = sidebar.querySelector(".toc-filter");
+          if (filter && window.matchMedia("(hover: none)").matches) filter.blur();
+        }
+      });
+      // Reflect state changes triggered elsewhere (backdrop tap, Esc, resize).
+      const tocStateObserver = new MutationObserver(syncTocTriggerState);
+      tocStateObserver.observe(sidebar, { attributes: true, attributeFilter: ["class"] });
+      syncTocTriggerState();
+    }
+
+    const tocCloseBtn = document.getElementById("toc-drawer-close");
+    if (tocCloseBtn) {
+      tocCloseBtn.addEventListener("click", () => {
+        sidebar.classList.remove("drawer-open");
+        syncScrollLock();
+        if (dockTocBtn) dockTocBtn.focus();
+      });
+    }
+
+    // From the chapter drawer, hand over to the full-site navigation drawer so the
+    // bottom-right button always leads somewhere.
+    const tocOpenNavBtn = document.getElementById("toc-open-nav-btn");
+    if (tocOpenNavBtn) {
+      tocOpenNavBtn.addEventListener("click", () => {
+        sidebar.classList.remove("drawer-open");
+        const navDrawer = document.getElementById("site-drawer");
+        if (navDrawer) navDrawer.classList.add("open");
         syncScrollLock();
       });
     }
@@ -617,10 +694,10 @@ function renderCard(t) {
       const tuneMap = window.PW_TIER_ART_TUNING || {};
       const tuneRaw = typeof tuneMap[t.slug] === "string" ? tuneMap[t.slug] : "";
       const tuneDecl = tuneRaw ? ";" + tuneRaw.replace(/[^A-Za-z0-9%:;.\- ]/g, "") : "";
-      const artStyle = ` style="background-image:url('${escapeHTML(resolveUrl(artPath))}')${tuneDecl}"`;
+      const artImg = `<img src="${escapeHTML(resolveUrl(artPath))}" alt="" loading="lazy" decoding="async">`;
       return `
         <a class="tier-card" data-domain="${escapeHTML(t.domain)}" href="${resolveUrl("tier/" + t.slug + ".html")}">
-          <span class="tier-card-art" aria-hidden="true"${artStyle}></span>
+          <span class="tier-card-art" aria-hidden="true" style="${tuneDecl.replace(/^;/, "")}">${artImg}</span>
           <div class="tier-card-top">
             <span class="tier-badge mono">⊙ ${escapeHTML(t.code)}</span>
             <span class="tier-top-right">${charPill}<span class="tier-seq mono">${orderText}</span></span>
@@ -1077,6 +1154,25 @@ function renderCard(t) {
   /* --------------------------------------------------------------------------
      7. Global Search Modal (Ctrl+K) & Dedicated Search Page
      -------------------------------------------------------------------------- */
+  /* 索引包（约 400 KB）在非探索器页面里改为按需加载：
+     第一次打开检索时才注入 <script>，加载完再渲染结果，功能完全一致。 */
+  let indexLoadPromise = null;
+  function ensureSearchData() {
+    if (window.__POWERWIKI_INDEX__) return Promise.resolve();
+    if (indexLoadPromise) return indexLoadPromise;
+    const src = window.__PW_INDEX_SRC__;
+    if (!src) return Promise.resolve();
+    indexLoadPromise = new Promise((resolve) => {
+      const tag = document.createElement("script");
+      tag.src = src;
+      tag.async = true;
+      tag.onload = resolve;
+      tag.onerror = resolve;
+      document.head.appendChild(tag);
+    });
+    return indexLoadPromise;
+  }
+
   function runSearchQuery(rawQuery, typeFilter) {
     const index = window.__POWERWIKI_INDEX__ || [];
     const q = (rawQuery || "").trim().toLowerCase();
@@ -1206,8 +1302,14 @@ function renderCard(t) {
       if (sidebar) sidebar.classList.remove("drawer-open");
       backdrop.classList.add("open");
       syncScrollLock();
-      renderHits();
       setTimeout(() => input.focus(), 25);
+      /* 索引还没到就先给个占位，加载完再渲染，弹窗本身不等待 */
+      if (!window.__POWERWIKI_INDEX__) {
+        body.innerHTML = '<div class="search-modal-empty">正在载入索引…</div>';
+        ensureSearchData().then(renderHits);
+      } else {
+        renderHits();
+      }
     }
 
     triggers.forEach((t) => t.addEventListener("click", openModal));
