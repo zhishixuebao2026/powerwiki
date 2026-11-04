@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" id="theme-color-meta" content="#f6f7f4">
   <meta name="color-scheme" content="light dark">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../static/img/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="衡天 Wiki">
+  <meta name="application-name" content="衡天 Wiki">
   <title>⊙砖△ 强爆砖 · 衡天⊙ PowerWiki</title>
   <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <script>
@@ -35,6 +44,7 @@
   <link rel="stylesheet" href="../static/css/experience.css">
   <link rel="stylesheet" href="../static/css/editions.css">
   <link rel="stylesheet" href="../static/css/polish.css">
+  <link rel="stylesheet" href="../static/css/app.css">
 </head>
 <body class="site-tiers">
   <header class="site-header">
@@ -62,6 +72,9 @@
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <span class="search-btn-label">检索…</span>
           <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="install-btn" data-pw-install hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11"/><path d="m7.5 9.5 4.5 4.5 4.5-4.5"/><path d="M4.5 16.5V18a3 3 0 0 0 3 3h9a3 3 0 0 0 3-3v-1.5"/></svg><span class="pw-install-text">装成 App</span>
         </button>
         <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题">
           <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
@@ -96,6 +109,9 @@
         <div class="drawer-group-label">快捷导航</div>
         <a class="drawer-doc-link" href="../index.html"><span>返回首页总览</span><span>→</span></a>
         <a class="drawer-doc-link" href="../search.html"><span>全站即时检索</span><span>→</span></a>
+        <button type="button" class="drawer-install-btn" data-pw-install hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11"/><path d="m7.5 9.5 4.5 4.5 4.5-4.5"/><path d="M4.5 16.5V18a3 3 0 0 0 3 3h9a3 3 0 0 0 3-3v-1.5"/></svg><span>装成 App（可离线阅读）</span>
+        </button>
       </div>
     </div>
   </aside>
@@ -265,6 +281,23 @@
       </div>
     </div>
   </footer>
+
+  <div class="pw-sheet" id="pw-install-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="pw-sheet-title">
+    <div class="pw-sheet-veil" data-pw-sheet-close></div>
+    <div class="pw-sheet-card" role="document">
+      <div class="pw-sheet-head">
+        <span class="pw-sheet-mark" aria-hidden="true">⊙</span>
+        <h2 class="pw-sheet-title" id="pw-sheet-title">把衡天 PowerWiki 装到主屏幕</h2>
+        <button type="button" class="pw-sheet-close" data-pw-sheet-close aria-label="关闭">×</button>
+      </div>
+      <ol class="pw-sheet-steps">
+        <li><span class="pw-sheet-step-num">1</span><span>点底部的「分享」按钮（Safari 是方框里一支向上箭头）。</span></li>
+        <li><span class="pw-sheet-step-num">2</span><span>在菜单里往下滑，选「添加到主屏幕」。</span></li>
+        <li><span class="pw-sheet-step-num">3</span><span>点右上角「添加」。图标出现在主屏幕上，之后打开就是全屏 App，没有地址栏。</span></li>
+      </ol>
+      <p class="pw-sheet-note">安卓 / 桌面 Chrome 会直接弹出安装框；Safari 只能按上面的步骤手动添加。装好以后已读过的页面断网也能打开。</p>
+    </div>
+  </div>
 
   <script>window.__PW_INDEX_SRC__ = "../static/js/search-index.js";</script>
   <script src="../static/js/app.js"></script>
