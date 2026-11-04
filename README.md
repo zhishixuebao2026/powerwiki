@@ -74,24 +74,45 @@ python3 build_site.py
 
 | id | 名称 | 栏目 | 说明 |
 |---|---|---|---|
-| `default` | 默认 | 首页 / 材质 / 规则 | 建筑感栅格，全站 |
+| `default` | 默认 | 首页 / 材质 / 规则 / 角色 | 建筑感栅格，全站 |
 | `archive` | 卷宗 | 材质 | 米纸底、左侧索引栏的档案排版 |
 | `atlas` | 星图 | 材质 | 大留白、描边巨字、裂星主视觉 |
-| `kalmia` | KALMIA | 规则 | 夜观 / 昼测双主题、二十八宿衡天仪、全链对数天梯 |
+| `observatory` | 观象台 | 规则 | 夜观 / 昼测双主题、二十八宿衡天仪、全链对数天梯 |
+| `moonfile` | 月面 | 御兔角色页 | 米纸底、墨笔巨字、月面插图与红色印章的卷宗排版 |
 
-KALMIA 的原产物（`KALMIA衡天量级体系.zip`）自带五个 `woff2` 子集字体，
-但 ZIP 里没有 `assets/fonts/` 目录，缺字体时整页会退成方框。
-所以它在 `data/editions.json` 里标了 `"font_rewrite": true`：
+皮肤名按设计语言起，不沿用原产物里写着的名字（那些是模型名，不是样式名）：
+`观象台` 来自 `KALMIA衡天量级体系.zip`（夜观 / 昼测 / 衡天仪），
+`月面` 来自 `opus-5.5-high御兔量级页面.zip`（月面卷宗、兔子、印章）。
+
+`观象台` 的原产物自带五个 `woff2` 子集字体，但 ZIP 里没有 `assets/fonts/` 目录，
+缺字体时整页会退成方框。所以它在 `data/editions.json` 里标了 `"font_rewrite": true`：
 构建时把 `HT Sans / HT Serif / HT Brush / HT Mono` 四个族改指站内自托管的
 思源黑体 / 思源宋体 / Space Grotesk，并去掉指向缺失文件的 `@font-face`。
 新增同类产物时记得加这个开关。
 
+`月面` 的字体是**按正文用字裁过的子集**，打包在页面里、不缺字表里没有的字 ——
+缺字时不是画方框而是直接留白。所以凡是我们自己往这页加的文字（站内导航、
+皮肤切换器）都必须显式换成站内自托管字体，不能跟着 `--font-*` 变量走。
+
 整页产物原本是「单向门」：进去以后没有任何回主站的入口。
-`skins/patches/kalmia.js` 因此往侧栏（`aside.rail` 的 `.rail-sticky`，插在
+`skins/patches/observatory.js` 因此往侧栏（`aside.rail` 的 `.rail-sticky`，插在
 「目录 · CONTENTS」标题之前）和移动端抽屉（`.drawer-scroll` 顶部）各挂一组
-「站内其他栏目」链接，把量级分类 / 角色档案 / 规则原文 / 材质数据库 / 首页连回去。
+「站内其他栏目」链接；`skins/patches/moonfile.js` 同样挂在它的 `nav.sticky`
+（桌面目录）和汉堡抽屉里。把量级分类 / 角色档案 / 规则原文 / 材质数据库 / 首页连回去。
 React 侧的壳在 `DOMContentLoaded` 之后才挂载，所以挂载用定时重试 + `MutationObserver`，
 不是一次 `querySelector` 就完事。
+
+### 只给单个页面挂皮肤
+
+`pages` 里的键不一定是栏目名，也可以是单页（例如 `character-yutu`）。
+构建器把它当 `skin_section` 传给 `render_shell()`，于是只在那一个页面上出现皮肤切换器：
+
+```json
+"pages": { "character-yutu": "skins/moonfile/character-yutu.html" }
+```
+
+默认皮肤也登记了同一个键（指回 `character/yutu.html`），两边互相跳得回去。
+新增角色单页皮肤时，记得在默认皮肤那条里也补一个同名键。
 
 ### 新增一套皮肤
 
@@ -173,6 +194,15 @@ React 侧的壳在 `DOMContentLoaded` 之后才挂载，所以挂载用定时重
   改成 `IntersectionObserver` 加 `.pw-in` 类（`chrome.js`），元素一旦出现就不再隐藏。
 - 验证脚本：`qa2/vscan.js`（逐屏截图统计空白行占比，≥62% 视为异常屏）、`qa2/vert.js`（找被挤成竖排的文字）、
   `qa2/overlap.js`（固定元素两两求交，必须 `TOTAL OVERLAPS: 0`）。
+
+## 修掉的排版 bug（2026-11-04）
+
+- **印章压在侧栏目录上**：`editions.js` 的避让定位原来只量 `position: fixed` 的障碍，
+  而整页产物的侧栏是 `position: sticky` 的，于是印章一路贴回左下角、盖住目录最后几行。
+  现在 sticky 也算障碍，并且「尚未滚进视口的 sticky 侧栏」也记一笔，滚动停下后再量一次。
+  侧栏的判定从「必须贴屏幕边缘」放宽到「靠边 8% 以内且够高够宽」，皮肤自带页边距时也认。
+- **月面皮肤的导航缺字**：那套页面的字体是按正文用字裁的子集，缺字时留白不画框，
+  站内导航直接少了几个字。导航与切换器一律改用站内自托管的思源黑体。
 
 ## 界面打磨（2026-11-02）
 

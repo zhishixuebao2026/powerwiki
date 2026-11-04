@@ -13,7 +13,8 @@
       "pages": {
         "home": "index.html",
         "materials": "materials.html",
-        "rules": "rules.html"
+        "rules": "rules.html",
+        "character-yutu": "character/yutu.html"
       }
     },
     {
@@ -42,18 +43,31 @@
       }
     },
     {
-      "id": "kalmia",
-      "name": "KALMIA",
-      "tag": "KALMIA · 观象台",
+      "id": "observatory",
+      "name": "观象台",
+      "tag": "OBSERVATORY · 观象台",
       "note": "夜观 / 昼测双主题、二十八宿衡天仪、全链对数天梯的观象台排版",
-      "source": "skins/_source/kalmia.html",
+      "source": "skins/_source/observatory.html",
       "section": "rules",
-      "thumb": "static/img/editions/kalmia.jpg",
+      "thumb": "static/img/editions/observatory.jpg",
       "font_rewrite": true,
       "pages": {
-        "rules": "skins/kalmia/rules.html"
+        "rules": "skins/observatory/rules.html"
       },
-      "patch": "skins/patches/kalmia.js"
+      "patch": "skins/patches/observatory.js"
+    },
+    {
+      "id": "moonfile",
+      "name": "月面",
+      "tag": "LUNA · 月面卷宗",
+      "note": "米纸底、墨笔巨字、月面插图与红色印章的卷宗排版",
+      "source": "skins/_source/moonfile.html",
+      "section": "character-yutu",
+      "thumb": "static/img/editions/moonfile.jpg",
+      "pages": {
+        "character-yutu": "skins/moonfile/character-yutu.html"
+      },
+      "patch": "skins/patches/moonfile.js"
     }
   ]
 }

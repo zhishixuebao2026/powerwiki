@@ -1,5 +1,5 @@
 /* ==========================================================================
-   KALMIA（观象台）页面补丁
+   观象台（原 KALMIA 整页产物）页面补丁
    1. 原产物的移动端底栏（.dock）只在滚动后滑出，且停在视口底部；
       印章（.pw-edition-dock）需要在底栏出现时让位，由 editions.js 实测处理，
       这里只保证底栏出现时正文末段不被压住。
@@ -81,10 +81,10 @@
     if (document.getElementById(STYLE_ID)) return;
     var css = [
       /* 底栏出现时给正文留出落脚空间 */
-      "html[data-pw-edition='kalmia'] main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}",
-      "html[data-pw-edition='kalmia'] .colophon{margin-bottom:120px}",
+      "html[data-pw-edition='observatory'] main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}",
+      "html[data-pw-edition='observatory'] .colophon{margin-bottom:120px}",
       /* 侧栏目录滚到底时给印章让出位置，别让最后一项目录被圆钮压住 */
-      "html[data-pw-edition='kalmia'] .rail-scroll{padding-bottom:64px}",
+      "html[data-pw-edition='observatory'] .rail-scroll{padding-bottom:64px}",
       /* 站内导航 */
       ".pw-site-nav{margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--line-soft,var(--line,#ffffff1a))}",
       /* 小标题跟着皮肤自己的排版语言走（中文标签不要拉字距，否则会被排成方块阵） */
@@ -94,8 +94,8 @@
       ".pw-site-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.45;flex:0 0 auto}",
       ".pw-site-link:hover .pw-site-dot{opacity:1}",
       /* 印章在深色顶栏上有一层发光底，和皮肤的圆角金属件对齐 */
-      "html[data-pw-edition='kalmia'] .pw-edition-toggle,",
-      "html[data-pw-edition='kalmia'] .pw-edition-home-btn{",
+      "html[data-pw-edition='observatory'] .pw-edition-toggle,",
+      "html[data-pw-edition='observatory'] .pw-edition-home-btn{",
       "  border-color:color-mix(in srgb,var(--brass,#c9a35a) 34%,transparent);",
       "  box-shadow:0 6px 20px rgba(0,0,0,.34),0 0 0 1px color-mix(in srgb,var(--brass,#c9a35a) 12%,transparent) inset;",
       "}",

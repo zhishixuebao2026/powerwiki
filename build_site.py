@@ -755,6 +755,7 @@ def render_shell(
     root_prefix: str = "./",
     has_toc_button: bool = False,
     body_class: str = "",
+    skin_section: Optional[str] = None,
 ) -> str:
     r = root_prefix
 
@@ -793,7 +794,9 @@ def render_shell(
 
     # r 只表达"回根目录要走几层"，用等深的占位目录即可算出正确的相对链接
     _page_dir = "/".join(["x"] * r.count("../"))
-    edition_launcher = edition_launcher_html(_page_dir, active_nav)
+    # 皮肤可以登记到某个具体页面上（例如某个角色的整页皮肤），
+    # 这时用 skin_section 覆盖栏目名，栏目本身仍旧只有 active_nav。
+    edition_launcher = edition_launcher_html(_page_dir, skin_section or active_nav)
     # 404 KB 的索引包只有量级探索器、角色探索器、检索页首屏真的需要；
     # 其余页面改为第一次打开检索时才加载（app.js 的 ensureSearchData）。
     if page_id in ("tiers", "characters", "search"):
@@ -1855,6 +1858,7 @@ def build_character_detail_pages(
             root_prefix="../",
             has_toc_button=has_full_doc,
             body_class=f"character-site character-{c['slug']}",
+            skin_section=f"character-{c['slug']}",
         )
         (CHAR_OUT_DIR / f"{c['slug']}.html").write_text(page_html, encoding="utf-8")
 

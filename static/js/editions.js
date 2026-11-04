@@ -54,6 +54,8 @@
         clearTimeout(idleTimer);
         idleTimer = setTimeout(function () {
           dock.classList.remove("is-dim");
+          // 滚停下来再量一次：有的侧栏是滚动后才滑进视口的，位置会变。
+          queueMeasure();
         }, 600);
       });
     }
@@ -73,7 +75,9 @@
         var el = nodes[i];
         if (el.closest && el.closest("#" + DOCK)) continue;
         var cs = getComputedStyle(el);
-        if (cs.position !== "fixed" || cs.display === "none" || cs.visibility === "hidden") continue;
+        // sticky 也算：整页产物的侧栏常是 position:sticky 的，只量 fixed 会漏掉，
+        // 印章就贴回左下角压在目录上。
+        if ((cs.position !== "fixed" && cs.position !== "sticky") || cs.display === "none" || cs.visibility === "hidden") continue;
         if (parseFloat(cs.opacity) < 0.15) continue;
         var r = el.getBoundingClientRect();
         if (!r.width || !r.height || r.height < 16) continue;
@@ -87,6 +91,12 @@
           var bottomPx = parseFloat(cs.bottom);
           if (!isFinite(bottomPx)) continue;
           out.push({ top: vh - bottomPx - r.height, bottom: vh - bottomPx, left: r.left, right: r.right });
+          continue;
+        }
+        // 还没滚到跟前的 sticky 侧栏：横向范围是固定的，先按"整条从底部起"记一笔，
+        // 否则刚进页面时它还在视口下方，印章会在左下角落地、等它出现就被压住。
+        if (cs.position === "sticky" && r.top >= vh - 4) {
+          if (r.width >= 120) out.push({ top: vh, bottom: vh + r.height, left: r.left, right: r.right });
           continue;
         }
         // 其余完全在视口外的
@@ -108,11 +118,14 @@
       // 贯通全高的左右侧栏（例如归档皮肤的 .rail）：把可用区推出来
       var leftInset = 0;
       var rightInset = 0;
+      // 侧栏不一定贴着屏幕边缘：皮肤自己有页边距时（比如 rail 从 43px 才开始），
+      // 只要它够高、够宽又靠边，就按整条侧栏处理。
+      var edge = Math.max(10, Math.round(vw * 0.08));
       for (var k = 0; k < boxes.length; k++) {
         var sb = boxes[k];
         if (sb.bottom - sb.top < vh * 0.55) continue;
-        if (sb.left <= 8) leftInset = Math.max(leftInset, sb.right);
-        if (sb.right >= vw - 8) rightInset = Math.max(rightInset, vw - sb.left);
+        if (sb.left <= edge && sb.right - sb.left >= 120) leftInset = Math.max(leftInset, sb.right);
+        if (sb.right >= vw - edge && sb.right - sb.left >= 120) rightInset = Math.max(rightInset, vw - sb.left);
       }
 
       function clearance(left) {
