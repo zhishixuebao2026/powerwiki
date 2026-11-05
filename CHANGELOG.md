@@ -4,6 +4,22 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-05（晚）· 全站移动端安全区自检与底部留白优化
+
+- **全站移动端安全区补齐（自检核心发现）**：`polish.css` 统一给 `.site-header` / `.reading-progress` /
+  `.site-drawer` / `.floating-dock` / `.modal-backdrop` / `.doc-sidebar` 加 `env(safe-area-inset-*)`，
+  顶栏、阅读进度条、移动抽屉、浮动工具、搜索模态、文档侧栏在真机上自动避让系统状态栏与
+  Home Indicator。桌面端 `env` 为 0，布局完全不变；独立窗口（`[data-standalone="1"]`）仍由
+  `app.css` 用实测 `--pw-top-inset` 接管，二者特异性分工不冲突。
+- **5 个皮肤页顶栏安全区**：`archive` / `atlas` / `observatory` / `moonfile` 四个整页皮肤的源
+  `head` 各注入针对性顶栏安全区样式（`futan-abyss` 此前已修）。之前这些皮肤顶栏均 `top:0` 直接
+  贴状态栏，且源码只给底部 toast/dock 加了安全区、漏了顶栏——本次补齐（含固定高度顶栏的高度补偿）。
+- **移动端底部留白**：`main` 加 `padding-bottom: 6rem`，避免滚动到底时正文被右下角浮动工具
+  （目录 / 字号栏 / 回顶）遮挡。
+- 验证：真机模拟 44px 状态栏后，主站与全部皮肤页顶栏内容均精确下移 44px 让出状态栏，抽屉头部与
+  浮动工具同步避让；暗色模式顶栏安全区规则与主题无关、正常生效。`service-worker` 升 `pw-v9`
+  强制刷新缓存。
+
 ## 2026-11-05（下午）
 
 - **弗坦新增整页皮肤「无光之渊」（ABYSS · 深海卷）**：把用户提供的独立构建的弗坦定级

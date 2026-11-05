@@ -498,3 +498,39 @@ html[data-pw-edition] .topbar {
   -webkit-backdrop-filter: blur(16px) saturate(1.35);
   backdrop-filter: blur(16px) saturate(1.35);
 }
+
+/* ==========================================================================
+   移动端安全区（env(safe-area-inset-*)）：全站顶栏、阅读进度、抽屉、浮动工具、
+   搜索模态统一避让系统状态栏与 Home 指示条。桌面端 env 为 0，布局完全不变。
+   独立窗口 [data-standalone="1"] 由 app.css 用实测 --pw-top-inset 接管
+   （特异性更高，自动覆盖本段），二者分工不冲突。
+   ========================================================================== */
+.site-header {
+  padding-top: env(safe-area-inset-top, 0px);
+  height: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+}
+.reading-progress {
+  top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+}
+.site-drawer {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.floating-dock {
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+}
+.modal-backdrop {
+  padding-top: max(8vh, env(safe-area-inset-top, 0px));
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+}
+@media (max-width: 768px) {
+  .doc-sidebar {
+    top: calc(var(--header-h) + env(safe-area-inset-top, 0px) + 16px);
+  }
+}
+
+/* 移动端：正文底部预留空间，避免被浮动工具（目录/字号栏/回顶按钮）遮挡 */
+@media (max-width: 768px) {
+  main { padding-bottom: 6rem; }
+  .doc-panel, .char-dossier, .char-body { padding-bottom: 1rem; }
+}
