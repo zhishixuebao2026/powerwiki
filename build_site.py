@@ -1639,7 +1639,7 @@ def build_character_detail_pages(
 
         portrait_src = resolve_rel_asset(c.get("portrait_url") or c.get("image_url") or "", "../")
         if portrait_src:
-            portrait_caption = esc(c.get("portrait_caption") or f"{c['name']} 角色立绘")
+            portrait_caption = esc(c.get("portrait_caption") or "")
             p_shape = c.get("portrait_shape") or c.get("image_shape") or "portrait"
             body_layout_cls = "has-landscape" if p_shape == "landscape" else "has-portrait"
             pw = c.get("portrait_w") or c.get("image_w")
@@ -1692,7 +1692,7 @@ def build_character_detail_pages(
                   {portrait_index_html}
                   <img class="char-portrait-img fade-on-load" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）形象参考"{p_dim_attrs}>
                 </div>
-                <div class="char-portrait-caption">{portrait_caption}</div>
+                {f'<div class="char-portrait-caption">{portrait_caption}</div>' if portrait_caption else ""}
               </aside>
             </div>"""
         else:

@@ -534,3 +534,16 @@ html[data-pw-edition] .topbar {
   main { padding-bottom: 6rem; }
   .doc-panel, .char-dossier, .char-body { padding-bottom: 1rem; }
 }
+
+/* --------------------------------------------------------------------------
+   7. 角色卡左上角角色名（data-art-label）：高对比显著，压在配图之上也清晰
+   -------------------------------------------------------------------------- */
+.char-card-yog .char-card-media::after,
+.char-card-divinity .char-card-media::after {
+  color: #f6d98c;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .78), 0 0 3px rgba(0, 0, 0, .95);
+}
+.char-card-divinity .char-card-media::after { color: #fdf3d0; }
+.char-card-yog .char-card-media::after { color: #9fd8e6; }

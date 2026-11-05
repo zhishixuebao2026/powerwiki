@@ -4,6 +4,14 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-05（夜·补）· 去除角色配图 AI 水印 + 清理图注与卡片显示
+
+- **去除配图 AI 水印**：yog / divinity 共 6 张自生成配图右下角被图片工具烤入「AI生成 / WORKBUDDY」水印，已用 opencv 原位修复去除（仅修补水印像素、保留原画；极角落留极淡修复痕，远小于原水印）。
+- **删除配图下说明文字**：`data/characters.json` 五位角色的 `portrait_caption` 全部清空；`build_site.py` 改为 caption 为空则不渲染 `char-portrait-caption`，消除「形象参考·艺术演绎」等配图说明。文档正文未被改动。
+- **角色卡图片比例修复**：列表卡 `is-square` 媒体由 16:9 含灰边改为 1:1 满铺（`object-fit:cover`），方块配图不再悬浮在灰底里。
+- **左上角角色名对比色**：yog / divinity 卡片 `data-art-label` 改为高亮色 + 深色描边（`#9fd8e6` / `#fdf3d0`），压在配图上也清晰显著。
+- service-worker 升 `pw-v11` 强制刷新缓存。
+
 ## 2026-11-05（夜）· 新增两位角色：犹格·索托斯 / 我就是我·至高神性
 
 - **犹格·索托斯（克苏鲁神话原作）**：新增默认角色页 `character/yog.html`，归属 `beyond-gate`（论外门槛）档；定级结论综合主档未定级、位格存在规模为外·门（论外门槛，可数无限 ℵ₀）。原定级文档逐字拷入 `data/docs/characters/`（md5 校验未改动）。
