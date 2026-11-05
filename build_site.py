@@ -246,6 +246,8 @@ BOOT_BG_CHARACTERS = {
     "character-yutu": ("#edf3f6", "#071320"),
     "character-futan": ("#eceee7", "#05100f"),
     "character-tongguan": ("#edeae1", "#0a100e"),
+    "character-yog": ("#edeff4", "#0a1024"),
+    "character-divinity": ("#f3f1ea", "#0d0b08"),
 }
 
 

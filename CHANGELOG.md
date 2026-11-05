@@ -4,6 +4,14 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-05（夜）· 新增两位角色：犹格·索托斯 / 我就是我·至高神性
+
+- **犹格·索托斯（克苏鲁神话原作）**：新增默认角色页 `character/yog.html`，归属 `beyond-gate`（论外门槛）档；定级结论综合主档未定级、位格存在规模为外·门（论外门槛，可数无限 ℵ₀）。原定级文档逐字拷入 `data/docs/characters/`（md5 校验未改动）。
+- **我就是我·至高神性（《法师：飞升》）**：新增默认角色页 `character/divinity.html`，按需求归入**暂存**（`pending` / 待定／暂存档）；综合主档未定级，存在规模记"遍及全部造化（规模未定）"，创世文字作"若采信"存疑。原文档逐字拷入 `data/docs/characters/`。
+- **角色图自生成**：两位各 3 张图（角色卡 1:1 / 立绘 2:3 / 题图 3:2 横幅），比例对齐现有角色图规范，置于 `static/img/characters/yog/`、`static/img/characters/divinity/`。
+- **新角色主题**：`experience.css` 追加 yog（靛蓝虚空+古金）、divinity（白金辉光）两套完整变量块 + 共用 dossier 视觉段；`build_site.py` 的 `BOOT_BG_CHARACTERS` 补 `character-yog` / `character-divinity` 防首帧闪屏。
+- service-worker 升 `pw-v10` 强制刷新缓存。
+
 ## 2026-11-05（晚）· 全站移动端安全区自检与底部留白优化
 
 - **全站移动端安全区补齐（自检核心发现）**：`polish.css` 统一给 `.site-header` / `.reading-progress` /

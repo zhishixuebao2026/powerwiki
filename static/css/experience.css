@@ -1569,3 +1569,287 @@ body.character-tongguan .char-identity-fx::after  { left: 71%; top: 62%; animati
   body.character-tongguan .char-identity-fx::after,
   body.character-tongguan .dossier-kicker::before { animation: none; }
 }
+
+/* =====================================================================
+   角色主题：犹格·索托斯（yog）· 我就是我·至高神性（divinity）
+   配色：yog = 靛蓝虚空 + 古金；divinity = 白金辉光
+   视觉骨架沿用 tongguan 的 dossier 排版，颜色走各角色的 --dossier-* 变量
+   ===================================================================== */
+
+/* ---- 犹格·索托斯 · 浅色 ---- */
+[data-theme="light"] body.character-yog {
+  --bg-canvas: #edeff4;
+  --bg-subtle: #e4e8f0;
+  --bg-surface: #fafbfd;
+  --bg-elevated: #f1f3f8;
+  --bg-header: rgba(250, 251, 253, .95);
+  --text-primary: #16203a;
+  --text-secondary: #3c4a6a;
+  --text-muted: #5e6c8a;
+  --accent: #34428a;
+  --accent-strong: #243069;
+  --accent-soft: rgba(52, 66, 138, .08);
+  --border-accent: rgba(52, 66, 138, .26);
+  --border-subtle: rgba(22, 32, 58, .10);
+  --border-default: rgba(22, 32, 58, .16);
+  --panel-glass: #fafbfd;
+  --site-grid: rgba(52, 66, 138, .035);
+  --char-accent: #8a6a2f;
+  --char-accent-strong: #6b4f1f;
+  --char-accent-soft: rgba(138, 106, 47, .085);
+  --char-border-accent: rgba(138, 106, 47, .26);
+  --char-header-accent: #8a6a2f;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(52, 66, 138, .12), transparent 74%),
+    linear-gradient(180deg, #eceff6, #edeff4);
+  --abyss-glass: #fafbfd;
+  --abyss-stroke: rgba(52, 66, 138, .16);
+  --abyss-glow: rgba(138, 106, 47, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(22, 32, 58, .26);
+  --dossier-bg: #f1f3f8;
+  --dossier-text: #16203a;
+  --dossier-muted: #5a6880;
+  --dossier-accent: #34428a;
+  --dossier-border: rgba(52, 66, 138, .22);
+  --dossier-surface: rgba(252, 253, 255, .8);
+}
+/* ---- 犹格·索托斯 · 暗色 ---- */
+[data-theme="dark"] body.character-yog {
+  --bg-canvas: #0a1024;
+  --bg-subtle: #0f1730;
+  --bg-surface: #121c38;
+  --bg-elevated: #18254a;
+  --bg-header: rgba(10, 16, 36, .95);
+  --text-primary: #e6ebf7;
+  --text-secondary: #aab6d6;
+  --text-muted: #7e8cb0;
+  --accent: #b9c4ee;
+  --accent-strong: #d8def4;
+  --accent-soft: rgba(185, 196, 238, .10);
+  --border-accent: rgba(185, 196, 238, .26);
+  --border-subtle: rgba(230, 235, 247, .085);
+  --border-default: rgba(230, 235, 247, .15);
+  --panel-glass: #121c38;
+  --site-grid: rgba(185, 196, 238, .022);
+  --char-accent: #d8bc7b;
+  --char-accent-strong: #efd79b;
+  --char-accent-soft: rgba(216, 188, 123, .10);
+  --char-border-accent: rgba(216, 188, 123, .28);
+  --char-header-accent: #d8bc7b;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(59, 78, 160, .28), transparent 74%),
+    linear-gradient(180deg, #0c1430, #0a1024);
+  --abyss-glass: #121c38;
+  --abyss-stroke: rgba(216, 188, 123, .18);
+  --abyss-glow: rgba(216, 188, 123, .40);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(4, 8, 20, .58);
+  --dossier-bg: #0d1530;
+  --dossier-text: #e6ebf7;
+  --dossier-muted: #a4b0d0;
+  --dossier-accent: #b9c4ee;
+  --dossier-border: rgba(185, 196, 238, .22);
+  --dossier-surface: rgba(18, 28, 56, .8);
+}
+
+/* ---- 我就是我·至高神性 · 浅色 ---- */
+[data-theme="light"] body.character-divinity {
+  --bg-canvas: #f3f1ea;
+  --bg-subtle: #e9e6db;
+  --bg-surface: #fbfaf5;
+  --bg-elevated: #f4f1e8;
+  --bg-header: rgba(251, 250, 245, .95);
+  --text-primary: #2a2418;
+  --text-secondary: #534a36;
+  --text-muted: #6a5f47;
+  --accent: #8a6a2f;
+  --accent-strong: #6b4f1f;
+  --accent-soft: rgba(138, 106, 47, .085);
+  --border-accent: rgba(138, 106, 47, .26);
+  --border-subtle: rgba(42, 36, 24, .10);
+  --border-default: rgba(42, 36, 24, .16);
+  --panel-glass: #fbfaf5;
+  --site-grid: rgba(138, 106, 47, .035);
+  --char-accent: #8a6a2f;
+  --char-accent-strong: #6b4f1f;
+  --char-accent-soft: rgba(138, 106, 47, .085);
+  --char-border-accent: rgba(138, 106, 47, .26);
+  --char-header-accent: #8a6a2f;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(138, 106, 47, .12), transparent 74%),
+    linear-gradient(180deg, #f2efe7, #f3f1ea);
+  --abyss-glass: #fbfaf5;
+  --abyss-stroke: rgba(138, 106, 47, .16);
+  --abyss-glow: rgba(138, 106, 47, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(42, 36, 24, .26);
+  --dossier-bg: #f5f3ec;
+  --dossier-text: #2a2418;
+  --dossier-muted: #6a5f47;
+  --dossier-accent: #8a6a2f;
+  --dossier-border: rgba(138, 106, 47, .20);
+  --dossier-surface: rgba(252, 250, 244, .8);
+}
+/* ---- 我就是我·至高神性 · 暗色 ---- */
+[data-theme="dark"] body.character-divinity {
+  --bg-canvas: #0d0b08;
+  --bg-subtle: #14110b;
+  --bg-surface: #16130c;
+  --bg-elevated: #1d190f;
+  --bg-header: rgba(13, 11, 8, .95);
+  --text-primary: #f3efe4;
+  --text-secondary: #cabf9f;
+  --text-muted: #9b8f6f;
+  --accent: #e8d4a0;
+  --accent-strong: #f5e8c4;
+  --accent-soft: rgba(232, 212, 160, .10);
+  --border-accent: rgba(232, 212, 160, .26);
+  --border-subtle: rgba(243, 239, 228, .085);
+  --border-default: rgba(243, 239, 228, .15);
+  --panel-glass: #16130c;
+  --site-grid: rgba(232, 212, 160, .022);
+  --char-accent: #e8d4a0;
+  --char-accent-strong: #f5e8c4;
+  --char-accent-soft: rgba(232, 212, 160, .10);
+  --char-border-accent: rgba(232, 212, 160, .28);
+  --char-header-accent: #e8d4a0;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(232, 212, 160, .16), transparent 74%),
+    linear-gradient(180deg, #100d08, #0d0b08);
+  --abyss-glass: #16130c;
+  --abyss-stroke: rgba(232, 212, 160, .18);
+  --abyss-glow: rgba(232, 212, 160, .40);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(6, 5, 3, .58);
+  --dossier-bg: #100e09;
+  --dossier-text: #f3efe4;
+  --dossier-muted: #bca98c;
+  --dossier-accent: #e8d4a0;
+  --dossier-border: rgba(232, 212, 160, .22);
+  --dossier-surface: rgba(22, 19, 12, .8);
+}
+
+/* ---- 共用 dossier 视觉骨架（yog / divinity） ---- */
+body.character-yog .dossier-masthead,
+body.character-divinity .dossier-masthead {
+  padding: 18px 0 13px;
+  border-bottom: 1px solid var(--dossier-border);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+body.character-yog .dossier-kicker,
+body.character-divinity .dossier-kicker { display: inline-flex; align-items: center; gap: 9px; }
+body.character-yog .dossier-kicker::before,
+body.character-divinity .dossier-kicker::before {
+  content: "✶";
+  color: var(--dossier-accent);
+  font-size: 14px;
+  text-shadow: 0 0 14px color-mix(in srgb, var(--dossier-accent) 48%, transparent);
+}
+body.character-divinity .dossier-kicker::before { content: "✦"; }
+body.character-yog .dossier-register,
+body.character-divinity .dossier-register {
+  padding: 5px 9px;
+  border: 1px solid var(--dossier-border);
+  border-radius: 4px;
+  background: var(--dossier-surface);
+  color: var(--dossier-accent);
+  font-size: 8px;
+}
+body.character-yog .character-dossier .page-title,
+body.character-divinity .character-dossier .page-title {
+  font-family: var(--font-editorial);
+  font-size: clamp(40px, 5.1vw, 64px);
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--dossier-text);
+}
+body.character-yog .character-dossier .page-desc,
+body.character-divinity .character-dossier .page-desc {
+  font-family: var(--font-editorial);
+  letter-spacing: .012em;
+}
+body.character-yog .character-dossier .tag-pill,
+body.character-divinity .character-dossier .tag-pill { border-radius: 4px; }
+body.character-yog .character-dossier .dossier-kpi-card,
+body.character-divinity .character-dossier .dossier-kpi-card { border-radius: 9px; }
+body.character-yog .character-dossier .char-tags .tag-pill,
+body.character-divinity .character-dossier .char-tags .tag-pill {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+/* 立绘竖版取景 */
+body.character-yog .char-portrait-stage,
+body.character-divinity .char-portrait-stage {
+  background: var(--dossier-surface);
+  border: 1px solid var(--dossier-border);
+  border-radius: 10px;
+}
+body.character-yog .char-portrait-canvas,
+body.character-divinity .char-portrait-canvas {
+  aspect-ratio: 3 / 4;
+  padding: 0;
+}
+body.character-yog .char-portrait-img,
+body.character-divinity .char-portrait-img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center 22%;
+}
+body.character-yog .char-portrait-caption,
+body.character-divinity .char-portrait-caption {
+  background: var(--dossier-bg);
+  color: var(--dossier-muted);
+  border-top: 1px solid var(--dossier-border);
+}
+body.character-yog .portrait-index,
+body.character-divinity .portrait-index {
+  background: var(--dossier-surface);
+  color: var(--dossier-accent);
+  border-color: var(--dossier-border);
+  border-radius: 4px;
+}
+/* 事实轨编号牌 */
+body.character-yog .dossier-fact-rail,
+body.character-divinity .dossier-fact-rail { background: color-mix(in srgb, var(--dossier-accent) 8%, transparent); }
+body.character-yog .dossier-fact,
+body.character-divinity .dossier-fact { position: relative; border-right: 0; }
+body.character-yog .dossier-fact + .dossier-fact,
+body.character-divinity .dossier-fact + .dossier-fact { border-left: 1px solid var(--dossier-border); }
+body.character-yog .dossier-fact .fact-label,
+body.character-divinity .dossier-fact .fact-label {
+  font-family: var(--font-mono);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+body.character-yog .dossier-fact:nth-child(1) .fact-label::before,
+body.character-divinity .dossier-fact:nth-child(1) .fact-label::before { content: "壹 / "; color: var(--dossier-accent); }
+body.character-yog .dossier-fact:nth-child(2) .fact-label::before,
+body.character-divinity .dossier-fact:nth-child(2) .fact-label::before { content: "贰 / "; color: var(--dossier-accent); }
+body.character-yog .dossier-fact:nth-child(3) .fact-label::before,
+body.character-divinity .dossier-fact:nth-child(3) .fact-label::before { content: "叁 / "; color: var(--dossier-accent); }
+body.character-yog .dossier-fact .fact-value,
+body.character-divinity .dossier-fact .fact-value {
+  font-family: var(--font-editorial);
+  font-size: clamp(17px, 1.9vw, 22px);
+  color: var(--dossier-text);
+}
+body.character-yog .markdown-body h2::before,
+body.character-divinity .markdown-body h2::before { letter-spacing: .05em; }
+body.character-yog .markdown-body blockquote,
+body.character-divinity .markdown-body blockquote {
+  border-left-color: var(--dossier-accent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--dossier-accent) 8%, transparent), transparent 88%);
+}
+/* 身份氛围层（空 div，先隐藏避免干扰） */
+body.character-yog .char-identity-fx,
+body.character-divinity .char-identity-fx { display: none; }
