@@ -248,6 +248,8 @@ BOOT_BG_CHARACTERS = {
     "character-tongguan": ("#edeae1", "#0a100e"),
     "character-yog": ("#edeff4", "#0a1024"),
     "character-divinity": ("#f3f1ea", "#0d0b08"),
+    "character-lufasi": ("#f2eef3", "#0c0710"),
+    "character-tianren": ("#eaf2f0", "#050e0c"),
 }
 
 
@@ -1687,10 +1689,10 @@ def build_character_detail_pages(
                 </div>
               </div>
 
-              <aside class="char-portrait-stage" aria-label="角色形象参考">
+              <aside class="char-portrait-stage" aria-label="{esc(c['name'])}">
                 <div class="char-portrait-canvas">
                   {portrait_index_html}
-                  <img class="char-portrait-img fade-on-load" src="{esc(portrait_src)}" alt="{esc(c['name'])}（{esc(c.get('series') or '')}）形象参考"{p_dim_attrs}>
+                  <img class="char-portrait-img fade-on-load" src="{esc(portrait_src)}" alt="{esc(c['name'])}"{p_dim_attrs}>
                 </div>
                 {f'<div class="char-portrait-caption">{portrait_caption}</div>' if portrait_caption else ""}
               </aside>

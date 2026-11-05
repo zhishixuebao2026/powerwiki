@@ -538,12 +538,31 @@ html[data-pw-edition] .topbar {
 /* --------------------------------------------------------------------------
    7. 角色卡左上角角色名（data-art-label）：高对比显著，压在配图之上也清晰
    -------------------------------------------------------------------------- */
-.char-card-yog .char-card-media::after,
-.char-card-divinity .char-card-media::after {
+/* 注意特异性：style.css 的 .char-card.media-top .char-card-media.is-landscape::after
+   为 4 类特异性，会盖过 2 类的 .char-card-xxx .char-card-media::after。
+   横幅卡片必须用到同等及以上的特异性，对比色才会生效。 */
+.char-card.media-top.char-card-yog .char-card-media::after,
+.char-card.media-top.char-card-divinity .char-card-media::after,
+.char-card.media-top.char-card-lufasi .char-card-media::after,
+.char-card.media-top.char-card-tianren .char-card-media::after {
   color: #f6d98c;
   font-size: 11px;
   letter-spacing: .2em;
   text-shadow: 0 1px 6px rgba(0, 0, 0, .78), 0 0 3px rgba(0, 0, 0, .95);
 }
-.char-card-divinity .char-card-media::after { color: #fdf3d0; }
-.char-card-yog .char-card-media::after { color: #9fd8e6; }
+.char-card.media-top.char-card-yog .char-card-media.is-landscape::after,
+.char-card.media-top.char-card-divinity .char-card-media.is-landscape::after,
+.char-card.media-top.char-card-lufasi .char-card-media.is-landscape::after,
+.char-card.media-top.char-card-tianren .char-card-media.is-landscape::after {
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .78), 0 0 3px rgba(0, 0, 0, .95);
+}
+.char-card.media-top.char-card-divinity .char-card-media::after,
+.char-card.media-top.char-card-divinity .char-card-media.is-landscape::after { color: #fdf3d0; }
+.char-card.media-top.char-card-yog .char-card-media::after,
+.char-card.media-top.char-card-yog .char-card-media.is-landscape::after { color: #9fd8e6; }
+.char-card.media-top.char-card-lufasi .char-card-media::after,
+.char-card.media-top.char-card-lufasi .char-card-media.is-landscape::after { color: #f2c46a; }
+.char-card.media-top.char-card-tianren .char-card-media::after,
+.char-card.media-top.char-card-tianren .char-card-media.is-landscape::after { color: #a8ecd6; }

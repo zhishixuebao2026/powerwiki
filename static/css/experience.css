@@ -1734,6 +1734,164 @@ body.character-tongguan .char-identity-fx::after  { left: 71%; top: 62%; animati
   --dossier-surface: rgba(22, 19, 12, .8);
 }
 
+/* ---- 露法斯·玛法尔（黑翼霸王 / 十二星天）· 浅色 ---- */
+[data-theme="light"] body.character-lufasi {
+  --bg-canvas: #f2eef3;
+  --bg-subtle: #e8e0ea;
+  --bg-surface: #fbf9fc;
+  --bg-elevated: #f3eef5;
+  --bg-header: rgba(251, 249, 252, .95);
+  --text-primary: #251a2c;
+  --text-secondary: #4d3b56;
+  --text-muted: #6f5c78;
+  --accent: #6b3a72;
+  --accent-strong: #4e2854;
+  --accent-soft: rgba(107, 58, 114, .08);
+  --border-accent: rgba(107, 58, 114, .26);
+  --border-subtle: rgba(37, 26, 44, .10);
+  --border-default: rgba(37, 26, 44, .16);
+  --panel-glass: #fbf9fc;
+  --site-grid: rgba(107, 58, 114, .035);
+  --char-accent: #9a6a22;
+  --char-accent-strong: #74500f;
+  --char-accent-soft: rgba(154, 106, 34, .085);
+  --char-border-accent: rgba(154, 106, 34, .26);
+  --char-header-accent: #9a6a22;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(107, 58, 114, .12), transparent 74%),
+    linear-gradient(180deg, #f0eaf2, #f2eef3);
+  --abyss-glass: #fbf9fc;
+  --abyss-stroke: rgba(107, 58, 114, .16);
+  --abyss-glow: rgba(154, 106, 34, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(37, 26, 44, .26);
+  --dossier-bg: #f3eef5;
+  --dossier-text: #251a2c;
+  --dossier-muted: #6b5874;
+  --dossier-accent: #6b3a72;
+  --dossier-border: rgba(107, 58, 114, .22);
+  --dossier-surface: rgba(253, 251, 254, .8);
+}
+/* ---- 露法斯·玛法尔 · 暗色 ---- */
+[data-theme="dark"] body.character-lufasi {
+  --bg-canvas: #0c0710;
+  --bg-subtle: #140c19;
+  --bg-surface: #1a1122;
+  --bg-elevated: #23182e;
+  --bg-header: rgba(12, 7, 16, .95);
+  --text-primary: #f0e6f2;
+  --text-secondary: #c6b0cd;
+  --text-muted: #9a83a4;
+  --accent: #d9a7e0;
+  --accent-strong: #ecc9f1;
+  --accent-soft: rgba(217, 167, 224, .10);
+  --border-accent: rgba(217, 167, 224, .26);
+  --border-subtle: rgba(240, 230, 242, .085);
+  --border-default: rgba(240, 230, 242, .15);
+  --panel-glass: #1a1122;
+  --site-grid: rgba(217, 167, 224, .022);
+  --char-accent: #e6b45e;
+  --char-accent-strong: #f4cf8c;
+  --char-accent-soft: rgba(230, 180, 94, .10);
+  --char-border-accent: rgba(230, 180, 94, .28);
+  --char-header-accent: #e6b45e;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(122, 62, 132, .30), transparent 74%),
+    linear-gradient(180deg, #100a17, #0c0710);
+  --abyss-glass: #1a1122;
+  --abyss-stroke: rgba(230, 180, 94, .18);
+  --abyss-glow: rgba(230, 180, 94, .40);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(5, 2, 8, .58);
+  --dossier-bg: #100a17;
+  --dossier-text: #f0e6f2;
+  --dossier-muted: #b7a2c0;
+  --dossier-accent: #d9a7e0;
+  --dossier-border: rgba(217, 167, 224, .22);
+  --dossier-surface: rgba(28, 17, 36, .8);
+}
+
+/* ---- 天人大圣（初代恒星 / 数学宇宙晶格）· 浅色 ---- */
+[data-theme="light"] body.character-tianren {
+  --bg-canvas: #eaf2f0;
+  --bg-subtle: #dceae6;
+  --bg-surface: #f7fbfa;
+  --bg-elevated: #eef5f3;
+  --bg-header: rgba(247, 251, 250, .95);
+  --text-primary: #10241f;
+  --text-secondary: #35544c;
+  --text-muted: #55756b;
+  --accent: #1f6a5a;
+  --accent-strong: #144c40;
+  --accent-soft: rgba(31, 106, 90, .08);
+  --border-accent: rgba(31, 106, 90, .26);
+  --border-subtle: rgba(16, 36, 31, .10);
+  --border-default: rgba(16, 36, 31, .16);
+  --panel-glass: #f7fbfa;
+  --site-grid: rgba(31, 106, 90, .035);
+  --char-accent: #8a7434;
+  --char-accent-strong: #6a5822;
+  --char-accent-soft: rgba(138, 116, 52, .085);
+  --char-border-accent: rgba(138, 116, 52, .26);
+  --char-header-accent: #8a7434;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(31, 106, 90, .12), transparent 74%),
+    linear-gradient(180deg, #e7f1ee, #eaf2f0);
+  --abyss-glass: #f7fbfa;
+  --abyss-stroke: rgba(31, 106, 90, .16);
+  --abyss-glow: rgba(138, 116, 52, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(16, 36, 31, .26);
+  --dossier-bg: #eef5f3;
+  --dossier-text: #10241f;
+  --dossier-muted: #526f66;
+  --dossier-accent: #1f6a5a;
+  --dossier-border: rgba(31, 106, 90, .20);
+  --dossier-surface: rgba(250, 253, 252, .8);
+}
+/* ---- 天人大圣 · 暗色 ---- */
+[data-theme="dark"] body.character-tianren {
+  --bg-canvas: #050e0c;
+  --bg-subtle: #0a1815;
+  --bg-surface: #0c1e19;
+  --bg-elevated: #12271f;
+  --bg-header: rgba(5, 14, 12, .95);
+  --text-primary: #e2f2ec;
+  --text-secondary: #a8c9bd;
+  --text-muted: #7f9e92;
+  --accent: #86d9c0;
+  --accent-strong: #acecda;
+  --accent-soft: rgba(134, 217, 192, .10);
+  --border-accent: rgba(134, 217, 192, .26);
+  --border-subtle: rgba(226, 242, 236, .085);
+  --border-default: rgba(226, 242, 236, .15);
+  --panel-glass: #0c1e19;
+  --site-grid: rgba(134, 217, 192, .022);
+  --char-accent: #d8c890;
+  --char-accent-strong: #ecdfb4;
+  --char-accent-soft: rgba(216, 200, 144, .10);
+  --char-border-accent: rgba(216, 200, 144, .28);
+  --char-header-accent: #d8c890;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(31, 106, 90, .26), transparent 74%),
+    linear-gradient(180deg, #07120f, #050e0c);
+  --abyss-glass: #0c1e19;
+  --abyss-stroke: rgba(216, 200, 144, .18);
+  --abyss-glow: rgba(216, 200, 144, .40);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(2, 6, 5, .58);
+  --dossier-bg: #07120f;
+  --dossier-text: #e2f2ec;
+  --dossier-muted: #a0bdb1;
+  --dossier-accent: #86d9c0;
+  --dossier-border: rgba(134, 217, 192, .22);
+  --dossier-surface: rgba(10, 26, 22, .8);
+}
+
 /* ---- dossier 表面色：必须定义在 .theme-* 元素本身 ----
    .character-dossier 自带白色兜底 --dossier-surface: rgba(255,255,255,.58)，
    按 CSS 变量「元素自身定义 > 继承」规则，挂在 body 上的 --dossier-* 会被它盖掉，
@@ -1751,19 +1909,37 @@ body.character-tongguan .char-identity-fx::after  { left: 71%; top: 62%; animati
 [data-theme="dark"] .theme-divinity {
   --dossier-surface: rgba(22, 19, 12, .82);
 }
+.theme-lufasi {
+  --dossier-surface: rgba(253, 251, 254, .78);
+}
+[data-theme="dark"] .theme-lufasi {
+  --dossier-surface: rgba(28, 17, 36, .82);
+}
+.theme-tianren {
+  --dossier-surface: rgba(250, 253, 252, .78);
+}
+[data-theme="dark"] .theme-tianren {
+  --dossier-surface: rgba(10, 26, 22, .82);
+}
 
-/* ---- 共用 dossier 视觉骨架（yog / divinity） ---- */
+/* ---- 共用 dossier 视觉骨架（yog / divinity / lufasi / tianren） ---- */
 body.character-yog .dossier-masthead,
-body.character-divinity .dossier-masthead {
+body.character-divinity .dossier-masthead,
+body.character-lufasi .dossier-masthead,
+body.character-tianren .dossier-masthead {
   padding: 18px 0 13px;
   border-bottom: 1px solid var(--dossier-border);
   letter-spacing: .18em;
   text-transform: uppercase;
 }
 body.character-yog .dossier-kicker,
-body.character-divinity .dossier-kicker { display: inline-flex; align-items: center; gap: 9px; }
+body.character-divinity .dossier-kicker,
+body.character-lufasi .dossier-kicker,
+body.character-tianren .dossier-kicker { display: inline-flex; align-items: center; gap: 9px; }
 body.character-yog .dossier-kicker::before,
-body.character-divinity .dossier-kicker::before {
+body.character-divinity .dossier-kicker::before,
+body.character-lufasi .dossier-kicker::before,
+body.character-tianren .dossier-kicker::before {
   content: "✶";
   color: var(--dossier-accent);
   font-size: 14px;
@@ -1771,7 +1947,9 @@ body.character-divinity .dossier-kicker::before {
 }
 body.character-divinity .dossier-kicker::before { content: "✦"; }
 body.character-yog .dossier-register,
-body.character-divinity .dossier-register {
+body.character-divinity .dossier-register,
+body.character-lufasi .dossier-register,
+body.character-tianren .dossier-register {
   padding: 5px 9px;
   border: 1px solid var(--dossier-border);
   border-radius: 4px;
@@ -1780,7 +1958,9 @@ body.character-divinity .dossier-register {
   font-size: 8px;
 }
 body.character-yog .character-dossier .page-title,
-body.character-divinity .character-dossier .page-title {
+body.character-divinity .character-dossier .page-title,
+body.character-lufasi .character-dossier .page-title,
+body.character-tianren .character-dossier .page-title {
   font-family: var(--font-editorial);
   font-size: clamp(40px, 5.1vw, 64px);
   font-weight: 600;
@@ -1788,34 +1968,48 @@ body.character-divinity .character-dossier .page-title {
   color: var(--dossier-text);
 }
 body.character-yog .character-dossier .page-desc,
-body.character-divinity .character-dossier .page-desc {
+body.character-divinity .character-dossier .page-desc,
+body.character-lufasi .character-dossier .page-desc,
+body.character-tianren .character-dossier .page-desc {
   font-family: var(--font-editorial);
   letter-spacing: .012em;
 }
 body.character-yog .character-dossier .tag-pill,
-body.character-divinity .character-dossier .tag-pill { border-radius: 4px; }
+body.character-divinity .character-dossier .tag-pill,
+body.character-lufasi .character-dossier .tag-pill,
+body.character-tianren .character-dossier .tag-pill { border-radius: 4px; }
 body.character-yog .character-dossier .dossier-kpi-card,
-body.character-divinity .character-dossier .dossier-kpi-card { border-radius: 9px; }
+body.character-divinity .character-dossier .dossier-kpi-card,
+body.character-lufasi .character-dossier .dossier-kpi-card,
+body.character-tianren .character-dossier .dossier-kpi-card { border-radius: 9px; }
 body.character-yog .character-dossier .char-tags .tag-pill,
-body.character-divinity .character-dossier .char-tags .tag-pill {
+body.character-divinity .character-dossier .char-tags .tag-pill,
+body.character-lufasi .character-dossier .char-tags .tag-pill,
+body.character-tianren .character-dossier .char-tags .tag-pill {
   white-space: normal;
   overflow-wrap: anywhere;
   line-height: 1.5;
 }
 /* 立绘竖版取景 */
 body.character-yog .char-portrait-stage,
-body.character-divinity .char-portrait-stage {
+body.character-divinity .char-portrait-stage,
+body.character-lufasi .char-portrait-stage,
+body.character-tianren .char-portrait-stage {
   background: var(--dossier-surface);
   border: 1px solid var(--dossier-border);
   border-radius: 10px;
 }
 body.character-yog .char-portrait-canvas,
-body.character-divinity .char-portrait-canvas {
+body.character-divinity .char-portrait-canvas,
+body.character-lufasi .char-portrait-canvas,
+body.character-tianren .char-portrait-canvas {
   aspect-ratio: 3 / 4;
   padding: 0;
 }
 body.character-yog .char-portrait-img,
-body.character-divinity .char-portrait-img {
+body.character-divinity .char-portrait-img,
+body.character-lufasi .char-portrait-img,
+body.character-tianren .char-portrait-img {
   width: 100%;
   height: 100%;
   max-width: none;
@@ -1824,13 +2018,17 @@ body.character-divinity .char-portrait-img {
   object-position: center 22%;
 }
 body.character-yog .char-portrait-caption,
-body.character-divinity .char-portrait-caption {
+body.character-divinity .char-portrait-caption,
+body.character-lufasi .char-portrait-caption,
+body.character-tianren .char-portrait-caption {
   background: var(--dossier-bg);
   color: var(--dossier-muted);
   border-top: 1px solid var(--dossier-border);
 }
 body.character-yog .portrait-index,
-body.character-divinity .portrait-index {
+body.character-divinity .portrait-index,
+body.character-lufasi .portrait-index,
+body.character-tianren .portrait-index {
   background: var(--dossier-surface);
   color: var(--dossier-accent);
   border-color: var(--dossier-border);
@@ -1838,36 +2036,58 @@ body.character-divinity .portrait-index {
 }
 /* 事实轨编号牌 */
 body.character-yog .dossier-fact-rail,
-body.character-divinity .dossier-fact-rail { background: color-mix(in srgb, var(--dossier-accent) 8%, transparent); }
+body.character-divinity .dossier-fact-rail,
+body.character-lufasi .dossier-fact-rail,
+body.character-tianren .dossier-fact-rail { background: color-mix(in srgb, var(--dossier-accent) 8%, transparent); }
 body.character-yog .dossier-fact,
-body.character-divinity .dossier-fact { position: relative; border-right: 0; }
+body.character-divinity .dossier-fact,
+body.character-lufasi .dossier-fact,
+body.character-tianren .dossier-fact { position: relative; border-right: 0; }
 body.character-yog .dossier-fact + .dossier-fact,
-body.character-divinity .dossier-fact + .dossier-fact { border-left: 1px solid var(--dossier-border); }
+body.character-divinity .dossier-fact + .dossier-fact,
+body.character-lufasi .dossier-fact + .dossier-fact,
+body.character-tianren .dossier-fact + .dossier-fact { border-left: 1px solid var(--dossier-border); }
 body.character-yog .dossier-fact .fact-label,
-body.character-divinity .dossier-fact .fact-label {
+body.character-divinity .dossier-fact .fact-label,
+body.character-lufasi .dossier-fact .fact-label,
+body.character-tianren .dossier-fact .fact-label {
   font-family: var(--font-mono);
   letter-spacing: .13em;
   text-transform: uppercase;
 }
 body.character-yog .dossier-fact:nth-child(1) .fact-label::before,
-body.character-divinity .dossier-fact:nth-child(1) .fact-label::before { content: "壹 / "; color: var(--dossier-accent); }
+body.character-divinity .dossier-fact:nth-child(1) .fact-label::before,
+body.character-lufasi .dossier-fact:nth-child(1) .fact-label::before,
+body.character-tianren .dossier-fact:nth-child(1) .fact-label::before { content: "壹 / "; color: var(--dossier-accent); }
 body.character-yog .dossier-fact:nth-child(2) .fact-label::before,
-body.character-divinity .dossier-fact:nth-child(2) .fact-label::before { content: "贰 / "; color: var(--dossier-accent); }
+body.character-divinity .dossier-fact:nth-child(2) .fact-label::before,
+body.character-lufasi .dossier-fact:nth-child(2) .fact-label::before,
+body.character-tianren .dossier-fact:nth-child(2) .fact-label::before { content: "贰 / "; color: var(--dossier-accent); }
 body.character-yog .dossier-fact:nth-child(3) .fact-label::before,
-body.character-divinity .dossier-fact:nth-child(3) .fact-label::before { content: "叁 / "; color: var(--dossier-accent); }
+body.character-divinity .dossier-fact:nth-child(3) .fact-label::before,
+body.character-lufasi .dossier-fact:nth-child(3) .fact-label::before,
+body.character-tianren .dossier-fact:nth-child(3) .fact-label::before { content: "叁 / "; color: var(--dossier-accent); }
 body.character-yog .dossier-fact .fact-value,
-body.character-divinity .dossier-fact .fact-value {
+body.character-divinity .dossier-fact .fact-value,
+body.character-lufasi .dossier-fact .fact-value,
+body.character-tianren .dossier-fact .fact-value {
   font-family: var(--font-editorial);
   font-size: clamp(17px, 1.9vw, 22px);
   color: var(--dossier-text);
 }
 body.character-yog .markdown-body h2::before,
-body.character-divinity .markdown-body h2::before { letter-spacing: .05em; }
+body.character-divinity .markdown-body h2::before,
+body.character-lufasi .markdown-body h2::before,
+body.character-tianren .markdown-body h2::before { letter-spacing: .05em; }
 body.character-yog .markdown-body blockquote,
-body.character-divinity .markdown-body blockquote {
+body.character-divinity .markdown-body blockquote,
+body.character-lufasi .markdown-body blockquote,
+body.character-tianren .markdown-body blockquote {
   border-left-color: var(--dossier-accent);
   background: linear-gradient(90deg, color-mix(in srgb, var(--dossier-accent) 8%, transparent), transparent 88%);
 }
 /* 身份氛围层（空 div，先隐藏避免干扰） */
 body.character-yog .char-identity-fx,
-body.character-divinity .char-identity-fx { display: none; }
+body.character-divinity .char-identity-fx,
+body.character-lufasi .char-identity-fx,
+body.character-tianren .char-identity-fx { display: none; }
