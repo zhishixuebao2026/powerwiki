@@ -3866,8 +3866,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   object-position: center 46%;
   filter: saturate(0.9) contrast(1.03);
 }
-.char-card.media-top .char-card-media.is-square { aspect-ratio: 1 / 1; }
-.char-card.media-top .char-card-media.is-square .char-card-img { padding: 0; object-fit: cover; }
+.char-card.media-top .char-card-media.is-square .char-card-img { padding: 18px; object-position: center; }
 
 /* Detail pages: less repeated chrome, more room for evidence */
 .detail-stack { gap: 28px; }

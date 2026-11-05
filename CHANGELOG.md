@@ -4,13 +4,19 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
-## 2026-11-05（夜·补）· 去除角色配图 AI 水印 + 清理图注与卡片显示
+## 2026-11-05（夜·补）· 重新生成合适比例配图 + 去水印 / 去图注 / 角色名对比色
 
-- **去除配图 AI 水印**：yog / divinity 共 6 张自生成配图右下角被图片工具烤入「AI生成 / WORKBUDDY」水印，已用 opencv 原位修复去除（仅修补水印像素、保留原画；极角落留极淡修复痕，远小于原水印）。
-- **删除配图下说明文字**：`data/characters.json` 五位角色的 `portrait_caption` 全部清空；`build_site.py` 改为 caption 为空则不渲染 `char-portrait-caption`，消除「形象参考·艺术演绎」等配图说明。文档正文未被改动。
-- **角色卡图片比例修复**：列表卡 `is-square` 媒体由 16:9 含灰边改为 1:1 满铺（`object-fit:cover`），方块配图不再悬浮在灰底里。
-- **左上角角色名对比色**：yog / divinity 卡片 `data-art-label` 改为高亮色 + 深色描边（`#9fd8e6` / `#fdf3d0`），压在配图上也清晰显著。
-- service-worker 升 `pw-v11` 强制刷新缓存。
+- **重新生成 6 张配图（核心）**：yog / divinity 各 3 张整套重做，比例按页面原生版式匹配——
+  角色卡横幅 1536×1024（3:2）、立绘竖版 1024×1536（2:3）、头图横幅 1536×1024（3:2）。
+  卡片图由方形改横幅后，`build_site.py` 的 `classify_image_shape()` 自动判为 `landscape`，
+  列表卡自动走 `object-fit:cover` 满铺版式。**全程未改任何页面结构 / CSS**，靠图片比例本身适配。
+- **去除配图 AI 水印**：图片工具强制在右下角烤入「AI生成 / WORKBUDDY」，已用 opencv 精确修复
+  文字像素去除，画面无 readable 文字、亮部无误伤；生成预览/检查图全部放项目外临时目录，未入库。
+- **删除配图下说明文字**：`data/characters.json` 五位角色 `portrait_caption` 清空；`build_site.py`
+  改为 caption 空则不渲染 `char-portrait-caption`，消除「形象参考·艺术演绎」等说明。文档正文未改动。
+- **左上角角色名对比色**：yog / divinity 卡片 `data-art-label` 改高亮色 + 深色描边
+  （`#9fd8e6` / `#fdf3d0`），压在配图上也清晰显著。
+- service-worker 升 `pw-v12` 强制刷新缓存（本轮图片整套重做）。
 
 ## 2026-11-05（夜）· 新增两位角色：犹格·索托斯 / 我就是我·至高神性
 
