@@ -16,7 +16,8 @@
         "rules": "rules.html",
         "character-yutu": "character/yutu.html",
         "character-futan": "character/futan.html",
-        "character-tongguan": "character/tongguan.html"
+        "character-tongguan": "character/tongguan.html",
+        "character-lufasi": "character/lufasi.html"
       }
     },
     {
@@ -95,6 +96,32 @@
       "thumb": "static/img/editions/bronze-coffin.jpg",
       "pages": {
         "character-tongguan": "skins/bronze-coffin/character-tongguan.html"
+      }
+    },
+    {
+      "id": "futan-lamp",
+      "name": "孤灯",
+      "tag": "LONE LAMP · 003",
+      "note": "海蚀洞巨幕与孤舟微灯，墨黑绿长卷阅读器；亮暗、字号、十四节索引与阅读进度",
+      "source": "skins/_source/futan-lamp.html",
+      "section": "character-futan",
+      "inject": "minimal",
+      "thumb": "static/img/editions/futan-lamp.jpg",
+      "pages": {
+        "character-futan": "skins/futan-lamp/character-futan.html"
+      }
+    },
+    {
+      "id": "ruphas-crimson",
+      "name": "绛翼",
+      "tag": "CRIMSON WING · 黑翼档案",
+      "note": "黑底金发黑翼巨像、珊瑚红印章与衬线卷宗；亮暗、字号、目录弹层与原文下载",
+      "source": "skins/_source/ruphas-crimson.html",
+      "section": "character-lufasi",
+      "inject": "minimal",
+      "thumb": "static/img/editions/ruphas-crimson.jpg",
+      "pages": {
+        "character-lufasi": "skins/ruphas-crimson/character-lufasi.html"
       }
     }
   ]

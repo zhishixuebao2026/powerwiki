@@ -210,10 +210,10 @@ def build_skin_editions() -> int:
             doc = patch_skin_fonts(doc)
         # 标记这是皮肤页面，editions.css 用它做合成层校正（不改外观）
         doc = doc.replace("<html", '<html data-pw-edition="' + esc(ed["id"]) + '"', 1)
-        if "</body>" in doc:
-            doc = doc.replace("</body>", inject + "</body>", 1)
-        else:
-            doc = doc + inject
+        # 整页应用常把 "</body>" 当字符串写进打包后的 JS（DOMParser 之类），
+        # 第一个匹配不是真实的结束标签；只认最后一个，别把注入塞进脚本里。
+        head, sep, tail = doc.rpartition("</body>")
+        doc = head + inject + sep + tail if sep else doc + inject
         (out_dir / f"{section}.html").write_text(doc, encoding="utf-8")
         built += 1
     return built

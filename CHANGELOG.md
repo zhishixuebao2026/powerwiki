@@ -4,6 +4,16 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-06（补）· 新增两套整页皮肤：「孤灯」（弗坦）与「绛翼」（露法斯）
+
+- **来源**：用户上传的 `1.zip` 内含两个独立构建的整页——`gpt-6-luna-max弗坦定级页面/dist/index.html` 与 `GPT6astraMAX路法斯定级页面/dist/index.html`。两份都是自包含的 React 阅读器，正文内嵌，各带亮暗主题、字号调节、章节目录与阅读进度；定级原文与项目内 `data/docs/characters/` 对应文件 md5 完全一致（第五版，按约定不回改第六版）。
+- **注册**：`data/editions.json` 新增 `futan-lamp`「孤灯」（`tag: LONE LAMP · 003`，海蚀洞巨幕＋孤舟微灯的墨黑绿长卷，`section=character-futan`）与 `ruphas-crimson`「绛翼」（`tag: CRIMSON WING · 黑翼档案`，黑底金发黑翼巨像＋珊瑚红印章的衬线卷宗，`section=character-lufasi`），均为 `inject: minimal`。`default.pages` 补 `character-lufasi`；弗坦页现有「无光之渊」，新增后切换器自动列出 3 套（默认／无光之渊／孤灯），路法斯页 2 套（默认／绛翼），双向切换无需改切换器代码。
+- **资源**：弗坦只需 1 张封面图；路法斯补齐封面、favicon、`content/original.md`（noscript 与「查看原始 Markdown」用）与 3 套 Archive 子集字体。ZIP 的 `dist/fonts/` 只带 OFL 许可证、缺字体二进制（页面 `@font-face` 会 404），从同包 `.cache/portable-test/…/assets/styles.css` 里同源的 base64 子集解码补回，页面字体与排版原样保留，零 404。ASSETS.md / START-HERE.txt / RESEARCH 等说明文件一律不进项目。
+- **构建器修复**：这两份整页把 `</head><body>`、`</body></html>` 当作字符串写进打包后的 JS（DOMParser 代码）；`build_skin_editions()` 原来按**第一个** `</body>` 注入，切换器被塞进脚本里，React 直接崩、页面只剩源码文本。改为 `rpartition` 只认最后一个真实结束标签；源 HTML 注入安全区样式同样改为认最后一个 `</head>`。生成页去掉注入块后与源 HTML 逐字一致，正文零改动。
+- **移动端安全区**：两份源页加 `viewport-fit=cover`，并按各自语义类名与断点注入 `header.site-header` 的 `calc(原高 + env(safe-area-inset-top))` 与 `padding-top`（弗坦 76px／≤720px 64px；路法斯 85px／≤800px 72px／≤520px 66px）；弗坦阅读进度条同步下移，路法斯目录弹层补 `padding-bottom: env(safe-area-inset-bottom)`。另发现 `editions.js` 用 inline `style.bottom` 覆盖了 `editions.css` 的底部安全区，新增 `safeBottomInset()` 实测 env 值计入 `baseBottom`（全站通用修复）。CDP 模拟刘海（top=47／bottom=34）实机验证：顶栏 111px／113px、`padding-top: 47px`，切换器印章 bottom=796（=844−34−14），目录弹层顶部落在状态栏下方、底部留出安全区。
+- **自检**：明暗双主题各截正文中段复核，无亮白块、无颜色突兀板块、文字清晰；桌面／移动端零 JS 报错、零 404（字体补齐后）、零横向溢出；切换器面板 3 项／2 项实机打开确认；页面无图注、无 AI 说明、无水印或杂碎文字，项目内无检查图或预览图，仅保留切换器必需的两张 640×400 缩略图（真实首屏截取）。
+- service-worker 升 `pw-v20` 强制刷新缓存。
+
 ## 2026-11-06 · 新增皮肤「茶白·长夜」（三世铜棺之主量级页面）· 含配色收敛
 
 - **来源**：用户上传的 `opus-5.5-high＆DS4.1MAX三世铜棺之主量级页面.zip`，取其中已构建好的 `dist/index.html`。该文件完全自包含（7 张图、4 套字体全部内联，零外部资源引用），直接作为整页皮肤源，无需搬运图片目录或改写路径。页面自带的定级原文、13 个章节、长夜／茶白双主题、字号调节与目录交互一律原样保留。

@@ -66,6 +66,16 @@
        于是印章压在「A− A+ 宽屏」上面。现在逐块求交，印章永远落在空地。 */
     var GAP = 10;
 
+    /* 量出真实的底部安全区（env() 只能靠一个临时元素读到计算值） */
+    function safeBottomInset() {
+      var probe = document.createElement("div");
+      probe.style.cssText = "position:fixed;left:-9999px;top:0;width:0;height:0;padding-bottom:env(safe-area-inset-bottom, 0px);pointer-events:none;";
+      document.body.appendChild(probe);
+      var v = parseFloat(getComputedStyle(probe).paddingBottom) || 0;
+      probe.parentNode.removeChild(probe);
+      return v;
+    }
+
     function visibleFixedBoxes() {
       var vw = window.innerWidth;
       var vh = window.innerHeight;
@@ -113,7 +123,9 @@
       var w = dock.offsetWidth || 63;
       var h = dock.offsetHeight || 28;
       var mSide = vw < 480 ? 12 : 16;
-      var baseBottom = vw < 480 ? 14 : 18;
+      // JS 会用 inline style 覆盖 CSS 的 bottom，所以安全区必须在这里算进去，
+      // 否则印章会压在 iPhone 的 Home 指示条上。
+      var baseBottom = (vw < 480 ? 14 : 18) + safeBottomInset();
 
       // 贯通全高的左右侧栏（例如归档皮肤的 .rail）：把可用区推出来
       var leftInset = 0;
