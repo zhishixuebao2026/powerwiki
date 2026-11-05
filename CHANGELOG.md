@@ -4,6 +4,14 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-06 · 新增皮肤「长夜铜棺」（三世铜棺之主量级页面）
+
+- **来源**：用户上传的 `opus-5.5-high＆DS4.1MAX三世铜棺之主量级页面.zip`，取其中已构建好的 `dist/index.html`。该文件完全自包含（7 张图、4 套字体全部内联，零外部资源引用），直接作为整页皮肤源，无需搬运图片目录或改写路径。页面自带的定级原文、13 个章节、长夜／茶白双主题、字号调节与目录交互一律原样保留。
+- **注册**：`data/editions.json` 新增 `bronze-coffin`（`section=character-tongguan`、`inject=minimal`），并在 `default.pages` 补 `character-tongguan: character/tongguan.html`——凑够两套皮肤，切换器才在主站角色页与皮肤页双向出现。构建产物 `skins/bronze-coffin/character-tongguan.html`；切换器缩略图取页面真实首屏截图（640×400）。
+- **minimal 注入**：只挂 `editions.css` + 切换器浮层 + `editions.js`，不注入主站 `app.css` / `chrome.js` / `pwa.js` / manifest，避免污染 React 应用的内联样式与 DOM（与「无光之渊」一致）。
+- **移动端安全区**：按该应用自身的语义类名精确注入，未照抄弗坦的 Tailwind 选择器。`.topbar` 固定高度（桌面 60px / ≤430px 54px）原本没有顶部安全区，改为 `calc(60px + env(safe-area-inset-top))` 并加 `padding-top`；`.toc-rail` sticky 偏移同步下移。页面自带的 `.sheet-body`、`.backtop` 已处理底部安全区，保持不变。CDP 模拟刘海（top=47 / bottom=34）实机验证：顶栏 101px、按钮落在 y=58–90 完全避开状态栏，底部 52px / 58px 正常。
+- **自检**：双向切换（主站角色页 ⇄ 皮肤页）往返成功；皮肤页自身主题切换、字号调节、目录抽屉与 Esc 关闭均正常；桌面/移动端零 JS 报错、零 404、零横向溢出；主站角色页 diff 仅 1 行（挂切换器），定级原文关键句逐字命中、零改动；项目内无检查图或预览图，仅保留切换器必需缩略图。
+
 ## 2026-11-05（夜·补6）· 新增五位角色：林飞 / 下游者 / 江无夜 / 古尘沙 / 雪之少女
 
 - **原文逐字入库**：5 份定级文档从用户给的 GitHub 仓库拉取，md5 与源一致，正文零删改；文件名沿用站内惯例（去掉日期前缀）。按约定「之前定级的角色就是之前的版本」，5 份原文页眉「定级依据：《…第五版》」与 `doc_basis` 均保留第五版，不随规则第六版回改。
