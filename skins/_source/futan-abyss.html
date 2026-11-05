@@ -41,6 +41,8 @@ Error generating stack: `+A.message+`
   header.fixed.inset-x-0.top-0.z-50{padding-top:env(safe-area-inset-top,0px)}
   /* 移动端底部标签栏避开 Home Indicator 安全区 */
   .lg\:hidden.fixed.inset-x-0.bottom-0{padding-bottom:env(safe-area-inset-bottom,0px)}
+  /* 目录浮层（从顶部展开）同样避让状态栏 */
+  .fixed.inset-0.z-\[70\] .absolute.inset-x-0.top-0{padding-top:env(safe-area-inset-top,0px)}
   </style>
   </head>
   <body>
