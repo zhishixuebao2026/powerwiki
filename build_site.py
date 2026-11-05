@@ -185,17 +185,26 @@ def build_skin_editions() -> int:
             f'<meta name="apple-mobile-web-app-title" content="衡天 Wiki">\n'
             f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/app.css")}">\n'
         )
-        inject = (
-            font_tags
-            + app_tags
-            + f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
-            f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/polish.css")}">\n'
-            f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
-            f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
-            f'<script src="{_rel_from(page_dir, "static/js/chrome.js")}" defer></script>\n'
-            f'<script src="{_rel_from(page_dir, "static/js/pwa.js")}" defer></script>\n'
-            f'{patch_tag}'
-        )
+        if ed.get("inject") == "minimal":
+            # React / 第三方整页应用皮肤：只注入切换器浮层（editions.css + editions.js + launcher），
+            # 不注入主站 app.css / chrome.js / pwa.js / manifest，否则会污染应用自身的内联样式与 DOM。
+            inject = (
+                f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
+                + f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
+                + f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
+            )
+        else:
+            inject = (
+                font_tags
+                + app_tags
+                + f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
+                + f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/polish.css")}">\n'
+                + f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
+                + f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
+                + f'<script src="{_rel_from(page_dir, "static/js/chrome.js")}" defer></script>\n'
+                + f'<script src="{_rel_from(page_dir, "static/js/pwa.js")}" defer></script>\n'
+                + f'{patch_tag}'
+            )
         doc = src_path.read_text(encoding="utf-8", errors="replace")
         if ed.get("font_rewrite"):
             doc = patch_skin_fonts(doc)

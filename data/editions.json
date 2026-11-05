@@ -14,7 +14,8 @@
         "home": "index.html",
         "materials": "materials.html",
         "rules": "rules.html",
-        "character-yutu": "character/yutu.html"
+        "character-yutu": "character/yutu.html",
+        "character-futan": "character/futan.html"
       }
     },
     {
@@ -68,6 +69,19 @@
         "character-yutu": "skins/moonfile/character-yutu.html"
       },
       "patch": "skins/patches/moonfile.js"
+    },
+    {
+      "id": "futan-abyss",
+      "name": "无光之渊",
+      "tag": "ABYSS · 深海卷",
+      "note": "诡秘地海 · 不可名状的深渊回响；基于独立构建的弗坦定级整页应用",
+      "source": "skins/_source/futan-abyss.html",
+      "section": "character-futan",
+      "inject": "minimal",
+      "thumb": "static/img/editions/futan-abyss.jpg",
+      "pages": {
+        "character-futan": "skins/futan-abyss/character-futan.html"
+      }
     }
   ]
 }

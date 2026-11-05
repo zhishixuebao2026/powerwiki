@@ -4,6 +4,20 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-05（下午）
+
+- **弗坦新增整页皮肤「无光之渊」（ABYSS · 深海卷）**：把用户提供的独立构建的弗坦定级
+  React 应用（`dist/` 单文件 SPA + 10 张配图）做成弗坦角色页（`character-futan`）的整页皮肤
+  edition，接入页面皮肤切换器。`editions.json` 里 `default` 与 `futan-abyss` 都登记了
+  `character-futan`，弗坦页因此出现切换器（切换器规则：同栏目不足两套不挂）；`futan-abyss`
+  的 `source` 指向 `skins/_source/futan-abyss.html`（图片引用由绝对 `/images/` 改为相对
+  `./images/`），`inject` 设为 `minimal`，缩略图 `static/img/editions/futan-abyss.jpg`。
+- **构建器新增 `minimal` 注入模式**：`build_site.py` 的 `build_skin_editions` 对 React /
+  第三方整页应用皮肤只注入切换器浮层（`editions.css` + `editions.js` + launcher），不注入
+  主站 `app.css` / `chrome.js` / `pwa.js` / `manifest`——否则会污染应用自身的内联样式与 DOM。
+- 验证：弗坦默认页与「无光之渊」双向切换正常、React 应用完整渲染（弗坦定级条目 / 配图 /
+  图表卡片）、切换器缩略图 URL 200、无 JS 报错；`service-worker.js` 升 `pw-v8`。
+
 ## 2026-11-05（中午）
 
 - **新增角色：三世铜棺之主（《遮天三部曲》）**
