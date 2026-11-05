@@ -185,6 +185,13 @@ def build_skin_editions() -> int:
             f'<meta name="apple-mobile-web-app-title" content="衡天 Wiki">\n'
             f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/app.css")}">\n'
         )
+        doc = src_path.read_text(encoding="utf-8", errors="replace")
+        # minimal 皮肤大多没自带 icon，浏览器会回退请求站点根 /favicon.ico（线上 404）。
+        # 自带 icon 的皮肤（如「绛翼」）保留自己的，不覆盖。
+        has_icon = bool(re.search(r'<link[^>]+rel=["\']icon', doc))
+        icon_tag = "" if has_icon else (
+            f'<link rel="icon" type="image/png" sizes="32x32" href="{_rel_from(page_dir, "static/img/icons/favicon-32.png")}">\n'
+        )
         if ed.get("inject") == "minimal":
             # React / 第三方整页应用皮肤：只注入切换器浮层（editions.css + editions.js + launcher），
             # 不注入主站 app.css / chrome.js / pwa.js / manifest，否则会污染应用自身的内联样式与 DOM。
@@ -205,11 +212,14 @@ def build_skin_editions() -> int:
                 + f'<script src="{_rel_from(page_dir, "static/js/pwa.js")}" defer></script>\n'
                 + f'{patch_tag}'
             )
-        doc = src_path.read_text(encoding="utf-8", errors="replace")
         if ed.get("font_rewrite"):
             doc = patch_skin_fonts(doc)
         # 标记这是皮肤页面，editions.css 用它做合成层校正（不改外观）
         doc = doc.replace("<html", '<html data-pw-edition="' + esc(ed["id"]) + '"', 1)
+        # 补 favicon 要落在 head 真正的末尾（打包 JS 里也有 "</head>" 字面量）
+        if ed.get("inject") == "minimal" and icon_tag:
+            h, s, t = doc.rpartition("</head>")
+            doc = h + icon_tag + s + t if s else icon_tag + doc
         # 整页应用常把 "</body>" 当字符串写进打包后的 JS（DOMParser 之类），
         # 第一个匹配不是真实的结束标签；只认最后一个，别把注入塞进脚本里。
         head, sep, tail = doc.rpartition("</body>")
