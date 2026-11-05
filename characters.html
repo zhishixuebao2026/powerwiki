@@ -177,7 +177,7 @@
     <div class="container">
       <section class="category-hub" aria-labelledby="characters-title">
         <div class="category-hub-body">
-          <div class="hub-kicker-row"><span class="hub-kicker-badge mono">CHARACTER DOSSIERS</span><span class="count-badge mono" id="char-result-count">7 / 7 位</span></div>
+          <div class="hub-kicker-row"><span class="hub-kicker-badge mono">CHARACTER DOSSIERS</span><span class="count-badge mono" id="char-result-count">12 / 12 位</span></div>
           <div><h1 class="page-title" id="characters-title">角色档案</h1><p class="page-desc">先看结论，再进入完整档案核对证据、计算与存疑说明。</p></div>
         </div>
       </section>
@@ -185,14 +185,26 @@
         <div class="control-row">
           <div class="control-cluster">
             <div class="seg-group" role="group" aria-label="角色排序方式"><button type="button" class="seg-btn active" data-char-sort="asc">量级 ↑</button><button type="button" class="seg-btn" data-char-sort="alpha">A–Z</button></div>
-
+            <select class="select-control" id="char-series-select" aria-label="按作品筛选"><option value="all">全部作品（12）</option><option value="《我就是要横练》（老污医，起点中文网）">《我就是要横练》（老污医，起点中文网）</option><option value="《法师：飞升》（Mage: The Ascension，经典黑暗世界）">《法师：飞升》（Mage: The Ascension，经典黑暗世界）</option><option value="《流形：时间》（流形三部曲，斯蒂芬·巴克斯特）">《流形：时间》（流形三部曲，斯蒂芬·巴克斯特）</option><option value="《绘之翼》（絵の翼，日文设定合集「設定集2」）">《绘之翼》（絵の翼，日文设定合集「設定集2」）</option><option value="《诡秘地海》">《诡秘地海》</option><option value="《走进修仙》（吾道长不孤，起点中文网）">《走进修仙》（吾道长不孤，起点中文网）</option><option value="《遮天三部曲》（《完美世界》《遮天》《圣墟》）">《遮天三部曲》（《完美世界》《遮天》《圣墟》）</option><option value="《都市之我活了万万年》（翩然烟雨中，QQ 阅读）">《都市之我活了万万年》（翩然烟雨中，QQ 阅读）</option><option value="《野生的最终BOSS出现了》（炎頭，小说家になろう）">《野生的最终BOSS出现了》（炎頭，小说家になろう）</option><option value="《非人学园》">《非人学园》</option><option value="《龙符》（梦入神机，纵横中文网）">《龙符》（梦入神机，纵横中文网）</option><option value="克苏鲁神话（H. P. 洛夫克拉夫特原作及合著、代笔）">克苏鲁神话（H. P. 洛夫克拉夫特原作及合著、代笔）</option></select>
           </div>
           <div class="search-field"><input type="search" class="search-input" id="char-filter-input" placeholder="搜索角色、作品或量级…" autocomplete="off"></div>
         </div>
 
+        <div class="control-row divider-top"><div class="chip-rail" role="group" aria-label="角色所属量级区间">
+          <button type="button" class="chip-btn active" data-char-domain="all">全部区间</button>
+          <button type="button" class="chip-btn" data-char-domain="terrestrial">个体—地表</button>
+          <button type="button" class="chip-btn" data-char-domain="stellar">行星—恒星</button>
+          <button type="button" class="chip-btn" data-char-domain="transition">过渡</button>
+          <button type="button" class="chip-btn" data-char-domain="cosmic">恒星系—宇宙</button>
+          <button type="button" class="chip-btn" data-char-domain="fgh">广义无限</button>
+          <button type="button" class="chip-btn" data-char-domain="beyond">论外—论天</button>
+        </div></div>
       </div>
-
-      <div class="content-section" id="chars-explorer-mount"><div class="char-grid compact-roster-grid">
+      <div class="alpha-bar" id="char-alpha-bar" aria-label="首字母快速定位"><div class="alpha-letters" id="char-alpha-letters"></div></div>
+      <div class="content-section" id="chars-explorer-mount">
+        <section class="group-section" id="char-scale-list">
+          <div class="group-header"><h2 class="group-title">按量级递增</h2><span class="group-sub">12 位角色</span></div>
+          <div class="char-grid">
     <a class="char-card has-media media-top char-card-yutu" data-character="yutu" href="character/yutu.html">
       <div class="char-card-media is-portrait" data-art-label="YUTU">
         <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/yutu/official-portrait.png')"></span>
@@ -204,6 +216,19 @@
           <span class="tier-badge gold mono">⊙ 国△</span>
         </div>
         <div class="char-tier-line"><span>强爆国</span><span class="mono">#34</span></div><p class="char-summary">终局轨道火球覆盖面积确立强爆国级主档（⊙国△）；一拳将虎力打上月球的动能为强爆城级保底。</p><div class="char-foot"><span>2026-10-26 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+      </div>
+    </a>
+    <a class="char-card has-media media-top char-card-xiayouzhe" data-character="xiayouzhe" href="character/xiayouzhe.html">
+      <div class="char-card-media is-landscape" data-art-label="XIAYOUZHE">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/xiayouzhe/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/xiayouzhe/character-card.jpg" alt="下游者" width="1536" height="865" loading="lazy">
+      </div>
+      <div class="char-card-body">
+        <div class="char-head">
+          <div class="char-meta"><h3 class="char-name">下游者</h3><div class="char-origin">《流形：时间》（流形三部曲，斯蒂芬·巴克斯特）</div></div>
+          <span class="tier-badge gold mono">⊙ 宇○</span>
+        </div>
+        <div class="char-tier-line"><span>标准宇宙</span><span class="mono">#79</span></div><p class="char-summary">《流形：时间》中人类在宇宙极远未来的后裔，为改写宇宙结局回溯干预过去。主档是经蓝孩子触发的真空衰变：真真空泡以光速扩张、最终覆盖整个宇宙，定标准宇宙级，但需数百亿年且能量来自真空相变本身，记「弱化／需时／触发式」；保底只取已展示的约 2 天文单位真真空泡。</p><div class="char-foot"><span>2026-11-04 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
     </a>
     <a class="char-card has-media media-top char-card-futan" data-character="futan" href="character/futan.html">
@@ -219,6 +244,19 @@
         <div class="char-tier-line"><span>强宇宙</span><span class="mono">#80</span></div><p class="char-summary">Ehod 级神明，全书始终沉睡；以苏醒未来的星辰清空与跨位面同步定级，位面数目未定故只记下限，保底标准宇宙级。</p><div class="char-foot"><span>2026-10-30 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
     </a>
+    <a class="char-card has-media media-top char-card-guchensha" data-character="guchensha" href="character/guchensha.html">
+      <div class="char-card-media is-landscape" data-art-label="GUCHENSHA">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/guchensha/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/guchensha/character-card.jpg" alt="古尘沙" width="1536" height="865" loading="lazy">
+      </div>
+      <div class="char-card-body">
+        <div class="char-head">
+          <div class="char-meta"><h3 class="char-name">古尘沙</h3><div class="char-origin">《龙符》（梦入神机，纵横中文网）</div></div>
+          <span class="tier-badge gold mono">⊙ 宇△</span>
+        </div>
+        <div class="char-tier-line"><span>强宇宙</span><span class="mono">#80</span></div><p class="char-summary">《龙符》主角，创无龙心法、终局立于多元宇宙之上。第1029章身躯化为恒沙数目的宇宙，按可确认的最小数目两个宇宙定强宇宙级；保底只取同章把「万古大陆」这一宇宙缩小封印于掌上，标准宇宙级。世界的无限虽成立，但他对整体只有命运、寿命一类影响，不进主档。</p><div class="char-foot"><span>2026-11-05 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+      </div>
+    </a>
     <a class="char-card has-media media-top char-card-tongguan" data-character="tongguan" href="character/tongguan.html">
       <div class="char-card-media is-landscape" data-art-label="TONGGUAN">
         <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/tongguan/character-card.jpg')"></span>
@@ -232,6 +270,32 @@
         <div class="char-tier-line"><span>极宇宙</span><span class="mono">#81</span></div><p class="char-summary">祭道之上、自我抹除的「病人」；点眉心一刹那亿万宇宙成灰又复原，以可确认的 1 亿个宇宙定极宇宙级下限，无限描写不过 8.1 门槛。</p><div class="char-foot"><span>2026-10-28 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
     </a>
+    <a class="char-card has-media media-top char-card-jiangwuye" data-character="jiangwuye" href="character/jiangwuye.html">
+      <div class="char-card-media is-landscape" data-art-label="JIANGWUYE">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/jiangwuye/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/jiangwuye/character-card.jpg" alt="江无夜" width="1536" height="865" loading="lazy">
+      </div>
+      <div class="char-card-body">
+        <div class="char-head">
+          <div class="char-meta"><h3 class="char-name">江无夜</h3><div class="char-origin">《我就是要横练》（老污医，起点中文网）</div></div>
+          <span class="tier-badge gold mono">⊙ 外·门</span>
+        </div>
+        <div class="char-tier-line"><span>论外门槛</span><span class="mono">#90</span></div><p class="char-summary">《我就是要横练》主角，终章揭示真实身份为「终焉」——收束一切叙事幻想者。大结局此纪一切幻想归无、随后挥手再造叙事阶梯世界，破与控同为论外门槛；保底只取第三百二十九章一次冲杀崩解的无穷时间线。作品自身排除叠加升档，终焉按叙事层标签记录。</p><div class="char-foot"><span>2026-11-04 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+      </div>
+    </a>
+    <a class="char-card has-media media-top char-card-linfei" data-character="linfei" href="character/linfei.html">
+      <div class="char-card-media is-landscape" data-art-label="LINFEI">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/linfei/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/linfei/character-card.jpg" alt="林飞" width="1536" height="865" loading="lazy">
+      </div>
+      <div class="char-card-body">
+        <div class="char-head">
+          <div class="char-meta"><h3 class="char-name">林飞</h3><div class="char-origin">《都市之我活了万万年》（翩然烟雨中，QQ 阅读）</div></div>
+          <span class="tier-badge gold mono">⊙ 外·门</span>
+        </div>
+        <div class="char-tier-line"><span>论外门槛</span><span class="mono">#90</span></div><p class="char-summary">《都市之我活了万万年》主角，正文终局证得「超脱」，番外 2 又从无到有造出一阶至「无限阶」的宇宙晶体嵌套结构并定下全部规则。综合量级取番外 2 的创造，定论外门槛（结构 φ(ω,0)）；去掉番外只看正文，保底为约一万个宇宙位面的强宇宙级。</p><div class="char-foot"><span>2026-10-30 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+      </div>
+    </a>
     <a class="char-card has-media media-top char-card-lufasi" data-character="lufasi" href="character/lufasi.html">
       <div class="char-card-media is-landscape" data-art-label="LUFASIMAFAER">
         <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/lufasi/character-card.jpg')"></span>
@@ -243,6 +307,19 @@
           <span class="tier-badge gold mono">⊙ 外·门</span>
         </div>
         <div class="char-tier-line"><span>论外门槛</span><span class="mono">#90</span></div><p class="char-summary">《野生的最终BOSS出现了》的「黑翼霸王」，终局在宇宙之外的终极点与创世女神决战。三次碰撞逐层毁去次元、上位次元、超上位次元，旁白明言力量互为无限、状态值为『∞』，综合主档记论外门槛（ℵ₀）〔下〕、保底超宇宙级。往上只说「更に上」，不再给出更高基数。</p><div class="char-foot"><span>2026-10-29 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+      </div>
+    </a>
+    <a class="char-card has-media media-top char-card-xuezhishaonv" data-character="xuezhishaonv" href="character/xuezhishaonv.html">
+      <div class="char-card-media is-landscape" data-art-label="XUEZHISHAONV">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/xuezhishaonv/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/xuezhishaonv/character-card.jpg" alt="雪之少女" width="1536" height="865" loading="lazy">
+      </div>
+      <div class="char-card-body">
+        <div class="char-head">
+          <div class="char-meta"><h3 class="char-name">雪之少女</h3><div class="char-origin">《绘之翼》（絵の翼，日文设定合集「設定集2」）</div></div>
+          <span class="tier-badge gold mono">⊙ 外·门</span>
+        </div>
+        <div class="char-tier-line"><span>论外门槛</span><span class="mono">#90</span></div><p class="char-summary">《绘之翼》的创世女神，以「神界创世」之力创造物质界万物与知性界的「原型」。设定写明多元宇宙是「巨大基数规模的宇宙的集合」且其中所有宇宙都是无限的，按 8.1 过门槛、只到门槛，综合量级定论外门槛〔下〕；保底去掉这一步，按多个宇宙计强宇宙级。伯克利以上等宣称未指明对象，不进规模。</p><div class="char-foot"><span>2026-11-05 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
     </a>
     <a class="char-card has-media media-top char-card-yog" data-character="yog" href="character/yog.html">
@@ -283,7 +360,8 @@
         </div>
         <div class="char-tier-line"><span>待定／暂存</span><span class="mono">待定</span></div><p class="char-summary">《法师：飞升》本影力量阶序最顶端的&quot;不可名状者&quot;，即&quot;我是我所是&quot;。规则书无数值、无能力、无行动，地位来自排第一与被定义为遍及一切。综合主档未定级，存在规模记&quot;遍及全部造化（规模未定）&quot;，创世文字作&quot;若采信&quot;存疑。这是作品写法所致，非判断其弱。</p><div class="char-foot"><span>2026-10-29 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
-    </a></div></div>
+    </a></div>
+        </section></div>
     </div>
 
   </main>

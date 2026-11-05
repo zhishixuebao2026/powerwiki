@@ -250,6 +250,11 @@ BOOT_BG_CHARACTERS = {
     "character-divinity": ("#f3f1ea", "#0d0b08"),
     "character-lufasi": ("#f2eef3", "#0c0710"),
     "character-tianren": ("#eaf2f0", "#050e0c"),
+    "character-linfei": ("#eef1ec", "#060f0d"),
+    "character-xiayouzhe": ("#edf2f8", "#050b14"),
+    "character-jiangwuye": ("#f4efec", "#120707"),
+    "character-guchensha": ("#f1edf5", "#0c0714"),
+    "character-xuezhishaonv": ("#f0f3f9", "#060b1a"),
 }
 
 

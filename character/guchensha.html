@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="char-guchensha" data-boot-bg-light="#f1edf5" data-boot-bg-dark="#0c0714">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" id="theme-color-meta" content="#f1edf5">
+  <meta name="color-scheme" content="light dark">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../static/img/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="衡天 Wiki">
+  <meta name="application-name" content="衡天 Wiki">
+  <title>古尘沙 · 角色战力档案 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第六版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <!-- 首帧底色：这段内联 CSS 在 <head> 里、所有外链样式表之前生效，浏览器在字体与
+       样式表全部到达前就用它画整个画布，杜绝冷启动白屏。颜色由生成器按页面写入，
+       必须等于该页 CSS 最终生效的 --bg-canvas；用 :where() 让优先级为 0，
+       外部 CSS 到达后即可无缝接管，不会干扰任何最终样式。切主题只改 data-theme，
+       属性选择器自动换色，JS 不再写 inline 底色。 -->
+  <style>
+    :where(html), :where(html) > :where(body) { background-color: #f1edf5; }
+    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #0c0714; }
+  </style>
+  <script>
+    (function() {
+      var root = document.documentElement;
+      var t = null;
+      try { t = localStorage.getItem('pw_theme_v2'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        try {
+          var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          t = dark ? 'dark' : 'light';
+          localStorage.setItem('pw_theme_v2', t);
+        } catch (e) { t = 'light'; }
+      }
+      root.setAttribute('data-theme', t);
+      root.classList.add('js');
+      /* 首帧底色已由 <head> 内联 <style> 按 data-theme 画好，这里只同步状态栏颜色。
+         不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
+         data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
+      var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
+        || (t === 'dark' ? '#080d11' : '#f1f2ed');
+      var mc = document.getElementById('theme-color-meta');
+      if (mc) mc.setAttribute('content', canvas);
+    })();
+  </script>
+  <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" as="image" href="../static/img/characters/guchensha/guchensha-cosmos.jpg">
+  <link rel="preload" as="image" href="../static/img/characters/guchensha/guchensha-portrait.jpg">
+  <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
+       子集各约 99 KB，原本与站点 CSS 一起阻塞首次绘制，是冷启动白屏主因。
+       font-display:swap 已保证文字始终先用系统字体可见、字体到位后平滑替换，
+       不会出现无样式内容闪现；noscript 环境仍按普通样式表加载。 -->
+  <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="../static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css">
+    <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css">
+  </noscript>
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="../static/css/editorial.css">
+  <link rel="stylesheet" href="../static/css/experience.css">
+  <link rel="stylesheet" href="../static/css/editions.css">
+  <link rel="stylesheet" href="../static/css/polish.css">
+  <link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body class="site-characters character-site character-guchensha">
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
+        <a class="brand-link" href="../index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+        </a>
+      </div>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link" href="../index.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></span><span>首页</span></a>
+        <a class="nav-link nav-cat" href="../tiers.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg></span><span>量级</span></a>
+        <a class="nav-link nav-cat active" href="../characters.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg></span><span>角色</span></a>
+        <a class="nav-link nav-doc" href="../rules.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg></span><span>规则</span></a>
+        <a class="nav-link nav-doc" href="../materials.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg></span><span>材质</span></a>
+      </nav>
+
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="search-btn-label">检索…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题" aria-pressed="false">
+          <span class="pw-theme-icon pw-icon-sun"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
+          <span class="pw-theme-icon pw-icon-moon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="../index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">查阅</div>
+        <a class="drawer-card-link" href="../tiers.html"><span class="drawer-card-title"><span>量级天梯</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档 · 从昆虫到论天</span></a>
+        <a class="drawer-card-link active" href="../characters.html"><span class="drawer-card-title"><span>角色档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">定级结论与完整证据原文</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">规则与资料</div>
+        <a class="drawer-doc-link" href="../rules.html"><span>衡天体系 · 第六版</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../materials.html"><span>材质与能量 · 第二版</span><span>→</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        <a class="drawer-doc-link" href="../index.html"><span>返回首页总览</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../search.html"><span>全站即时检索</span><span>→</span></a>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {
+        if (window.__PW_SYNC_LOCK__) { window.__PW_SYNC_LOCK__(); return; }
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }
+      function closeAll() {
+        if (window.__PW_CLOSE_ALL__) { window.__PW_CLOSE_ALL__(); return; }
+        drawer.classList.remove('open');
+        sync();
+      }
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      });
+      if (closeBtn) { closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }
+      if (backdrop) { backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {
+        links[j].addEventListener('click', function() { drawer.classList.remove('open'); sync(); });
+      }
+      window.addEventListener('pageshow', function() { drawer.classList.remove('open'); sync(); });
+    })();
+  </script>
+
+  <main>
+
+        <div class="container detail-stack character-detail character-guchensha">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>古尘沙</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header character-dossier theme-guchensha">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img fade-on-load" src="../static/img/characters/guchensha/guchensha-cosmos.jpg" alt="">
+            </div>
+
+            <div class="dossier-masthead">
+              <span class="dossier-kicker mono">GU CHENSHA · DRAGON TALISMAN</span>
+              <span class="dossier-register mono">UNIVERSE STRONG · CONTROL-TYPE</span>
+            </div>
+
+            <div class="dossier-body has-portrait">
+              <div class="dossier-main-col">
+                <div class="char-tags">
+                  <span class="tag-pill accent">星团至宇宙阶</span>
+                  <span class="tag-pill">《龙符》（梦入神机，纵横中文网）</span>
+                  <span class="tag-pill">综合量级 宇△（掌控式）〔实〕· 元·多（按 2 计）· 1.6×10⁷⁸ J</span><span class="tag-pill">保底量级 宇○（掌控式）〔实〕· 8.0×10⁷⁷ J</span><span class="tag-pill">破 宇△〔推〕/ 宇○〔推〕（均由控推定）</span><span class="tag-pill">位格 —（层级轴天外之天为结构标注，倍率〔缺〕）</span>
+                </div>
+
+                <div>
+                  <h1 class="page-title">古尘沙</h1>
+                  <div class="dossier-submeta"><span>形态：终局「所有的境界，都是我来定的」· 立于多元宇宙之上 · 无不朽第九层、第十层非有无不朽</span><span>·</span><span>别称：大永王朝十九皇子 / 无龙心法 / 非有无不朽 / 永远无敌</span><span>·</span><span>定级日期：2026-11-05</span></div>
+                </div>
+
+                <p class="page-desc">《龙符》主角古尘沙，自凡境起步创无龙心法，终局「所有的境界，都是我来定的」、立于多元宇宙之上。综合量级落在强宇宙级（掌控式）：第1029章身躯化为恒沙数目的宇宙被无无先生吸收；保底为同章把万古大陆宇宙缩小、封印于掌上。混沌、人间界的无限只记入「域」的影响范围，按两步推定不进主档。</p>
+
+                <div class="dossier-kpi-grid">
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">综合主档定级</div>
+                    <div class="kpi-value">
+                      <a class="kpi-tier-link mono" href="../tier/universe-strong.html" title="查看所属主档规格页">
+                        <span>⊙ 宇△ · 强宇宙（#80）</span>
+                        <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">保底量级</div>
+                    <div class="kpi-value">综合量级 ⊙宇△（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span>· 元·多（数目未定，按 2 计）——强宇宙级，8.0×10⁷⁷ J 起，当量 1.6×10⁷⁸ J；保底量级 ⊙宇○（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span>——标准宇宙级，8.0×10⁷⁷ J</div>
+                  </div>
+                </div>
+
+                <div class="dossier-actions-row"><a class="text-link" href="../rules.html#sec-4-9-宇宙级-宇-半球扩散-第二版重新分档">对照衡天规则原文 →</a></div>
+
+                <div class="full-writing-box">
+                  <div class="box-kicker">正式完整书写摘要</div>
+                  <div>古尘沙（《龙符》）综合量级 ⊙宇△（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span>· 元·多（数目未定，按 2 计）——强宇宙级：超过一个标准宇宙，8.0×10⁷⁷ J 起，按能确认的最小数目两个宇宙计当量 1.6×10⁷⁸ J。来自第1029章：无无先生偷袭并吸取古尘沙的力量，「他的身躯化为了无数的宇宙，就让无无先生吸收」，「就看到了如恒沙一般数目的宇宙都在刹那之间，进入了无无先生的体内」。保底量级 ⊙宇○（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span>——标准宇宙级，8.0×10⁷⁷ J：不依赖「恒沙数目的宇宙」是否为完整宇宙，只取同章前段，古尘沙伸手「整个万古大陆就直接消失了」，这个「有日月星辰，天地变化，宇宙运转」的宇宙（第1025章）「出现在了古尘沙的手掌之上，然后宇宙缩小成了鸡蛋小大小。被四四方方的封印给禁锢住」。主档与保底均为第1029章旁白直接叙述<span class="ev-badge ev-confirmed">〔实〕</span>；破 宇△<span class="ev-badge ev-inferred">〔推〕</span>、宇○<span class="ev-badge ev-inferred">〔推〕</span>（均由控，0.11）。域记命运长河 · 影响范围全人间界（世界规模 外·门<span class="ev-badge ev-lower">〔下〕</span>）· 可影响强度上限天帝、古华沙（天界境界）<span class="ev-badge ev-confirmed">〔实〕</span>；寿命法则 · 影响范围全多元宇宙每一个生灵 · 可影响强度上限无不朽<span class="ev-badge ev-confirmed">〔实〕</span>；按 0.16 不推出破坏或掌控。世界规模：混沌、人间界过 8.1，记 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>；但古尘沙对这一整体做到的是命运、寿命一类单一要素的影响，按 8.1 界线 3 两步推定的第二步只在「域」成立，世界规模不进主档。位格：层级轴抵达「不存于任何时间，空间之中的天外之天」（第993章），结构标注、倍率<span class="ev-badge ev-missing">〔缺〕</span>；存在规模、计算层级 —（「全知全能」是旁白定性，没有可计量的结构，记入特性）。风险：第1056、1068 章旁白追述「缔造了人间界」「把无尽大陆天界化为了现在的人间界」与第935章直接场景的归因不一致，按 0.14.2 以更具体、更接近事件的第935章为准。</div>
+                  <div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>位格：层级轴——抵达「不存于任何时间，空间之中的天外之天」（第993章），结构标注，倍率<span class="ev-badge ev-missing">〔缺〕</span>；存在规模、计算层级 —（「全知全能」是旁白的定性，没有可计量的结构，记入特性）。混沌、人间界过 8.1 记 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>属于世界规模，古尘沙对这一整体做到的是命运、寿命一类单一要素的影响，按 8.1 界线 3 的两步推定只在「域」成立，不进主档；三项与综合量级 ⊙宇△（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span>并列，互不推出（1.7）。</span></div>
+                  <div class="box-subnote">证据链核验摘要：主档、保底均为第1029章旁白直接叙述<span class="ev-badge ev-confirmed">〔实〕</span>；破由控推定<span class="ev-badge ev-inferred">〔推〕</span>。世界规模混沌、人间界过 8.1 记 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>，但两步推定的第二步只在「域」成立，不进主档。「恒沙数目的宇宙」没有展示内部内容，按作品称谓认定为完整宇宙；不认定时主档退回保底宇○。人间界归因按 0.14.2 以第935章直接场景为准，旁白追述记为历时千年、众人参与的改造与扩大</div>
+                </div>
+              </div>
+
+              <aside class="char-portrait-stage" aria-label="古尘沙">
+                <div class="char-portrait-canvas">
+                  <span class="portrait-index mono">宇△ / 强宇宙 · 掌控式</span>
+                  <img class="char-portrait-img fade-on-load" src="../static/img/characters/guchensha/guchensha-portrait.jpg" alt="古尘沙" width="1024" height="1536">
+                </div>
+
+              </aside>
+            </div>
+            <div class="dossier-fact-rail"><div class="dossier-fact"><span class="fact-label">综合量级</span><strong class="fact-value">宇△（掌控式）〔实〕</strong><span class="fact-note">元·多（按 2 计）· 1.6×10⁷⁸ J · 第1029章恒沙数目的宇宙</span></div><div class="dossier-fact"><span class="fact-label">保底量级</span><strong class="fact-value">宇○（掌控式）〔实〕</strong><span class="fact-note">8.0×10⁷⁷ J · 万古大陆宇宙缩小封印于掌上</span></div><div class="dossier-fact"><span class="fact-label">位格</span><strong class="fact-value">—</strong><span class="fact-note">天外之天为层级轴结构标注 · 倍率<span class="ev-badge ev-missing">〔缺〕</span> · 世界的无限只进「域」</span></div></div>
+          </section>
+
+          <div class="char-identity-fx" aria-hidden="true"></div>
+
+        <section class="char-info-panel" aria-label="量级信息图">
+          <div class="char-info-kicker">量级刻度 / TIER SCALE</div>
+          <div class="char-info-head">
+            <span class="char-info-main">⊙ 宇△<span class="char-info-code">〔主档〕</span></span>
+            <span class="char-info-note">综合量级 宇△（掌控式）〔实〕· 元·多（按 2 计）· 1.6×10⁷⁸ J · 保底量级 宇○（掌控式）〔实〕· 8.0×10⁷⁷ J · 破 宇△〔推〕/ 宇○〔推〕（均由控推定） · 位格 —（层级轴天外之天为结构标注，倍率〔缺〕）</span>
+          </div>
+          <div class="char-scale">
+            <div class="char-scale-track">
+              <span class="char-scale-fill" style="--pos:82%"></span>
+              <i class="char-scale-mark" style="--pos:82%"></i>
+            </div>
+            <div class="char-scale-labels"><span style="left:28%">城</span><span style="left:33%">国</span><span style="left:53%">恒</span><span style="left:80%">宇</span></div>
+          </div>
+          <div class="char-dims"><div class="char-dim "><b>破</b><span>宇○〔推〕</span></div><div class="char-dim "><b>控</b><span>宇○〔实〕</span></div><div class="char-dim "><b>域</b><span>〔下〕</span></div><div class="char-dim is-missing"><b>御</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>速</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>算</b><span>〔缺〕</span></div><div class="char-dim "><b>性</b><span>无不朽之身（「只</span></div></div>
+          <div class="char-facts"><div class="char-fact"><span class="char-fact-k">综合量级</span><span class="char-fact-v">宇△（掌控式）〔实〕</span></div><div class="char-fact"><span class="char-fact-k">保底量级</span><span class="char-fact-v">宇○（掌控式）〔实〕</span></div><div class="char-fact"><span class="char-fact-k">位格</span><span class="char-fact-v">—</span></div></div>
+        </section>
+
+          <div class="doc-layout">
+            <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
+              <div class="toc-head">
+                <div class="toc-head-row">
+                  <span>档案章节目录</span>
+                  <span class="mono toc-count">23 节</span>
+                  <button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭章节目录">
+                    <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
+                </div>
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
+              </div>
+              <nav class="toc-list" id="toc-nav">
+                <a class="toc-item toc-lvl-2" href="#sec-作品信息">作品信息</a><a class="toc-item toc-lvl-2" href="#sec-角色信息">角色信息</a><a class="toc-item toc-lvl-2" href="#sec-量级栏">量级栏</a><a class="toc-item toc-lvl-3" href="#sec-量级栏用语说明">量级栏用语说明</a><a class="toc-item toc-lvl-2" href="#sec-概述">概述</a><a class="toc-item toc-lvl-2" href="#sec-一-定级方法">一、定级方法</a><a class="toc-item toc-lvl-2" href="#sec-二-世界观">二、世界观</a><a class="toc-item toc-lvl-3" href="#sec-结构与规模">结构与规模</a><a class="toc-item toc-lvl-3" href="#sec-8-1-审查-混沌">8.1 审查：混沌</a><a class="toc-item toc-lvl-3" href="#sec-5-6-证伪核对">5.6 证伪核对</a><a class="toc-item toc-lvl-3" href="#sec-后期的命名阶梯">后期的命名阶梯</a><a class="toc-item toc-lvl-2" href="#sec-三-关键事件">三、关键事件</a><a class="toc-item toc-lvl-2" href="#sec-四-分维度分析">四、分维度分析</a><a class="toc-item toc-lvl-3" href="#sec-世界观推定-第二步">世界观推定：第二步</a><a class="toc-item toc-lvl-3" href="#sec-破与控">破与控</a><a class="toc-item toc-lvl-3" href="#sec-域-影响">域（影响）</a><a class="toc-item toc-lvl-3" href="#sec-性-特性">性（特性）</a><a class="toc-item toc-lvl-3" href="#sec-层级轴-衡天-7-9">层级轴（衡天 7.9）</a><a class="toc-item toc-lvl-2" href="#sec-五-综合定级">五、综合定级</a><a class="toc-item toc-lvl-3" href="#sec-为什么不更高">为什么不更高</a><a class="toc-item toc-lvl-3" href="#sec-对战判定">对战判定</a><a class="toc-item toc-lvl-2" href="#sec-存疑与作者矛盾">存疑与作者矛盾</a><a class="toc-item toc-lvl-2" href="#sec-参考资料">参考资料</a>
+              </nav>
+              <div class="toc-foot">
+                <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+                <a class="toc-foot-btn" href="../search.html">全站检索</a>
+              </div>
+            </aside>
+
+            <article class="doc-panel">
+              <div class="doc-toolbar">
+                <div class="doc-source-info">
+                  <span>定级档案全文</span>
+                  <span>·</span>
+                  <span>依据《衡天⊙ 多维战力量级体系（第五版）》</span>
+                </div>
+              </div>
+
+              <div class="markdown-body">
+                <h2 id="sec-作品信息">作品信息<a class="heading-anchor" href="#sec-作品信息" data-target-id="sec-作品信息" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">作品</td><td style="text-align:left">《龙符》</td></tr><tr><td style="text-align:left">作者</td><td style="text-align:left">梦入神机（本名王钟）</td></tr><tr><td style="text-align:left">平台</td><td style="text-align:left">纵横中文网，仙侠</td></tr><tr><td style="text-align:left">篇幅</td><td style="text-align:left">约 360 万字（作者完本感言），共 1151 章，2016 年 1 月 1 日开始连载，已完结；末章「第1151章 永远无敌（大结局）」</td></tr><tr><td style="text-align:left">简介</td><td style="text-align:left">大永王朝十九皇子古尘沙得祭天符诏，自凡境起步，历道境三十六变、天尊至天道，创无龙心法，以「心灵之力反哺世界」取代旧世界「吞噬他人才能变强」的规则，最终立于多元宇宙之上，亿万年间无人能胜</td></tr></tbody></table></div>
+<h2 id="sec-角色信息">角色信息<a class="heading-anchor" href="#sec-角色信息" data-target-id="sec-角色信息" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">名称</td><td style="text-align:left">古尘沙（大永王朝十九皇子，天符大帝古踏仙之子）</td></tr><tr><td style="text-align:left">境界历程</td><td style="text-align:left">凡境 → 道境三十六变 → 神级、圣人 → 天尊（第868章，于混沌中突破）→ 天寿、天元、天界 → 天道（第986章自述"目前整个天地宇宙，无数时空之中，修成了天道境界的就我一人"）→ 不朽第九层无不朽（第1000章"其中有一丝，居然化为了'无不朽'"）；终章自称"所有的境界，都是我来定的"，第十层"非有无不朽""我不是没有练成，而是我已经不需要这个境界来支撑自己了"（第1151章）</td></tr><tr><td style="text-align:left">核心功法</td><td style="text-align:left">无龙心法：不从外界吸取能量，开发自身心灵之力，并向世界输出</td></tr><tr><td style="text-align:left">关键关系</td><td style="text-align:left">楼拜月、闻洪、诸葛牙等无龙内阁成员；古踏仙（父，与天道相融，化为「可怕东西」）；天帝、古华沙（四皇子）；无无先生、无心先生等（「可怕东西」的分身）；周钦等六人与其合体「白衣少年」；昊玄（第一个练成非有无不朽者）</td></tr><tr><td style="text-align:left">结局</td><td style="text-align:left">隐于幕后观察多元宇宙，每隔亿年便有最强者前来挑战，均被炼成法宝丢回多元宇宙："尘沙，这是你炼化的一千零一尊主角了"（第1151章）</td></tr></tbody></table></div>
+<h2 id="sec-量级栏">量级栏<a class="heading-anchor" href="#sec-量级栏" data-target-id="sec-量级栏" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>⊙宇△（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span>· 元·多（数目未定，按 2 计）</strong>——强宇宙级：超过一个标准宇宙，能量 8.0×10⁷⁷ J 起；按能确认的最小数目两个宇宙计，当量 1.6×10⁷⁸ J。来自第1029章：无无先生偷袭并吸取古尘沙的力量，"他的身躯化为了无数的宇宙，就让无无先生吸收"，"就看到了如恒沙一般数目的宇宙都在刹那之间，进入了无无先生的体内"，把对方撑爆。一次创造多个宇宙，按衡天 0.11 记整体掌控（创造），标掌控式</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left"><strong>⊙宇○（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span></strong>——标准宇宙级，8.0×10⁷⁷ J。不依赖「恒沙数目的宇宙」是否为完整宇宙，只取同章前段：古尘沙伸手，"整个万古大陆就直接消失了"，这个"有日月星辰，天地变化，宇宙运转"的宇宙（第1025章）"出现在了古尘沙的手掌之上，然后宇宙缩小成了鸡蛋小大小。被四四方方的封印给禁锢住"</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">层级轴：抵达"不存于任何时间，空间之中的天外之天"（第993章），结构标注，倍率<span class="ev-badge ev-missing">〔缺〕</span>。存在规模、计算层级：—（"全知全能"是旁白的定性，没有可计量的结构，记入特性）</td></tr><tr><td style="text-align:left">设定宣称</td><td style="text-align:left">"自己缔造了人间界，又缔造了多元宇宙"（第1056章旁白）、"古尘沙则是直接把无尽大陆天界化为了现在的人间界，多元宇宙"（第1068章旁白）——与第935章直接场景的归因不一致，见存疑 1；自称"可以随意使得人间界变化"（第1003章）、"我可以一念之间，就让多元宇宙进化到达一个不可思议的地步"（第1069章），记潜力</td></tr><tr><td style="text-align:left">可信度</td><td style="text-align:left">主档、保底均为第1029章旁白直接叙述<span class="ev-badge ev-confirmed">〔实〕</span>。世界规模：混沌、人间界过 8.1，记 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>；古尘沙对这一整体做到的是命运、寿命一类的影响（域），没有整体破坏、掌控或创造（两步推定的第二步只在「域」成立）</td></tr><tr><td style="text-align:left">破（破坏力）</td><td style="text-align:left">宇△（元·多）<span class="ev-badge ev-inferred">〔推〕</span>、宇○<span class="ev-badge ev-inferred">〔推〕</span>（均由控）；一掌"拍入了宇宙中"，剿灭天帝与古华沙缔造的失控宇宙（第1024、1026章，宇宙此前已缩小，规模未写明）<span class="ev-badge ev-confirmed">〔实〕</span>；一字"变！"令天道境赵江山的"大宇宙"消失（第1019章，规模未写明）<span class="ev-badge ev-confirmed">〔实〕</span>；撑爆无无先生（无不朽，第1029章）、一掌击碎白衣少年（第1148章）、一抓使昊玄（非有无不朽）虚化（第1151章）</td></tr><tr><td style="text-align:left">控（整体掌控）</td><td style="text-align:left">宇△（元·多，数目未定）<span class="ev-badge ev-confirmed">〔实〕</span>（创造，第1029章）；宇○<span class="ev-badge ev-confirmed">〔实〕</span>（万古大陆宇宙，缩小、封印，第1029章）；新世界初生时一个宇宙（第1031—1033章，与核心成员共同缔造，后文旁白称"整个新世界都是古尘沙所缔造的"）宇○<span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">域（影响）</td><td style="text-align:left">命运长河 · 影响范围：全人间界（世界规模 外·门<span class="ev-badge ev-lower">〔下〕</span>）· 可影响强度上限：天帝、古华沙（天界境界）<span class="ev-badge ev-confirmed">〔实〕</span>；寿命法则（虚拟面板）· 影响范围：全多元宇宙每一个生灵 · 可影响强度上限：无不朽<span class="ev-badge ev-confirmed">〔实〕</span>；详见第四节</td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">无不朽之身（"到达了这个境界，只能够被封印，根本无法被消灭"，第1025章）；全知全能（旁白，第1144章，可自行放弃）；被白衣少年一掌"似乎被手掌彻底消灭了"后复现（第1148章）</td></tr></tbody></table></div>
+<p>御（防御）、速（速度）、算（计算层级）没有可换算的表现，未列出。</p>
+<h3 id="sec-量级栏用语说明">量级栏用语说明<a class="heading-anchor" href="#sec-量级栏用语说明" data-target-id="sec-量级栏用语说明" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">代字或标签</th><th style="text-align:left">全称与含义</th></tr></thead><tbody><tr><td style="text-align:left">⊙</td><td style="text-align:left">综合量级标记</td></tr><tr><td style="text-align:left">宇○</td><td style="text-align:left">标准宇宙级：完全摧毁或整体掌控可观测宇宙规模（直径约 930 亿光年），8.0×10⁷⁷ J</td></tr><tr><td style="text-align:left">宇△</td><td style="text-align:left">强宇宙级：超过一个标准宇宙，至直径 1 万倍（8.0×10⁷⁷～8.0×10⁸⁵ J）；一次作用于多个宇宙时按个数换算当量（衡天 6.3）</td></tr><tr><td style="text-align:left">元·多（数目未定）</td><td style="text-align:left">一次作用波及多个完整宇宙、数目没有写明，按能确认的最小数目计（衡天 6.5）</td></tr><tr><td style="text-align:left">外·门</td><td style="text-align:left">论外门槛：可数无限（ℵ₀），有限区间之后的第一级真正的无限</td></tr><tr><td style="text-align:left">掌控式</td><td style="text-align:left">主档来自整体掌控（含创造），由掌控推定破坏（衡天 0.11）</td></tr><tr><td style="text-align:left">位格</td><td style="text-align:left">存在规模、计算层级、层级轴中证据过关的记录，与综合量级并列，互不推出（衡天 1.7）</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td><td style="text-align:left">已确认：文本直接展示了该表现</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">下限：只能确认至少如此</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-inferred">〔推〕</span></td><td style="text-align:left">推定：由单步推理得出</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td><td style="text-align:left">缺：文本没有可用的表现</td></tr></tbody></table></div>
+<h2 id="sec-概述">概述<a class="heading-anchor" href="#sec-概述" data-target-id="sec-概述" title="复制本节锚点链接">#</a></h2>
+<p>《龙符》的世界观有一处平实交代的无限：第860章旁白说明天地宇宙以天界为中心，外有时空乱流，最外层包裹着混沌，"天界是有限的，时空乱流也是有限的，但混沌是真正无限的。"天界崩溃后，整个混沌并入人间界，人间界后来演化为多元宇宙。这一段过衡天 8.1，世界规模记论外门槛。</p>
+<p>古尘沙的问题出在第二步：作品给了他「万物缔造者」的名分和一连串宣称，但他对这个无限整体实际做到的，是以命运长河、寿命法则约束其中全部众生，属于「域」；实际展示的破坏与掌控都落在单个或若干个宇宙上。作品后期的宇宙分级（微型……超级巨无霸、超级无量无尽、不可思议、非有无）、天道分级与不朽层级都是命名阶梯，"无限""无量无尽"在其中是等级名；无不朽之上的强弱以寿命计，数到万亿、十兆，并且按加法合并。所以古尘沙的综合量级落在强宇宙级，世界的无限只体现在他「域」的影响范围上。</p>
+<h2 id="sec-一-定级方法">一、定级方法<a class="heading-anchor" href="#sec-一-定级方法" data-target-id="sec-一-定级方法" title="复制本节锚点链接">#</a></h2>
+<ul><li><strong>阅读范围</strong>：全文检索（「无限」「无穷」「无尽」「混沌」「天界」「人间界」「多元宇宙」「新世界」「天道」「不朽」「非有无」「寿命」及宇宙分级名称等），精读第860—868、920—937、980—1003、1019—1033、1056—1110、1137—1151章与检索命中的设定段落。</li><li><strong>世界观推定角色量级</strong>：先确认世界多大，再确认古尘沙对它的整体做了什么（衡天 8.1 界线 3，守则「林飞」判例）。</li><li><strong>证伪核对</strong>：按 5.6（2026-10-30 修订）先核对同一对象、同一意义、总体还是部分，再看信号是否成立。</li></ul>
+<h2 id="sec-二-世界观">二、世界观<a class="heading-anchor" href="#sec-二-世界观" data-target-id="sec-二-世界观" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-结构与规模">结构与规模<a class="heading-anchor" href="#sec-结构与规模" data-target-id="sec-结构与规模" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">层级</th><th style="text-align:left">原文</th><th style="text-align:left">规模记录</th></tr></thead><tbody><tr><td style="text-align:left">微尘、小千、中千世界</td><td style="text-align:left">"一千个微尘世界相当于一个小千世界，一千个小千世界才相当于一个中千世界。"（第529章）</td><td style="text-align:left">有限</td></tr><tr><td style="text-align:left">大千世界</td><td style="text-align:left">混沌爆炸所生；"哪怕是再多的大千世界，再多的天元境界，也不能够和天界境界媲美"（第979章）</td><td style="text-align:left">有限（小于天界）</td></tr><tr><td style="text-align:left">天界（无尽大陆）</td><td style="text-align:left">"天界是有限的，时空乱流也是有限的，但混沌是真正无限的。"（第860章）</td><td style="text-align:left">有限；名称中的「无尽」是名号</td></tr><tr><td style="text-align:left">时空乱流</td><td style="text-align:left">同上；"所以时空乱流在扩大，每时每刻都在膨胀"（第860章）</td><td style="text-align:left">有限，膨胀中</td></tr><tr><td style="text-align:left">混沌</td><td style="text-align:left">同上；"混沌元力本身就蕴含无穷无尽的物质"（第449章）</td><td style="text-align:left">外·门（ℵ₀）<span class="ev-badge ev-lower">〔下〕</span>（8.1，见下）</td></tr><tr><td style="text-align:left">人间界（第935章起）</td><td style="text-align:left">"为什么人间界比起天界要大得多，那是因为混沌融入了其中。""而现在整个混沌都融入了人间界，那人间界到底有多么巨大？"（第936章旁白）</td><td style="text-align:left">含整个混沌 → 外·门<span class="ev-badge ev-lower">〔下〕</span></td></tr><tr><td style="text-align:left">多元宇宙</td><td style="text-align:left">"后来天界毁灭，才形成了人间界，逐渐成了多元宇宙。"（第1119章）</td><td style="text-align:left">由人间界演化而来，按延续记 外·门<span class="ev-badge ev-lower">〔下〕</span>；所含宇宙的个数有限（第1151章，见 5.6 核对）</td></tr><tr><td style="text-align:left">宇宙分级</td><td style="text-align:left">"微型宇宙，小型宇宙，中型宇宙，大型宇宙，超大型宇宙，超级巨无霸宇宙，超级无限无尽无边无际宇宙，不可思议宇宙"，其上为"非有无宇宙"（第1151章）</td><td style="text-align:left">命名阶梯（衡天 5.3），不是规模证据</td></tr></tbody></table></div>
+<p>第653章旁白曾称无尽大陆为"天地宇宙，诸多次元，无穷空间的唯一"；第860章在交代整体结构时明言"天界是有限的"，后文也一贯把天界当作有限的、可以崩碎和比较的对象，按第860章记有限。</p>
+<h3 id="sec-8-1-审查-混沌">8.1 审查：混沌<a class="heading-anchor" href="#sec-8-1-审查-混沌" data-target-id="sec-8-1-审查-混沌" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">条件</th><th style="text-align:left">情况</th><th style="text-align:left">结果</th></tr></thead><tbody><tr><td style="text-align:left">来源</td><td style="text-align:left">第860章旁白，交代"整个天地宇宙"的形态</td><td style="text-align:left">通过</td></tr><tr><td style="text-align:left">指明对象</td><td style="text-align:left">包裹时空乱流的混沌本体：其中充满混沌元力，"四外茫茫"，不停爆炸生出小千、中千、大千世界——物质分布于其中的无限空间（衡天 0.18）</td><td style="text-align:left">通过</td></tr><tr><td style="text-align:left">字面用法</td><td style="text-align:left">语境是交代世界结构，与"天界是有限的，时空乱流也是有限的"并列对照；全书写到混沌一贯是无边无际</td><td style="text-align:left">通过</td></tr><tr><td style="text-align:left">不被推翻</td><td style="text-align:left">见下方 5.6 核对，各信号均不成立</td><td style="text-align:left">通过</td></tr></tbody></table></div>
+<p>四条通过，混沌记论外门槛 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>；按 8.1 界线 1，设定陈述只到门槛。人间界在第936章并入"整个混沌"，旁白明写，按包含关系记 ℵ₀<span class="ev-badge ev-lower">〔下〕</span>。</p>
+<h3 id="sec-5-6-证伪核对">5.6 证伪核对<a class="heading-anchor" href="#sec-5-6-证伪核对" data-target-id="sec-5-6-证伪核对" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">信号</th><th style="text-align:left">文本</th><th style="text-align:left">核对</th><th style="text-align:left">结果</th></tr></thead><tbody><tr><td style="text-align:left">完成态检验（混沌）</td><td style="text-align:left">"混沌是真正无限的"之后紧接"所以时空乱流在扩大，每时每刻都在膨胀"（第860章）</td><td style="text-align:left">同一对象：在扩大的是有限的时空乱流，混沌是已达到的状态</td><td style="text-align:left">不成立</td></tr><tr><td style="text-align:left">能量枯竭（混沌）</td><td style="text-align:left">"混沌也变得稀薄起来，混沌元力被一股大不可量的力量吸收进入了未知时空之中，或者说混沌在产生某种塌陷和浓缩"（第921章）；"因为混沌都已经没有了"（第935章）</td><td style="text-align:left">总体还是部分：混沌被吸收并入人间界，"整个混沌都融入了人间界"（第936章），是总量转移，不是耗尽；第935章"没有了"指修士无法再从外界摄取混沌元力</td><td style="text-align:left">不成立</td></tr><tr><td style="text-align:left">有限算术结果（混沌、人间界）</td><td style="text-align:left">"大千世界和混沌比较起来，就等于是一个水泡和江河海洋相比"（第936章）；人间界"比起天界要大得多"</td><td style="text-align:left">比喻没有给出有限比值；天界本为有限，无限对象大于有限对象不构成冲突</td><td style="text-align:left">不成立</td></tr><tr><td style="text-align:left">有限增量（后期多元宇宙）</td><td style="text-align:left">"又是一个亿年，多元宇宙越来越大，比起当初昊玄死的时候，更是扩大了数百倍，因为无数的高手出现了，他们出现之后，缔造自己的宇宙。"（第1151章）</td><td style="text-align:left">同一意义：增长按宇宙个数解释；同一对象：同章"多元宇宙都已经不是原来的宇宙"</td><td style="text-align:left">对「宇宙个数」成立：多元宇宙中的宇宙是有限多个；对人间界的空间规模不成立</td></tr><tr><td style="text-align:left">算术组合（寿命刻度）</td><td style="text-align:left">周钦一方五人各九千余亿寿命，"我们现在五人联手，也杀不死一尊万亿级别的存在"，"除非是我们的力量合一，我们的修为，才会立刻突破万亿境界，甚至是数万亿之多都不稀奇"（第1143章）</td><td style="text-align:left">同一层级的个体合并，按有限倍数达到更高一档；验算 5 × 9000 亿 = 4.5 万亿，与"数万亿"吻合</td><td style="text-align:left">成立：无不朽之上的寿命档是有限刻度</td></tr></tbody></table></div>
+<h3 id="sec-后期的命名阶梯">后期的命名阶梯<a class="heading-anchor" href="#sec-后期的命名阶梯" data-target-id="sec-后期的命名阶梯" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>宇宙分级</strong>：第1060章古尘沙"按照形体，给宇宙进行定位"，新世界被定为"超级无量无尽宇宙"，理由是"因为理论上来说，在新世界之中，是可以诞生出来无不朽境界的高手，而且不止一个"——等级名按产出能力来定，不是在交代空间无限。第1098章各级宇宙按能诞生的天道境界人数划分（"一般来说，微型宇宙只能够诞生出来一个天道境界的人物"，直到超级巨无霸宇宙"数百万，乃至于数千万"）；第1145章"那小一级的无限无尽无边无际宇宙更是有了数千个之多"，其上还有不可思议、非有无宇宙。第1103章"新世界的规模很大，也是无穷无尽"重复的是这个等级名，8.1「字面用法」不通过。</li><li><strong>天道分级</strong>：第1064章"分为微天道，小天道，中天道，大天道，巨天道，超级巨无霸天道，和宇宙的划分一样"，同属命名。</li><li><strong>不朽层级</strong>：第一至第十层，无不朽内分"开始是无，随后就是无有之境界，然后就是非无之境界，随后是非有之境，然后就是非非无，其次就是非非有，最后就是非有无之境界"（第1094章）；更高层只出现在古尘沙的话里："不光有十一层，还有十二层，甚至十三层，不过那个时候，究竟是怎么一回事，我也不清楚"（第1109章）。第十层的描述"存在的是他，不存在的也是他，既然不是存在，也不是非存在的也是他"（第1010章）是关系与否定式的表述（衡天 8.4），不携带规模。</li><li><strong>寿命刻度</strong>："无不朽境界，寿命就是十亿"（第1145章），其上百亿、千亿、万亿、十兆（第1147章）；按上表的算术组合，属有限刻度。</li></ul>
+<h2 id="sec-三-关键事件">三、关键事件<a class="heading-anchor" href="#sec-三-关键事件" data-target-id="sec-三-关键事件" title="复制本节锚点链接">#</a></h2>
+<ol><li><strong>混沌（第860—868章）</strong>：古尘沙入混沌如"闲庭信步"，"这混沌不过也就是个大一点的沼泽而已"，"以他为中心，所有的混沌元力都纷纷沉降下去，诞生出来了无穷无尽的世界"；于混沌中突破天尊，"整个混沌似乎都是猛烈一震，然后波及到了时空乱流之中，最后波及到了无穷世界"（第868章）。</li><li><strong>天界崩溃、永界与人间界（第920—936章）</strong>：天道启动自毁，混沌塌陷、被吸走；古尘沙将神州、四荒与天界许多大陆化为永界，"在永界诞生的刹那，整个本来残破不堪的天界陡然爆炸，无数的大陆碎片散向四处，最后被一个无形的天道旋涡全部吸收了进去"，古尘沙当场判明"这是天帝率领天庭众人在凝聚成根基"（第935章）。</li><li><strong>改造人间界、取代天道（第980—993章）</strong>：古尘沙凝出一条包含大千世界、法宝与"无穷无尽的混沌之气"的长河，"随手一抛，这条长河就降落下来，落入了人间界的大地之中"（第980章）；"而古尘沙现在就代替了天道，清理世间因果缘分"，缔造新的命运长河（第985—986章）；命运长河"就在他的手掌之中"，"所有生灵世界虚空时间乃至于一切的一切都在长河的笼罩之下"（第993章）。</li><li><strong>送回千年前（第1003章）</strong>：逆祖、命祖二人重生于千年之前后回到现时，"是古尘沙真的把他们送到了过去的时代"。</li><li><strong>赵江山（第1019章）</strong>：天道境的赵江山手中"似乎有一个大宇宙出现"，"迅速扩大，把一切时空都覆盖"；古尘沙一个"变"字，"顿时全部的大宇宙立刻消失了"，赵江山"似乎他在刹那之间，变成了普通人"，随后被变成牛。</li><li><strong>宇宙一掌、万古大陆与无无先生（第1024、1029章）</strong>：天帝与古华沙缔造的宇宙被「可怕东西」占据，古尘沙巨掌"狠狠拍入了宇宙中"，"彻底炸开"（第1024章，第1026章旁白追述"古尘沙剿灭了这宇宙"）；第1029章伸手收走并封印万古大陆宇宙，随后化身"如恒沙一般数目的宇宙"撑爆无无先生。</li><li><strong>新世界（第1031—1033章）</strong>：核心成员以心灵之力缔造一个新宇宙，"随后他把自己的力量也注入了这个新宇宙之中"；第1033章新宇宙诞生，此后成为不停喷吐宇宙的新世界，"新世界虽然是古尘沙所缔造，可随着里面的生灵越来越多……导致新世界也不是绝对掌控在古尘沙手中"（第1093章）。</li><li><strong>无人永生（第1108—1109章、第1149章）</strong>：古尘沙手上的线条"渗透进入了无数的虚空之中，所有宇宙，哪怕是新世界，旧世界，非新旧世界，都逃脱不了被这线条笼罩的命运"，众生听到"多元宇宙，无人永生，天地之间，一切种种，为寿所困"；"一股法则的力量，就笼罩了整个多元宇宙，每一个生灵的心中"。亿年后应众生之愿"把那虚拟面板给直接取消了"。</li><li><strong>终局（第1147—1151章）</strong>：集众生意志的白衣少年被一掌击碎；第一个练成非有无不朽的昊玄被一抓虚化、融入心灵网络；此后金袍人、无上大帝、通天彻地者相继挑战，均被炼成金丹、大印、大旗；"尘沙，这是你炼化的一千零一尊主角了"。</li></ol>
+<h2 id="sec-四-分维度分析">四、分维度分析<a class="heading-anchor" href="#sec-四-分维度分析" data-target-id="sec-四-分维度分析" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-世界观推定-第二步">世界观推定：第二步<a class="heading-anchor" href="#sec-世界观推定-第二步" data-target-id="sec-世界观推定-第二步" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">步骤</th><th style="text-align:left">内容</th><th style="text-align:left">结果</th></tr></thead><tbody><tr><td style="text-align:left">一、世界规模</td><td style="text-align:left">混沌、人间界过 8.1；多元宇宙由人间界演化而来</td><td style="text-align:left">外·门（ℵ₀）<span class="ev-badge ev-lower">〔下〕</span></td></tr><tr><td style="text-align:left">二、对整体的破坏</td><td style="text-align:left">没有作用于整个混沌、人间界或多元宇宙的破坏；自称"要以整个天地宇宙，万界虚空为代价"才能镇压可怕东西（第1032章），是条件句，记潜力</td><td style="text-align:left">不成立</td></tr><tr><td style="text-align:left">二、对整体的掌控或创造</td><td style="text-align:left">人间界由天帝与天道旋涡凝聚（第935章）；无限的部分来自并入的混沌。古尘沙此后以长河注入、命运长河、无龙心法的传播改造并扩大人间界，历时千年，且大量出自他人之手（"这千年岁月，就是古尘沙缔造人间界，扩大人间界的一个过程"，第1022章爱祖语）</td><td style="text-align:left">不成立（需时，归因分散）</td></tr><tr><td style="text-align:left">二、对整体的影响</td><td style="text-align:left">命运长河、寿命法则笼罩全人间界、全多元宇宙的众生</td><td style="text-align:left">成立，记入「域」</td></tr></tbody></table></div>
+<p>两步推定只在「域」成立：世界的无限确定了古尘沙影响范围的规模，不确定他的破坏或掌控规模（衡天 1.7.2、8.1 界线 3）。</p>
+<h3 id="sec-破与控">破与控<a class="heading-anchor" href="#sec-破与控" data-target-id="sec-破与控" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>主档：第1029章，控（创造）宇△（元·多）<span class="ev-badge ev-confirmed">〔实〕</span>。</strong> "他的身躯化为了无数的宇宙"，"如恒沙一般数目的宇宙都在刹那之间，进入了无无先生的体内"：一次、同时出现，数目只以"如恒沙一般"形容，按衡天 6.5 取能确认的最小数目 2；宇宙大小未写明，按标准宇宙计（6.3）。这些宇宙内部没有展示，"完整"（6.1）按作品称谓认定，这一步的风险由保底承担。</li><li><strong>保底：同章，控宇○<span class="ev-badge ev-confirmed">〔实〕</span>。</strong> 万古大陆是"一个巨大的宇宙，无数空间，山河大地海洋星球日月宗门帝国"，古尘沙一抓收至掌上，缩成鸡蛋大小并封印：物质与范围本身同时受控，满足 0.11；宇宙随后被封在其中的无心先生摧毁，那一部分不算古尘沙的破坏。</li><li><strong>新世界</strong>：初生时是一个"日月星辰"俱全的宇宙，由数百名核心成员共同缔造、古尘沙注入力量；此后的扩张出自新世界众生（第1093章），按 0.17 不计入古尘沙。记控宇○<span class="ev-badge ev-confirmed">〔实〕</span>，与保底同档。</li><li><strong>其他破坏</strong>：第1024章一掌剿灭失控宇宙、第1019章消去赵江山的"大宇宙"，两处宇宙的规模都没有写明（前者已缩小，后者"把一切时空都覆盖"属渲染），不另抬档。</li><li><strong>击败强者</strong>：无无先生、白衣少年、昊玄等都没有已确认的防御数值，按 1.4 不以其为下限；昊玄"一抓，似乎整个多元宇宙在缩小，无数恒沙数目的宇宙都在的手掌之中"（第1151章）是昊玄的表现，且带"似乎"，按 0.20 第三条第 3 项不随交手传递给古尘沙。</li><li><strong>场地不封顶</strong>：古尘沙多次表示怕毁坏宇宙而"投鼠忌器"（第1029、1032章），按 0.20 只作不降级的理由，不给出数值。</li></ul>
+<h3 id="sec-域-影响">域（影响）<a class="heading-anchor" href="#sec-域-影响" data-target-id="sec-域-影响" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">能力</th><th style="text-align:left">内容</th><th style="text-align:left">影响范围</th><th style="text-align:left">可影响强度上限</th><th style="text-align:left">证据</th></tr></thead><tbody><tr><td style="text-align:left">命运长河</td><td style="text-align:left">取代天道清理因果，"掌握世界命运，掌握时空命运，掌握天体命运，掌握万物命运"（第985章）</td><td style="text-align:left">全人间界（外·门<span class="ev-badge ev-lower">〔下〕</span>）；人间界演化为多元宇宙后重建于全多元宇宙（第1097章自述），第1097章撤去</td><td style="text-align:left">天帝、古华沙："哪怕是老四和天帝都摆脱不了束缚"（第986章）</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">寿命法则</td><td style="text-align:left">为每个生灵设定寿命、显示于识海中的虚拟面板（第1108—1109章），后一念撤销（第1149章）</td><td style="text-align:left">全多元宇宙每一个生灵（按延续记 外·门<span class="ev-badge ev-lower">〔下〕</span>）</td><td style="text-align:left">无不朽：张玄功、唐川"现在寿命只有区区几十亿年"（第1109章）；万亿寿命者同受约束（第1147章）</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">送回过去</td><td style="text-align:left">两位天界境界的祖重生于千年之前后返回（第1003章）</td><td style="text-align:left">两人</td><td style="text-align:left">天界境界</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">剥夺修为</td><td style="text-align:left">一字令天道境赵江山的力量全失（第1019章）</td><td style="text-align:left">一人</td><td style="text-align:left">天道境界</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">炼化</td><td style="text-align:left">把挑战者炼成金丹、大印、大旗、长剑（第1151章）</td><td style="text-align:left">单体</td><td style="text-align:left">非有无不朽及以上的挑战者（境界名，无数值）</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr></tbody></table></div>
+<p>寿命法则、命运长河只改写一类要素，按 0.11 不构成整体掌控，不推出破坏。</p>
+<h3 id="sec-性-特性">性（特性）<a class="heading-anchor" href="#sec-性-特性" data-target-id="sec-性-特性" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">特性</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">无不朽</td><td style="text-align:left">"到达了这个境界，只能够被封印，根本无法被消灭"（第1025章）</td></tr><tr><td style="text-align:left">全知全能</td><td style="text-align:left">"哪怕是古尘沙，可以做到全知全能，但他努力的创造各种机会，使得自己不再全知全能"（第1144章旁白）；第1029章亦自言"我开始失算了"，按可自行放弃理解</td></tr><tr><td style="text-align:left">复现</td><td style="text-align:left">被白衣少年一掌"似乎被手掌彻底消灭了"，随即"出现在了白衣少年的背后"（第1148章）</td></tr><tr><td style="text-align:left">境界自定</td><td style="text-align:left">"境界，不过就是一个符号，一个衡量实力高低的名字而已，而所有的境界，都是我来定的。"（第1151章）关系性表述，不进规模（8.4）</td></tr></tbody></table></div>
+<h3 id="sec-层级轴-衡天-7-9">层级轴（衡天 7.9）<a class="heading-anchor" href="#sec-层级轴-衡天-7-9" data-target-id="sec-层级轴-衡天-7-9" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>天外之天（第993章）</strong>："这个空间无限巨大，无限广阔，似乎是一切的源头"，"因为此地似乎没有了大小概念"——带"似乎"，并自我否定大小，8.1 不通过；古尘沙抵达而无法剿灭其中的存在，按 7.2 记结构标注（丙类倾向），倍率<span class="ev-badge ev-missing">〔缺〕</span>。</li><li><strong>九十九层天与天外天（第964章）</strong>："而在九十九层天之上，居然还有无穷无尽的天外天"，天帝自述"天外有天，天外之天以外还是有天"——永不完成的递进，没有结构（7.6），且属天帝，不涉及古尘沙。</li></ul>
+<h2 id="sec-五-综合定级">五、综合定级<a class="heading-anchor" href="#sec-五-综合定级" data-target-id="sec-五-综合定级" title="复制本节锚点链接">#</a></h2>
+<p>按衡天 1.3，主档取破坏、整体掌控两维中证据为<span class="ev-badge ev-confirmed">〔实〕</span>或<span class="ev-badge ev-lower">〔下〕</span>的最高者：</p>
+<ul><li>控：宇△（元·多，数目未定）<span class="ev-badge ev-confirmed">〔实〕</span>——化身恒沙数目的宇宙（第1029章）；</li><li>控：宇○<span class="ev-badge ev-confirmed">〔实〕</span>——封印万古大陆宇宙（第1029章，保底）；</li><li>域：命运、寿命法则 · 影响范围 外·门<span class="ev-badge ev-lower">〔下〕</span>（不进主档）。</li></ul>
+<p><strong>综合量级为 ⊙宇△（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span>· 元·多（数目未定，按 2 计）；保底量级为 ⊙宇○（掌控式）<span class="ev-badge ev-confirmed">〔实〕</span>。</strong></p>
+<h3 id="sec-为什么不更高">为什么不更高<a class="heading-anchor" href="#sec-为什么不更高" data-target-id="sec-为什么不更高" title="复制本节锚点链接">#</a></h3>
+<ul><li>世界的无限（混沌、人间界）成立，但古尘沙对这一整体只有「域」；人间界的形成不是他的作为，此后的「缔造」是历时千年、众人参与的改造与扩大。</li><li>"万物缔造者""一念之间，就让多元宇宙进化"等出自旁白追述或本人宣称，按 0.14.1、0.14.2 记设定宣称或潜力。</li><li>宇宙分级、天道分级、不朽层级是命名阶梯（5.3）；寿命档按加法合并（5.6 算术组合），是有限刻度；"非有无"的描述是关系与否定式（8.4）。</li><li>击败练成非有无不朽的昊玄与集众生意志的白衣少年，不继承对方的表现（0.20、1.4）。</li></ul>
+<h3 id="sec-对战判定">对战判定<a class="heading-anchor" href="#sec-对战判定" data-target-id="sec-对战判定" title="复制本节锚点链接">#</a></h3>
+<p>按衡天 1.7.3：</p>
+<ul><li><strong>本作内部</strong>：古尘沙终局居于顶点，此后亿万年的挑战者全被炼化，作品以"永远无敌"收束。</li><li><strong>跨作品</strong>：默认比较综合量级（宇△）。古尘沙的命运长河、寿命法则覆盖无限的世界，但属规则型影响，只有对方同样受这套机制约束时才能用于比较；否则写「不可判定」。</li></ul>
+<h2 id="sec-存疑与作者矛盾">存疑与作者矛盾<a class="heading-anchor" href="#sec-存疑与作者矛盾" data-target-id="sec-存疑与作者矛盾" title="复制本节锚点链接">#</a></h2>
+<ol><li><strong>人间界的归因</strong>：第935章的直接场景中，人间界由天道旋涡吸收天界碎片凝聚，古尘沙当场判明是"天帝率领天庭众人在凝聚成根基"；第1056、1068章旁白追述古尘沙"缔造了人间界""把无尽大陆天界化为了现在的人间界"。按 0.14.2 以更具体、更接近事件的第935章为准；追述可理解为此后千年的改造与扩大（第980、1022章），需时且大量出自他人，不计为一次掌控。</li><li><strong>第1068章的比较</strong>："现在的多元宇宙之中，随随便便一个宇宙，都比当初的人间界要大得多"。若照字面，单个宇宙不小于含整个混沌的人间界，即每个宇宙都在外·门以上，古尘沙封印、创造的宇宙也随之为外·门。这只是比较，不是对单个宇宙规模的平实交代；第1029章的宇宙早于这句话，套用要再接一步，按 1.3 第 2 条不进主档，记外·门<span class="ev-badge ev-inferred">〔推〕</span>。</li><li><strong>后期多元宇宙</strong>：第1150章老祖转述"相传在极其久远而古老的年代，整个多元宇宙只是一个小小的世界那么大"，属传说，按 0.14.2 不采信；第1151章"扩大了数百倍"按宇宙个数解释，只说明宇宙个数有限。</li><li><strong>恒沙数目的宇宙</strong>：没有展示内部内容，按作品称谓认定为完整宇宙；不认定时主档退回保底宇○。</li><li><strong>新世界的缔造者</strong>：第1031—1033章为核心成员共同缔造、古尘沙注入力量，第1093、1095章旁白归于古尘沙；两种归因都只到一个宇宙，不影响档位。</li><li><strong>全知全能与失算</strong>：第1144章旁白称其可以全知全能，第1029章自言失算；按其主动放弃全知理解，只记特性。</li></ol>
+<h2 id="sec-参考资料">参考资料<a class="heading-anchor" href="#sec-参考资料" data-target-id="sec-参考资料" title="复制本节锚点链接">#</a></h2>
+<ul><li><a href="https://m.maigoo.com/citiao/157407.html" target="_blank" rel="noopener">买购网 · 《龙符》词条（连载平台、创作时间）</a></li><li>《衡天⊙多维战力量级体系（第五版）》《衡天工作守则与判例》</li></ul>
+              </div>
+            </article>
+
+            <aside class="reader-rail" role="group" aria-label="阅读显示设置">
+              <span class="reader-rail-label mono" aria-hidden="true">字号</span>
+              <div class="reader-rail-btns">
+                <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+                <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+                <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
+              </div>
+              <span class="reader-rail-readout mono" id="doc-font-readout">15.5px</span>
+            </aside>
+          </div>
+
+
+          <div class="pager-grid">
+            <a class="pager-card" href="futan.html">
+                  <span class="pager-dir">← 上一位角色（更低量级）</span>
+                  <span class="pager-title">弗坦</span>
+                  <span class="pager-sub mono">⊙ 宇△ · 首字母 F</span>
+                </a>
+            <a class="pager-card next" href="tongguan.html">
+                  <span class="pager-dir">下一位角色（更高量级） →</span>
+                  <span class="pager-title">三世铜棺之主</span>
+                  <span class="pager-sub mono">⊙ 宇◆ · 首字母 T</span>
+                </a>
+          </div>
+        </div>
+
+  </main>
+
+  <div class="floating-dock" aria-label="快捷工具">
+    <button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录" aria-label="展开章节目录"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg></button>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
+      <div class="search-modal-head">
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第六版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="../search.html">进入独立搜索页 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 第六版基准</span>
+      </div>
+      <div class="footer-links">
+        <a href="../tiers.html">量级天梯</a>
+        <a href="../characters.html">角色档案</a>
+        <a href="../rules.html">衡天体系全文</a>
+        <a href="../materials.html">材质能量库</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>window.__PW_INDEX_SRC__ = "../static/js/search-index.js";</script>
+  <script src="../static/js/theme.js"></script>
+  <script src="../static/js/app.js"></script>
+  <script src="../static/js/pwa.js"></script>
+
+  <script src="../static/js/chrome.js"></script>
+  <script src="../static/js/editions.js"></script>
+</body>
+</html>

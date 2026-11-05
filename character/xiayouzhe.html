@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="char-xiayouzhe" data-boot-bg-light="#edf2f8" data-boot-bg-dark="#050b14">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" id="theme-color-meta" content="#edf2f8">
+  <meta name="color-scheme" content="light dark">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../static/img/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="衡天 Wiki">
+  <meta name="application-name" content="衡天 Wiki">
+  <title>下游者 · 角色战力档案 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第六版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <!-- 首帧底色：这段内联 CSS 在 <head> 里、所有外链样式表之前生效，浏览器在字体与
+       样式表全部到达前就用它画整个画布，杜绝冷启动白屏。颜色由生成器按页面写入，
+       必须等于该页 CSS 最终生效的 --bg-canvas；用 :where() 让优先级为 0，
+       外部 CSS 到达后即可无缝接管，不会干扰任何最终样式。切主题只改 data-theme，
+       属性选择器自动换色，JS 不再写 inline 底色。 -->
+  <style>
+    :where(html), :where(html) > :where(body) { background-color: #edf2f8; }
+    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #050b14; }
+  </style>
+  <script>
+    (function() {
+      var root = document.documentElement;
+      var t = null;
+      try { t = localStorage.getItem('pw_theme_v2'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        try {
+          var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          t = dark ? 'dark' : 'light';
+          localStorage.setItem('pw_theme_v2', t);
+        } catch (e) { t = 'light'; }
+      }
+      root.setAttribute('data-theme', t);
+      root.classList.add('js');
+      /* 首帧底色已由 <head> 内联 <style> 按 data-theme 画好，这里只同步状态栏颜色。
+         不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
+         data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
+      var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
+        || (t === 'dark' ? '#080d11' : '#f1f2ed');
+      var mc = document.getElementById('theme-color-meta');
+      if (mc) mc.setAttribute('content', canvas);
+    })();
+  </script>
+  <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" as="image" href="../static/img/characters/xiayouzhe/xiayouzhe-cosmos.jpg">
+  <link rel="preload" as="image" href="../static/img/characters/xiayouzhe/xiayouzhe-portrait.jpg">
+  <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
+       子集各约 99 KB，原本与站点 CSS 一起阻塞首次绘制，是冷启动白屏主因。
+       font-display:swap 已保证文字始终先用系统字体可见、字体到位后平滑替换，
+       不会出现无样式内容闪现；noscript 环境仍按普通样式表加载。 -->
+  <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="../static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css">
+    <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css">
+  </noscript>
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="../static/css/editorial.css">
+  <link rel="stylesheet" href="../static/css/experience.css">
+  <link rel="stylesheet" href="../static/css/editions.css">
+  <link rel="stylesheet" href="../static/css/polish.css">
+  <link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body class="site-characters character-site character-xiayouzhe">
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
+        <a class="brand-link" href="../index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+        </a>
+      </div>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link" href="../index.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></span><span>首页</span></a>
+        <a class="nav-link nav-cat" href="../tiers.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg></span><span>量级</span></a>
+        <a class="nav-link nav-cat active" href="../characters.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg></span><span>角色</span></a>
+        <a class="nav-link nav-doc" href="../rules.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg></span><span>规则</span></a>
+        <a class="nav-link nav-doc" href="../materials.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg></span><span>材质</span></a>
+      </nav>
+
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="search-btn-label">检索…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题" aria-pressed="false">
+          <span class="pw-theme-icon pw-icon-sun"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
+          <span class="pw-theme-icon pw-icon-moon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="../index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">查阅</div>
+        <a class="drawer-card-link" href="../tiers.html"><span class="drawer-card-title"><span>量级天梯</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档 · 从昆虫到论天</span></a>
+        <a class="drawer-card-link active" href="../characters.html"><span class="drawer-card-title"><span>角色档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">定级结论与完整证据原文</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">规则与资料</div>
+        <a class="drawer-doc-link" href="../rules.html"><span>衡天体系 · 第六版</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../materials.html"><span>材质与能量 · 第二版</span><span>→</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        <a class="drawer-doc-link" href="../index.html"><span>返回首页总览</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../search.html"><span>全站即时检索</span><span>→</span></a>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {
+        if (window.__PW_SYNC_LOCK__) { window.__PW_SYNC_LOCK__(); return; }
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }
+      function closeAll() {
+        if (window.__PW_CLOSE_ALL__) { window.__PW_CLOSE_ALL__(); return; }
+        drawer.classList.remove('open');
+        sync();
+      }
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      });
+      if (closeBtn) { closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }
+      if (backdrop) { backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {
+        links[j].addEventListener('click', function() { drawer.classList.remove('open'); sync(); });
+      }
+      window.addEventListener('pageshow', function() { drawer.classList.remove('open'); sync(); });
+    })();
+  </script>
+
+  <main>
+
+        <div class="container detail-stack character-detail character-xiayouzhe">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>下游者</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header character-dossier theme-xiayouzhe">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img fade-on-load" src="../static/img/characters/xiayouzhe/xiayouzhe-cosmos.jpg" alt="">
+            </div>
+
+            <div class="dossier-masthead">
+              <span class="dossier-kicker mono">DOWNSTREAMERS · MANIFOLD: TIME</span>
+              <span class="dossier-register mono">UNIVERSE STD · TRIGGERED VACUUM DECAY</span>
+            </div>
+
+            <div class="dossier-body has-portrait">
+              <div class="dossier-main-col">
+                <div class="char-tags">
+                  <span class="tag-pill accent">星团至宇宙阶</span>
+                  <span class="tag-pill">《流形：时间》（流形三部曲，斯蒂芬·巴克斯特）</span>
+                  <span class="tag-pill">综合量级 宇○（弱化：需时，触发式）〔下〕· 8.0×10⁷⁷ J</span><span class="tag-pill">保底量级 弱化弱恒星系〔实〕· 约 9.2×10⁴⁶ J</span><span class="tag-pill">控〔缺〕· 御、速〔缺〕· 算 有限〔推〕</span><span class="tag-pill">位格 —（无损计算基质无新增输入，思想终将穷尽）</span>
+                </div>
+
+                <div>
+                  <h1 class="page-title">下游者</h1>
+                  <div class="dossier-submeta"><span>形态：宇宙极远未来的后人类智慧 · 嵌入无损计算基质 · 经蓝孩子触发真空衰变</span><span>·</span><span>别称：Downstreamers / 时间之河下游的人类后裔</span><span>·</span><span>定级日期：2026-11-04</span></div>
+                </div>
+
+                <p class="page-desc">《流形三部曲》中宇宙极远未来的人类后裔，把自己嵌入无损计算基质后回溯改写过去。综合量级来自真空衰变——真真空泡以光速扩张、最终覆盖整个宇宙，落在标准宇宙级；这条主档带三个限定：弱化、需时、触发式。跨宇宙门户链与宇宙繁衍机制只记影响，不进主档，位格为 —。</p>
+
+                <div class="dossier-kpi-grid">
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">综合主档定级</div>
+                    <div class="kpi-value">
+                      <a class="kpi-tier-link mono" href="../tier/universe-std.html" title="查看所属主档规格页">
+                        <span>⊙ 宇○ · 标准宇宙（#79）</span>
+                        <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">保底量级</div>
+                    <div class="kpi-value">综合量级 ⊙宇○（弱化：需时，触发式）<span class="ev-badge ev-lower">〔下〕</span>——标准宇宙级：摧毁可观测宇宙（直径约 930 亿光年，8.0×10⁷⁷ J）；保底量级 ⊙弱化弱恒星系<span class="ev-badge ev-confirmed">〔实〕</span>——约 9.2×10⁴⁶ J（过渡带 A，覆盖直径约 2 天文单位）</div>
+                  </div>
+                </div>
+
+                <div class="dossier-actions-row"><a class="text-link" href="../rules.html#sec-4-9-宇宙级-宇-半球扩散-第二版重新分档">对照衡天规则原文 →</a></div>
+
+                <div class="full-writing-box">
+                  <div class="box-kicker">正式完整书写摘要</div>
+                  <div>下游者（《流形：时间》）综合量级 ⊙宇○（弱化：需时，触发式）<span class="ev-badge ev-lower">〔下〕</span>——标准宇宙级：摧毁可观测宇宙（直径约 930 亿光年，8.0×10⁷⁷ J）。来自下游者经蓝孩子触发的真空衰变：真真空泡以光速扩张，迈克尔说它「永远不会停止」，银河系十万年后消失，仙女座星系几百万年后消失，「最终」覆盖整个宇宙。「弱化」「需时」指这一规模要以光速扩张数百亿年才达到（0.17）；「触发式」指作用者只提供一次触发、破坏能量来自被破坏对象自身的真空相变（1.4）。主档依据为迈克尔（蓝孩子，计划执行者、知情）给出的扩张预期，带具体时间与对象，事件本身已发生<span class="ev-badge ev-confirmed">〔实〕</span>；归因依据为蓝孩子与门户都是下游者改变过去的产物、按其意志行动（8.3.2）。保底量级 ⊙弱化弱恒星系<span class="ev-badge ev-confirmed">〔实〕</span>——约 9.2×10⁴⁶ J（过渡带 A，覆盖直径约 2 天文单位）：只取文中实际展示到的部分，真真空泡宽到「16 光分钟」、两亿英里时，水星、金星、地球、月球与太阳都已被吞没。域记改写过去（本宇宙从极远未来到二十一世纪初的历史<span class="ev-badge ev-confirmed">〔实〕</span>）、跨宇宙门户链（数以百计的宇宙<span class="ev-badge ev-confirmed">〔实〕</span>）、宇宙繁衍机制（黑洞数目「超出」10¹⁸「许多个数量级」，每个黑洞孕育一个子宇宙，具体数目<span class="ev-badge ev-missing">〔缺〕</span>）；按 0.16 不推出破坏或掌控。算记有限<span class="ev-badge ev-inferred">〔推〕</span>：无损基质「没有新的输入」，终将穷尽一切可能的思想，说明状态数有限。位格 —：存在形式是无损计算基质，作品明说其思想终将穷尽，没有可记录的无限存在规模。风险：现实宇宙加速膨胀时以光速扩张的泡只能到达事件视界之内，按 4.9 约 1×10⁷⁷ J 落在宇▽；原文未写本作宇宙是否加速膨胀，按原文取宇○，这一风险单列。</div>
+                  <div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>位格 —：下游者的存在形式是无损计算基质，作品明说「没有新的输入」、终将穷尽一切可能的思想，没有可记录的无限存在规模；计算层级记有限<span class="ev-badge ev-inferred">〔推〕</span>。跨宇宙的门户链记入「域」的影响（数以百计的宇宙），按 0.16 不进主档；按 0.17 记弱化与需时，档位不变（宇○）。</span></div>
+                  <div class="box-subnote">证据链核验摘要：主档依据：迈克尔（蓝孩子，计划执行者、知情）给出的扩张预期，带具体时间与对象，事件本身已发生<span class="ev-badge ev-confirmed">〔实〕</span>；归因依据：蓝孩子与门户均为下游者改变过去的产物、按其意志行动（8.3.2）。若认定蓝孩子是自主第三方，真空衰变应记在蓝孩子名下，下游者只保留改写过去、门户链等影响；门户链的建造按情节概括采信、维护不采信。跨作品比较须写明主档是触发式破坏、不说明防御或直接输出能力</div>
+                </div>
+              </div>
+
+              <aside class="char-portrait-stage" aria-label="下游者">
+                <div class="char-portrait-canvas">
+                  <span class="portrait-index mono">宇○ / 标准宇宙 · 触发式</span>
+                  <img class="char-portrait-img fade-on-load" src="../static/img/characters/xiayouzhe/xiayouzhe-portrait.jpg" alt="下游者" width="1024" height="1536">
+                </div>
+
+              </aside>
+            </div>
+            <div class="dossier-fact-rail"><div class="dossier-fact"><span class="fact-label">综合量级</span><strong class="fact-value">宇○〔下〕</strong><span class="fact-note">弱化·需时·触发式 · 8.0×10⁷⁷ J · 光速扩张数百亿年</span></div><div class="dossier-fact"><span class="fact-label">保底量级</span><strong class="fact-value">弱化弱恒星系</strong><span class="fact-note">约 9.2×10⁴⁶ J · 已展示直径约 2 天文单位</span></div><div class="dossier-fact"><span class="fact-label">位格</span><strong class="fact-value">—</strong><span class="fact-note">无损计算基质 · 状态数有限<span class="ev-badge ev-inferred">〔推〕</span> · 跨宇宙门户链只记影响</span></div></div>
+          </section>
+
+          <div class="char-identity-fx" aria-hidden="true"></div>
+
+        <section class="char-info-panel" aria-label="量级信息图">
+          <div class="char-info-kicker">量级刻度 / TIER SCALE</div>
+          <div class="char-info-head">
+            <span class="char-info-main">⊙ 宇○<span class="char-info-code">〔主档〕</span></span>
+            <span class="char-info-note">综合量级 宇○（弱化：需时，触发式）〔下〕· 8.0×10⁷⁷ J · 保底量级 弱化弱恒星系〔实〕· 约 9.2×10⁴⁶ J · 控〔缺〕· 御、速〔缺〕· 算 有限〔推〕 · 位格 —（无损计算基质无新增输入，思想终将穷尽）</span>
+          </div>
+          <div class="char-scale">
+            <div class="char-scale-track">
+              <span class="char-scale-fill" style="--pos:81%"></span>
+              <i class="char-scale-mark" style="--pos:81%"></i>
+            </div>
+            <div class="char-scale-labels"><span style="left:28%">城</span><span style="left:33%">国</span><span style="left:53%">恒</span><span style="left:80%">宇</span></div>
+          </div>
+          <div class="char-dims"><div class="char-dim "><b>破</b><span>〔下〕</span></div><div class="char-dim is-missing"><b>控</b><span>〔缺〕</span></div><div class="char-dim "><b>域</b><span>〔实〕</span></div><div class="char-dim is-missing"><b>御</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>速</b><span>〔缺〕</span></div><div class="char-dim "><b>算</b><span>〔推〕</span></div><div class="char-dim "><b>性</b><span>无损计算基质中的</span></div></div>
+          <div class="char-facts"><div class="char-fact"><span class="char-fact-k">综合量级</span><span class="char-fact-v">宇○〔下〕</span></div><div class="char-fact"><span class="char-fact-k">保底量级</span><span class="char-fact-v">弱化弱恒星系</span></div><div class="char-fact"><span class="char-fact-k">位格</span><span class="char-fact-v">—</span></div></div>
+        </section>
+
+          <div class="doc-layout">
+            <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
+              <div class="toc-head">
+                <div class="toc-head-row">
+                  <span>档案章节目录</span>
+                  <span class="mono toc-count">23 节</span>
+                  <button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭章节目录">
+                    <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
+                </div>
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
+              </div>
+              <nav class="toc-list" id="toc-nav">
+                <a class="toc-item toc-lvl-2" href="#sec-作品信息">作品信息</a><a class="toc-item toc-lvl-2" href="#sec-角色信息">角色信息</a><a class="toc-item toc-lvl-2" href="#sec-量级栏">量级栏</a><a class="toc-item toc-lvl-3" href="#sec-量级栏用语说明">量级栏用语说明</a><a class="toc-item toc-lvl-2" href="#sec-概述">概述</a><a class="toc-item toc-lvl-2" href="#sec-一-定级方法">一、定级方法</a><a class="toc-item toc-lvl-2" href="#sec-二-世界观">二、世界观</a><a class="toc-item toc-lvl-3" href="#sec-流形">流形</a><a class="toc-item toc-lvl-3" href="#sec-宇宙的繁衍">宇宙的繁衍</a><a class="toc-item toc-lvl-2" href="#sec-三-关键事件">三、关键事件</a><a class="toc-item toc-lvl-3" href="#sec-真空衰变">真空衰变</a><a class="toc-item toc-lvl-3" href="#sec-门户链">门户链</a><a class="toc-item toc-lvl-2" href="#sec-四-分维度分析">四、分维度分析</a><a class="toc-item toc-lvl-3" href="#sec-破-破坏力">破（破坏力）</a><a class="toc-item toc-lvl-3" href="#sec-域-影响">域（影响）</a><a class="toc-item toc-lvl-3" href="#sec-算-计算层级">算（计算层级）</a><a class="toc-item toc-lvl-3" href="#sec-性-特性">性（特性）</a><a class="toc-item toc-lvl-2" href="#sec-五-与-起源-古圣的关系">五、与《起源》古圣的关系</a><a class="toc-item toc-lvl-2" href="#sec-六-综合定级">六、综合定级</a><a class="toc-item toc-lvl-3" href="#sec-为什么不更高">为什么不更高</a><a class="toc-item toc-lvl-3" href="#sec-对战判定">对战判定</a><a class="toc-item toc-lvl-2" href="#sec-存疑与作者矛盾">存疑与作者矛盾</a><a class="toc-item toc-lvl-2" href="#sec-参考资料">参考资料</a>
+              </nav>
+              <div class="toc-foot">
+                <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+                <a class="toc-foot-btn" href="../search.html">全站检索</a>
+              </div>
+            </aside>
+
+            <article class="doc-panel">
+              <div class="doc-toolbar">
+                <div class="doc-source-info">
+                  <span>定级档案全文</span>
+                  <span>·</span>
+                  <span>依据《衡天⊙ 多维战力量级体系（第五版）》</span>
+                </div>
+              </div>
+
+              <div class="markdown-body">
+                <h2 id="sec-作品信息">作品信息<a class="heading-anchor" href="#sec-作品信息" data-target-id="sec-作品信息" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">系列</td><td style="text-align:left">流形三部曲（Manifold Trilogy），另有相关短篇集一部</td></tr><tr><td style="text-align:left">作者</td><td style="text-align:left">斯蒂芬·巴克斯特（Stephen Baxter）</td></tr><tr><td style="text-align:left">各卷</td><td style="text-align:left">《流形：时间》（Manifold: Time），英国 Voyager（哈珀柯林斯）1999 年 8 月，美国 Del Rey 2000 年，2000 年阿瑟·克拉克奖提名；《流形：空间》（Manifold: Space），英国 Voyager 2000 年，美国 Del Rey 2001 年；《流形：起源》（Manifold: Origin），哈珀柯林斯 2001 年；短篇集《相空间》（Phase Space）</td></tr><tr><td style="text-align:left">各卷关系</td><td style="text-align:left">三部小说主题相关，发生在不同的现实中，主角都叫里德·马伦方（Reid Malenfant），但「不是同一个」马伦方；三部分别给费米悖论一个不同的答案：《时间》是宇宙中只有人类，《空间》是生命普遍存在却不断被宇宙灾难抹去，《起源》是智慧生命只在地球出现、却分散在无数平行宇宙之中</td></tr><tr><td style="text-align:left">类型</td><td style="text-align:left">硬科幻，涉及末日论证（卡特灾难）、费米悖论、宇宙自然选择、真空衰变</td></tr></tbody></table></div>
+<h2 id="sec-角色信息">角色信息<a class="heading-anchor" href="#sec-角色信息" data-target-id="sec-角色信息" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">名称</td><td style="text-align:left">下游者（Downstreamers），即时间之河「下游」的人类后裔</td></tr><tr><td style="text-align:left">处境</td><td style="text-align:left">宇宙极远未来，质子衰变、物质消散之后，残存的智慧把自己嵌入一个「无损计算基质」（lossless computing substrate），可以无限延续，但没有新的输入，终将穷尽一切可能的思想</td></tr><tr><td style="text-align:left">动机</td><td style="text-align:left">其中一部分智慧认为宇宙不该走到这个结局，于是改变过去，重点是二十一世纪初</td></tr><tr><td style="text-align:left">改变过去的手段</td><td style="text-align:left">给马伦方的讯息；世界各地出生的超常儿童「蓝孩子」（Blue children，迈克尔、安娜等）；小行星克鲁伊斯内（3753 Cruithne）上的门户</td></tr><tr><td style="text-align:left">结局</td><td style="text-align:left">蓝孩子在月球上触发真空衰变，真真空泡以光速扩张，吞没太阳系并将席卷整个宇宙；衰变过程中形成的大量黑洞孕育新的子宇宙。马伦方经门户穿过一串宇宙，最终与下游者相遇</td></tr></tbody></table></div>
+<h2 id="sec-量级栏">量级栏<a class="heading-anchor" href="#sec-量级栏" data-target-id="sec-量级栏" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>⊙宇○（弱化：需时，触发式）<span class="ev-badge ev-lower">〔下〕</span></strong>——标准宇宙级：摧毁可观测宇宙（直径约 930 亿光年，8.0×10⁷⁷ J）。来自下游者经蓝孩子触发的真空衰变：真真空泡以光速扩张，迈克尔说它「永远不会停止」，银河系十万年后消失，仙女座星系几百万年后消失，「最终」覆盖整个宇宙。「弱化」「需时」指这一规模要以光速扩张数百亿年才达到（衡天 0.17）；「触发式」指破坏的能量来自假真空本身，下游者一方只负责触发</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left"><strong>⊙弱化弱恒星系<span class="ev-badge ev-confirmed">〔实〕</span></strong>——约 9.2×10⁴⁶ J（过渡带 A，覆盖直径约 2 天文单位）。只取文中实际展示到的部分：真真空泡宽到「16 光分钟」、两亿英里时，水星、金星、地球、月球与太阳都已被吞没</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">—（下游者的存在形式是无损计算基质，作品明说其思想终将穷尽，没有可记录的无限存在规模；跨宇宙的门户链记入影响）</td></tr><tr><td style="text-align:left">可信度</td><td style="text-align:left">主档依据：迈克尔（蓝孩子，计划的执行者，知情）给出的扩张预期，带具体时间与对象；事件本身已发生<span class="ev-badge ev-confirmed">〔实〕</span>。归因依据：蓝孩子与门户都是下游者改变过去的产物，按其意志行动（衡天 8.3.2，与天人大圣条目中类星龙的处理一致）</td></tr><tr><td style="text-align:left">破（破坏力）</td><td style="text-align:left">宇○（弱化：需时，触发式）<span class="ev-badge ev-lower">〔下〕</span>；已展示：直径约 2 天文单位的真真空泡<span class="ev-badge ev-confirmed">〔实〕</span>；月球先被夸克块坍缩为夸克物质再内爆碎裂<span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">域（影响）</td><td style="text-align:left">改写过去 · 影响范围：本宇宙从极远未来到二十一世纪初的历史<span class="ev-badge ev-confirmed">〔实〕</span>；跨宇宙门户链 · 影响范围：马伦方经门户穿过的数以百计的宇宙，直至这条宇宙链的最上游<span class="ev-badge ev-confirmed">〔实〕</span>；宇宙繁衍机制 · 真空衰变产生的黑洞数目「超出」本宇宙恒星与星系核所能形成的「区区十亿亿」（10¹⁸）「许多个数量级」，每个黑洞孕育一个子宇宙<span class="ev-badge ev-confirmed">〔实〕</span>，具体数目<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">算（计算层级）</td><td style="text-align:left">有限<span class="ev-badge ev-inferred">〔推〕</span>：无损基质「没有新的输入」，终将穷尽一切可能的思想，说明状态数有限</td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">无损计算基质中的长存；回溯因果、改变过去；跨宇宙门户的建造与维护；人类后裔</td></tr><tr><td style="text-align:left">横向位置</td><td style="text-align:left">蓝孩子是下游者改变过去的产物与执行者；与《起源》古圣的关系见第五节</td></tr></tbody></table></div>
+<p>御（防御）、速（速度）没有可用的表现，未列出。</p>
+<h3 id="sec-量级栏用语说明">量级栏用语说明<a class="heading-anchor" href="#sec-量级栏用语说明" data-target-id="sec-量级栏用语说明" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">代字或标签</th><th style="text-align:left">全称与含义</th></tr></thead><tbody><tr><td style="text-align:left">⊙</td><td style="text-align:left">综合量级标记</td></tr><tr><td style="text-align:left">宇○</td><td style="text-align:left">标准宇宙级：摧毁可观测宇宙（直径约 930 亿光年），8.0×10⁷⁷ J</td></tr><tr><td style="text-align:left">宇▽</td><td style="text-align:left">弱宇宙级：3.7×10⁷⁶～8.0×10⁷⁷ J</td></tr><tr><td style="text-align:left">弱化弱恒星系</td><td style="text-align:left">过渡带 A（恒星→恒星系）中覆盖直径大于 1 天文单位的一段，须写出具体焦耳数</td></tr><tr><td style="text-align:left">弱化</td><td style="text-align:left">该规模需要时间逐步达到（衡天 0.17）</td></tr><tr><td style="text-align:left">触发式</td><td style="text-align:left">破坏由一次触发引起、能量来自被破坏对象自身（此处为假真空的能量），不是作用者输出的能量</td></tr><tr><td style="text-align:left">位格</td><td style="text-align:left">存在规模、计算层级、层级轴中证据过关的记录，与综合量级并列，互不推出（衡天 1.7）</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td><td style="text-align:left">已确认：文本直接展示了该表现</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">下限：只能确认至少如此</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-inferred">〔推〕</span></td><td style="text-align:left">推定：由已确认的表现按允许的单步规则推出</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td><td style="text-align:left">缺：文本没有可用的表现</td></tr><tr><td style="text-align:left">〔若采信〕</td><td style="text-align:left">依赖一处未通过审查的陈述，只在采信该陈述时成立</td></tr></tbody></table></div>
+<h2 id="sec-概述">概述<a class="heading-anchor" href="#sec-概述" data-target-id="sec-概述" title="复制本节锚点链接">#</a></h2>
+<p>下游者是人类在宇宙热寂之后的后裔，躲进无损计算基质里长存，却面对一个永远不再有新东西的宇宙。它们回到过去改写历史：让蓝孩子出生，在克鲁伊斯内放下门户。蓝孩子最终在月球上触发真空衰变，把本宇宙推向终结，用衰变中大量形成的黑洞孕育远多于自然演化的子宇宙。马伦方领悟到的意义是："By striving for a meaningless eternity, humans denied true infinity."（「人类追求无意义的永恒，反而否定了真正的无限。」）</p>
+<p>量级上，下游者的最大表现是这次真空衰变：已经展示到吞没太阳的程度，按计划执行者的说明最终覆盖整个宇宙，记宇○，弱化、需时、触发式。它们创造了大量子宇宙，但数目没有给出，子宇宙也不是由它们逐一设计、掌控的，记入影响。流形中「无限多」的宇宙是世界的规模，下游者没有对整个流形做过破坏、掌控或创造，不由此推到论外。</p>
+<h2 id="sec-一-定级方法">一、定级方法<a class="heading-anchor" href="#sec-一-定级方法" data-target-id="sec-一-定级方法" title="复制本节锚点链接">#</a></h2>
+<ul><li><strong>材料</strong>：《流形：时间》《流形：起源》及《相空间》的英文原著段落截图（逐字核对引文）；知乎中文摘译只作定位；维基百科与书评核对情节与出版信息。手头没有完整原著，章节号<span class="ev-badge ev-missing">〔缺〕</span>，引文按卷标注。</li><li><strong>世界观推定角色量级的两步</strong>：先确认世界多大，再确认对象对世界整体做了什么（衡天 8.1 界线 3，见守则「林飞」判例）。本作中流形是否无限是第一步，下游者是否作用于整个流形是第二步，第二步不成立时第一步不影响下游者的量级。</li><li><strong>归因</strong>：蓝孩子、门户都是下游者改变过去的产物，执行的是下游者的计划；按衡天 8.3.2 记在下游者名下，风险写入存疑。</li></ul>
+<h2 id="sec-二-世界观">二、世界观<a class="heading-anchor" href="#sec-二-世界观" data-target-id="sec-二-世界观" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-流形">流形<a class="heading-anchor" href="#sec-流形" data-target-id="sec-流形" title="复制本节锚点链接">#</a></h3>
+<p>《时间》中，安娜（蓝孩子）向莫拉解释："There are an infinite number of possible universes in the manifold. Of those only a subset -- nevertheless infinite itself -- are capable of supporting self-aware substructures."（「流形中有无限多个可能的宇宙，其中只有一个子集——尽管它本身也是无限的——能支持自我意识的子结构。」）她又说每一个内部自洽的形式系统都描述一个存在的宇宙："But there are many formal systems... each formal system, logically consistent internally, describes a possible universe, which therefore exists."</p>
+<p>按衡天 8.1 审查这两句：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">条件</th><th style="text-align:left">情况</th><th style="text-align:left">结果</th></tr></thead><tbody><tr><td style="text-align:left">来源</td><td style="text-align:left">角色陈述（安娜），不是旁白；安娜受下游者影响、知情度高</td><td style="text-align:left">不满足「旁白、全知叙述或官方设定」</td></tr><tr><td style="text-align:left">指明对象</td><td style="text-align:left">可能宇宙的个数</td><td style="text-align:left">通过</td></tr><tr><td style="text-align:left">字面用法</td><td style="text-align:left">交代世界规则的语境</td><td style="text-align:left">通过</td></tr><tr><td style="text-align:left">不被推翻</td><td style="text-align:left">未见冲突</td><td style="text-align:left">通过</td></tr></tbody></table></div>
+<p>来源一条不过，流形的无限不确认。另外有一点数学上的约束：形式系统都由有限长的符号串写成，全部形式系统只有可数无限个。所以即使采信「每个自洽的形式系统都是一个宇宙」，流形的宇宙个数也只到 ℵ₀，不会更高。</p>
+<p>更重要的是第二步：下游者的作为是改写本宇宙的历史、触发本宇宙的真空衰变、建造一条宇宙链上的门户，没有一处作用于整个流形。所以流形是否无限，不影响下游者的量级（衡天 8.1 界线 3）。</p>
+<h3 id="sec-宇宙的繁衍">宇宙的繁衍<a class="heading-anchor" href="#sec-宇宙的繁衍" data-target-id="sec-宇宙的繁衍" title="复制本节锚点链接">#</a></h3>
+<p>科尼利厄斯与艾玛在宇宙链中领悟：能产生黑洞的宇宙可以有许多子宇宙，子宇宙经奇点与母宇宙相连，几代之后会产黑洞的宇宙占绝大多数（宇宙自然选择）。马伦方嫌这种演化太慢：即使"a whole new universe, after all, every couple of minutes"（「毕竟每隔几分钟就是一个全新的宇宙」），宇宙的演化仍是"a dim, undirected groping for complexity"（「一场黯淡、无方向的摸索」）。下游者的计划就是用真空衰变替代这种缓慢的演化。</p>
+<h2 id="sec-三-关键事件">三、关键事件<a class="heading-anchor" href="#sec-三-关键事件" data-target-id="sec-三-关键事件" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-真空衰变">真空衰变<a class="heading-anchor" href="#sec-真空衰变" data-target-id="sec-真空衰变" title="复制本节锚点链接">#</a></h3>
+<ol><li><strong>夸克块与月球</strong>：蓝孩子用夸克块使月球坍缩成夸克物质，月球内爆碎裂，爆出一颗短暂的「新星」。迈克尔说夸克块只是工具，用来产生一次能量密度极高的脉冲，比两颗最高能宇宙射线原子核对撞还要高六个数量级（<span class="ev-badge ev-confirmed">〔实〕</span>；原文给出的是能量密度的比较，不是破坏范围）。</li><li><strong>真真空泡</strong>：脉冲触发真空衰变，泡以接近光速扩张，一秒多吞没地月距离，几分钟内大过太阳，太阳在三到五秒内被泡壁吞没；泡宽到 16 光分钟、两亿英里时，内行星都已消失。泡内物理定律不同，在成核后几微秒就开始引力坍缩，迈克尔称之为"the true vacuum, Malenfant, the final state of the universe"（「真真空，宇宙的最终状态」）。</li><li><strong>扩张预期</strong>：迈克尔说这是宇宙结构的根本改变，永不停止，以光速扫过一切，银河系十万年后消失，仙女座星系几百万年后消失，「需要时间，但最终——」。马伦方随即想到，它很快会成为覆盖整个宇宙的一堵墙。</li><li><strong>目的</strong>："This is just a better way of making black holes, and budding off new universes."（「这只是制造黑洞、孕育新宇宙的更好办法。」）迈克尔："The black holes created as the vacuum decay proceeds will overwhelm by many orders of magnitude the mere billion billion that our universe might have created through its stars and galaxy cores."（「真空衰变中形成的黑洞，将以许多个数量级压倒本宇宙靠恒星与星系核能形成的区区十亿亿个。」）"There will be many daughter universes -- universes too many to count, universes exotic beyond our imagining -- and many, many of them will harbor life and mind."（「将会有许多子宇宙——多到数不清，奇异到超出想象——其中很多很多会孕育生命与心灵。」）</li></ol>
+<h3 id="sec-门户链">门户链<a class="heading-anchor" href="#sec-门户链" data-target-id="sec-门户链" title="复制本节锚点链接">#</a></h3>
+<p>克鲁伊斯内的门户把马伦方、艾玛与科尼利厄斯送进另一个宇宙，科尼利厄斯判断那是「最深的过去」。此后他们沿门户穿过一串宇宙，每隔几分钟一个，书评统计为数以百计。马伦方猜想："some unimaginable agency of the downstreamers who built this chain -- monitor the portals across the universes, repair them after cosmological accidents?"（「是不是建造这条链的下游者中，有某种难以想象的力量在监视各宇宙中的门户，在宇宙事故后修复它们？」）</p>
+<h2 id="sec-四-分维度分析">四、分维度分析<a class="heading-anchor" href="#sec-四-分维度分析" data-target-id="sec-四-分维度分析" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-破-破坏力">破（破坏力）<a class="heading-anchor" href="#sec-破-破坏力" data-target-id="sec-破-破坏力" title="复制本节锚点链接">#</a></h3>
+<p><strong>主档：真空衰变，宇○（弱化：需时，触发式）<span class="ev-badge ev-lower">〔下〕</span>。</strong></p>
+<ul><li><strong>事件已发生</strong>：真空衰变被触发、泡已吞没内太阳系，<span class="ev-badge ev-confirmed">〔实〕</span>。</li><li><strong>最终规模</strong>：迈克尔是计划的执行者，知情；他的说明带具体对象与时间（银河系十万年、仙女座几百万年），按衡天 0.14.1 第二条判据，带具体数据的陈述可视同实际表现。真空衰变在物理上是自持的相变，一旦开始不需要外部持续供能，「最终覆盖整个宇宙」与这一机制一致。按 0.17，这一规模要以光速扩张数百亿年才达到，记弱化并注明需时。</li><li><strong>触发式</strong>：下游者一方提供的是一次高能脉冲，摧毁宇宙的能量来自假真空本身。记录的是这次作用实际造成的破坏范围；按衡天 1.4，破坏不推出防御，所以这一档不说明下游者能承受同等规模的攻击。</li><li><strong>归因</strong>：执行者是蓝孩子。蓝孩子的出生是下游者改变过去的结果，马伦方的领悟把这件事归于「我们」——人类回到遥远的上游，与「我们最后的孩子」蓝孩子交谈，纠正了错误的未来。按衡天 8.3.2，记在下游者名下。</li></ul>
+<p><strong>保底：已展示部分，弱化弱恒星系约 9.2×10⁴⁶ J<span class="ev-badge ev-confirmed">〔实〕</span>。</strong> 文中实际看到的泡宽约 16 光分钟（约 2 天文单位），按过渡带 A 的覆盖直径 2 天文单位计。</p>
+<p><strong>中间档</strong>：只采信迈克尔点名的对象（银河系、仙女座），覆盖半径约 250 万光年，按衡天 4.9 的面积换算约 2×10⁶⁹ J，落在星系级与星系团级之间，同样需时。</p>
+<h3 id="sec-域-影响">域（影响）<a class="heading-anchor" href="#sec-域-影响" data-target-id="sec-域-影响" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">能力</th><th style="text-align:left">内容</th><th style="text-align:left">影响范围</th><th style="text-align:left">证据</th></tr></thead><tbody><tr><td style="text-align:left">改写过去</td><td style="text-align:left">讯息、蓝孩子、克鲁伊斯内门户</td><td style="text-align:left">本宇宙从极远未来到二十一世纪初的历史</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">跨宇宙门户</td><td style="text-align:left">建造并可能维护一条穿越数以百计宇宙的门户链，上溯到「最深的过去」</td><td style="text-align:left">数以百计的宇宙（元·多，数目只到「数以百计」）</td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span>（门户存在与穿越）；维护为马伦方的猜想</td></tr><tr><td style="text-align:left">宇宙繁衍</td><td style="text-align:left">真空衰变形成的黑洞远多于 10¹⁸，每个孕育一个子宇宙</td><td style="text-align:left">子宇宙数目"too many to count"，具体数目<span class="ev-badge ev-missing">〔缺〕</span></td><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td></tr></tbody></table></div>
+<p>子宇宙由黑洞奇点按物理过程自然孕育，下游者没有逐一设计其内容或规则，按衡天 0.11 不构成整体掌控，只记影响。"too many to count"按 0.2 读作极多，不读作无限。</p>
+<h3 id="sec-算-计算层级">算（计算层级）<a class="heading-anchor" href="#sec-算-计算层级" data-target-id="sec-算-计算层级" title="复制本节锚点链接">#</a></h3>
+<p>维基百科对开篇的概括是：智慧嵌入无损计算基质后可以无限延续，但没有新的输入，终将穷尽一切可能的思想。能穷尽，说明可能的思想（状态）是有限的，记有限<span class="ev-badge ev-inferred">〔推〕</span>，具体规模<span class="ev-badge ev-missing">〔缺〕</span>。</p>
+<h3 id="sec-性-特性">性（特性）<a class="heading-anchor" href="#sec-性-特性" data-target-id="sec-性-特性" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">特性</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">长存</td><td style="text-align:left">在物质消散之后仍以无损基质延续</td></tr><tr><td style="text-align:left">回溯因果</td><td style="text-align:left">能把影响送回过去并改写历史；《起源》中解释了这类改写的机制：每个量子事件都是过去与未来的「握手」，改动过去会让宇宙从改动点起重新编织，直至再次自洽</td></tr><tr><td style="text-align:left">门户</td><td style="text-align:left">跨宇宙门户的建造者</td></tr></tbody></table></div>
+<h2 id="sec-五-与-起源-古圣的关系">五、与《起源》古圣的关系<a class="heading-anchor" href="#sec-五-与-起源-古圣的关系" data-target-id="sec-五-与-起源-古圣的关系" title="复制本节锚点链接">#</a></h2>
+<p>《起源》中，根本（Nemoto）与真卡托（Manekato）推断，古圣"constructed a manifold of universes -- an infinite number of universes"（「构建了一个宇宙流形——无限多个宇宙」），"We believe the Old Ones created, not just a multiplicity of daughter universes, but an infinite number"（「我们相信古圣创造的不只是许多子宇宙，而是无限多个」），手段是"The branching of universes, deep into the hyperpast"（「宇宙的分支，深入超过去」）。根本又推断古圣就是人类的后裔；艾玛的信里写"Maybe they really were us"，同时说"Or at least humans from some variant of our future history"（「或者至少是我们未来历史某个变体中的人类」）。</p>
+<p><strong>为什么不并入下游者</strong>：三部曲发生在不同的现实中，各卷的马伦方「不是同一个」。古圣与下游者都是人类的未来后裔，但属于不同的现实，作品没有写明二者是同一群体。本条目不把古圣的作为记在下游者名下。</p>
+<p><strong>古圣的作为能否确认</strong>：</p>
+<ul><li><strong>来源</strong>：都是角色的推断——"We believe""must have come to believe""We don't know how they did it"。按衡天 0.14.1，角色平静陈述记为意图或潜力；按 0.14.2，说话人不在场，也不知道手段。不满足 8.1 的来源条件。</li><li><strong>规模上限</strong>："in that infinite ensemble, all logically possible universes must exist"（「在那个无限的集合中，所有逻辑上可能的宇宙都必然存在」）。如上所述，逻辑上可能的宇宙若由形式系统刻画，只有可数无限个，到论外门槛为止。</li><li><strong>「流形的流形」</strong>：巴博说"Or perhaps the manifold is itself merely one thread in a greater tapestry"（「或许流形本身只是一幅更大挂毯中的一根线」），是「或许」开头的猜想，不作记录。</li><li><strong>「不可数」</strong>：同书描述宇宙由"uncountable trillions of such tiny handshakes"（「数不清的上万亿次微小握手」）编织而成。这里的 uncountable 是「数不清」，紧接着的"trillions"是有限数，按衡天 8.1 界线 1，不读作不可数基数。</li></ul>
+<p><strong>记录（古圣，单列）</strong>：控 外·门（ℵ₀）〔若采信〕（创造无限多宇宙的流形，依据角色推断）；已展示的表现是在平行宇宙之间游荡的红月（书评描述为火星大小的天体），跨宇宙搬运一颗行星级天体，记影响，量级<span class="ev-badge ev-missing">〔缺〕</span>。</p>
+<h2 id="sec-六-综合定级">六、综合定级<a class="heading-anchor" href="#sec-六-综合定级" data-target-id="sec-六-综合定级" title="复制本节锚点链接">#</a></h2>
+<p>按衡天 1.3，主档取破坏、整体掌控两维中证据为<span class="ev-badge ev-confirmed">〔实〕</span>或<span class="ev-badge ev-lower">〔下〕</span>的最高者：</p>
+<ul><li>破：宇○（弱化：需时，触发式）<span class="ev-badge ev-lower">〔下〕</span>——真空衰变的最终规模；</li><li>破：弱化弱恒星系约 9.2×10⁴⁶ J<span class="ev-badge ev-confirmed">〔实〕</span>——已展示部分；</li><li>控：<span class="ev-badge ev-missing">〔缺〕</span>。</li></ul>
+<p><strong>综合量级为 ⊙宇○（弱化：需时，触发式）<span class="ev-badge ev-lower">〔下〕</span>，保底量级为 ⊙弱化弱恒星系（约 9.2×10⁴⁶ J）<span class="ev-badge ev-confirmed">〔实〕</span>。</strong></p>
+<h3 id="sec-为什么不更高">为什么不更高<a class="heading-anchor" href="#sec-为什么不更高" data-target-id="sec-为什么不更高" title="复制本节锚点链接">#</a></h3>
+<ul><li>流形无限是世界规模，下游者没有作用于整个流形（8.1 界线 3）；</li><li>子宇宙「数不清」没有数目，也不是整体掌控；</li><li>门户链只到「数以百计」的宇宙，是影响而不是破坏；</li><li>《起源》古圣的无限流形是另一个现实中的角色推断，不归下游者，且即使采信也只到论外门槛。</li></ul>
+<h3 id="sec-对战判定">对战判定<a class="heading-anchor" href="#sec-对战判定" data-target-id="sec-对战判定" title="复制本节锚点链接">#</a></h3>
+<p>默认比较综合量级。下游者的主档是触发式破坏，不说明防御或直接输出能力；与以直接输出为主的对象比较时，须写明这一点。</p>
+<h2 id="sec-存疑与作者矛盾">存疑与作者矛盾<a class="heading-anchor" href="#sec-存疑与作者矛盾" data-target-id="sec-存疑与作者矛盾" title="复制本节锚点链接">#</a></h2>
+<ol><li><strong>宇宙加速膨胀</strong>：现实宇宙在加速膨胀，以光速扩张的泡只能到达宇宙事件视界之内（今天的固有距离约 165 亿光年），最终覆盖的直径约为可观测宇宙的三分之一多，按 4.9 换算约 1×10⁷⁷ J，落在宇▽（弱宇宙级）。原文没有写本作宇宙是否加速膨胀，迈克尔说的是「最终」覆盖一切，本条目按原文取宇○，这一风险单列。</li><li><strong>归因</strong>：蓝孩子是否完全按下游者的意志行动，原文通过马伦方的领悟交代，不是下游者直接出手。若认定蓝孩子是自主的第三方，真空衰变应记在蓝孩子名下，下游者只保留改写过去、门户链等影响。</li><li><strong>门户的维护者</strong>：马伦方"Or did someone..."是猜想，「下游者建造了这条链」是他的前提，门户链的建造按情节概括采信，维护不采信。</li><li><strong>章节号</strong>：手头没有完整原著，引文只标卷名；英文引文据原著截图逐字核对，中文为本条目的翻译。</li></ol>
+<h2 id="sec-参考资料">参考资料<a class="heading-anchor" href="#sec-参考资料" data-target-id="sec-参考资料" title="复制本节锚点链接">#</a></h2>
+<ul><li><a href="https://en.wikipedia.org/wiki/Time_(novel" target="_blank" rel="noopener">维基百科 · Time (novel)</a>)</li><li><a href="https://en.wikipedia.org/wiki/Manifold_Trilogy" target="_blank" rel="noopener">维基百科 · Manifold Trilogy</a></li><li><a href="https://en.wikipedia.org/wiki/Space_(Baxter_novel" target="_blank" rel="noopener">维基百科 · Space (Baxter novel)</a>)</li><li><a href="https://archive.nesfa.org/reviews/Olson/Origin.html" target="_blank" rel="noopener">NESFA 书评 · Origin</a></li><li><a href="https://logosconcarne.com/2020/04/04/stephen-baxter-manifold/" target="_blank" rel="noopener">Logos con carne · Stephen Baxter: Manifold</a></li><li><a href="https://ansible.uk/writing/time.html" target="_blank" rel="noopener">Ansible · David Langford 评 Time</a></li><li><a href="https://www.goodreads.com/work/quotes/97079" target="_blank" rel="noopener">Goodreads · Time 摘句</a></li><li>《衡天⊙多维战力量级体系（第五版）》《衡天工作守则与判例》</li></ul>
+              </div>
+            </article>
+
+            <aside class="reader-rail" role="group" aria-label="阅读显示设置">
+              <span class="reader-rail-label mono" aria-hidden="true">字号</span>
+              <div class="reader-rail-btns">
+                <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+                <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+                <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
+              </div>
+              <span class="reader-rail-readout mono" id="doc-font-readout">15.5px</span>
+            </aside>
+          </div>
+
+
+          <div class="pager-grid">
+            <a class="pager-card" href="yutu.html">
+                  <span class="pager-dir">← 上一位角色（更低量级）</span>
+                  <span class="pager-title">御兔</span>
+                  <span class="pager-sub mono">⊙ 国△ · 首字母 Y</span>
+                </a>
+            <a class="pager-card next" href="futan.html">
+                  <span class="pager-dir">下一位角色（更高量级） →</span>
+                  <span class="pager-title">弗坦</span>
+                  <span class="pager-sub mono">⊙ 宇△ · 首字母 F</span>
+                </a>
+          </div>
+        </div>
+
+  </main>
+
+  <div class="floating-dock" aria-label="快捷工具">
+    <button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录" aria-label="展开章节目录"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg></button>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
+      <div class="search-modal-head">
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第六版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="../search.html">进入独立搜索页 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 第六版基准</span>
+      </div>
+      <div class="footer-links">
+        <a href="../tiers.html">量级天梯</a>
+        <a href="../characters.html">角色档案</a>
+        <a href="../rules.html">衡天体系全文</a>
+        <a href="../materials.html">材质能量库</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>window.__PW_INDEX_SRC__ = "../static/js/search-index.js";</script>
+  <script src="../static/js/theme.js"></script>
+  <script src="../static/js/app.js"></script>
+  <script src="../static/js/pwa.js"></script>
+
+  <script src="../static/js/chrome.js"></script>
+  <script src="../static/js/editions.js"></script>
+</body>
+</html>

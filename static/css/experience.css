@@ -1922,10 +1922,440 @@ body.character-tongguan .char-identity-fx::after  { left: 71%; top: 62%; animati
   --dossier-surface: rgba(10, 26, 22, .82);
 }
 
+/* ---- 林飞（长生 / 宇宙晶体） · 浅色 ---- */
+[light] body.character-linfei {
+  --bg-canvas: #eef1ec;
+  --bg-subtle: #dfe7dd;
+  --bg-surface: #f8faf5;
+  --bg-elevated: #edf3ea;
+  --bg-header: rgba(248, 250, 245, .95);
+  --text-primary: #18231c;
+  --text-secondary: #3d5343;
+  --text-muted: #607563;
+  --accent: #2f6b58;
+  --accent-strong: #1d4c3d;
+  --accent-soft: rgba(47, 107, 88, .08);
+  --border-accent: rgba(47, 107, 88, .26);
+  --border-subtle: rgba(24, 35, 28, .10);
+  --border-default: rgba(24, 35, 28, .16);
+  --panel-glass: #f8faf5;
+  --site-grid: rgba(47, 107, 88, .035);
+  --char-accent: #9a7a24;
+  --char-accent-strong: #755c18;
+  --char-accent-soft: rgba(154, 122, 36, .085);
+  --char-border-accent: rgba(154, 122, 36, .26);
+  --char-header-accent: #9a7a24;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(47, 107, 88, .12), transparent 74%),
+    linear-gradient(180deg, #dfe7dd, #eef1ec);
+  --abyss-glass: #f8faf5;
+  --abyss-stroke: rgba(47, 107, 88, .16);
+  --abyss-glow: rgba(154, 122, 36, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(24, 35, 28, .26);
+  --dossier-bg: #edf3ea;
+  --dossier-text: #18231c;
+  --dossier-muted: #607563;
+  --dossier-accent: #2f6b58;
+  --dossier-border: rgba(47, 107, 88, .20);
+  --dossier-surface: rgba(250, 252, 247, .78);
+}
+/* ---- 林飞 · 暗色 ---- */
+[dark] body.character-linfei {
+  --bg-canvas: #060f0d;
+  --bg-subtle: #0b1814;
+  --bg-surface: #0d1c17;
+  --bg-elevated: #12261e;
+  --bg-header: rgba(13, 28, 23, .95);
+  --text-primary: #e6f1e6;
+  --text-secondary: #adc6ae;
+  --text-muted: #7d9a83;
+  --accent: #6fc0a0;
+  --accent-strong: #9adcc0;
+  --accent-soft: rgba(111, 192, 160, .08);
+  --border-accent: rgba(111, 192, 160, .26);
+  --border-subtle: rgba(230, 241, 230, .10);
+  --border-default: rgba(230, 241, 230, .16);
+  --panel-glass: #0d1c17;
+  --site-grid: rgba(111, 192, 160, .035);
+  --char-accent: #d9b455;
+  --char-accent-strong: #e8c877;
+  --char-accent-soft: rgba(217, 180, 85, .085);
+  --char-border-accent: rgba(217, 180, 85, .26);
+  --char-header-accent: #d9b455;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(111, 192, 160, .12), transparent 74%),
+    linear-gradient(180deg, #0b1814, #060f0d);
+  --abyss-glass: #0d1c17;
+  --abyss-stroke: rgba(111, 192, 160, .16);
+  --abyss-glow: rgba(217, 180, 85, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(230, 241, 230, .26);
+  --dossier-bg: #0c1c16;
+  --dossier-text: #e6f1e6;
+  --dossier-muted: #7d9a83;
+  --dossier-accent: #6fc0a0;
+  --dossier-border: rgba(111, 192, 160, .20);
+  --dossier-surface: rgba(9, 22, 17, .82);
+}
+.theme-linfei {
+  --dossier-surface: rgba(250, 252, 247, .78);
+}
+[data-theme="dark"] .theme-linfei {
+  --dossier-surface: rgba(9, 22, 17, .82);
+}
+
+/* ---- 下游者（真空衰变 / 无损计算基质） · 浅色 ---- */
+[light] body.character-xiayouzhe {
+  --bg-canvas: #edf2f8;
+  --bg-subtle: #dce7f2;
+  --bg-surface: #f7fafd;
+  --bg-elevated: #eaf1f8;
+  --bg-header: rgba(247, 250, 253, .95);
+  --text-primary: #131f2c;
+  --text-secondary: #364d63;
+  --text-muted: #5a7086;
+  --accent: #2d6f9e;
+  --accent-strong: #1d5278;
+  --accent-soft: rgba(45, 111, 158, .08);
+  --border-accent: rgba(45, 111, 158, .26);
+  --border-subtle: rgba(19, 31, 44, .10);
+  --border-default: rgba(19, 31, 44, .16);
+  --panel-glass: #f7fafd;
+  --site-grid: rgba(45, 111, 158, .035);
+  --char-accent: #4f8fb8;
+  --char-accent-strong: #376f96;
+  --char-accent-soft: rgba(79, 143, 184, .085);
+  --char-border-accent: rgba(79, 143, 184, .26);
+  --char-header-accent: #4f8fb8;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(45, 111, 158, .12), transparent 74%),
+    linear-gradient(180deg, #dce7f2, #edf2f8);
+  --abyss-glass: #f7fafd;
+  --abyss-stroke: rgba(45, 111, 158, .16);
+  --abyss-glow: rgba(79, 143, 184, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(19, 31, 44, .26);
+  --dossier-bg: #eaf1f8;
+  --dossier-text: #131f2c;
+  --dossier-muted: #5a7086;
+  --dossier-accent: #2d6f9e;
+  --dossier-border: rgba(45, 111, 158, .20);
+  --dossier-surface: rgba(249, 252, 255, .78);
+}
+/* ---- 下游者 · 暗色 ---- */
+[dark] body.character-xiayouzhe {
+  --bg-canvas: #050b14;
+  --bg-subtle: #0a1626;
+  --bg-surface: #0c1c2f;
+  --bg-elevated: #122640;
+  --bg-header: rgba(12, 28, 47, .95);
+  --text-primary: #e2edfa;
+  --text-secondary: #a9c3de;
+  --text-muted: #7994b2;
+  --accent: #66b6e8;
+  --accent-strong: #8fd0f5;
+  --accent-soft: rgba(102, 182, 232, .08);
+  --border-accent: rgba(102, 182, 232, .26);
+  --border-subtle: rgba(226, 237, 250, .10);
+  --border-default: rgba(226, 237, 250, .16);
+  --panel-glass: #0c1c2f;
+  --site-grid: rgba(102, 182, 232, .035);
+  --char-accent: #7fc4e8;
+  --char-accent-strong: #a3ddf5;
+  --char-accent-soft: rgba(127, 196, 232, .085);
+  --char-border-accent: rgba(127, 196, 232, .26);
+  --char-header-accent: #7fc4e8;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(102, 182, 232, .12), transparent 74%),
+    linear-gradient(180deg, #0a1626, #050b14);
+  --abyss-glass: #0c1c2f;
+  --abyss-stroke: rgba(102, 182, 232, .16);
+  --abyss-glow: rgba(127, 196, 232, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(226, 237, 250, .26);
+  --dossier-bg: #0b1a2b;
+  --dossier-text: #e2edfa;
+  --dossier-muted: #7994b2;
+  --dossier-accent: #66b6e8;
+  --dossier-border: rgba(102, 182, 232, .20);
+  --dossier-surface: rgba(8, 18, 32, .82);
+}
+.theme-xiayouzhe {
+  --dossier-surface: rgba(249, 252, 255, .78);
+}
+[data-theme="dark"] .theme-xiayouzhe {
+  --dossier-surface: rgba(8, 18, 32, .82);
+}
+
+/* ---- 江无夜（终焉 / 叙事层阶梯） · 浅色 ---- */
+[light] body.character-jiangwuye {
+  --bg-canvas: #f4efec;
+  --bg-subtle: #e8dedd;
+  --bg-surface: #fbf7f5;
+  --bg-elevated: #f3eae7;
+  --bg-header: rgba(251, 247, 245, .95);
+  --text-primary: #261a18;
+  --text-secondary: #57403c;
+  --text-muted: #7d625d;
+  --accent: #9b3f36;
+  --accent-strong: #7a2c25;
+  --accent-soft: rgba(155, 63, 54, .08);
+  --border-accent: rgba(155, 63, 54, .26);
+  --border-subtle: rgba(38, 26, 24, .10);
+  --border-default: rgba(38, 26, 24, .16);
+  --panel-glass: #fbf7f5;
+  --site-grid: rgba(155, 63, 54, .035);
+  --char-accent: #a8503f;
+  --char-accent-strong: #8a3d2f;
+  --char-accent-soft: rgba(168, 80, 63, .085);
+  --char-border-accent: rgba(168, 80, 63, .26);
+  --char-header-accent: #a8503f;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(155, 63, 54, .12), transparent 74%),
+    linear-gradient(180deg, #e8dedd, #f4efec);
+  --abyss-glass: #fbf7f5;
+  --abyss-stroke: rgba(155, 63, 54, .16);
+  --abyss-glow: rgba(168, 80, 63, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(38, 26, 24, .26);
+  --dossier-bg: #f3eae7;
+  --dossier-text: #261a18;
+  --dossier-muted: #7d625d;
+  --dossier-accent: #9b3f36;
+  --dossier-border: rgba(155, 63, 54, .20);
+  --dossier-surface: rgba(253, 250, 248, .78);
+}
+/* ---- 江无夜 · 暗色 ---- */
+[dark] body.character-jiangwuye {
+  --bg-canvas: #120707;
+  --bg-subtle: #1e0c0b;
+  --bg-surface: #25100e;
+  --bg-elevated: #331613;
+  --bg-header: rgba(37, 16, 14, .95);
+  --text-primary: #f4e7e2;
+  --text-secondary: #d0aea6;
+  --text-muted: #9d7c75;
+  --accent: #e07a68;
+  --accent-strong: #f09a88;
+  --accent-soft: rgba(224, 122, 104, .08);
+  --border-accent: rgba(224, 122, 104, .26);
+  --border-subtle: rgba(244, 231, 226, .10);
+  --border-default: rgba(244, 231, 226, .16);
+  --panel-glass: #25100e;
+  --site-grid: rgba(224, 122, 104, .035);
+  --char-accent: #e08a72;
+  --char-accent-strong: #f0ab96;
+  --char-accent-soft: rgba(224, 138, 114, .085);
+  --char-border-accent: rgba(224, 138, 114, .26);
+  --char-header-accent: #e08a72;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(224, 122, 104, .12), transparent 74%),
+    linear-gradient(180deg, #1e0c0b, #120707);
+  --abyss-glass: #25100e;
+  --abyss-stroke: rgba(224, 122, 104, .16);
+  --abyss-glow: rgba(224, 138, 114, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(244, 231, 226, .26);
+  --dossier-bg: #1c0d0b;
+  --dossier-text: #f4e7e2;
+  --dossier-muted: #9d7c75;
+  --dossier-accent: #e07a68;
+  --dossier-border: rgba(224, 122, 104, .20);
+  --dossier-surface: rgba(26, 10, 9, .82);
+}
+.theme-jiangwuye {
+  --dossier-surface: rgba(253, 250, 248, .78);
+}
+[data-theme="dark"] .theme-jiangwuye {
+  --dossier-surface: rgba(26, 10, 9, .82);
+}
+
+/* ---- 古尘沙（龙符 / 掌心宇宙） · 浅色 ---- */
+[light] body.character-guchensha {
+  --bg-canvas: #f1edf5;
+  --bg-subtle: #e3dbee;
+  --bg-surface: #f9f6fc;
+  --bg-elevated: #efe8f6;
+  --bg-header: rgba(249, 246, 252, .95);
+  --text-primary: #20182b;
+  --text-secondary: #4b3a5e;
+  --text-muted: #6f5c83;
+  --accent: #6c4a9c;
+  --accent-strong: #503474;
+  --accent-soft: rgba(108, 74, 156, .08);
+  --border-accent: rgba(108, 74, 156, .26);
+  --border-subtle: rgba(32, 24, 43, .10);
+  --border-default: rgba(32, 24, 43, .16);
+  --panel-glass: #f9f6fc;
+  --site-grid: rgba(108, 74, 156, .035);
+  --char-accent: #9a7420;
+  --char-accent-strong: #775818;
+  --char-accent-soft: rgba(154, 116, 32, .085);
+  --char-border-accent: rgba(154, 116, 32, .26);
+  --char-header-accent: #9a7420;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(108, 74, 156, .12), transparent 74%),
+    linear-gradient(180deg, #e3dbee, #f1edf5);
+  --abyss-glass: #f9f6fc;
+  --abyss-stroke: rgba(108, 74, 156, .16);
+  --abyss-glow: rgba(154, 116, 32, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(32, 24, 43, .26);
+  --dossier-bg: #efe8f6;
+  --dossier-text: #20182b;
+  --dossier-muted: #6f5c83;
+  --dossier-accent: #6c4a9c;
+  --dossier-border: rgba(108, 74, 156, .20);
+  --dossier-surface: rgba(252, 249, 254, .78);
+}
+/* ---- 古尘沙 · 暗色 ---- */
+[dark] body.character-guchensha {
+  --bg-canvas: #0c0714;
+  --bg-subtle: #160d23;
+  --bg-surface: #1c1130;
+  --bg-elevated: #281a40;
+  --bg-header: rgba(28, 17, 48, .95);
+  --text-primary: #eee4fa;
+  --text-secondary: #c6aede;
+  --text-muted: #9480b2;
+  --accent: #b58be8;
+  --accent-strong: #cfaaf5;
+  --accent-soft: rgba(181, 139, 232, .08);
+  --border-accent: rgba(181, 139, 232, .26);
+  --border-subtle: rgba(238, 228, 250, .10);
+  --border-default: rgba(238, 228, 250, .16);
+  --panel-glass: #1c1130;
+  --site-grid: rgba(181, 139, 232, .035);
+  --char-accent: #d9b455;
+  --char-accent-strong: #e8c877;
+  --char-accent-soft: rgba(217, 180, 85, .085);
+  --char-border-accent: rgba(217, 180, 85, .26);
+  --char-header-accent: #d9b455;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(181, 139, 232, .12), transparent 74%),
+    linear-gradient(180deg, #160d23, #0c0714);
+  --abyss-glass: #1c1130;
+  --abyss-stroke: rgba(181, 139, 232, .16);
+  --abyss-glow: rgba(217, 180, 85, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(238, 228, 250, .26);
+  --dossier-bg: #170e26;
+  --dossier-text: #eee4fa;
+  --dossier-muted: #9480b2;
+  --dossier-accent: #b58be8;
+  --dossier-border: rgba(181, 139, 232, .20);
+  --dossier-surface: rgba(18, 10, 30, .82);
+}
+.theme-guchensha {
+  --dossier-surface: rgba(252, 249, 254, .78);
+}
+[data-theme="dark"] .theme-guchensha {
+  --dossier-surface: rgba(18, 10, 30, .82);
+}
+
+/* ---- 雪之少女（绘之翼 / 神界创世） · 浅色 ---- */
+[light] body.character-xuezhishaonv {
+  --bg-canvas: #f0f3f9;
+  --bg-subtle: #e0e7f3;
+  --bg-surface: #f8fbff;
+  --bg-elevated: #ebf1fa;
+  --bg-header: rgba(248, 251, 255, .95);
+  --text-primary: #16203a;
+  --text-secondary: #3c4c6e;
+  --text-muted: #62729b;
+  --accent: #3a5fa8;
+  --accent-strong: #284681;
+  --accent-soft: rgba(58, 95, 168, .08);
+  --border-accent: rgba(58, 95, 168, .26);
+  --border-subtle: rgba(22, 32, 58, .10);
+  --border-default: rgba(22, 32, 58, .16);
+  --panel-glass: #f8fbff;
+  --site-grid: rgba(58, 95, 168, .035);
+  --char-accent: #5b7fc0;
+  --char-accent-strong: #42629e;
+  --char-accent-soft: rgba(91, 127, 192, .085);
+  --char-border-accent: rgba(91, 127, 192, .26);
+  --char-header-accent: #5b7fc0;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(58, 95, 168, .12), transparent 74%),
+    linear-gradient(180deg, #e0e7f3, #f0f3f9);
+  --abyss-glass: #f8fbff;
+  --abyss-stroke: rgba(58, 95, 168, .16);
+  --abyss-glow: rgba(91, 127, 192, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(22, 32, 58, .26);
+  --dossier-bg: #ebf1fa;
+  --dossier-text: #16203a;
+  --dossier-muted: #62729b;
+  --dossier-accent: #3a5fa8;
+  --dossier-border: rgba(58, 95, 168, .20);
+  --dossier-surface: rgba(250, 252, 255, .78);
+}
+/* ---- 雪之少女 · 暗色 ---- */
+[dark] body.character-xuezhishaonv {
+  --bg-canvas: #060b1a;
+  --bg-subtle: #0c1428;
+  --bg-surface: #101c35;
+  --bg-elevated: #182747;
+  --bg-header: rgba(16, 28, 53, .95);
+  --text-primary: #e4ebff;
+  --text-secondary: #adbede;
+  --text-muted: #7d90b8;
+  --accent: #7fa4ef;
+  --accent-strong: #a3c0f7;
+  --accent-soft: rgba(127, 164, 239, .08);
+  --border-accent: rgba(127, 164, 239, .26);
+  --border-subtle: rgba(228, 235, 255, .10);
+  --border-default: rgba(228, 235, 255, .16);
+  --panel-glass: #101c35;
+  --site-grid: rgba(127, 164, 239, .035);
+  --char-accent: #9fc0f0;
+  --char-accent-strong: #c2d7fa;
+  --char-accent-soft: rgba(159, 192, 240, .085);
+  --char-border-accent: rgba(159, 192, 240, .26);
+  --char-header-accent: #9fc0f0;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(127, 164, 239, .12), transparent 74%),
+    linear-gradient(180deg, #0c1428, #060b1a);
+  --abyss-glass: #101c35;
+  --abyss-stroke: rgba(127, 164, 239, .16);
+  --abyss-glow: rgba(159, 192, 240, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(228, 235, 255, .26);
+  --dossier-bg: #0e1930;
+  --dossier-text: #e4ebff;
+  --dossier-muted: #7d90b8;
+  --dossier-accent: #7fa4ef;
+  --dossier-border: rgba(127, 164, 239, .20);
+  --dossier-surface: rgba(8, 15, 32, .82);
+}
+.theme-xuezhishaonv {
+  --dossier-surface: rgba(250, 252, 255, .78);
+}
+[data-theme="dark"] .theme-xuezhishaonv {
+  --dossier-surface: rgba(8, 15, 32, .82);
+}
+
 /* ---- 共用 dossier 视觉骨架（yog / divinity / lufasi / tianren） ---- */
 body.character-yog .dossier-masthead,
 body.character-divinity .dossier-masthead,
 body.character-lufasi .dossier-masthead,
+body.character-linfei .dossier-masthead,
+body.character-xiayouzhe .dossier-masthead,
+body.character-jiangwuye .dossier-masthead,
+body.character-guchensha .dossier-masthead,
+body.character-xuezhishaonv .dossier-masthead,
 body.character-tianren .dossier-masthead {
   padding: 18px 0 13px;
   border-bottom: 1px solid var(--dossier-border);
@@ -1935,10 +2365,20 @@ body.character-tianren .dossier-masthead {
 body.character-yog .dossier-kicker,
 body.character-divinity .dossier-kicker,
 body.character-lufasi .dossier-kicker,
+body.character-linfei .dossier-kicker,
+body.character-xiayouzhe .dossier-kicker,
+body.character-jiangwuye .dossier-kicker,
+body.character-guchensha .dossier-kicker,
+body.character-xuezhishaonv .dossier-kicker,
 body.character-tianren .dossier-kicker { display: inline-flex; align-items: center; gap: 9px; }
 body.character-yog .dossier-kicker::before,
 body.character-divinity .dossier-kicker::before,
 body.character-lufasi .dossier-kicker::before,
+body.character-linfei .dossier-kicker::before,
+body.character-xiayouzhe .dossier-kicker::before,
+body.character-jiangwuye .dossier-kicker::before,
+body.character-guchensha .dossier-kicker::before,
+body.character-xuezhishaonv .dossier-kicker::before,
 body.character-tianren .dossier-kicker::before {
   content: "✶";
   color: var(--dossier-accent);
@@ -1949,6 +2389,11 @@ body.character-divinity .dossier-kicker::before { content: "✦"; }
 body.character-yog .dossier-register,
 body.character-divinity .dossier-register,
 body.character-lufasi .dossier-register,
+body.character-linfei .dossier-register,
+body.character-xiayouzhe .dossier-register,
+body.character-jiangwuye .dossier-register,
+body.character-guchensha .dossier-register,
+body.character-xuezhishaonv .dossier-register,
 body.character-tianren .dossier-register {
   padding: 5px 9px;
   border: 1px solid var(--dossier-border);
@@ -1960,6 +2405,11 @@ body.character-tianren .dossier-register {
 body.character-yog .character-dossier .page-title,
 body.character-divinity .character-dossier .page-title,
 body.character-lufasi .character-dossier .page-title,
+body.character-linfei .character-dossier .page-title,
+body.character-xiayouzhe .character-dossier .page-title,
+body.character-jiangwuye .character-dossier .page-title,
+body.character-guchensha .character-dossier .page-title,
+body.character-xuezhishaonv .character-dossier .page-title,
 body.character-tianren .character-dossier .page-title {
   font-family: var(--font-editorial);
   font-size: clamp(40px, 5.1vw, 64px);
@@ -1970,6 +2420,11 @@ body.character-tianren .character-dossier .page-title {
 body.character-yog .character-dossier .page-desc,
 body.character-divinity .character-dossier .page-desc,
 body.character-lufasi .character-dossier .page-desc,
+body.character-linfei .character-dossier .page-desc,
+body.character-xiayouzhe .character-dossier .page-desc,
+body.character-jiangwuye .character-dossier .page-desc,
+body.character-guchensha .character-dossier .page-desc,
+body.character-xuezhishaonv .character-dossier .page-desc,
 body.character-tianren .character-dossier .page-desc {
   font-family: var(--font-editorial);
   letter-spacing: .012em;
@@ -1977,14 +2432,29 @@ body.character-tianren .character-dossier .page-desc {
 body.character-yog .character-dossier .tag-pill,
 body.character-divinity .character-dossier .tag-pill,
 body.character-lufasi .character-dossier .tag-pill,
+body.character-linfei .character-dossier .tag-pill,
+body.character-xiayouzhe .character-dossier .tag-pill,
+body.character-jiangwuye .character-dossier .tag-pill,
+body.character-guchensha .character-dossier .tag-pill,
+body.character-xuezhishaonv .character-dossier .tag-pill,
 body.character-tianren .character-dossier .tag-pill { border-radius: 4px; }
 body.character-yog .character-dossier .dossier-kpi-card,
 body.character-divinity .character-dossier .dossier-kpi-card,
 body.character-lufasi .character-dossier .dossier-kpi-card,
+body.character-linfei .character-dossier .dossier-kpi-card,
+body.character-xiayouzhe .character-dossier .dossier-kpi-card,
+body.character-jiangwuye .character-dossier .dossier-kpi-card,
+body.character-guchensha .character-dossier .dossier-kpi-card,
+body.character-xuezhishaonv .character-dossier .dossier-kpi-card,
 body.character-tianren .character-dossier .dossier-kpi-card { border-radius: 9px; }
 body.character-yog .character-dossier .char-tags .tag-pill,
 body.character-divinity .character-dossier .char-tags .tag-pill,
 body.character-lufasi .character-dossier .char-tags .tag-pill,
+body.character-linfei .character-dossier .char-tags .tag-pill,
+body.character-xiayouzhe .character-dossier .char-tags .tag-pill,
+body.character-jiangwuye .character-dossier .char-tags .tag-pill,
+body.character-guchensha .character-dossier .char-tags .tag-pill,
+body.character-xuezhishaonv .character-dossier .char-tags .tag-pill,
 body.character-tianren .character-dossier .char-tags .tag-pill {
   white-space: normal;
   overflow-wrap: anywhere;
@@ -1994,6 +2464,11 @@ body.character-tianren .character-dossier .char-tags .tag-pill {
 body.character-yog .char-portrait-stage,
 body.character-divinity .char-portrait-stage,
 body.character-lufasi .char-portrait-stage,
+body.character-linfei .char-portrait-stage,
+body.character-xiayouzhe .char-portrait-stage,
+body.character-jiangwuye .char-portrait-stage,
+body.character-guchensha .char-portrait-stage,
+body.character-xuezhishaonv .char-portrait-stage,
 body.character-tianren .char-portrait-stage {
   background: var(--dossier-surface);
   border: 1px solid var(--dossier-border);
@@ -2002,6 +2477,11 @@ body.character-tianren .char-portrait-stage {
 body.character-yog .char-portrait-canvas,
 body.character-divinity .char-portrait-canvas,
 body.character-lufasi .char-portrait-canvas,
+body.character-linfei .char-portrait-canvas,
+body.character-xiayouzhe .char-portrait-canvas,
+body.character-jiangwuye .char-portrait-canvas,
+body.character-guchensha .char-portrait-canvas,
+body.character-xuezhishaonv .char-portrait-canvas,
 body.character-tianren .char-portrait-canvas {
   aspect-ratio: 3 / 4;
   padding: 0;
@@ -2009,6 +2489,11 @@ body.character-tianren .char-portrait-canvas {
 body.character-yog .char-portrait-img,
 body.character-divinity .char-portrait-img,
 body.character-lufasi .char-portrait-img,
+body.character-linfei .char-portrait-img,
+body.character-xiayouzhe .char-portrait-img,
+body.character-jiangwuye .char-portrait-img,
+body.character-guchensha .char-portrait-img,
+body.character-xuezhishaonv .char-portrait-img,
 body.character-tianren .char-portrait-img {
   width: 100%;
   height: 100%;
@@ -2020,6 +2505,11 @@ body.character-tianren .char-portrait-img {
 body.character-yog .char-portrait-caption,
 body.character-divinity .char-portrait-caption,
 body.character-lufasi .char-portrait-caption,
+body.character-linfei .char-portrait-caption,
+body.character-xiayouzhe .char-portrait-caption,
+body.character-jiangwuye .char-portrait-caption,
+body.character-guchensha .char-portrait-caption,
+body.character-xuezhishaonv .char-portrait-caption,
 body.character-tianren .char-portrait-caption {
   background: var(--dossier-bg);
   color: var(--dossier-muted);
@@ -2028,6 +2518,11 @@ body.character-tianren .char-portrait-caption {
 body.character-yog .portrait-index,
 body.character-divinity .portrait-index,
 body.character-lufasi .portrait-index,
+body.character-linfei .portrait-index,
+body.character-xiayouzhe .portrait-index,
+body.character-jiangwuye .portrait-index,
+body.character-guchensha .portrait-index,
+body.character-xuezhishaonv .portrait-index,
 body.character-tianren .portrait-index {
   background: var(--dossier-surface);
   color: var(--dossier-accent);
@@ -2038,18 +2533,38 @@ body.character-tianren .portrait-index {
 body.character-yog .dossier-fact-rail,
 body.character-divinity .dossier-fact-rail,
 body.character-lufasi .dossier-fact-rail,
+body.character-linfei .dossier-fact-rail,
+body.character-xiayouzhe .dossier-fact-rail,
+body.character-jiangwuye .dossier-fact-rail,
+body.character-guchensha .dossier-fact-rail,
+body.character-xuezhishaonv .dossier-fact-rail,
 body.character-tianren .dossier-fact-rail { background: color-mix(in srgb, var(--dossier-accent) 8%, transparent); }
 body.character-yog .dossier-fact,
 body.character-divinity .dossier-fact,
 body.character-lufasi .dossier-fact,
+body.character-linfei .dossier-fact,
+body.character-xiayouzhe .dossier-fact,
+body.character-jiangwuye .dossier-fact,
+body.character-guchensha .dossier-fact,
+body.character-xuezhishaonv .dossier-fact,
 body.character-tianren .dossier-fact { position: relative; border-right: 0; }
 body.character-yog .dossier-fact + .dossier-fact,
 body.character-divinity .dossier-fact + .dossier-fact,
 body.character-lufasi .dossier-fact + .dossier-fact,
+body.character-linfei .dossier-fact + .dossier-fact,
+body.character-xiayouzhe .dossier-fact + .dossier-fact,
+body.character-jiangwuye .dossier-fact + .dossier-fact,
+body.character-guchensha .dossier-fact + .dossier-fact,
+body.character-xuezhishaonv .dossier-fact + .dossier-fact,
 body.character-tianren .dossier-fact + .dossier-fact { border-left: 1px solid var(--dossier-border); }
 body.character-yog .dossier-fact .fact-label,
 body.character-divinity .dossier-fact .fact-label,
 body.character-lufasi .dossier-fact .fact-label,
+body.character-linfei .dossier-fact .fact-label,
+body.character-xiayouzhe .dossier-fact .fact-label,
+body.character-jiangwuye .dossier-fact .fact-label,
+body.character-guchensha .dossier-fact .fact-label,
+body.character-xuezhishaonv .dossier-fact .fact-label,
 body.character-tianren .dossier-fact .fact-label {
   font-family: var(--font-mono);
   letter-spacing: .13em;
@@ -2058,18 +2573,38 @@ body.character-tianren .dossier-fact .fact-label {
 body.character-yog .dossier-fact:nth-child(1) .fact-label::before,
 body.character-divinity .dossier-fact:nth-child(1) .fact-label::before,
 body.character-lufasi .dossier-fact:nth-child(1) .fact-label::before,
+body.character-linfei .dossier-fact:nth-child(1) .fact-label::before,
+body.character-xiayouzhe .dossier-fact:nth-child(1) .fact-label::before,
+body.character-jiangwuye .dossier-fact:nth-child(1) .fact-label::before,
+body.character-guchensha .dossier-fact:nth-child(1) .fact-label::before,
+body.character-xuezhishaonv .dossier-fact:nth-child(1) .fact-label::before,
 body.character-tianren .dossier-fact:nth-child(1) .fact-label::before { content: "壹 / "; color: var(--dossier-accent); }
 body.character-yog .dossier-fact:nth-child(2) .fact-label::before,
 body.character-divinity .dossier-fact:nth-child(2) .fact-label::before,
 body.character-lufasi .dossier-fact:nth-child(2) .fact-label::before,
+body.character-linfei .dossier-fact:nth-child(2) .fact-label::before,
+body.character-xiayouzhe .dossier-fact:nth-child(2) .fact-label::before,
+body.character-jiangwuye .dossier-fact:nth-child(2) .fact-label::before,
+body.character-guchensha .dossier-fact:nth-child(2) .fact-label::before,
+body.character-xuezhishaonv .dossier-fact:nth-child(2) .fact-label::before,
 body.character-tianren .dossier-fact:nth-child(2) .fact-label::before { content: "贰 / "; color: var(--dossier-accent); }
 body.character-yog .dossier-fact:nth-child(3) .fact-label::before,
 body.character-divinity .dossier-fact:nth-child(3) .fact-label::before,
 body.character-lufasi .dossier-fact:nth-child(3) .fact-label::before,
+body.character-linfei .dossier-fact:nth-child(3) .fact-label::before,
+body.character-xiayouzhe .dossier-fact:nth-child(3) .fact-label::before,
+body.character-jiangwuye .dossier-fact:nth-child(3) .fact-label::before,
+body.character-guchensha .dossier-fact:nth-child(3) .fact-label::before,
+body.character-xuezhishaonv .dossier-fact:nth-child(3) .fact-label::before,
 body.character-tianren .dossier-fact:nth-child(3) .fact-label::before { content: "叁 / "; color: var(--dossier-accent); }
 body.character-yog .dossier-fact .fact-value,
 body.character-divinity .dossier-fact .fact-value,
 body.character-lufasi .dossier-fact .fact-value,
+body.character-linfei .dossier-fact .fact-value,
+body.character-xiayouzhe .dossier-fact .fact-value,
+body.character-jiangwuye .dossier-fact .fact-value,
+body.character-guchensha .dossier-fact .fact-value,
+body.character-xuezhishaonv .dossier-fact .fact-value,
 body.character-tianren .dossier-fact .fact-value {
   font-family: var(--font-editorial);
   font-size: clamp(17px, 1.9vw, 22px);
@@ -2078,10 +2613,20 @@ body.character-tianren .dossier-fact .fact-value {
 body.character-yog .markdown-body h2::before,
 body.character-divinity .markdown-body h2::before,
 body.character-lufasi .markdown-body h2::before,
+body.character-linfei .markdown-body h2::before,
+body.character-xiayouzhe .markdown-body h2::before,
+body.character-jiangwuye .markdown-body h2::before,
+body.character-guchensha .markdown-body h2::before,
+body.character-xuezhishaonv .markdown-body h2::before,
 body.character-tianren .markdown-body h2::before { letter-spacing: .05em; }
 body.character-yog .markdown-body blockquote,
 body.character-divinity .markdown-body blockquote,
 body.character-lufasi .markdown-body blockquote,
+body.character-linfei .markdown-body blockquote,
+body.character-xiayouzhe .markdown-body blockquote,
+body.character-jiangwuye .markdown-body blockquote,
+body.character-guchensha .markdown-body blockquote,
+body.character-xuezhishaonv .markdown-body blockquote,
 body.character-tianren .markdown-body blockquote {
   border-left-color: var(--dossier-accent);
   background: linear-gradient(90deg, color-mix(in srgb, var(--dossier-accent) 8%, transparent), transparent 88%);
@@ -2090,4 +2635,9 @@ body.character-tianren .markdown-body blockquote {
 body.character-yog .char-identity-fx,
 body.character-divinity .char-identity-fx,
 body.character-lufasi .char-identity-fx,
+body.character-linfei .char-identity-fx,
+body.character-xiayouzhe .char-identity-fx,
+body.character-jiangwuye .char-identity-fx,
+body.character-guchensha .char-identity-fx,
+body.character-xuezhishaonv .char-identity-fx,
 body.character-tianren .char-identity-fx { display: none; }
