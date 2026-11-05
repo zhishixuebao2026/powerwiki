@@ -17,7 +17,8 @@
         "character-yutu": "character/yutu.html",
         "character-futan": "character/futan.html",
         "character-tongguan": "character/tongguan.html",
-        "character-lufasi": "character/lufasi.html"
+        "character-lufasi": "character/lufasi.html",
+        "character-linfei": "character/linfei.html"
       }
     },
     {
@@ -122,6 +123,45 @@
       "thumb": "static/img/editions/ruphas-crimson.jpg",
       "pages": {
         "character-lufasi": "skins/ruphas-crimson/character-lufasi.html"
+      }
+    },
+    {
+      "id": "ruphas-gilded",
+      "name": "鎏星",
+      "tag": "GILDED STAR · 终局档案",
+      "note": "暗夜鎏金与星轨、金色衬线巨字、黑翼金发立绘、罗马数字七章；亮暗双主题与字号调节",
+      "source": "skins/_source/ruphas-gilded.html",
+      "section": "character-lufasi",
+      "inject": "minimal",
+      "thumb": "static/img/editions/ruphas-gilded.jpg",
+      "pages": {
+        "character-lufasi": "skins/ruphas-gilded/character-lufasi.html"
+      }
+    },
+    {
+      "id": "linfei-inkseal",
+      "name": "墨印长生",
+      "tag": "INK SEAL · 超脱",
+      "note": "水墨宣纸、朱印超脱、竖排「长生万万年·不败天地间」；十二节目录、阅读设置与双主题",
+      "source": "skins/_source/linfei-inkseal.html",
+      "section": "character-linfei",
+      "inject": "minimal",
+      "thumb": "static/img/editions/linfei-inkseal.jpg",
+      "pages": {
+        "character-linfei": "skins/linfei-inkseal/character-linfei.html"
+      }
+    },
+    {
+      "id": "linfei-crystal",
+      "name": "晶穹",
+      "tag": "CRYSTAL DOME · 宣纸",
+      "note": "淡金宣纸与宇宙晶体光球、毛笔巨字、洪荒盘古场景图；宣纸／暗夜双主题、目录与原文检索",
+      "source": "skins/_source/linfei-crystal.html",
+      "section": "character-linfei",
+      "inject": "minimal",
+      "thumb": "static/img/editions/linfei-crystal.jpg",
+      "pages": {
+        "character-linfei": "skins/linfei-crystal/character-linfei.html"
       }
     }
   ]

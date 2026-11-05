@@ -4,6 +4,15 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-06（补2）· 新增三套整页皮肤：「鎏星」「墨印长生」「晶穹」
+
+- **来源**：用户上传的 `2.zip` 内含三个独立构建的整页——`glm-5.3 (max)＆kalmia路法斯定级页面/dist/index.html`、`fable-5.1-low＆OPUS5.5MAX＆fe-raichu＆kerria林飞定级量级页面/dist/index.html`、`opus-5-medium＆fe-raichu＆GPT5.6TERRAXHIGH＆sonnet-5-high林飞定级量级页面/dist/index.html`。三份都是自包含的 React 阅读器（字体与首屏图内联），各带亮暗主题、字号调节与章节目录；定级原文与项目内 `data/docs/characters/林飞…衡天定级.md` md5 完全一致（`a19ee6c…`，第五版，按约定不回改第六版），露法斯 `content.ts` 亦自述「全部文本转录自原条目（2026-10-29 版），未删改」。
+- **注册**：`data/editions.json` 新增 `ruphas-gilded`「鎏星」（`GILDED STAR · 终局档案`，暗夜鎏金＋星轨＋金色衬线巨字，`section=character-lufasi`）、`linfei-inkseal`「墨印长生」（`INK SEAL · 超脱`，水墨宣纸＋朱印超脱＋竖排「长生万万年·不败天地间」，`section=character-linfei`）、`linfei-crystal`「晶穹」（`CRYSTAL DOME · 宣纸`，淡金宣纸＋宇宙晶体光球＋洪荒盘古场景图，`section=character-linfei`），均为 `inject: minimal`。`default.pages` 补 `character-linfei: character/linfei.html`。切换器项数：路法斯页 3 套（默认／绛翼／鎏星），林飞页 3 套（默认／墨印长生／晶穹）；新皮肤与旧皮肤并存，不删不改。
+- **资源**：「鎏星」「墨印长生」全内联，无需搬运资源；「晶穹」引用 `./images/{crystal,honghuang,linfei,pangu}.jpg` 与 `./source.md`，按生成页所在目录原样落到 `skins/linfei-crystal/`，相对路径零改写。「晶穹」没自带 icon，由构建器既有逻辑自动补站内 `favicon-32.png`，避免浏览器回退请求站点根 `/favicon.ico` 的 404；另两份自带 data-URI icon，保留不覆盖。ASSETS / README / RESEARCH 等说明文件一律不进项目。
+- **移动端安全区**：「墨印长生」作者已用 `--chrome-height`、`drawer-panel`、`mobile-dock`、`totop`、`footer` 完整处理 `env(safe-area-inset-*)`，不再注入以免双重叠加。「鎏星」（顶栏 65px）与「晶穹」（顶栏 62px）完全没做安全区，按各自语义类名注入 `calc(原高 + env(safe-area-inset-top))` 与 `padding-top`，并给固定底部工具条补 `calc(20px + env(safe-area-inset-bottom))`。CDP 模拟刘海（top=47／bottom=34）实机验证：三套顶栏分别落在 112／112／109px、`padding-top: 47px`，顶栏文字与目录弹层第一项均在状态栏下方、无挤压变形。
+- **自检**：明暗双主题各截正文中段复核，无亮白块、无颜色突兀板块；桌面／移动端零 JS 报错、零 4xx/5xx、零横向溢出（CDP 偶发 `ERR_ABORTED` 指向 `editions.js/css` 的新建标签请求竞态，切换器面板实机可开、卡片齐全，非资源缺失）；切换器面板 3 项在 5 个页面实机打开确认；生成页去掉注入块后与源 HTML 逐字一致（三份全部 True），正文零改动；页面无图注、无 AI 说明、无水印杂碎文字，项目内无检查图或预览图，仅保留切换器必需的 3 张 640×400 缩略图（按最终皮肤页真实渲染、清 localStorage 后重截）。
+- service-worker 升 `pw-v22` 强制刷新缓存。
+
 ## 2026-11-06（补）· 新增两套整页皮肤：「孤灯」（弗坦）与「绛翼」（露法斯）
 
 - **来源**：用户上传的 `1.zip` 内含两个独立构建的整页——`gpt-6-luna-max弗坦定级页面/dist/index.html` 与 `GPT6astraMAX路法斯定级页面/dist/index.html`。两份都是自包含的 React 阅读器，正文内嵌，各带亮暗主题、字号调节、章节目录与阅读进度；定级原文与项目内 `data/docs/characters/` 对应文件 md5 完全一致（第五版，按约定不回改第六版）。
