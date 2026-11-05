@@ -398,6 +398,17 @@ body.character-futan .fact-value {
 body.character-futan .character-dossier .page-title { letter-spacing: .02em; }
 body.character-futan .markdown-body { letter-spacing: .018em; }
 body.character-futan .fact-value { font-size: 21px; }
+/* 三世铜棺之主：衬线巨题 + 略宽字距，与青铜棺椁的古典气质相配 */
+body.character-tongguan .page-title,
+body.character-tongguan .markdown-body h1,
+body.character-tongguan .markdown-body h2 {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  letter-spacing: .03em;
+}
+body.character-tongguan .doc-toolbar,
+body.character-tongguan .md-table-wrap,
+body.character-tongguan .md-figure { border-radius: 8px; }
 
 @media (min-width: 901px) {
   body.character-site .doc-sidebar {
@@ -415,6 +426,7 @@ body.character-futan .fact-value { font-size: 21px; }
 @media (min-width: 1500px) {
   body.character-yutu::after { content: "YUTU / LUNAR KINETIC ARCHIVE"; }
   body.character-futan::after { content: "003 / ABYSSAL ENTITY ARCHIVE"; }
+  body.character-tongguan::after { content: "THREE COFFINS / COSMIC ASH ARCHIVE"; }
 }
 
 @media (max-width: 1200px) {

@@ -4351,6 +4351,30 @@ h1, h2, h3,
 .theme-futan .ev-hidden { background: rgba(169,142,240,.15); color: #cbb9ee; }
 .theme-futan .ev-missing { background: rgba(156,163,175,.14); color: #b3bcc5; }
 
+/* 三世铜棺之主 · 灰烬青铜（与 experience.css 的同名变量保持一致） */
+.theme-tongguan {
+  --dossier-bg: #f5f2e9;
+  --dossier-text: #232b27;
+  --dossier-muted: #5a665f;
+  --dossier-accent: #8a713a;
+  --dossier-border: rgba(35,45,40,.16);
+  --dossier-surface: rgba(252,250,244,.78);
+  --dossier-art-opacity: .46;
+  --dossier-overlay: linear-gradient(90deg, rgba(245,242,233,.985) 0%, rgba(245,242,233,.93) 42%, rgba(245,242,233,.60) 74%, rgba(245,242,233,.22) 100%);
+}
+[data-theme="dark"] .theme-tongguan {
+  --dossier-bg: #0d1512;
+  --dossier-text: #e9eee7;
+  --dossier-muted: #aebdb3;
+  --dossier-accent: #c9ab72;
+  --dossier-border: rgba(201,171,114,.19);
+  --dossier-surface: rgba(14,24,20,.72);
+  --dossier-art-opacity: .55;
+  --dossier-overlay:
+    linear-gradient(90deg, rgba(9,16,13,.97) 0%, rgba(9,16,13,.90) 44%, rgba(9,16,13,.56) 78%, rgba(9,16,13,.32) 100%),
+    linear-gradient(180deg, rgba(9,16,13,.04), rgba(9,16,13,.30));
+}
+
 [data-theme="dark"] .theme-yutu {
   --dossier-bg: #111c28;
   --dossier-text: #edf2f4;

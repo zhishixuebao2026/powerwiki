@@ -236,6 +236,7 @@ BOOT_BG_DEFAULT = ("#f1f2ed", "#080d11")
 BOOT_BG_CHARACTERS = {
     "character-yutu": ("#edf3f6", "#071320"),
     "character-futan": ("#eceee7", "#05100f"),
+    "character-tongguan": ("#edeae1", "#0a100e"),
 }
 
 

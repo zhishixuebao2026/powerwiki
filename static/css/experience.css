@@ -1322,3 +1322,250 @@ body.character-futan .spec-card:hover {
   display: block;
   pointer-events: none;
 }
+
+/* ==========================================================================
+   三世铜棺之主 · 「灰烬青铜 / 三重棺椁」专属皮肤
+   基调：灰烬米纸 + 青铜绿 + 暗金；页头是三重铜棺与亿万成灰的星海。
+   --char-atmosphere / --banner-art-opacity 必须在此按角色定义：
+   前者无兜底值（缺了氛围层空白），后者浅色主题全局为 0（缺了页头图不可见）。
+   ========================================================================== */
+[data-theme="light"] body.character-tongguan {
+  --bg-canvas: #edeae1;
+  --bg-subtle: #e3dfd3;
+  --bg-surface: #f8f6f0;
+  --bg-elevated: #f1eee5;
+  --bg-header: rgba(237, 234, 225, .90);
+  --text-primary: #232b27;
+  --text-secondary: #55615a;
+  --text-muted: #89918a;
+  --accent: #4f6a5f;
+  --accent-strong: #3a5148;
+  --accent-soft: rgba(79, 106, 95, .09);
+  --border-accent: rgba(79, 106, 95, .26);
+  --border-subtle: rgba(35, 45, 40, .09);
+  --border-default: rgba(35, 45, 40, .15);
+  --panel-glass: rgba(248, 246, 240, .84);
+  --site-grid: rgba(79, 106, 95, .035);
+  --char-accent: #4f6a5f;
+  --char-accent-strong: #3a5148;
+  --char-accent-soft: rgba(79, 106, 95, .09);
+  --char-border-accent: rgba(79, 106, 95, .26);
+  --char-header-accent: #8a713a;
+  --banner-art-opacity: .46;
+  --dossier-art-opacity: .46;
+  --char-art-opacity: .34;
+  --char-atmosphere:
+    radial-gradient(760px 400px at 82% 2%, rgba(138, 113, 58, .10), transparent 70%),
+    linear-gradient(180deg, rgba(237, 234, 225, .28), rgba(237, 234, 225, .96)),
+    url("../img/characters/tongguan/bronze-coffins-cosmos.jpg");
+}
+[data-theme="dark"] body.character-tongguan {
+  --bg-canvas: #0a100e;
+  --bg-subtle: #101a17;
+  --bg-surface: #131e1a;
+  --bg-elevated: #1a2722;
+  --bg-header: rgba(10, 16, 14, .94);
+  --text-primary: #e9eee7;
+  --text-secondary: #aebdb3;
+  --text-muted: #7d9086;
+  --accent: #c9ab72;
+  --accent-strong: #e0c891;
+  --accent-soft: rgba(201, 171, 114, .10);
+  --border-accent: rgba(201, 171, 114, .27);
+  --border-subtle: rgba(233, 238, 231, .085);
+  --border-default: rgba(233, 238, 231, .15);
+  --panel-glass: rgba(19, 30, 26, .82);
+  --site-grid: rgba(201, 171, 114, .022);
+  --char-accent: #c9ab72;
+  --char-accent-strong: #e0c891;
+  --char-accent-soft: rgba(201, 171, 114, .10);
+  --char-border-accent: rgba(201, 171, 114, .27);
+  --char-header-accent: #c9ab72;
+  --banner-art-opacity: .48;
+  --dossier-art-opacity: .55;
+  --char-art-opacity: .40;
+  --char-atmosphere:
+    radial-gradient(780px 420px at 80% 0%, rgba(120, 160, 140, .14), transparent 72%),
+    linear-gradient(180deg, rgba(10, 16, 14, .45), rgba(10, 16, 14, .97)),
+    url("../img/characters/tongguan/bronze-coffins-cosmos.jpg");
+}
+
+/* 档案盒：细金边 + 双层内描边，呼应「三重铜棺」层叠相套 */
+[data-theme="light"] body.character-tongguan .character-dossier {
+  --dossier-bg: #f5f2e9;
+  --dossier-text: #232b27;
+  --dossier-muted: #5a665f;
+  --dossier-accent: #8a713a;
+  --dossier-border: rgba(35, 45, 40, .16);
+  --dossier-surface: rgba(252, 250, 244, .78);
+  --dossier-art-opacity: .46;
+  --dossier-overlay: linear-gradient(90deg, rgba(245, 242, 233, .985) 0%, rgba(245, 242, 233, .93) 42%, rgba(245, 242, 233, .60) 74%, rgba(245, 242, 233, .22) 100%);
+  --dossier-motif:
+    radial-gradient(ellipse 460px 320px at 84% 44%, transparent 47%, rgba(79, 106, 95, .13) 47.2% 47.6%, transparent 47.9%),
+    radial-gradient(ellipse 330px 230px at 84% 44%, transparent 47%, rgba(138, 113, 58, .14) 47.3% 47.7%, transparent 48%),
+    repeating-linear-gradient(0deg, transparent 0 15px, rgba(35, 45, 40, .026) 16px 17px);
+}
+[data-theme="dark"] body.character-tongguan .character-dossier {
+  --dossier-bg: #0d1512;
+  --dossier-text: #e9eee7;
+  --dossier-muted: #aebdb3;
+  --dossier-accent: #c9ab72;
+  --dossier-border: rgba(201, 171, 114, .19);
+  --dossier-surface: rgba(14, 24, 20, .72);
+  --dossier-art-opacity: .55;
+  --dossier-overlay:
+    linear-gradient(90deg, rgba(9, 16, 13, .97) 0%, rgba(9, 16, 13, .90) 44%, rgba(9, 16, 13, .56) 78%, rgba(9, 16, 13, .32) 100%),
+    linear-gradient(180deg, rgba(9, 16, 13, .04), rgba(9, 16, 13, .30));
+  --dossier-motif:
+    radial-gradient(ellipse 460px 320px at 84% 44%, transparent 47%, rgba(120, 160, 140, .20) 47.2% 47.6%, transparent 47.9%),
+    radial-gradient(ellipse 330px 230px at 84% 44%, transparent 47%, rgba(201, 171, 114, .17) 47.3% 47.7%, transparent 48%),
+    repeating-linear-gradient(0deg, transparent 0 15px, rgba(201, 171, 114, .035) 16px 17px);
+}
+body.character-tongguan .character-dossier {
+  border: 1px solid var(--dossier-border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 66px rgba(10, 20, 16, .18), inset 0 0 0 4px rgba(138, 113, 58, .055);
+}
+[data-theme="light"] body.character-tongguan .character-dossier {
+  box-shadow: 0 22px 58px rgba(35, 45, 40, .10), inset 0 0 0 4px rgba(79, 106, 95, .045);
+}
+body.character-tongguan .character-dossier::after {
+  background: var(--dossier-motif), var(--dossier-overlay);
+  background-size: auto, cover;
+  background-position: right center, center;
+}
+body.character-tongguan .dossier-masthead {
+  padding: 18px 0 13px;
+  border-bottom: 1px solid var(--dossier-border);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+body.character-tongguan .dossier-kicker { display: inline-flex; align-items: center; gap: 9px; }
+body.character-tongguan .dossier-kicker::before {
+  content: "◈";
+  color: var(--dossier-accent);
+  font-size: 14px;
+  text-shadow: 0 0 14px color-mix(in srgb, var(--dossier-accent) 48%, transparent);
+  animation: tongguanBreath 4.2s ease-in-out infinite;
+}
+body.character-tongguan .dossier-register {
+  padding: 5px 9px;
+  border: 1px solid var(--dossier-border);
+  border-radius: 4px;
+  background: var(--dossier-surface);
+  color: var(--dossier-accent);
+  font-size: 8px;
+}
+body.character-tongguan .character-dossier .page-title {
+  font-family: var(--font-editorial);
+  font-size: clamp(40px, 5.1vw, 64px);
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--dossier-text);
+}
+body.character-tongguan .character-dossier .page-desc {
+  font-family: var(--font-editorial);
+  letter-spacing: .012em;
+}
+body.character-tongguan .character-dossier .tag-pill { border-radius: 4px; }
+body.character-tongguan .character-dossier .dossier-kpi-card { border-radius: 9px; }
+
+/* 标签允许折行：默认 .tag-pill 是 nowrap，320px 下长标签会被父级裁掉；
+   只在本角色档案盒内放开，不影响站内其他页面。 */
+body.character-tongguan .character-dossier .char-tags .tag-pill {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+/* 立绘是竖版，给专用取景，避免沿用横版 16/10 裁掉人物 */
+body.character-tongguan .theme-tongguan .char-portrait-stage {
+  background: var(--dossier-surface);
+  border: 1px solid var(--dossier-border);
+  border-radius: 10px;
+}
+body.character-tongguan .theme-tongguan .char-portrait-canvas {
+  aspect-ratio: 3 / 4;
+  padding: 0;
+}
+body.character-tongguan .theme-tongguan .char-portrait-img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center 22%;
+  filter: saturate(.88) contrast(1.02);
+}
+body.character-tongguan .theme-tongguan .char-portrait-caption {
+  background: var(--dossier-bg);
+  color: var(--dossier-muted);
+  border-top: 1px solid var(--dossier-border);
+}
+body.character-tongguan .portrait-index {
+  background: var(--dossier-surface);
+  color: var(--dossier-accent);
+  border-color: var(--dossier-border);
+  border-radius: 4px;
+}
+
+/* 事实轨：编号铜牌 */
+body.character-tongguan .dossier-fact-rail { background: rgba(79, 106, 95, .08); }
+[data-theme="dark"] body.character-tongguan .dossier-fact-rail { background: rgba(6, 16, 13, .30); }
+body.character-tongguan .dossier-fact { position: relative; border-right: 0; }
+body.character-tongguan .dossier-fact + .dossier-fact { border-left: 1px solid var(--dossier-border); }
+body.character-tongguan .dossier-fact .fact-label {
+  font-family: var(--font-mono);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+body.character-tongguan .dossier-fact:nth-child(1) .fact-label::before { content: "壹 / "; color: var(--dossier-accent); }
+body.character-tongguan .dossier-fact:nth-child(2) .fact-label::before { content: "贰 / "; color: var(--dossier-accent); }
+body.character-tongguan .dossier-fact:nth-child(3) .fact-label::before { content: "叁 / "; color: var(--dossier-accent); }
+body.character-tongguan .dossier-fact .fact-value {
+  font-family: var(--font-editorial);
+  font-size: clamp(17px, 1.9vw, 22px);
+  color: var(--dossier-text);
+}
+body.character-tongguan .markdown-body h2::before { letter-spacing: .05em; }
+body.character-tongguan .markdown-body blockquote {
+  border-left-color: var(--dossier-accent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--dossier-accent) 9%, transparent), transparent 90%);
+}
+
+/* 页头图占位底色：与青铜星海同调，避免首帧偏蓝 */
+body.character-tongguan .character-dossier .page-header-art {
+  background: radial-gradient(120% 95% at 78% 28%, rgba(79, 106, 95, .14), transparent 70%);
+}
+
+/* 灰烬浮尘：极轻微的两粒光尘，纯装饰、无 JS 依赖 */
+body.character-tongguan .char-identity-fx::before,
+body.character-tongguan .char-identity-fx::after {
+  content: "";
+  position: fixed;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--char-header-accent);
+  opacity: .35;
+  pointer-events: none;
+  filter: blur(.4px);
+}
+body.character-tongguan .char-identity-fx::before { left: 18%; top: 34%; animation: tongguanAsh 17s linear infinite; }
+body.character-tongguan .char-identity-fx::after  { left: 71%; top: 62%; animation: tongguanAsh 23s linear infinite reverse; }
+@keyframes tongguanBreath { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@keyframes tongguanAsh {
+  0%   { transform: translateY(0) translateX(0);        opacity: 0; }
+  12%  { opacity: .38; }
+  88%  { opacity: .22; }
+  100% { transform: translateY(-90px) translateX(24px); opacity: 0; }
+}
+@media (max-width: 900px) {
+  body.character-tongguan .theme-tongguan .char-portrait-stage { max-width: 420px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.character-tongguan .char-identity-fx::before,
+  body.character-tongguan .char-identity-fx::after,
+  body.character-tongguan .dossier-kicker::before { animation: none; }
+}
