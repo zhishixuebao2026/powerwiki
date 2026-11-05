@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 衡天⊙ PowerWiki Static Site Builder v9.1
-Updated for 《衡天⊙ 多维战力量级体系（第五版）》 & Full-Text Character Dossiers
+Updated for 《衡天⊙ 多维战力量级体系（第六版）》 & Full-Text Character Dossiers
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ TIER_OUT_DIR = ROOT / "tier"
 CHAR_OUT_DIR = ROOT / "character"
 JS_OUT_DIR = ROOT / "static" / "js"
 
-RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第五版·最新】.md"
+RULES_MD_PATH = DOCS_DIR / "衡天量级体系【第六版·最新】.md"
 MATERIALS_MD_PATH = DOCS_DIR / "材质与破坏能量数据库（新）.md"
 EDITIONS_PATH = DATA_DIR / "editions.json"
 SKINS_OUT_DIR = ROOT / "skins"
@@ -869,7 +869,7 @@ def render_shell(
   <meta name="apple-mobile-web-app-title" content="衡天 Wiki">
   <meta name="application-name" content="衡天 Wiki">
   <title>{esc(title)} · 衡天⊙ PowerWiki</title>
-  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第五版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第六版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
   <!-- 首帧底色：这段内联 CSS 在 <head> 里、所有外链样式表之前生效，浏览器在字体与
        样式表全部到达前就用它画整个画布，杜绝冷启动白屏。颜色由生成器按页面写入，
        必须等于该页 CSS 最终生效的 --bg-canvas；用 :where() 让优先级为 0，
@@ -975,7 +975,7 @@ def render_shell(
       </div>
       <div class="drawer-group">
         <div class="drawer-group-label">规则与资料</div>
-        {drawer_doc("rules", "rules.html", "衡天体系 · 第五版")}
+        {drawer_doc("rules", "rules.html", "衡天体系 · 第六版")}
         {drawer_doc("materials", "materials.html", "材质与能量 · 第二版")}
       </div>
       <div class="drawer-group">
@@ -1048,7 +1048,7 @@ def render_shell(
         <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
         <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
         <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
-        <button type="button" class="chip-btn" data-search-tab="rules">衡天第五版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第六版全文</button>
         <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
       </div>
       <div class="search-modal-body" id="search-modal-results"></div>
@@ -1063,7 +1063,7 @@ def render_shell(
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="brand-mark">⊙</span>
-        <span>衡天 PowerWiki · 第五版基准</span>
+        <span>衡天 PowerWiki · 第六版基准</span>
       </div>
       <div class="footer-links">
         <a href="{r}tiers.html">量级天梯</a>
@@ -1166,12 +1166,12 @@ def build_home_page(
           <img class="hero-backdrop-img" src="static/img/cosmic-atlas-hero.jpg" width="1584" height="672" alt="">
         </div>
         <div class="hero-body">
-          <div class="eyebrow"><span class="eyebrow-dot"></span>第五版 · 2026.10.30 最新基准（含 1.7 位格栏 · 5.6 / 8.3 修订）</div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span>第六版 · 2026.11.05 最新基准（8.5 门槛之上结构证据 · 1.7.1 保底量级 · 1.3 第 8 条未定级）</div>
           <h1 class="hero-heading" id="home-title">从昆虫到无限，<br><span>查清每一个量级。</span></h1>
           <p class="hero-desc">从物理能量到无限基数，用同一套标尺查阅量级、角色证据与规则原文。</p>
           <div class="hero-cta-row">
             <a class="btn btn-primary" href="tiers.html">浏览量级天梯 {SVGS["arrow_up_right"]}</a>
-            <a class="btn btn-secondary" href="rules.html">阅读第五版规则</a>
+            <a class="btn btn-secondary" href="rules.html">阅读第六版规则</a>
           </div>
         </div>
       </section>
@@ -1204,7 +1204,7 @@ def build_home_page(
             <div class="portal-top"><span class="portal-heading"><span class="portal-glyph">{SVGS["library"]}</span><span class="portal-num mono">03 / LIBRARY</span></span></div>
             <div><h3 class="portal-title">规则与资料</h3><p class="portal-text">保留完整原文与章节目录，方便逐条核对。</p></div>
             <div class="library-links">
-              <a href="rules.html"><span>衡天量级体系</span><span class="mono">第五版 →</span></a>
+              <a href="rules.html"><span>衡天量级体系</span><span class="mono">第六版 →</span></a>
               <a href="materials.html"><span>材质与破坏能量</span><span class="mono">第二版 →</span></a>
             </div>
           </div>
@@ -1286,7 +1286,7 @@ def build_tiers_page(
       <section class="category-hub" aria-labelledby="tiers-title">
         <div class="category-hub-body">
           <div class="hub-kicker-row">
-            <span class="hub-kicker-badge mono">TIER ATLAS · 第五版</span>
+            <span class="hub-kicker-badge mono">TIER ATLAS · 第六版</span>
             <span class="count-badge mono" id="tier-result-count">{len(tiers)} / {len(tiers)} 档</span>
           </div>
           <div><h1 class="page-title" id="tiers-title">量级天梯</h1><p class="page-desc">从 #01 昆虫级到 #97 论天最上，按能量与数学结构递增。</p></div>
@@ -1452,7 +1452,7 @@ def build_tier_detail_pages(
                   <p class="page-desc">{esc(t.get('notes', ''))}</p>
                 </div>
                 <a class="btn btn-secondary btn-sm" href="{rule_href}">
-                  查阅《衡天第五版》对应章节 {SVGS["arrow_up_right"]}
+                  查阅《衡天第六版》对应章节 {SVGS["arrow_up_right"]}
                 </a>
               </div>
 
@@ -1616,7 +1616,7 @@ def build_character_detail_pages(
         floor_val_html = format_evidence_html(c.get("floor_tier") or t["energy"])
         ceiling_val_html = format_evidence_html(c.get("ceiling_note") or t["scale"])
         basis_val_html = format_evidence_html(
-            c.get("core_basis") or c.get("credibility") or f"依据《衡天⊙ 第五版》{t['name']}标准评定"
+            c.get("core_basis") or c.get("credibility") or f"依据《衡天⊙ 第六版》{t['name']}标准评定"
         )
         floor_label = "保底量级" if c.get("floor_tier") else "主档能量带"
         ceiling_label = "上限边界与反证" if c.get("ceiling_note") else "主档覆盖尺度"
@@ -1760,7 +1760,7 @@ def build_character_detail_pages(
                     }
                 )
 
-            doc_basis_label = esc(c.get("doc_basis") or "依据《衡天⊙ 多维战力量级体系（第五版）》")
+            doc_basis_label = esc(c.get("doc_basis") or "依据《衡天⊙ 多维战力量级体系（第六版）》")
             center_content_html = f"""
           <div class="doc-layout">
             <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
@@ -1884,9 +1884,9 @@ def build_character_detail_pages(
                 <div class="spec-val">{esc(t['scale'])}</div>
               </div>
               <div class="spec-card">
-                <div class="spec-label">对应《衡天第五版》章节</div>
+                <div class="spec-label">对应《衡天第六版》章节</div>
                 <div class="spec-val">
-                  <a class="table-primary-link" href="{rule_href}">{esc(rule_sec_title or '查阅第五版规范原文')} →</a>
+                  <a class="table-primary-link" href="{rule_href}">{esc(rule_sec_title or '查阅第六版规范原文')} →</a>
                 </div>
               </div>
             </div>
@@ -1984,13 +1984,13 @@ def build_fulltext_doc_page(
 
     rules_tab_cls = "codex-tab active" if active_nav == "rules" else "codex-tab"
     mat_tab_cls = "codex-tab active" if active_nav == "materials" else "codex-tab"
-    version_label = "第五版 · 2026.10.30（1.7 · 5.6 / 8.3）" if active_nav == "rules" else "第二版 · 物理参考"
+    version_label = "第六版 · 2026.11.05（8.5 结构证据 · 1.7.1 保底量级 · 1.3 第 8 条）" if active_nav == "rules" else "第二版 · 物理参考"
 
     body = f"""
     <div class="container">
       <header class="codex-header">
         <nav class="codex-tabs" aria-label="规则与资料切换">
-          <a class="{rules_tab_cls}" href="rules.html">衡天体系 · 第五版</a>
+          <a class="{rules_tab_cls}" href="rules.html">衡天体系 · 第六版</a>
           <a class="{mat_tab_cls}" href="materials.html">材质与能量 · 第二版</a>
         </nav>
         <div class="codex-folio">
@@ -2124,7 +2124,7 @@ def build_search_page() -> str:
       <header class="page-header search-page-header">
         <div class="page-header-body">
           <div class="page-title-row">
-            <div><span class="section-kicker">Search PowerWiki</span><h1 class="page-title">搜索全站</h1><p class="page-desc">检索量级、角色证据、第五版规则与材质数据。</p></div>
+            <div><span class="section-kicker">Search PowerWiki</span><h1 class="page-title">搜索全站</h1><p class="page-desc">检索量级、角色证据、第六版规则与材质数据。</p></div>
             <span class="count-badge mono" id="dedicated-search-count">准备就绪</span>
           </div>
         </div>
@@ -2135,7 +2135,7 @@ def build_search_page() -> str:
           <button type="button" class="chip-btn active" data-page-search-type="all">全部</button>
           <button type="button" class="chip-btn" data-page-search-type="tier">量级</button>
           <button type="button" class="chip-btn" data-page-search-type="char">角色</button>
-          <button type="button" class="chip-btn" data-page-search-type="rules">第五版规则</button>
+          <button type="button" class="chip-btn" data-page-search-type="rules">第六版规则</button>
           <button type="button" class="chip-btn" data-page-search-type="materials">材质数据</button>
         </div></div>
       </div>
@@ -2195,8 +2195,8 @@ def build_search_index_bundle(
             {
                 "type": "rules",
                 "code": "",
-                "title": f"衡天第五版 · {sec['title']}",
-                "badge": "衡天第五版",
+                "title": f"衡天第六版 · {sec['title']}",
+                "badge": "衡天第六版",
                 "pinyin": "",
                 "text": clean_txt,
                 "url": f"rules.html#{sec['id']}",
@@ -2264,9 +2264,9 @@ def main() -> None:
     rules_html, rules_sections, rules_title_to_id = build_fulltext_doc_page(
         page_id="rules",
         active_nav="rules",
-        title="衡天⊙ 多维战力量级体系（第五版·全文）",
+        title="衡天⊙ 多维战力量级体系（第六版·全文）",
         subtitle="核对判定通则、量级定义、无限类证据与图像测量规范。",
-        source_filename="衡天量级体系【第五版·最新】.md",
+        source_filename="衡天量级体系【第六版·最新】.md",
         masthead_img="static/img/cosmos-eclipse.jpg",
         md_text=rules_md,
         other_doc_link=("materials.html", "材质与破坏能量数据库"),
@@ -2281,7 +2281,7 @@ def main() -> None:
         source_filename="材质与破坏能量数据库（新）.md",
         masthead_img="static/img/physics-lattice.jpg",
         md_text=materials_md,
-        other_doc_link=("rules.html", "衡天量级体系（第五版）"),
+        other_doc_link=("rules.html", "衡天量级体系（第六版）"),
     )
     (ROOT / "materials.html").write_text(materials_html, encoding="utf-8")
 
@@ -2323,7 +2323,7 @@ def main() -> None:
         f"  - Core pages: index.html, tiers.html, characters.html, rules.html, materials.html, search.html\n"
         f"  - Standalone Tier pages: {len(tiers)} files in tier/*.html\n"
         f"  - Standalone Character pages: {len(all_chars)} files in character/*.html ({len(char_doc_sections)} full-text sections indexed)\n"
-        f"  - Rules v5 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections\n"
+        f"  - Rules v6 TOC anchors: {len(rules_sections)} sections | Materials TOC anchors: {len(materials_sections)} sections\n"
         f"  - Page skins (editions): {editions_built} standalone builds in skins/*/"
     )
 

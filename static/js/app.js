@@ -1197,7 +1197,7 @@ function renderCard(t) {
   const TYPE_LABELS = {
     tier: "量级分类",
     char: "角色档案",
-    rules: "衡天第五版",
+    rules: "衡天第六版",
     materials: "材质能量库"
   };
 
@@ -1332,7 +1332,7 @@ function renderCard(t) {
         mount.innerHTML = `
           <div class="empty-state-box">
             <h3 class="empty-state-title">没有找到匹配内容</h3>
-            <p class="empty-state-sub">试试检索代字（如 恒○、宇◆、外·门）、第五版规则（如 明确设定陈述、标注图与动图、归因审查）或材质名称（如 中子星、花岗岩）。</p>
+            <p class="empty-state-sub">试试检索代字（如 恒○、宇◆、外·门）、第六版规则（如 明确设定陈述、标注图与动图、归因审查）或材质名称（如 中子星、花岗岩）。</p>
           </div>`;
         return;
       }
