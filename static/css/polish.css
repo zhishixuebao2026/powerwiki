@@ -544,7 +544,8 @@ html[data-pw-edition] .topbar {
 .char-card.media-top.char-card-yog .char-card-media::after,
 .char-card.media-top.char-card-divinity .char-card-media::after,
 .char-card.media-top.char-card-lufasi .char-card-media::after,
-.char-card.media-top.char-card-tianren .char-card-media::after {
+.char-card.media-top.char-card-tianren .char-card-media::after,
+.char-card.media-top.char-card-tongguan .char-card-media::after {
   color: #f6d98c;
   font-size: 11px;
   letter-spacing: .2em;
@@ -553,7 +554,8 @@ html[data-pw-edition] .topbar {
 .char-card.media-top.char-card-yog .char-card-media.is-landscape::after,
 .char-card.media-top.char-card-divinity .char-card-media.is-landscape::after,
 .char-card.media-top.char-card-lufasi .char-card-media.is-landscape::after,
-.char-card.media-top.char-card-tianren .char-card-media.is-landscape::after {
+.char-card.media-top.char-card-tianren .char-card-media.is-landscape::after,
+.char-card.media-top.char-card-tongguan .char-card-media.is-landscape::after {
   font-size: 11px;
   letter-spacing: .2em;
   text-shadow: 0 1px 6px rgba(0, 0, 0, .78), 0 0 3px rgba(0, 0, 0, .95);
@@ -566,3 +568,5 @@ html[data-pw-edition] .topbar {
 .char-card.media-top.char-card-lufasi .char-card-media.is-landscape::after { color: #f2c46a; }
 .char-card.media-top.char-card-tianren .char-card-media::after,
 .char-card.media-top.char-card-tianren .char-card-media.is-landscape::after { color: #a8ecd6; }
+.char-card.media-top.char-card-tongguan .char-card-media::after,
+.char-card.media-top.char-card-tongguan .char-card-media.is-landscape::after { color: #f0c96b; }
