@@ -1734,6 +1734,24 @@ body.character-tongguan .char-identity-fx::after  { left: 71%; top: 62%; animati
   --dossier-surface: rgba(22, 19, 12, .8);
 }
 
+/* ---- dossier 表面色：必须定义在 .theme-* 元素本身 ----
+   .character-dossier 自带白色兜底 --dossier-surface: rgba(255,255,255,.58)，
+   按 CSS 变量「元素自身定义 > 继承」规则，挂在 body 上的 --dossier-* 会被它盖掉，
+   导致暗色下 KPI 卡 / 徽标 / 立绘容器变成对比亮色白块。故在此按老角色
+   .theme-tongguan 的写法，于 dossier 元素自身补齐明暗两套表面色。 */
+.theme-yog {
+  --dossier-surface: rgba(252, 253, 255, .78);
+}
+[data-theme="dark"] .theme-yog {
+  --dossier-surface: rgba(18, 28, 56, .82);
+}
+.theme-divinity {
+  --dossier-surface: rgba(252, 250, 244, .78);
+}
+[data-theme="dark"] .theme-divinity {
+  --dossier-surface: rgba(22, 19, 12, .82);
+}
+
 /* ---- 共用 dossier 视觉骨架（yog / divinity） ---- */
 body.character-yog .dossier-masthead,
 body.character-divinity .dossier-masthead {

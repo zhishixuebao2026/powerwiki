@@ -4,6 +4,22 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-05（夜·补2）· 修复新角色暗色主题 KPI 等板块变亮白块
+
+- **问题**：暗色下 yog / divinity 的「综合主档定级」「保底量级」两张 KPI 卡、
+  右上 dossier 徽标、立绘容器、立绘角标共 5 处呈 `rgba(255,255,255,.58)` 亮白块，
+  浅色文字近乎白底白字，与暗色版割裂；老角色 tongguan 暗色无此问题。
+- **根因**：`.character-dossier` 自带白色兜底 `--dossier-surface`；按 CSS 变量
+  「元素自身定义 > 继承」，挂在 `body` 上的 `character-yog/divinity` 暗色变量被它盖掉。
+  老角色是把明暗表面色定义在 dossier 元素自身的 `.theme-tongguan` 类上。
+- **修复**：`experience.css` 给 `.theme-yog` / `.theme-divinity` 补明暗两套
+  `--dossier-surface`（暗色 yog `rgba(18,28,56,.82)` / divinity `rgba(22,19,12,.82)`，
+  浅色各取对应浅色），与老角色写法一致。一行变量同时修好 5 个板块，未改页面结构。
+- **全面自检**：playwright 实机 dump 明暗两套 computed background-color，逐项对比
+  tongguan；暗色白块由 5 处降为 0（仅剩三角色共有的刻度金点，属设计元素），
+  浅色无回退；滚动至量级信息面板与正文区复查，全页无残留亮块。
+- service-worker 升 `pw-v13` 强制刷新样式缓存。
+
 ## 2026-11-05（夜·补）· 重新生成合适比例配图 + 去水印 / 去图注 / 角色名对比色
 
 - **重新生成 6 张配图（核心）**：yog / divinity 各 3 张整套重做，比例按页面原生版式匹配——
