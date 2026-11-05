@@ -502,6 +502,42 @@ void main(){
   /* 目录抽屉为底部展开，.sheet-body 已自带底部安全区；此处只保证背板覆盖状态栏时不变形 */
   .sheet { top: 0; }
 </style>
+
+<style data-pw-palette>
+  /* 茶白·长夜专属色板：把同模板带来的「弗坦冷青绿」收敛为青铜锈墨绿，
+     主结构色统一到赭铜 / 金 / 墨 / 茶白，朱砂只留给印章。 */
+  html[data-theme="light"] {
+    --verdigris: #3d6b5d;
+    --verdigris-soft: rgba(61, 107, 93, .10);
+    --cinnabar: #b1492f;
+    --cinnabar-soft: rgba(177, 73, 47, .09);
+    --seal: #a83f2a;
+    --warn: #a9792f;
+  }
+  html[data-theme="dark"] {
+    --verdigris: #82a89a;
+    --verdigris-soft: rgba(130, 168, 154, .11);
+    --cinnabar: #c4705a;
+    --cinnabar-soft: rgba(196, 112, 90, .11);
+    --seal: #bd553c;
+    --warn: #c39a55;
+  }
+  /* 综合定级卡：去掉模板的「青绿 + 朱砂」双色渐变，改单一赭金晕染 + 与同层卡片一致的表面 */
+  .verdict {
+    background:
+      radial-gradient(circle at 88% 18%, rgba(138, 98, 48, .12), transparent 52%),
+      var(--surface);
+  }
+  /* 量级栏 / 位格 / 术语卡：同一层一律同一表面与描边，不再白、米白、灰白混用 */
+  .kv, .ia-zone, .gl-k { background-color: var(--surface); border-color: var(--line); }
+  .gl-k { background: var(--bronze-soft); }
+  /* 卷间插页：亮色主题下不用死黑，改墨绿黑 + 铜金描边，看起来是碑刻而不是漏了主题 */
+  html[data-theme="light"] .interlude,
+  html[data-theme="light"] .toast-frame {
+    background: #1a2220;
+    border-color: rgba(138, 98, 48, .42);
+  }
+</style>
 </head>
   <body>
     <div id="root"></div>

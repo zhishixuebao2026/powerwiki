@@ -502,11 +502,47 @@ void main(){
   /* 目录抽屉为底部展开，.sheet-body 已自带底部安全区；此处只保证背板覆盖状态栏时不变形 */
   .sheet { top: 0; }
 </style>
+
+<style data-pw-palette>
+  /* 茶白·长夜专属色板：把同模板带来的「弗坦冷青绿」收敛为青铜锈墨绿，
+     主结构色统一到赭铜 / 金 / 墨 / 茶白，朱砂只留给印章。 */
+  html[data-theme="light"] {
+    --verdigris: #3d6b5d;
+    --verdigris-soft: rgba(61, 107, 93, .10);
+    --cinnabar: #b1492f;
+    --cinnabar-soft: rgba(177, 73, 47, .09);
+    --seal: #a83f2a;
+    --warn: #a9792f;
+  }
+  html[data-theme="dark"] {
+    --verdigris: #82a89a;
+    --verdigris-soft: rgba(130, 168, 154, .11);
+    --cinnabar: #c4705a;
+    --cinnabar-soft: rgba(196, 112, 90, .11);
+    --seal: #bd553c;
+    --warn: #c39a55;
+  }
+  /* 综合定级卡：去掉模板的「青绿 + 朱砂」双色渐变，改单一赭金晕染 + 与同层卡片一致的表面 */
+  .verdict {
+    background:
+      radial-gradient(circle at 88% 18%, rgba(138, 98, 48, .12), transparent 52%),
+      var(--surface);
+  }
+  /* 量级栏 / 位格 / 术语卡：同一层一律同一表面与描边，不再白、米白、灰白混用 */
+  .kv, .ia-zone, .gl-k { background-color: var(--surface); border-color: var(--line); }
+  .gl-k { background: var(--bronze-soft); }
+  /* 卷间插页：亮色主题下不用死黑，改墨绿黑 + 铜金描边，看起来是碑刻而不是漏了主题 */
+  html[data-theme="light"] .interlude,
+  html[data-theme="light"] .toast-frame {
+    background: #1a2220;
+    border-color: rgba(138, 98, 48, .42);
+  }
+</style>
 </head>
   <body>
     <div id="root"></div>
   <link rel="stylesheet" href="../../static/css/editions.css">
-<div class="pw-edition-dock" id="pw-edition-dock"><a class="pw-edition-home-btn" href="../../index.html" title="返回主站首页" aria-label="返回主站首页"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></a><button type="button" class="pw-edition-toggle" id="pw-edition-toggle" aria-expanded="false" aria-controls="pw-edition-panel" title="切换页面皮肤"><span class="pw-edition-glyph" aria-hidden="true">⊙</span><span class="pw-edition-label">皮肤</span></button><div class="pw-edition-panel" id="pw-edition-panel" data-current-edition="bronze-coffin" hidden><div class="pw-edition-head"><span class="pw-edition-title">本页皮肤</span><span class="pw-edition-sub">同一内容 · 2 种版式</span></div><div class="pw-edition-list"><a class="pw-edition-card" data-edition-id="default" href="../../character/tongguan.html"><span class="pw-edition-thumb"><img src="../../static/img/editions/default.jpg" alt="" loading="lazy" decoding="async"></span><span class="pw-edition-meta"><span class="pw-edition-name">默认</span><span class="pw-edition-tag">DEFAULT · v6.0</span><span class="pw-edition-note">建筑感栅格，98 档量级 + 角色 + 规则 + 材质全站</span></span></a><a class="pw-edition-card is-current" data-edition-id="bronze-coffin" href="character-tongguan.html" aria-current="page"><span class="pw-edition-thumb"><img src="../../static/img/editions/bronze-coffin.jpg" alt="" loading="lazy" decoding="async"></span><span class="pw-edition-meta"><span class="pw-edition-name">长夜铜棺<span class="pw-edition-now">当前</span></span><span class="pw-edition-tag">COFFIN · 长夜卷</span><span class="pw-edition-note">青铜古棺 · 水墨灰烬与茶白小院，长夜／茶白双主题；基于独立构建的三世铜棺之主定级整页应用</span></span></a></div><div class="pw-edition-foot"><a class="pw-edition-home" href="../../index.html"><span aria-hidden="true">←</span> 返回主站首页</a><span class="pw-edition-foot-note">只列出与本页对应的皮肤；换页后入口随页面走。</span></div></div></div>
+<div class="pw-edition-dock" id="pw-edition-dock"><a class="pw-edition-home-btn" href="../../index.html" title="返回主站首页" aria-label="返回主站首页"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></a><button type="button" class="pw-edition-toggle" id="pw-edition-toggle" aria-expanded="false" aria-controls="pw-edition-panel" title="切换页面皮肤"><span class="pw-edition-glyph" aria-hidden="true">⊙</span><span class="pw-edition-label">皮肤</span></button><div class="pw-edition-panel" id="pw-edition-panel" data-current-edition="bronze-coffin" hidden><div class="pw-edition-head"><span class="pw-edition-title">本页皮肤</span><span class="pw-edition-sub">同一内容 · 2 种版式</span></div><div class="pw-edition-list"><a class="pw-edition-card" data-edition-id="default" href="../../character/tongguan.html"><span class="pw-edition-thumb"><img src="../../static/img/editions/default.jpg" alt="" loading="lazy" decoding="async"></span><span class="pw-edition-meta"><span class="pw-edition-name">默认</span><span class="pw-edition-tag">DEFAULT · v6.0</span><span class="pw-edition-note">建筑感栅格，98 档量级 + 角色 + 规则 + 材质全站</span></span></a><a class="pw-edition-card is-current" data-edition-id="bronze-coffin" href="character-tongguan.html" aria-current="page"><span class="pw-edition-thumb"><img src="../../static/img/editions/bronze-coffin.jpg" alt="" loading="lazy" decoding="async"></span><span class="pw-edition-meta"><span class="pw-edition-name">茶白·长夜<span class="pw-edition-now">当前</span></span><span class="pw-edition-tag">BRONZE COFFIN</span><span class="pw-edition-note">青铜古棺 · 水墨灰烬的定级卷宗；茶白／长夜双主题，赭金与铜锈墨绿，独立构建的三世铜棺之主整页应用</span></span></a></div><div class="pw-edition-foot"><a class="pw-edition-home" href="../../index.html"><span aria-hidden="true">←</span> 返回主站首页</a><span class="pw-edition-foot-note">只列出与本页对应的皮肤；换页后入口随页面走。</span></div></div></div>
 <script src="../../static/js/editions.js" defer></script>
 </body>
 </html>

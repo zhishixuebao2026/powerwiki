@@ -86,9 +86,9 @@
     },
     {
       "id": "bronze-coffin",
-      "name": "长夜铜棺",
-      "tag": "COFFIN · 长夜卷",
-      "note": "青铜古棺 · 水墨灰烬与茶白小院，长夜／茶白双主题；基于独立构建的三世铜棺之主定级整页应用",
+      "name": "茶白·长夜",
+      "tag": "BRONZE COFFIN",
+      "note": "青铜古棺 · 水墨灰烬的定级卷宗；茶白／长夜双主题，赭金与铜锈墨绿，独立构建的三世铜棺之主整页应用",
       "source": "skins/_source/bronze-coffin.html",
       "section": "character-tongguan",
       "inject": "minimal",
