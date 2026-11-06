@@ -266,6 +266,7 @@ BOOT_BG_CHARACTERS = {
     "character-guchensha": ("#f1edf5", "#0c0714"),
     "character-xuezhishaonv": ("#f0f3f9", "#060b1a"),
     "character-zhigaowangzuo": ("#f3efe7", "#0c0a08"),
+    "character-wuxianbaoshi": ("#f3eff8", "#0b0713"),
 }
 
 

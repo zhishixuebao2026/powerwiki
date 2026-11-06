@@ -590,5 +590,7 @@ html[data-pw-edition] .topbar {
 .char-card.media-top.char-card-guchensha .char-card-media.is-landscape::after { color: #d8b0f0; }
 .char-card.media-top.char-card-zhigaowangzuo .char-card-media::after,
 .char-card.media-top.char-card-zhigaowangzuo .char-card-media.is-landscape::after { color: #e8c877; }
+.char-card.media-top.char-card-wuxianbaoshi .char-card-media::after,
+.char-card.media-top.char-card-wuxianbaoshi .char-card-media.is-landscape::after { color: #d9b24e; }
 .char-card.media-top.char-card-xuezhishaonv .char-card-media::after,
 .char-card.media-top.char-card-xuezhishaonv .char-card-media.is-landscape::after { color: #dce8ff; }

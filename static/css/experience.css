@@ -2091,6 +2091,92 @@ body.character-tongguan .char-identity-fx::after  { left: 71%; top: 62%; animati
 }
 
 
+/* ---- 无限宝石（漫威漫画 / 六宝石） · 宇宙紫 + 宝石金 · 浅色 ---- */
+[light] body.character-wuxianbaoshi {
+  --bg-canvas: #f3eff8;
+  --bg-subtle: #e6def0;
+  --bg-surface: #fbf9fe;
+  --bg-elevated: #efe7f7;
+  --bg-header: rgba(251, 249, 254, .95);
+  --text-primary: #1b1426;
+  --text-secondary: #463657;
+  --text-muted: #6a587e;
+  --accent: #6b3fa0;
+  --accent-strong: #4c2c77;
+  --accent-soft: rgba(107, 63, 160, .08);
+  --border-accent: rgba(107, 63, 160, .26);
+  --border-subtle: rgba(27, 20, 38, .10);
+  --border-default: rgba(27, 20, 38, .16);
+  --panel-glass: #fbf9fe;
+  --site-grid: rgba(107, 63, 160, .035);
+  --char-accent: #a07a1e;
+  --char-accent-strong: #7c5d14;
+  --char-accent-soft: rgba(160, 122, 30, .085);
+  --char-border-accent: rgba(160, 122, 30, .26);
+  --char-header-accent: #a07a1e;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(107, 63, 160, .12), transparent 74%),
+    linear-gradient(180deg, #e6def0, #f3eff8);
+  --abyss-glass: #fbf9fe;
+  --abyss-stroke: rgba(107, 63, 160, .16);
+  --abyss-glow: rgba(160, 122, 30, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(27, 20, 38, .26);
+  --dossier-bg: #efe7f7;
+  --dossier-text: #1b1426;
+  --dossier-muted: #6a587e;
+  --dossier-accent: #6b3fa0;
+  --dossier-border: rgba(107, 63, 160, .20);
+  --dossier-surface: rgba(251, 249, 254, .8);
+}
+/* ---- 无限宝石 · 暗色 ---- */
+[dark] body.character-wuxianbaoshi {
+  --bg-canvas: #0b0713;
+  --bg-subtle: #150e22;
+  --bg-surface: #161022;
+  --bg-elevated: #1f1731;
+  --bg-header: rgba(22, 16, 34, .95);
+  --text-primary: #efe7f8;
+  --text-secondary: #c4b2dd;
+  --text-muted: #9986b6;
+  --accent: #b07ce0;
+  --accent-strong: #cda3ef;
+  --accent-soft: rgba(176, 124, 224, .08);
+  --border-accent: rgba(176, 124, 224, .26);
+  --border-subtle: rgba(239, 231, 248, .10);
+  --border-default: rgba(239, 231, 248, .16);
+  --panel-glass: #161022;
+  --site-grid: rgba(176, 124, 224, .035);
+  --char-accent: #e0b84e;
+  --char-accent-strong: #f1d073;
+  --char-accent-soft: rgba(224, 184, 78, .085);
+  --char-border-accent: rgba(224, 184, 78, .26);
+  --char-header-accent: #e0b84e;
+  --char-art-opacity: 1;
+  --char-atmosphere:
+    radial-gradient(960px 480px at 74% -12%, rgba(176, 124, 224, .12), transparent 74%),
+    linear-gradient(180deg, #150e22, #0b0713);
+  --abyss-glass: #161022;
+  --abyss-stroke: rgba(176, 124, 224, .16);
+  --abyss-glow: rgba(224, 184, 78, .30);
+  --abyss-deep: transparent;
+  --drawer-veil: rgba(239, 231, 248, .26);
+  --dossier-bg: #141021;
+  --dossier-text: #efe7f8;
+  --dossier-muted: #9986b6;
+  --dossier-accent: #b07ce0;
+  --dossier-border: rgba(176, 124, 224, .20);
+  --dossier-surface: rgba(18, 13, 30, .84);
+}
+.theme-wuxianbaoshi {
+  --dossier-surface: rgba(251, 249, 254, .8);
+}
+[data-theme="dark"] .theme-wuxianbaoshi {
+  --dossier-surface: rgba(18, 13, 30, .84);
+}
+
+
 /* ---- 下游者（真空衰变 / 无损计算基质） · 浅色 ---- */
 [light] body.character-xiayouzhe {
   --bg-canvas: #edf2f8;
