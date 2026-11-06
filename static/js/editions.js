@@ -66,6 +66,32 @@
        于是印章压在「A− A+ 宽屏」上面。现在逐块求交，印章永远落在空地。 */
     var GAP = 10;
 
+    /* ── 选边状态：一次性决定后冻结，滚动/开合绝不翻面 ──
+       之前 dock 会在滚动停下重测时反复左右翻转（两侧瞬时净空接近、
+       或底部栏滑入把左栏净空顶过阈值都会触发）。现在选边只看稳定输入
+       （视口宽度 ≤560 → 右；否则有贯通左栏 → 右；否则左），并且只在
+       启动时与视口尺寸真正变化时重算；滚动只调上下净空，横向永不翻。 */
+    var dockSide = null;
+
+    function decideSide(vw, vh, boxes) {
+      if (vw <= 560) return "right";                 // 手机屏：左边常站着阅读工具条，统一贴右
+      var edge = Math.max(10, Math.round(vw * 0.08));
+      for (var k = 0; k < boxes.length; k++) {
+        var sb = boxes[k];
+        if (sb.bottom - sb.top < vh * 0.55) continue;   // 只认贯通全高的侧栏
+        // 排除半截在屏外的元素（如匿名 fixed 装饰层 left 为负）：它高却不在屏内，
+        // 一旦被误判成"左栏"就会把印章翻到右，必须跳过。真正贴边的侧栏左缘≈0。
+        if (sb.left < -4 || sb.right > vw + 4) continue;
+        if (sb.left <= edge && sb.right - sb.left >= 120) return "right";
+      }
+      return "left";
+    }
+
+    function refreshSide() {
+      var vw = window.innerWidth, vh = window.innerHeight;
+      dockSide = decideSide(vw, vh, visibleFixedBoxes());
+    }
+
     /* 量出真实的底部安全区（env() 只能靠一个临时元素读到计算值） */
     function safeBottomInset() {
       var probe = document.createElement("div");
@@ -136,39 +162,44 @@
       for (var k = 0; k < boxes.length; k++) {
         var sb = boxes[k];
         if (sb.bottom - sb.top < vh * 0.55) continue;
+        // 同 decideSide：半截在屏外的元素不算侧栏，避免把它们当 inset 推出去
+        if (sb.left < -4 || sb.right > vw + 4) continue;
         if (sb.left <= edge && sb.right - sb.left >= 120) leftInset = Math.max(leftInset, sb.right);
         if (sb.right >= vw - edge && sb.right - sb.left >= 120) rightInset = Math.max(rightInset, vw - sb.left);
       }
 
-      function clearance(left) {
+      // ── 选边：一次性决定后冻结，滚动/开合绝不翻面 ──
+      // dockSide 只在启动时与视口尺寸变化（resize/orientation）时重算，
+      // 滚动停下后的重测只调上下净空，不再左右翻转。
+      var side = dockSide || decideSide(vw, vh, boxes);
+
+      // 给定选边下的水平起点（紧贴可用区；与 dock 实际宽度无关）
+      var leftX = mSide + leftInset;
+      var rightX = mSide + rightInset;
+
+      // 下半屏常驻栏的净空：只决定"抬多高"，不改变左右
+      function clearance(spanLeft, spanRight) {
         var bottom = baseBottom;
         for (var i = 0; i < boxes.length; i++) {
           var b = boxes[i];
           if (b.top < vh * 0.5) continue;            // 只看下半屏的常驻栏
-          if (b.right <= left + 2 || b.left >= left + w - 2) continue;
+          if (b.bottom > vh + 2) continue;           // 底已探出视口的不是底栏，别拿来顶高印章
+          if (b.right <= spanLeft + 2 || b.left >= spanRight - 2) continue;
           bottom = Math.max(bottom, Math.round(vh - b.top) + GAP);
         }
         return bottom;
       }
 
-      var leftX = Math.round(mSide + leftInset);
-      var rightX = Math.round(vw - mSide - w - rightInset);
-      var leftSlot = clearance(leftX);
-      var rightSlot = clearance(rightX);
-      // 左侧有整条侧栏、或者手机屏（左边已经站着阅读工具条）时，
-      // 一律贴右侧：和工具坞排成一列，左边整块留给正文。
-      var useRight = leftInset > 0 || vw <= 560 || rightSlot + 0.5 < leftSlot;
-      var bottom = useRight ? rightSlot : leftSlot;
-      // 实在挤得太高，就退回另一侧
-      if (bottom > vh * 0.42) {
-        var other = useRight ? leftSlot : rightSlot;
-        if (other < bottom) { useRight = !useRight; bottom = other; }
-      }
+      var leftSpanL = leftX, leftSpanR = leftX + w;
+      var rightSpanL = vw - rightX - w, rightSpanR = vw - rightX;
+      // 只调上下净空，选边已冻结：滚动出现底部栏时整体抬升，但不翻面
+      var bottom = side === "left" ? clearance(leftSpanL, leftSpanR) : clearance(rightSpanL, rightSpanR);
+      bottom = Math.max(baseBottom, Math.min(bottom, Math.round(vh * 0.66)));
 
-      dock.classList.toggle("is-flipped", useRight);
-      // 贴右边时用 right 锚定：展开标签只会往左长，不会顶出屏幕
-      if (useRight) {
-        dock.style.right = Math.max(mSide, vw - rightX - w) + "px";
+      dock.classList.toggle("is-flipped", side === "right");
+      // 用 inset 直接锚定：展开标签只朝屏内长，绝不顶出屏幕、也不左右跳动
+      if (side === "right") {
+        dock.style.right = Math.max(mSide, rightX) + "px";
         dock.style.left = "auto";
       } else {
         dock.style.left = Math.max(mSide, leftX) + "px";
@@ -199,11 +230,16 @@
     }
     window.__PW_PLACE_DOCK__ = queueMeasure;
 
-    // React 产物是异步挂载的，分几个时间点各测一次
-    [200, 700, 1500, 3000].forEach(function (t) { setTimeout(queueMeasure, t); });
-    window.addEventListener("resize", queueMeasure);
-    window.addEventListener("orientationchange", queueMeasure);
-    // 面板开合会改变自身尺寸，重新量一次
+    // React 产物是异步挂载的，分几个时间点各测一次：每次都先重算选边再定位。
+    // 启动期（3s 内）允许选边随布局稳定而调整；之后 dockSide 冻结，滚动不再翻面。
+    [200, 700, 1500, 3000].forEach(function (t) {
+      setTimeout(function () { refreshSide(); queueMeasure(); }, t);
+    });
+    // 仅在视口尺寸真正变化时重算选边（手机横竖屏、桌面缩放/拖拽窗口）
+    function onViewportChange() { refreshSide(); queueMeasure(); }
+    window.addEventListener("resize", onViewportChange);
+    window.addEventListener("orientationchange", onViewportChange);
+    // 面板开合会改变自身尺寸，重新量一次（只重定位，不动选边）
     btn.addEventListener("click", function () { setTimeout(queueMeasure, 0); });
   }
 
