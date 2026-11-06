@@ -4,6 +4,15 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-07（补6）· 新增两套整页皮肤：「圣辉」（我就是我·至高神性 第2套）与「碎核」（材质与破坏能量数据库）
+
+- **来源**：用户上传的 `4.zip`（沙箱 `1793984073908146836-4.zip`）内含两个独立构建的整页——`sonnet-5-5-xhigh＆haiku-5.5-high＆gpt-5.6-terra-xhigh我就是我定级页面/dist/index.html`、`opus-5.5-low＆GLM5.2MAX＆mimo-v2.6-flash＆gemini3.7flash材质页面/dist/index.html`。
+- **命名**（按设计语言，非模型名）：`divinity-radiance`「圣辉」——米白羊皮纸＋中心金色光晕、衬线巨字「我就是我·至高神性」、环形 `I AM THAT I AM`、虚空／万有双态切换，`tag: SACRED RADIANCE · 虚空万有`，`section=character-divinity`（与「金印神性」并列，至高神性第 2 套皮肤）；`material-shatter`「碎核」——赤陶与朱红、裂核＋轨道环＋漂浮碎石的破坏物理主题，`tag: SHATTERED CORE · 破坏能量数据库`，`section=materials`（挂在既有 `materials.html` 数据参考页，类比观象台挂 `rules`）。均 `inject: minimal`。
+- **自包含、零字体修复**：两份 ZIP 的资源策略与上轮相反——「圣辉」把 14 个 woff2 字体（Noto Serif SC 等）与各图（portrait/texture/voice）**全部 base64 内联**，页面 54MB、零外部请求，无需 `font_rewrite`；「碎核」0 个 @font-face（系统字体），仅 8 张 `./images/*.jpg` 经 `hi()` 运行时解码引用，已原样落到 `skins/material-shatter/images/`，相对路径零改写。两套均无需扩展 `patch_skin_fonts`。
+- **favicon / 安全区**：两套源 HTML 都无 `<link rel=icon>`，由构建器既有逻辑补站内 `favicon-32.png` 消除 `/favicon.ico` 回退 404。两套均有 `viewport-fit=cover` 但顶栏**无顶部 `env()`**，按 `</head>` 前注入 `<style data-pw-safearea>`：`.topbar{padding-top:env(safe-area-inset-top,0px)!important}`（两套 `.topbar` 均无显式 height，仅由内部 56/63px 内容撑高，补 padding 即可避开刘海而不破坏布局）。CDP 模拟刘海（top=47）实机：圣辉顶栏 `pt:47px / h:106`、碎核 `pt:47px / h:63`，状态栏无遮挡。
+- **切换器**：`default.pages` 的 `character-divinity` 与 `materials` 键此前已存在，无需改动。实机 cards：至高神性页 `default / 金印神性 / 圣辉`（共 3 套）；材质页 `default / archive / atlas / 碎核`（共 4 套）。两套皮肤页零 JS 报错、零 404；碎核 8 图 curl 全 200。
+- **缩略图**：两套各生成 640×400（清 localStorage 真实首屏），`static/img/editions/divinity-radiance.jpg`、`material-shatter.jpg`。
+
 ## 2026-11-06（补5）· 新增两套整页皮肤：「衡天星册」（天人大圣）与「金印神性」（我就是我·至高神性）
 
 - **来源**：用户上传的 `3.zip`（沙箱 `1793979930868732710-3.zip`）内含两个独立构建的整页——`muse-wonder-max＆gpt-6.1-terra-max＆qwen3.8-max-0902天人大圣定级页面/dist/index.html`、`opus-5.5-high＆DS4.1FLASHMAX＆grok-4.6-xhigh我就是我定级页面/dist/index.html`。两份都是自包含的 React 阅读器，各带亮暗主题、字号调节与章节目录。定级原文均**逐字零改动**：天人大圣 `dist/source.md` 与站内 `data/docs/characters/天人大圣（走进修仙）衡天定级.md` md5 完全一致（`0a6e941b…`，第五版，按约定不回改第六版）；我就是我的原文内嵌在打包 JS 的 `O0` 常量里，站内 md 的 114 个非空行逐行命中、零缺失。

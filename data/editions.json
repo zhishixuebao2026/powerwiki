@@ -193,6 +193,32 @@
       "pages": {
         "character-divinity": "skins/divinity-seal/character-divinity.html"
       }
+    },
+    {
+      "id": "divinity-radiance",
+      "name": "圣辉",
+      "tag": "SACRED RADIANCE · 虚空万有",
+      "note": "米白羊皮纸与中心金色光晕、衬线巨字「我就是我·至高神性」、I AM THAT I AM 御言；虚空／万有双态切换、目录与检索",
+      "source": "skins/_source/divinity-radiance.html",
+      "section": "character-divinity",
+      "inject": "minimal",
+      "thumb": "static/img/editions/divinity-radiance.jpg",
+      "pages": {
+        "character-divinity": "skins/divinity-radiance/character-divinity.html"
+      }
+    },
+    {
+      "id": "material-shatter",
+      "name": "碎核",
+      "tag": "SHATTERED CORE · 破坏能量数据库",
+      "note": "赤陶与朱红、裂核＋轨道环＋漂浮碎石的破坏物理主题；材质／相变／天体束缚能数据表，检索与目录",
+      "source": "skins/_source/material-shatter.html",
+      "section": "materials",
+      "inject": "minimal",
+      "thumb": "static/img/editions/material-shatter.jpg",
+      "pages": {
+        "materials": "skins/material-shatter/materials.html"
+      }
     }
   ]
 }
