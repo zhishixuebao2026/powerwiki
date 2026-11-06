@@ -13,7 +13,7 @@
 - **安全区**：三套都在 `</head>` 前注入 `<style data-pw-safearea>`：`.topbar{padding-top:env(safe-area-inset-top,0px)!important}`（三套 `.topbar` 均无显式 height，仅由内部内容撑高，补 padding 即可避开刘海）。
 - **切换器**：`default.pages` 补 `character-yog: character/yog.html`——此前站内已有 `character/yog.html` 但栏目未登记，补键后「黄铜钥」与默认页在该栏目双向出现；「碧渊」「周天」的栏目键此前已存在。实机 cards：弗坦页 `default / 无光之渊 / 孤灯 / 碧渊`（共 4 套）、天人大圣页 `default / 衡天星册 / 周天`（共 3 套）、犹格页 `default / 黄铜钥`（共 2 套）。
 - **缩略图**：三套各生成 640×400（取首屏代表图裁切），`static/img/editions/futan-biyuan.jpg`、`yog-bronze-key.jpg`、`tianren-zhoutian.jpg`。
-- **已知缺口**：犹格·索托斯皮肤**源端即缺 4 张图**——`abyss-light.jpg`、`key-dark.jpg`、`observatory-dark.jpg`、`planes-dark.jpg` 被 `./images/` 引用，但 ZIP 的 `dist/images/` 只发了 10 张（-dark/-light 变体不完整），缺这 4 张，接入后对应位置会 404（其余 10 张正常），需用户补源后重发。
+- **图片加载方式（更正说明）**：犹格·索托斯皮肤图片**全部内联**——渲染取 `b0[o]`（`data:image/webp;base64`，14 张场景图全内联，含 `abyss-light`/`key-dark`/`observatory-dark`/`planes-dark`），`y0[o]` 仅作为 `relPath` 相对路径元信息，不参与真实 `src`。故**不存在缺图/404**（CDP 实机已验证 0 报错、0 坏响应）。源 ZIP 外发的 `./images/*.jpg` 实为冗余 relPath 文件，未用于实际加载。
 - service-worker 升 `pw-v27` 强制刷新缓存。
 
 ## 2026-11-07（补6）· 新增两套整页皮肤：「圣辉」（我就是我·至高神性 第2套）与「碎核」（材质与破坏能量数据库）
