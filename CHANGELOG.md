@@ -4,6 +4,18 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-07（补7）· 新增三套整页皮肤：「碧渊」（弗坦 第3套）、「黄铜钥」（犹格·索托斯）、「周天」（天人大圣 第2套）
+
+- **来源**：用户上传的 `6.zip`（沙箱 `1793989306026607734-6.zip`）内含三个独立构建的整页——`opus-5＆mimo-v2.6-flash＆glm-5.3-flash＆opus5.5low弗坦定级页面/dist/index.html`、`DS4.1FLASHMAX＆kalmia＆qwen3.7-max＆gemini4argon犹格索托斯定级页面/dist/index.html`、`gpt-6-sol-max＆GPT6SOL＆qwen3.8-max-0902天人大圣定级页面/dist/index.html`。定级原文均**逐字零改动**。
+- **命名**（按设计语言，非模型名）：`futan-biyuan`「碧渊」——青绿回响（#5fe3d0）＋暖米底（#f2ece0）＋近黑深渊的诡秘地海卷，`tag: BIYUAN · 诡秘地海`，`section=character-futan`（与「无光之渊」「孤灯」并列，弗坦第 3 套）；`yog-bronze-key`「黄铜钥」——黄铜金（#c8a86c）＋米纸（#f3edde）＋近黑绿（#07100e）的外神卷宗、门之钥意向，`tag: BRONZE KEY · 外神档案`，`section=character-yog`（新栏目，对应站内 `character/yog.html`）；`tianren-zhoutian`「周天」——米白＋灰金（#cdc1a0）＋近黑的修仙宇宙卷、周天运行意象，`tag: ZHOUTIAN · 宇宙之阶`，`section=character-tianren`（与「衡天星册」并列，天人大圣第 2 套）。均 `inject: minimal`。
+- **资源落位**：三套各 `./images/*.jpg` 按生成页目录原样落到 `skins/<id>/images/`，相对路径零改写；「周天」另含 `./fonts/`（仅 3 份 OFL 授权文本，无 woff2 二进制）与自带 `favicon.svg`，一并落到 `skins/tianren-zhoutian/fonts/`、`favicon.svg`。「碧渊」「黄铜钥」源 HTML 无 `<link rel=icon>`，按既有逻辑在 `_source` 手动补 `<link rel="icon" href="./favicon-32.png">` 并落位图标，规避 minimal 分支 favicon 注入误插 JS 字符串的风险。
+- **字体**：「碧渊」「黄铜钥」字体全内联自包含（base64 / 运行时注入），无需 `font_rewrite`；「周天」的 3 条 `@font-face` 指向 `./fonts/Tianren-*.woff2`，但 ZIP 未随包发出字体二进制（仅 OFL 文本），实机会 404。已在 `_source` 层删除缺失 @font-face 块，并把 `font-family` 里的 `Tianren Display/Text/Symbols` 重映射为系统 `serif`/`sans-serif` 栈（其 font-family 列表本就带 `Noto Serif SC`/`serif` 回退，重映射后零残留、无 tofu）。
+- **安全区**：三套都在 `</head>` 前注入 `<style data-pw-safearea>`：`.topbar{padding-top:env(safe-area-inset-top,0px)!important}`（三套 `.topbar` 均无显式 height，仅由内部内容撑高，补 padding 即可避开刘海）。
+- **切换器**：`default.pages` 补 `character-yog: character/yog.html`——此前站内已有 `character/yog.html` 但栏目未登记，补键后「黄铜钥」与默认页在该栏目双向出现；「碧渊」「周天」的栏目键此前已存在。实机 cards：弗坦页 `default / 无光之渊 / 孤灯 / 碧渊`（共 4 套）、天人大圣页 `default / 衡天星册 / 周天`（共 3 套）、犹格页 `default / 黄铜钥`（共 2 套）。
+- **缩略图**：三套各生成 640×400（取首屏代表图裁切），`static/img/editions/futan-biyuan.jpg`、`yog-bronze-key.jpg`、`tianren-zhoutian.jpg`。
+- **已知缺口**：犹格·索托斯皮肤**源端即缺 4 张图**——`abyss-light.jpg`、`key-dark.jpg`、`observatory-dark.jpg`、`planes-dark.jpg` 被 `./images/` 引用，但 ZIP 的 `dist/images/` 只发了 10 张（-dark/-light 变体不完整），缺这 4 张，接入后对应位置会 404（其余 10 张正常），需用户补源后重发。
+- service-worker 升 `pw-v27` 强制刷新缓存。
+
 ## 2026-11-07（补6）· 新增两套整页皮肤：「圣辉」（我就是我·至高神性 第2套）与「碎核」（材质与破坏能量数据库）
 
 - **来源**：用户上传的 `4.zip`（沙箱 `1793984073908146836-4.zip`）内含两个独立构建的整页——`sonnet-5-5-xhigh＆haiku-5.5-high＆gpt-5.6-terra-xhigh我就是我定级页面/dist/index.html`、`opus-5.5-low＆GLM5.2MAX＆mimo-v2.6-flash＆gemini3.7flash材质页面/dist/index.html`。

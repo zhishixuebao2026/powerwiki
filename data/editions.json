@@ -20,7 +20,8 @@
         "character-lufasi": "character/lufasi.html",
         "character-linfei": "character/linfei.html",
         "character-tianren": "character/tianren.html",
-        "character-divinity": "character/divinity.html"
+        "character-divinity": "character/divinity.html",
+        "character-yog": "character/yog.html"
       }
     },
     {
@@ -218,6 +219,45 @@
       "thumb": "static/img/editions/material-shatter.jpg",
       "pages": {
         "materials": "skins/material-shatter/materials.html"
+      }
+    },
+    {
+      "id": "futan-biyuan",
+      "name": "碧渊",
+      "tag": "BIYUAN · 诡秘地海",
+      "note": "青绿回响与暖米底、近黑深渊的诡秘地海卷；独立构建的弗坦定级整页应用",
+      "source": "skins/_source/futan-biyuan.html",
+      "section": "character-futan",
+      "inject": "minimal",
+      "thumb": "static/img/editions/futan-biyuan.jpg",
+      "pages": {
+        "character-futan": "skins/futan-biyuan/character-futan.html"
+      }
+    },
+    {
+      "id": "yog-bronze-key",
+      "name": "黄铜钥",
+      "tag": "BRONZE KEY · 外神档案",
+      "note": "黄铜金与米纸、近黑绿的外神卷宗；门之钥意向的犹格·索托斯定级整页应用",
+      "source": "skins/_source/yog-bronze-key.html",
+      "section": "character-yog",
+      "inject": "minimal",
+      "thumb": "static/img/editions/yog-bronze-key.jpg",
+      "pages": {
+        "character-yog": "skins/yog-bronze-key/character-yog.html"
+      }
+    },
+    {
+      "id": "tianren-zhoutian",
+      "name": "周天",
+      "tag": "ZHOUTIAN · 宇宙之阶",
+      "note": "米白与灰金、近黑的修仙宇宙卷；周天运行的宇宙之阶，天人大圣定级整页应用",
+      "source": "skins/_source/tianren-zhoutian.html",
+      "section": "character-tianren",
+      "inject": "minimal",
+      "thumb": "static/img/editions/tianren-zhoutian.jpg",
+      "pages": {
+        "character-tianren": "skins/tianren-zhoutian/character-tianren.html"
       }
     }
   ]
