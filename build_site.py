@@ -265,6 +265,7 @@ BOOT_BG_CHARACTERS = {
     "character-jiangwuye": ("#f4efec", "#120707"),
     "character-guchensha": ("#f1edf5", "#0c0714"),
     "character-xuezhishaonv": ("#f0f3f9", "#060b1a"),
+    "character-zhigaowangzuo": ("#f3efe7", "#0c0a08"),
 }
 
 
@@ -1755,6 +1756,13 @@ def build_character_detail_pages(
             has_full_doc = True
             raw_doc_md = (ROOT / doc_rel_path).read_text(encoding="utf-8")
             body_doc_md = strip_character_doc_front_banner(raw_doc_md)
+            # 定级原文里的「【插图位置 · 图N】文件名.png」是随包给的制作标注，
+            # 用来指明证据图的插入位置，不是条目的正文。存档 md 逐字保留不动，
+            # 只在渲染时跳过这些标记行；图片本身由 image_map 按原位置正常显示。
+            body_doc_md = re.sub(
+                r"^\s*\*\*【插图位置\s*·\s*图\d+】.*\*\*\s*$\n?",
+                "", body_doc_md, flags=re.M,
+            )
             doc_renderer = VerbatimMarkdownRenderer(image_map=c.get("image_map"), base_dir=CHAR_OUT_DIR)
             rendered_doc_html = doc_renderer.render(body_doc_md)
             toc_links_html = "".join(
