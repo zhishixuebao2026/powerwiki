@@ -4,6 +4,15 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-07（补8）· 新增四套整页皮肤：鎏金 / 玄金（我就是我·至高神性）+ 青漩 / 铜晖（犹格·索托斯）
+
+- **来源**：用户上传的 `7.zip`（沙箱 `1793991206676768051-7.zip`）内含四个独立构建的整页——两套「我就是我·至高神性」（`dubi-mega＆…＆GEMINI4ARGON我就是我定级页面`、`dubi-mega＆…＆fable-5.1-max我就是我定级页面`）与两套「犹格·索托斯」（克苏鲁神话原作）（`qwen3.8-flash-next＆…＆DS4.1flashMAX＆GPT6LUNAMAX犹格…定级量级页面`、`qwen3.8-flash-next＆…＆sonnet-5-5-xhigh＆opus-5.5-max犹格…定级量级页面`）。定级原文均**逐字零改动**。
+- **命名**（按设计语言，非模型名）：`divinity-gilt`「鎏金」——纯金箔面＋米白羊皮纸、衬线巨字「我就是我·至高神性」的金色神性卷，`tag: GILT · 至高神性`，`section=character-divinity`（与「金印神性」「圣辉」并列）；`divinity-xuanjin`「玄金」——近黑底＋暗金描边、暖金衬线巨字的暗黑神性卷，`tag: XUANJIN · 暗金神性`，同 `section=character-divinity`；`yog-teal-vortex`「青漩」——黄铜金＋青绿涡旋、近黑的外神卷宗（webp 动态主视觉），`tag: TEAL VORTEX · 外神档案`，`section=character-yog`（与「黄铜钥」并列）；`yog-bronze-glow`「铜晖」——黄铜金＋青绿辉光、近黑的外神卷宗（jpeg 主视觉），`tag: BRONZE GLOW · 外神档案`，同 `section=character-yog`。四套均 `inject: minimal`。
+- **全内联、零外部依赖**：四套图片（data:image webp/jpeg/png/svg 全部 base64）、字体（`@font-face` 全部 base64，含鎏金 20 个、玄金 10 个、青漩/铜晖各 4 个）、favicon（鎏金/玄金/青漩为内联 `data:image/svg+xml`，铜晖原为本地 `favicon.svg`——已在 `_source` 层改为内联 base64 消除外部引用）。HTML 中 `./images/`、`./fonts/` 外链引用均为 0，故**无缺图、无缺字体、无 favicon 404**（补7 犹格曾误判外链缺图，本次先核验确认为纯内联）。
+- **安全区**：四套均在 `</head>` 前注入 `<style data-pw-safearea>`：`.topbar{padding-top:env(safe-area-inset-top,0px)!important}`。
+- **缩略图**：四套各从内联首图（jpeg/webp 解码）裁切 640×400，`static/img/editions/{divinity-gilt,divinity-xuanjin,yog-teal-vortex,yog-bronze-glow}.jpg`；切换器 cards：至高神性页 `default / 金印神性 / 圣辉 / 鎏金 / 玄金`（共 5 套）、犹格页 `default / 黄铜钥 / 青漩 / 铜晖`（共 4 套）。
+- service-worker 升 `pw-v28` 强制刷新缓存。
+
 ## 2026-11-07（补7）· 新增三套整页皮肤：「碧渊」（弗坦 第3套）、「黄铜钥」（犹格·索托斯）、「周天」（天人大圣 第2套）
 
 - **来源**：用户上传的 `6.zip`（沙箱 `1793989306026607734-6.zip`）内含三个独立构建的整页——`opus-5＆mimo-v2.6-flash＆glm-5.3-flash＆opus5.5low弗坦定级页面/dist/index.html`、`DS4.1FLASHMAX＆kalmia＆qwen3.7-max＆gemini4argon犹格索托斯定级页面/dist/index.html`、`gpt-6-sol-max＆GPT6SOL＆qwen3.8-max-0902天人大圣定级页面/dist/index.html`。定级原文均**逐字零改动**。

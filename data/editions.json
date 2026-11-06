@@ -259,6 +259,58 @@
       "pages": {
         "character-tianren": "skins/tianren-zhoutian/character-tianren.html"
       }
+    },
+    {
+      "id": "divinity-gilt",
+      "name": "鎏金",
+      "tag": "GILT · 至高神性",
+      "note": "纯金箔面与米白羊皮纸、衬线巨字「我就是我·至高神性」的金色神性卷；亮暗双主题、目录与检索",
+      "source": "skins/_source/divinity-gilt.html",
+      "section": "character-divinity",
+      "inject": "minimal",
+      "thumb": "static/img/editions/divinity-gilt.jpg",
+      "pages": {
+        "character-divinity": "skins/divinity-gilt/character-divinity.html"
+      }
+    },
+    {
+      "id": "divinity-xuanjin",
+      "name": "玄金",
+      "tag": "XUANJIN · 暗金神性",
+      "note": "近黑底与暗金描边、暖金衬线巨字的暗黑神性卷；我就是我·至高神性的暗金版本",
+      "source": "skins/_source/divinity-xuanjin.html",
+      "section": "character-divinity",
+      "inject": "minimal",
+      "thumb": "static/img/editions/divinity-xuanjin.jpg",
+      "pages": {
+        "character-divinity": "skins/divinity-xuanjin/character-divinity.html"
+      }
+    },
+    {
+      "id": "yog-teal-vortex",
+      "name": "青漩",
+      "tag": "TEAL VORTEX · 外神档案",
+      "note": "黄铜金与青绿涡旋、近黑的外神卷宗；犹格·索托斯定级整页应用（webp 动态主视觉）",
+      "source": "skins/_source/yog-teal-vortex.html",
+      "section": "character-yog",
+      "inject": "minimal",
+      "thumb": "static/img/editions/yog-teal-vortex.jpg",
+      "pages": {
+        "character-yog": "skins/yog-teal-vortex/character-yog.html"
+      }
+    },
+    {
+      "id": "yog-bronze-glow",
+      "name": "铜晖",
+      "tag": "BRONZE GLOW · 外神档案",
+      "note": "黄铜金与青绿辉光、近黑的外神卷宗；犹格·索托斯定级整页应用（jpeg 主视觉，favicon 已内联）",
+      "source": "skins/_source/yog-bronze-glow.html",
+      "section": "character-yog",
+      "inject": "minimal",
+      "thumb": "static/img/editions/yog-bronze-glow.jpg",
+      "pages": {
+        "character-yog": "skins/yog-bronze-glow/character-yog.html"
+      }
     }
   ]
 }
