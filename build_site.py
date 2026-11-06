@@ -126,6 +126,20 @@ SKIN_FONT_STACKS = {
     "HT Mono": '"Space Grotesk Variable","Noto Sans SC Variable",ui-monospace,monospace',
 }
 
+# 站内自托管字体族名（index.css 里 @font-face 的 font-family）。
+_SITE_SERIF = '"Noto Serif SC Variable","Noto Serif SC","Songti SC",serif'
+_SITE_SANS = '"Noto Sans SC Variable","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif'
+# 部分整页皮肤把字体栈放在 :root 的 --serif/--sans/--display/--garamond 变量里，
+# 且字体二进制未随包发出（静态 @font-face 或运行时 style 注入都会 404）。
+# 直接把这些变量定义整体改指站内字体，坏 @font-face 随后被删除。
+_SKIN_ROOT_FONT_VARS = [
+    # (变量名, 站内字体栈)  —— 长名在前，逐个替换
+    ("--garamond", _SITE_SERIF),
+    ("--display", _SITE_SERIF),
+    ("--serif", _SITE_SERIF),
+    ("--sans", _SITE_SANS),
+]
+
 SKIN_FONT_SHEETS = [
     "static/fonts/noto-sans-sc/index.css",
     "static/fonts/noto-serif-sc/index.css",
@@ -135,9 +149,28 @@ SKIN_FONT_SHEETS = [
 
 def patch_skin_fonts(doc: str) -> str:
     """Rewrite a skin's font families to the site's self-hosted fonts."""
-    # 1. 去掉指向不存在的 ./assets/fonts/*.woff2 的 @font-face
+    # 1. 去掉指向不存在的字体二进制的 @font-face（两种写法都覆盖）：
+    #    - 静态 CSS：@font-face{...url(./assets/fonts/heng-*.woff2)...}
+    #    - 运行时 JS：z0.map(...) 生成、document.head 注入的 @font-face 模板串
     doc = re.sub(r"@font-face\{[^{}]*?\.\/assets\/fonts\/[^{}]*?\}", "", doc)
-    # 2. HT Sans / HT Serif / HT Brush / HT Mono -> 站内字体栈
+    #    1b. 运行时字体注入：把整段 `...style); Ns.textContent=M0; document.head.appendChild(Ns)`
+    #        里的注入内容置空——保留 DOM 逻辑不变，只是不再注册指向缺失文件的 @font-face。
+    #        用非贪婪匹配锁定 textContent= 赋值那一句。
+    #    用 lambda 返回纯 ""（不用替换串里的 \" ——那会把反斜杠写进打包 JS，整包崩溃）
+    doc = re.sub(
+        r"(\.textContent=)([A-Za-z_$][\w$]*)(\s*;\s*document\.head\.appendChild)",
+        lambda m: m.group(1) + '""' + m.group(3),
+        doc,
+    )
+    # 2. :root 里的字体变量（--serif/--sans/--display/--garamond）改指站内字体栈。
+    #    只匹配变量定义整段：`--xxx:...;`，分号前允许任意引号/逗号/括号内容。
+    for var, stack in _SKIN_ROOT_FONT_VARS:
+        doc = re.sub(
+            r"(--" + re.escape(var.lstrip("-")) + r":)[^;}]*",
+            lambda m, s=stack: m.group(1) + s,
+            doc,
+        )
+    # 3. HT Sans / HT Serif / HT Brush / HT Mono -> 站内字体栈（旧皮肤：裸族名出现在 font-family: 后）
     #    先换长的名字，避免 "HT Sans" 先于 "HT Sans SC" 之类被误伤
     for name in sorted(SKIN_FONT_STACKS, key=len, reverse=True):
         stack = SKIN_FONT_STACKS[name]
@@ -195,8 +228,11 @@ def build_skin_editions() -> int:
         if ed.get("inject") == "minimal":
             # React / 第三方整页应用皮肤：只注入切换器浮层（editions.css + editions.js + launcher），
             # 不注入主站 app.css / chrome.js / pwa.js / manifest，否则会污染应用自身的内联样式与 DOM。
+            # font_rewrite 的皮肤需要站内字体表（@font-face 定义），否则改指后的族名无字体可用；
+            # font_tags 仅在 font_rewrite 为真时非空，对其他 minimal 皮肤零影响。
             inject = (
-                f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
+                font_tags
+                + f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/editions.css")}">\n'
                 + f'{edition_launcher_html(page_dir, section, ed["id"])}\n'
                 + f'<script src="{_rel_from(page_dir, "static/js/editions.js")}" defer></script>\n'
             )

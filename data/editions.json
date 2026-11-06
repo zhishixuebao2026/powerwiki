@@ -18,7 +18,9 @@
         "character-futan": "character/futan.html",
         "character-tongguan": "character/tongguan.html",
         "character-lufasi": "character/lufasi.html",
-        "character-linfei": "character/linfei.html"
+        "character-linfei": "character/linfei.html",
+        "character-tianren": "character/tianren.html",
+        "character-divinity": "character/divinity.html"
       }
     },
     {
@@ -162,6 +164,34 @@
       "thumb": "static/img/editions/linfei-crystal.jpg",
       "pages": {
         "character-linfei": "skins/linfei-crystal/character-linfei.html"
+      }
+    },
+    {
+      "id": "tianren-register",
+      "name": "衡天星册",
+      "tag": "CELESTIAL REGISTER · 初星之志",
+      "note": "深空黑洞与初星星云、黄铜衬线巨字、天体登记册式章节导航；亮暗双主题、字号调节与十四节索引",
+      "source": "skins/_source/tianren-register.html",
+      "section": "character-tianren",
+      "inject": "minimal",
+      "font_rewrite": true,
+      "thumb": "static/img/editions/tianren-register.jpg",
+      "pages": {
+        "character-tianren": "skins/tianren-register/character-tianren.html"
+      }
+    },
+    {
+      "id": "divinity-seal",
+      "name": "金印神性",
+      "tag": "I AM THAT I AM · 神性卷宗",
+      "note": "淡金羊皮纸与同心符环、金色衬线巨字「至高神性」、十二节卷宗；宣纸／暗夜双主题、目录与原文检索",
+      "source": "skins/_source/divinity-seal.html",
+      "section": "character-divinity",
+      "inject": "minimal",
+      "font_rewrite": true,
+      "thumb": "static/img/editions/divinity-seal.jpg",
+      "pages": {
+        "character-divinity": "skins/divinity-seal/character-divinity.html"
       }
     }
   ]

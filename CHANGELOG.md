@@ -4,6 +4,17 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-06（补5）· 新增两套整页皮肤：「衡天星册」（天人大圣）与「金印神性」（我就是我·至高神性）
+
+- **来源**：用户上传的 `3.zip`（沙箱 `1793979930868732710-3.zip`）内含两个独立构建的整页——`muse-wonder-max＆gpt-6.1-terra-max＆qwen3.8-max-0902天人大圣定级页面/dist/index.html`、`opus-5.5-high＆DS4.1FLASHMAX＆grok-4.6-xhigh我就是我定级页面/dist/index.html`。两份都是自包含的 React 阅读器，各带亮暗主题、字号调节与章节目录。定级原文均**逐字零改动**：天人大圣 `dist/source.md` 与站内 `data/docs/characters/天人大圣（走进修仙）衡天定级.md` md5 完全一致（`0a6e941b…`，第五版，按约定不回改第六版）；我就是我的原文内嵌在打包 JS 的 `O0` 常量里，站内 md 的 114 个非空行逐行命中、零缺失。
+- **命名**（沿用「模型名不是样式名、皮肤按设计语言命名」的既定规则）：`tianren-register`「衡天星册」——`CELESTIAL REGISTER` 徽记、深空黑洞与初星星云、黄铜衬线巨字、天体登记册式导航，`tag: CELESTIAL REGISTER · 初星之志`，`section=character-tianren`；`divinity-seal`「金印神性」——淡金羊皮纸与同心符环、金色衬线巨字「至高神性」、环形 `I AM THAT I AM`、`tag: I AM THAT I AM · 神性卷宗`，`section=character-divinity`。均为 `inject: minimal`。
+- **注册**：`data/editions.json` 新增两条，`default.pages` 补 `character-tianren: character/tianren.html`、`character-divinity: character/divinity.html`——凑够两套皮肤，切换器才在主站角色页与皮肤页双向出现（实机 cards：主站两页各 `["default","<新皮肤>"]`）。缩略图按最终皮肤页真实首屏、清 localStorage 后重截，640×400。
+- **资源**：两套各 10 张 `./images/*.jpg` 按生成页目录原样落到 `skins/<id>/images/`，相对路径零改写；天人大圣的 `source.md` 同目录落下（页面「查看原文」用）、3 份 OFL 许可证文本与 `.tmp/` 审计脚本一律不进项目。天人大圣没自带 icon，由构建器既有逻辑补站内 `favicon-32.png` 消除回退 `/favicon.ico` 的 404；我就是我自带 data-URI icon，保留不覆盖。
+- **缺字体修复（关键）**：两份 ZIP **都没有随包发出字体二进制**（全包无 `*.woff2`、无 base64 内嵌），但页面会注册指向缺失文件的 @font-face——天人大圣是静态 CSS 的 3 条 `url(./assets/fonts/heng-*.woff2)`，我就是我是运行时 `document.head.appendChild(style)` 注入的 10 条 `url("./fonts/*.woff2")`，原始页实机分别 3 / 10 个 404。按站内「观象台」的 `font_rewrite` 先例扩展 `build_site.py` 的 `patch_skin_fonts`：① 删掉静态坏 @font-face；② 把运行时注入的 `Ns.textContent=M0` 置空（**用 lambda 返回纯 `""`**，替换串里写 `\"` 会把反斜杠注入打包 JS 导致整包崩溃，已修正）；③ 把 `:root` 的 `--serif/--sans/--display/--garamond` 字体变量整体改指站内自托管的思源宋体／黑体；④ `inject: minimal` 分支补注入站内 3 份字体表（`font_tags` 仅在 `font_rewrite` 时非空，对其余 minimal 皮肤零影响）。族名 `Heng *` / `HT Display` / `HT Garamond` / `HT Symbols` 全部落到站内字体栈，中文实机无方框、无 tofu。
+- **移动端安全区**：天人大圣源里完全没有 `env(safe-area-inset-*)`、viewport 也没有 `viewport-fit=cover`，按 `</head>` 前注入 `<style data-pw-safearea>`：补 `viewport-fit=cover`、`.site-header{padding-top:env(top)}`、`.back-to-top{bottom:calc(22px+env(bottom))}`（只让顶栏单层下移，不去叠加 `.header-inner` 高度，避免双重偏移）。我就是我作者已处理左右／底部，只补 `.topbar` 的 `calc(60px+env(top))` 与 `padding-top`，不重复叠加。CDP 模拟刘海（top=47／bottom=34）实机验证：天人大圣顶栏 112px／`padding-top:47px`、回顶按钮 752–798；我就是我顶栏 107px／`padding-top:47px`、fab 787–825，顶栏文字与目录弹层第一项均在状态栏下方、无挤压变形。
+- **自检**：明暗双主题各截首屏复核（衡天星册 dark/light、金印神性 light/dark），无亮白块、无颜色突兀板块、文字清晰、hero 图完整；桌面 1440／移动 390 零 JS 报错、零 4xx/5xx、零横向溢出（CDP 偶发 `ERR_ABORTED` 指向站内字体分片的截图竞态，curl 逐资源全 200）；两套定级 md 非空行 279／108 行在生成页逐行命中、零缺失；坏字体 @font-face 在 DOM 层全清除（静态 0 处，运行时注入已置空）；切换器面板在主站角色页与皮肤页双向可开、卡片齐全。生成/检查图全在项目外，页面无图注、无 AI 说明、无水印杂碎文字。
+- service-worker 升 `pw-v25` 强制刷新缓存。
+
 ## 2026-11-06（补4）· 新增角色「无限宝石」（漫威漫画）
 
 - **新角色**：`【11.06】无限宝石（漫威漫画）衡天定级.zip` 内含 1 份定级 md（28754 B，md5 `cf495fe…`）＋ `img/` 下 8 张证据标注图。定级 md **逐字入库** `data/docs/characters/无限宝石（漫威漫画）衡天定级.md`（与用户文件 md5 一致），档位 `universe-std`（⊙宇○（掌控式）〔实〕，标准宇宙级 8.0×10⁷⁷ J；保底 ⊙系▽〔下〕），`doc_basis` 按新条目自身写明「第六版」，条目版本 2026-11-06。评的是宝石本身（8.3.2），电影宇宙／《What If》／平行世界不计入，持有者（灭霸、卡魔拉等）为操作者另行评级。
