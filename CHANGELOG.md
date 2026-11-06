@@ -4,6 +4,15 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-07（补9）· 新增两套整页皮肤：「星烬」（我就是我·至高神性 第5套）与「霜门」（露法斯·玛法尔 第3套）
+
+- **来源**：用户上传的 `8.zip`（沙箱 `1793992492063340232-8.zip`）内含两个独立构建的整页——`sonnet-5-5-high我就是我定级页面/index.html`、`qwen3.8-max-0902＆sonnet5.5high露法斯定级页面/index.html`。定级原文均**逐字零改动**。
+- **命名**（按设计语言，非模型名）：`divinity-starember`「星烬」——近黑夜空（#05060D）与亮金星烬（#E8C577）、米纸衬线（#F3ECDC）的至高神性卷，`tag: STAR EMBER · 至高神性`，`section=character-divinity`（与「金印神性」「圣辉」「鎏金」「玄金」并列，至高神性第 5 套）；`ruphas-frostgate`「霜门」——近黑与金（#E0B158）、米（#F6EFE0）、淡蓝门意象（#86B6D6）的露法斯卷、衡天⊙外·门（ℵ₀）主题，`tag: FROST GATE · 外门档案`，`section=character-lufasi`（沿用 `ruphas-` 前缀，与「绛翼」「鎏星」并列，露法斯第 3 套）。均 `inject: minimal`。
+- **全内联、零外部依赖**：两套图片（`data:image` webp×4 / svg×1 与 jpeg×7 / svg×2，全部 base64）、字体（`@font-face` 全部 base64，星烬 10 个、霜门 5 个）、favicon（构建器 minimal 分支自动补站内 `favicon-32.png`，消除 `/favicon.ico` 回退 404）。HTML 中 `./images/`、`./fonts/` 外链引用均为 0，故**无缺图、无缺字体、无 favicon 404**。
+- **安全区**：两套均在 `</head>` 前注入 `<style data-pw-safearea>`：`.topbar{padding-top:env(safe-area-inset-top,0px)!important}`。
+- **缩略图**：两套各从内联首图（webp / jpeg 解码）裁切 640×400，`static/img/editions/{divinity-starember,ruphas-frostgate}.jpg`；切换器 cards：至高神性页 `default / 金印神性 / 圣辉 / 鎏金 / 玄金 / 星烬`（共 6 套）、露法斯页 `default / 绛翼 / 鎏星 / 霜门`（共 4 套）。
+- service-worker 升 `pw-v29` 强制刷新缓存。
+
 ## 2026-11-07（补8）· 新增四套整页皮肤：鎏金 / 玄金（我就是我·至高神性）+ 青漩 / 铜晖（犹格·索托斯）
 
 - **来源**：用户上传的 `7.zip`（沙箱 `1793991206676768051-7.zip`）内含四个独立构建的整页——两套「我就是我·至高神性」（`dubi-mega＆…＆GEMINI4ARGON我就是我定级页面`、`dubi-mega＆…＆fable-5.1-max我就是我定级页面`）与两套「犹格·索托斯」（克苏鲁神话原作）（`qwen3.8-flash-next＆…＆DS4.1flashMAX＆GPT6LUNAMAX犹格…定级量级页面`、`qwen3.8-flash-next＆…＆sonnet-5-5-xhigh＆opus-5.5-max犹格…定级量级页面`）。定级原文均**逐字零改动**。

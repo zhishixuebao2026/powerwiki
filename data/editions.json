@@ -311,6 +311,32 @@
       "pages": {
         "character-yog": "skins/yog-bronze-glow/character-yog.html"
       }
+    },
+    {
+      "id": "divinity-starember",
+      "name": "星烬",
+      "tag": "STAR EMBER · 至高神性",
+      "note": "近黑夜空与亮金星烬、米纸衬线的至高神性卷；我就是我·定级整页应用（全内联）",
+      "source": "skins/_source/divinity-starember.html",
+      "section": "character-divinity",
+      "inject": "minimal",
+      "thumb": "static/img/editions/divinity-starember.jpg",
+      "pages": {
+        "character-divinity": "skins/divinity-starember/character-divinity.html"
+      }
+    },
+    {
+      "id": "ruphas-frostgate",
+      "name": "霜门",
+      "tag": "FROST GATE · 外门档案",
+      "note": "近黑与金、米、淡蓝门意象的露法斯卷；衡天⊙外·门定级整页应用（全内联）",
+      "source": "skins/_source/ruphas-frostgate.html",
+      "section": "character-lufasi",
+      "inject": "minimal",
+      "thumb": "static/img/editions/ruphas-frostgate.jpg",
+      "pages": {
+        "character-lufasi": "skins/ruphas-frostgate/character-lufasi.html"
+      }
     }
   ]
 }
