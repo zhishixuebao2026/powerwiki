@@ -21,7 +21,8 @@
         "character-linfei": "character/linfei.html",
         "character-tianren": "character/tianren.html",
         "character-divinity": "character/divinity.html",
-        "character-yog": "character/yog.html"
+        "character-yog": "character/yog.html",
+        "character-jiangwuye": "character/jiangwuye.html"
       }
     },
     {
@@ -336,6 +337,45 @@
       "thumb": "static/img/editions/ruphas-frostgate.jpg",
       "pages": {
         "character-lufasi": "skins/ruphas-frostgate/character-lufasi.html"
+      }
+    },
+    {
+      "id": "xuanheng",
+      "name": "宣衡",
+      "tag": "XUAN HENG · 水墨典章",
+      "note": "米纸水墨、朱印⊙日轮，暗/亮双主题、字阶可调的衡天体系全文典章；规则正文已对齐第六版·最新",
+      "source": "skins/_source/xuanheng.html",
+      "section": "rules",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xuanheng.jpg",
+      "pages": {
+        "rules": "skins/xuanheng/rules.html"
+      }
+    },
+    {
+      "id": "jiangwuye-starvortex",
+      "name": "星涡",
+      "tag": "STAR VORTEX · 星海定级",
+      "note": "青蓝星系漩涡与金榜书「江无夜」、深空孤崖的江无夜定级整页（暗色，图/字体内联）",
+      "source": "skins/_source/jiangwuye-starvortex.html",
+      "section": "character-jiangwuye",
+      "inject": "minimal",
+      "thumb": "static/img/editions/jiangwuye-starvortex.jpg",
+      "pages": {
+        "character-jiangwuye": "skins/jiangwuye-starvortex/character-jiangwuye.html"
+      }
+    },
+    {
+      "id": "jiangwuye-eclipsring",
+      "name": "蚀环",
+      "tag": "ECLIPSE RING · 终焉定级",
+      "note": "近黑金环日蚀、极简留白与 TERMINUS 终焉的江无夜定级整页（亮/暗双主题，全内联）",
+      "source": "skins/_source/jiangwuye-eclipsring.html",
+      "section": "character-jiangwuye",
+      "inject": "minimal",
+      "thumb": "static/img/editions/jiangwuye-eclipsring.jpg",
+      "pages": {
+        "character-jiangwuye": "skins/jiangwuye-eclipsring/character-jiangwuye.html"
       }
     }
   ]
