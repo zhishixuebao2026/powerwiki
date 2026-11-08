@@ -1414,6 +1414,88 @@ function renderCard(t) {
   }
 
   /* --------------------------------------------------------------------------
+     Figure Lightbox — 点插图留在当前页放大，不跳新页面 / 新标签
+     主屏幕启动（standalone）时没有返回键，target="_blank" 会让用户滑回 App；
+     网页版则直接开新标签页。这里用事件委托接管，页面 HTML 保持原样。
+     保留 Ctrl/Cmd/Shift/Alt + 点击与中键，需要新标签时仍可自行打开。
+     -------------------------------------------------------------------------- */
+  function initFigureLightbox() {
+    if (!document.querySelector("a.md-figure-link[href]")) return;
+
+    const box = document.createElement("div");
+    box.className = "pw-figure-lightbox";
+    box.hidden = true;
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-label", "图片放大查看");
+    box.innerHTML =
+      '<button class="pw-figure-close" type="button" aria-label="关闭图片查看">&times;</button>' +
+      '<div class="pw-figure-stage"><img class="pw-figure-img" alt="" decoding="async"></div>';
+    document.body.appendChild(box);
+
+    const stage = box.querySelector(".pw-figure-stage");
+    const img = box.querySelector(".pw-figure-img");
+    const closeBtn = box.querySelector(".pw-figure-close");
+    let trigger = null;
+
+    function close() {
+      if (box.hidden) return;
+      box.classList.remove("is-open");
+      box.hidden = true;
+      document.body.classList.remove("pw-figure-open");
+      img.removeAttribute("src");
+      img.alt = "";
+      if (trigger && trigger.isConnected) trigger.focus();
+      trigger = null;
+    }
+
+    function open(link) {
+      const href = link.getAttribute("href");
+      if (!href) return;
+      trigger = link;
+      const thumb = link.querySelector("img");
+      img.alt = thumb ? thumb.getAttribute("alt") || "" : "";
+      img.src = href;
+      stage.scrollTop = 0;
+      box.hidden = false;
+      // 强制一次布局，让入场过渡真正跑起来
+      void box.offsetWidth;
+      box.classList.add("is-open");
+      document.body.classList.add("pw-figure-open");
+      closeBtn.focus();
+    }
+
+    document.addEventListener("click", (e) => {
+      if (e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const link = e.target.closest && e.target.closest("a.md-figure-link[href]");
+      if (!link) return;
+      e.preventDefault();
+      open(link);
+    });
+
+    // 点图片本身不关闭，点空白处或按钮才关闭
+    box.addEventListener("click", (e) => {
+      if (e.target === box || e.target === stage || e.target === closeBtn) close();
+    });
+
+    // 焦点留在对话框内：只有一个可聚焦控件
+    box.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        closeBtn.focus();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !box.hidden) {
+        e.preventDefault();
+        close();
+      }
+    });
+  }
+
+  /* --------------------------------------------------------------------------
      Boot — Render synchronous DOM lists FIRST, then restore cached scrollY
      -------------------------------------------------------------------------- */
   function bootAll() {
@@ -1426,6 +1508,7 @@ function renderCard(t) {
     initBrowsingCacheAndBack();
     initGlobalSearchModal();
     initHorizontalRails();
+    initFigureLightbox();
   }
 
   if (document.readyState === "loading") {
