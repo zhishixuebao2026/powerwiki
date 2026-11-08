@@ -29,7 +29,7 @@
     },
     {
       "id": "archive",
-      "name": "卷宗",
+      "name": "索引栏",
       "tag": "ARCHIVE",
       "note": "米纸底、左侧索引栏、细线分隔与衬线巨标题的档案排版",
       "source": "skins/_source/archive.html",
@@ -55,7 +55,7 @@
     {
       "id": "observatory",
       "name": "观象台",
-      "tag": "OBSERVATORY · 观象台",
+      "tag": "OBSERVATORY · 二十八宿",
       "note": "夜观 / 昼测双主题、二十八宿衡天仪、全链对数天梯的观象台排版",
       "source": "skins/_source/observatory.html",
       "section": "rules",
@@ -69,7 +69,7 @@
     {
       "id": "moonfile",
       "name": "月面",
-      "tag": "LUNA · 月面卷宗",
+      "tag": "LUNA · 墨笔朱印",
       "note": "米纸底、墨笔巨字、月面插图与红色印章的卷宗排版",
       "source": "skins/_source/moonfile.html",
       "section": "character-yutu",
@@ -120,7 +120,7 @@
     },
     {
       "id": "ruphas-crimson",
-      "name": "绛翼",
+      "name": "珊瑚印",
       "tag": "CRIMSON WING · 黑翼档案",
       "note": "黑底金发黑翼巨像、珊瑚红印章与衬线卷宗；亮暗、字号、目录弹层与原文下载",
       "source": "skins/_source/ruphas-crimson.html",
@@ -133,7 +133,7 @@
     },
     {
       "id": "ruphas-gilded",
-      "name": "鎏星",
+      "name": "星轨",
       "tag": "GILDED STAR · 终局档案",
       "note": "暗夜鎏金与星轨、金色衬线巨字、黑翼金发立绘、罗马数字七章；亮暗双主题与字号调节",
       "source": "skins/_source/ruphas-gilded.html",
@@ -159,7 +159,7 @@
     },
     {
       "id": "linfei-crystal",
-      "name": "晶穹",
+      "name": "晶球",
       "tag": "CRYSTAL DOME · 宣纸",
       "note": "淡金宣纸与宇宙晶体光球、毛笔巨字、洪荒盘古场景图；宣纸／暗夜双主题、目录与原文检索",
       "source": "skins/_source/linfei-crystal.html",
@@ -173,7 +173,7 @@
     {
       "id": "tianren-register",
       "name": "衡天星册",
-      "tag": "CELESTIAL REGISTER · 初星之志",
+      "tag": "CELESTIAL REGISTER · 黄铜巨字",
       "note": "深空黑洞与初星星云、黄铜衬线巨字、天体登记册式章节导航；亮暗双主题、字号调节与十四节索引",
       "source": "skins/_source/tianren-register.html",
       "section": "character-tianren",
@@ -187,7 +187,7 @@
     {
       "id": "divinity-seal",
       "name": "金印神性",
-      "tag": "I AM THAT I AM · 神性卷宗",
+      "tag": "I AM THAT I AM · 同心符环",
       "note": "淡金羊皮纸与同心符环、金色衬线巨字「至高神性」、十二节卷宗；宣纸／暗夜双主题、目录与原文检索",
       "source": "skins/_source/divinity-seal.html",
       "section": "character-divinity",
@@ -213,7 +213,7 @@
     },
     {
       "id": "material-shatter",
-      "name": "碎核",
+      "name": "赤陶裂核",
       "tag": "SHATTERED CORE · 破坏能量数据库",
       "note": "赤陶与朱红、裂核＋轨道环＋漂浮碎石的破坏物理主题；材质／相变／天体束缚能数据表，检索与目录",
       "source": "skins/_source/material-shatter.html",
@@ -226,8 +226,8 @@
     },
     {
       "id": "futan-biyuan",
-      "name": "碧渊",
-      "tag": "BIYUAN · 诡秘地海",
+      "name": "地海回响",
+      "tag": "BIYUAN · 青绿暖米",
       "note": "青绿回响与暖米底、近黑深渊的诡秘地海卷；独立构建的弗坦定级整页应用",
       "source": "skins/_source/futan-biyuan.html",
       "section": "character-futan",
@@ -265,7 +265,7 @@
     },
     {
       "id": "divinity-gilt",
-      "name": "鎏金",
+      "name": "箔面羊皮",
       "tag": "GILT · 至高神性",
       "note": "纯金箔面与米白羊皮纸、衬线巨字「我就是我·至高神性」的金色神性卷；亮暗双主题、目录与检索",
       "source": "skins/_source/divinity-gilt.html",
@@ -278,7 +278,7 @@
     },
     {
       "id": "divinity-xuanjin",
-      "name": "玄金",
+      "name": "玄夜描边",
       "tag": "XUANJIN · 暗金神性",
       "note": "近黑底与暗金描边、暖金衬线巨字的暗黑神性卷；我就是我·至高神性的暗金版本",
       "source": "skins/_source/divinity-xuanjin.html",
@@ -291,7 +291,7 @@
     },
     {
       "id": "yog-teal-vortex",
-      "name": "青漩",
+      "name": "青绿涡旋",
       "tag": "TEAL VORTEX · 外神档案",
       "note": "黄铜金与青绿涡旋、近黑的外神卷宗；犹格·索托斯定级整页应用（webp 动态主视觉）",
       "source": "skins/_source/yog-teal-vortex.html",
@@ -304,7 +304,7 @@
     },
     {
       "id": "yog-bronze-glow",
-      "name": "铜晖",
+      "name": "辉光",
       "tag": "BRONZE GLOW · 外神档案",
       "note": "黄铜金与青绿辉光、近黑的外神卷宗；犹格·索托斯定级整页应用（jpeg 主视觉，favicon 已内联）",
       "source": "skins/_source/yog-bronze-glow.html",
@@ -317,7 +317,7 @@
     },
     {
       "id": "divinity-starember",
-      "name": "星烬",
+      "name": "余烬",
       "tag": "STAR EMBER · 至高神性",
       "note": "近黑夜空与亮金星烬、米纸衬线的至高神性卷；我就是我·定级整页应用（全内联）",
       "source": "skins/_source/divinity-starember.html",
@@ -330,8 +330,8 @@
     },
     {
       "id": "ruphas-frostgate",
-      "name": "霜门",
-      "tag": "FROST GATE · 外门档案",
+      "name": "淡蓝之门",
+      "tag": "FROST GATE · 金米霜色",
       "note": "近黑与金、米、淡蓝门意象的露法斯卷；衡天⊙外·门定级整页应用（全内联）",
       "source": "skins/_source/ruphas-frostgate.html",
       "section": "character-lufasi",
@@ -356,7 +356,7 @@
     },
     {
       "id": "jiangwuye-starvortex",
-      "name": "星涡",
+      "name": "金榜孤崖",
       "tag": "STAR VORTEX · 星海定级",
       "note": "青蓝星系漩涡与金榜书「江无夜」、深空孤崖的江无夜定级整页（暗色，图/字体内联）",
       "source": "skins/_source/jiangwuye-starvortex.html",
@@ -382,8 +382,8 @@
     },
     {
       "id": "xuanji",
-      "name": "璇玑",
-      "tag": "XUAN JI · 浑天星图",
+      "name": "浑天金轨",
+      "tag": "XUAN JI · 暗色观台",
       "note": "深空浑天仪、金线星轨与朱金印的衡天体系全文（暗色观测台，图/字体内联）；规则正文已对齐第六版·最新",
       "source": "skins/_source/xuanji.html",
       "section": "rules",
@@ -395,7 +395,7 @@
     },
     {
       "id": "zhuban",
-      "name": "朱版",
+      "name": "竖排版本牌",
       "tag": "ZHU BAN · 朱印典籍",
       "note": "米纸朱印、大字衡天、竖排目录与版本牌的衡天体系全文（亮/暗双主题）；规则正文已对齐第六版·最新",
       "source": "skins/_source/zhuban.html",
@@ -408,8 +408,8 @@
     },
     {
       "id": "guchensha-molong",
-      "name": "墨龙",
-      "tag": "MO LONG · 青绿龙章",
+      "name": "龙符山水",
+      "tag": "MO LONG · 青绿朱印",
       "note": "青绿山水、水墨龙、朱印与毛笔大字的古尘沙（龙符）定级整页（亮/暗双主题，图/字体内联）",
       "source": "skins/_source/guchensha-molong.html",
       "section": "character-guchensha",
@@ -421,8 +421,8 @@
     },
     {
       "id": "xiayouzhe-qionghu",
-      "name": "穹弧",
-      "tag": "QIONG HU · 巨行星弧",
+      "name": "冷白星球弧",
+      "tag": "QIONG HU · 极简深空",
       "note": "深空巨大星球弧面、极简冷白留白的下游者（流形三部曲）定级整页（暗色，图/字体内联）",
       "source": "skins/_source/xiayouzhe-qionghu.html",
       "section": "character-xiayouzhe",
@@ -435,7 +435,7 @@
     {
       "id": "xiayouzhe-sujuan",
       "name": "素卷",
-      "tag": "SU JUAN · 水墨长卷",
+      "tag": "SU JUAN · 淡红日",
       "note": "米纸水墨长卷、淡红日与克制版式的下游者（流形三部曲）定级整页（亮色，图/字体内联）",
       "source": "skins/_source/xiayouzhe-sujuan.html",
       "section": "character-xiayouzhe",
