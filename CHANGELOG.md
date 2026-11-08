@@ -4,6 +4,12 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-08（仓库整理）· 验收截图不再入库
+
+- 将已跟踪的 10 张验收／自检截图（命名整理 2 张、补3212 3 张、全站自检 5 张，共 6.9 MB）从 git 索引移除，`git rm --cached` 保留本地文件，截图本身仍可查看。
+- `.gitignore` 追加 `验收截图/`，以后本地生成的检查截图不会再被 `git add -A` 带进仓库。
+- 这些图没有任何页面／CSS／JS 引用，站点内容与线上页面零变化，SW 版本保持 `pw-v34` 不升。
+
 ## 2026-11-08（全站自检）· 修掉新栏目切换器的失效链接，并补齐根 favicon 兜底
 
 - **修复 20 张失效链接**：上一批新增的 4 套「至高王座」皮肤在 `editions.json` 里把 `pages[character-zhigaowangzuo]` 误写成 `character/character-zhigaowangzuo.html`（既有主站页是 `character/zhigaowangzuo.html`，皮肤产物在 `skins/<id>/`）。生成器 `edition_launcher_html()` 直接拿这个值拼卡片 href，导致主站 4 张 + 4 套皮肤页各 4 张共 **20 张卡片点进去必然 404**，且四套指向同一个错误地址。已全部改为 `skins/<id>/character-zhigaowangzuo.html`，重跑生成器后 198 张卡片链接全有效。之前的验收只查了卡片名与面板开合、没实际点跳转，这次补上点击回归。

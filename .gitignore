@@ -11,3 +11,6 @@ __pycache__/
 .DS_Store
 *.swp
 Thumbs.db
+
+# 验收 / 自检截图：仅本地留存，不入库
+验收截图/
