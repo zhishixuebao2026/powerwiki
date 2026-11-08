@@ -4,6 +4,37 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-08（补3212）· 新增四套「至高王座」整页皮肤（开新栏目），并补齐缺图套的 8 张插图
+
+- **来源**：用户上传 `3212.zip`（176,999,579 B）。对话层附件因超限下载失败，改用附件里的对象存储签名链接直取。包内 4 个独立整页工程，均为「护国机神·至高王座（《斩！赤红之瞳》）」衡天定级页，各带 `dist/index.html` 成品与 `images/` / `generated/` 资源；其中一套目录自带「(缺图)」标注。
+- **新栏目**：主站 `character/zhigaowangzuo.html` 与权威定级 md `data/docs/characters/至高王座（斩！赤红之瞳）衡天定级.md` 早已存在，`build_site.py` 的 `BOOT_BG_CHARACTERS` 也已预留 `character-zhigaowangzuo`，只是没登记进切换器。本次给 `default.pages` 补 `character-zhigaowangzuo` → `character/zhigaowangzuo.html`，4 套皮肤 `section` 统一挂该栏目；主站角色页切换器由 0 张变 5 张（默认＋4）。
+- **命名（沿用上一版命名整理的自检）**：4 套按各自视觉物象起名，字数排成 **2／3／4／5 阶梯**，不堆两字古风词、不与现有 33 套撞套路，副标也不与名字撞字：
+
+| id | 新名 | 字数 | 视觉依据 |
+| --- | --- | --- | --- |
+| `zhigaowangzuo-rilun` | **日轮** | 2 | 黑金铜版画、巨大日蚀光环、机神立绘、档案顶栏 |
+| `zhigaowangzuo-junzhen` | **军阵图** | 3 | 铜版线描机神、军阵全景、珊瑚橙点缀 |
+| `zhigaowangzuo-yihuan` | **猩红仪环** | 4 | 金线浑天仪环、猩红核心、观测台刻度、档案双栏 |
+| `zhigaowangzuo-zhanchang` | **放射线战场** | 5 | 全屏机神巨像、放射速度线、战场废墟、红白巨字 |
+
+- **★ 缺图套修复**：`kimi-k3.1-pro-max＆gemini3.8flash` 那套的 8 个插图位用的是**占位图**，图面明写「原插图缺失 · 占位图」「源码包未包含『至高王座_图3_*.png』」「补齐原图后重新构建，即可自动替换为真实证据图」；JS 数组 `D2` 也指向 8 个不存在的 `./images/至高王座_图N_*.png`。关键坑：包内 `images/optimized/plate-01~08.jpg` **本身就是这 8 张占位图**（首轮误当成正常图补了一遍，看图后推翻重做）。按用户「可以用其他正常的补上去」，从**另外 3 套的正常图**里按 8 个插图位的语义一一对应挑图：
+
+| 插图位 | 补入的图 | 来源 |
+| --- | --- | --- |
+| 图1 炮击与弹坑 | `banner-dark-1-crater`（炮击火光弹坑俯瞰） | gemini＋opus 套 |
+| 图2 弹坑宽度测量 | `banner-light-1-crater`（线描弹坑剖面） | gemini＋opus 套 |
+| 图3 机体身高 | `hero-dark.png`（机神全身立绘） | gpt-6-astra 套 |
+| 图4 腿部局部 | `banner-light-2-scale`（腿部与房屋比例尺） | gemini＋opus 套 |
+| 图5 事后全景城墙 | `banner-light-3-capital`（帝都全景） | gemini＋opus 套 |
+| 图6 肩炮齐射 | `hero-dark.jpg`（全屏机神带炮） | fable 套 |
+| 图7 索敌迎击与装甲 | `hero-dark-emblem`（机神装甲半身） | gemini＋opus 套 |
+| 图8 帝都面积设定 | `map-light.jpg`（帝都圆形规划图） | fable 套 |
+
+  处理：8 张统一 cover 裁到 1600×1000、JPEG q88，替换 `_source` 里对应的 8 段内联 base64（**后 2 段 hero 原样不动**）；同步覆盖 `images/optimized/plate-0N.jpg` 与补齐的 8 张 `至高王座_图N_*.png`，页面与磁盘资源一致。8 张全部 HTTP 200、PIL 可解码；图版区实机截图已无「占位图／PLACEHOLDER」字样。
+- **铁律守住**：**定级原文逐字保留**——把两侧 HTML 所有 `data:image/jpeg;base64,...` 抹成占位符、只去掉安全区注入后，正文长度差 **0**、逐字完全一致；「定级依据」「条目版本」「城▽」「弱爆城级」「第六版」计数原／现完全相同。4 套均按惯例只注入 `<style data-pw-safearea>`（`viewport-fit=cover` 原始文件本已带），无字体外链可修（4 套 `@font-face` 全为内联／系统栈，0 个失效 woff2）。主站 `rules.html` 与其余角色页 diff **0 行**，`character/zhigaowangzuo.html` 仅 launcher 1 行变化，规则正文零改动。
+- **验收**：本地 8900 + 无头 Chromium，桌面 1440 / 移动 390 × 5 页 = 10 组：切换器 5 卡名字逐字命中、面板开合、0 破图、0 404、0 JS 报错；横跳回归按锚定边 8/8 恒定（桌面 `left=16`、移动 `right=370/378`）；最长 5 字名「放射线战场」在 390px 下完整显示。截图 `验收截图/3212_*.png`。
+- **累计 37 套**；`service-worker.js` `pw-v32`→`pw-v33`。
+
 ## 2026-11-08（命名整理）· 皮肤名去掉「全是两字」的套路感
 
 - **起因**：用户反馈「怎么全是两个字，别重复了」。核查 `data/editions.json` 共 33 套，**26 套是两字名**（79%），且用字严重撞车——「星」5 次、「墨」3 次、「金」3 次、「鎏」2 次，「渊／穹／卷／铜／青」成串；另有 12 处 `tag` 副标直接复述 `name`（最典型 `观象台` / `OBSERVATORY · 观象台`）。

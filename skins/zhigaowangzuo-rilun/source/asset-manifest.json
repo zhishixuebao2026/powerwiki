@@ -1,0 +1,50 @@
+[
+  {
+    "figure": "2",
+    "original": "./img/至高王座_图2_弹坑宽度测量.png",
+    "sha256": "1197821bcc40f5076787dc17f19e4340006e91b105da953f8f01dc72f2816331",
+    "rendered": "./images/figure-2.jpg"
+  },
+  {
+    "figure": "7",
+    "original": "./img/至高王座_图7_索敌迎击与装甲.png",
+    "sha256": "752ec8e62d3197cd95aab437b69c17cbf99a18f006fb41cbe4d660897fe602e5",
+    "rendered": "./images/figure-7.jpg"
+  },
+  {
+    "figure": "1",
+    "original": "./img/至高王座_图1_炮击与弹坑.png",
+    "sha256": "a40233f4b4848319bd2376147ad5cf1bc64262026a52c13804328316774294b2",
+    "rendered": "./images/figure-1.jpg"
+  },
+  {
+    "figure": "6",
+    "original": "./img/至高王座_图6_肩炮齐射.png",
+    "sha256": "18f9d4e3d5e927308aad2f809ca448f9468a9ba135713f1e2d383e415adbdd0e",
+    "rendered": "./images/figure-6.jpg"
+  },
+  {
+    "figure": "3",
+    "original": "./img/至高王座_图3_机体身高.png",
+    "sha256": "aa2e4cd98bf2cbb9467ce3f66dcfd63a6441ec6bfb35a5a615947d2869f8ab04",
+    "rendered": "./images/figure-3.jpg"
+  },
+  {
+    "figure": "8",
+    "original": "./img/至高王座_图8_帝都面积设定.png",
+    "sha256": "eceab70e5ee230e119a84e9f53b1f37a4507eab3e3291a58cc1726257d4d9bf7",
+    "rendered": "./images/figure-8.jpg"
+  },
+  {
+    "figure": "4",
+    "original": "./img/至高王座_图4_腿部局部.png",
+    "sha256": "0cfaf82c0b07072d414d0c89c7ded3ae12bf8235dd99c0006d7e877d440b792b",
+    "rendered": "./images/figure-4.jpg"
+  },
+  {
+    "figure": "5",
+    "original": "./img/至高王座_图5_事后全景城墙.png",
+    "sha256": "75936fa48ef3899df70ad1026642a6e3e7f5843345fc05ceeba97c17e375966c",
+    "rendered": "./images/figure-5.jpg"
+  }
+]

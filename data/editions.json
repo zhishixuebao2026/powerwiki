@@ -24,7 +24,8 @@
         "character-yog": "character/yog.html",
         "character-jiangwuye": "character/jiangwuye.html",
         "character-guchensha": "character/guchensha.html",
-        "character-xiayouzhe": "character/xiayouzhe.html"
+        "character-xiayouzhe": "character/xiayouzhe.html",
+        "character-zhigaowangzuo": "character/zhigaowangzuo.html"
       }
     },
     {
@@ -443,6 +444,58 @@
       "thumb": "static/img/editions/xiayouzhe-sujuan.jpg",
       "pages": {
         "character-xiayouzhe": "skins/xiayouzhe-sujuan/character-xiayouzhe.html"
+      }
+    },
+    {
+      "id": "zhigaowangzuo-rilun",
+      "name": "日轮",
+      "tag": "SOLAR HALO · 黑金铜版",
+      "note": "黑金铜版画、巨大日蚀光环与机神立绘、衬线巨字与档案顶栏的至高王座定级整页（暗色，图/字体内联）",
+      "source": "skins/_source/zhigaowangzuo-rilun.html",
+      "section": "character-zhigaowangzuo",
+      "inject": "minimal",
+      "thumb": "static/img/editions/zhigaowangzuo-rilun.jpg",
+      "pages": {
+        "character-zhigaowangzuo": "character/character-zhigaowangzuo.html"
+      }
+    },
+    {
+      "id": "zhigaowangzuo-junzhen",
+      "name": "军阵图",
+      "tag": "COPPERPLATE · 珊瑚橙印",
+      "note": "铜版线描机神与军阵全景、珊瑚橙点缀、衬线巨字的至高王座定级整页（暗色，图/字体内联；8 张插图原图已用包内优化版补齐）",
+      "source": "skins/_source/zhigaowangzuo-junzhen.html",
+      "section": "character-zhigaowangzuo",
+      "inject": "minimal",
+      "thumb": "static/img/editions/zhigaowangzuo-junzhen.jpg",
+      "pages": {
+        "character-zhigaowangzuo": "character/character-zhigaowangzuo.html"
+      }
+    },
+    {
+      "id": "zhigaowangzuo-yihuan",
+      "name": "猩红仪环",
+      "tag": "ORRERY · 观测台刻度",
+      "note": "金线浑天仪环与猩红核心、观测台刻度、档案双栏网格的至高王座定级整页（暗色，图/字体内联）",
+      "source": "skins/_source/zhigaowangzuo-yihuan.html",
+      "section": "character-zhigaowangzuo",
+      "inject": "minimal",
+      "thumb": "static/img/editions/zhigaowangzuo-yihuan.jpg",
+      "pages": {
+        "character-zhigaowangzuo": "character/character-zhigaowangzuo.html"
+      }
+    },
+    {
+      "id": "zhigaowangzuo-zhanchang",
+      "name": "放射线战场",
+      "tag": "SPEEDLINES · 漫画网点",
+      "note": "全屏机神巨像、放射速度线与战场废墟、红白巨字的至高王座定级整页（暗色，图/字体内联）",
+      "source": "skins/_source/zhigaowangzuo-zhanchang.html",
+      "section": "character-zhigaowangzuo",
+      "inject": "minimal",
+      "thumb": "static/img/editions/zhigaowangzuo-zhanchang.jpg",
+      "pages": {
+        "character-zhigaowangzuo": "character/character-zhigaowangzuo.html"
       }
     }
   ]
