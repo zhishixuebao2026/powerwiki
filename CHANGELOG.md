@@ -4,6 +4,20 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-08（补12）· 新增五套整页皮肤：璇玑/朱版（规则·第六版）、墨龙（古尘沙）、穹弧/素卷（下游者）
+
+- **来源**：用户上传的 `12.zip`（沙箱 `1794126165450599944-12.zip`）内含 5 个独立 Vite/React 单文件工程，各带 `dist/index.html` 成品、`public/` 图片与 `src/` 源码初始结构（用户明确指出包内成品、结构、图片齐全）。按设计语言命名（非模型名）：
+  - `GLM5.3MAX＆gemini-4-argon-high衡天规则页面` → 规则栏目「璇玑」`xuanji`（深空浑天仪、金线星轨、朱金印、暗色观测台，图/字体内联）
+  - `KIMIK3＆grok-4.7-xhigh衡天规则页面` → 规则栏目「朱版」`zhuban`（米纸朱印、大字衡天、竖排目录、版本牌，亮/暗双主题）
+  - `OPUS5.5HIGH＆gemini-3.8-flash-medium龙符定级页面` → 古尘沙栏目「墨龙」`guchensha-molong`（青绿山水、水墨龙、朱印、毛笔大字，亮/暗双主题）
+  - `fable-5.1-lowa＆GPT6LUNAMAX＆GEMINI3.8FLASHHIGH下游者定级页面` → 下游者栏目「穹弧」`xiayouzhe-qionghu`（深空巨大星球弧面、极简冷白，暗色）
+  - `fable-5.1-low＆opus5.5low下游者定级页面` → 下游者栏目「素卷」`xiayouzhe-sujuan`（米纸水墨长卷、淡红日、克制版式，亮色）
+- **★ 规则拉齐第六版（沿用补11 既定铁律）**：两套规则页工程自带的 `doc.md` / `hengtian.md` 均为**第五版**（129KB，h1 21 / h2 98，md5 `009cc126f3`，与补11 那套第五版逐字一致），而主站 `rules.html`、资料库权威源 `data/docs/衡天量级体系【第六版·最新】.md` 已是**第六版·最新**（145KB，h1 22 / h2 98，md5 `934cd7b86b`）。处理方式：权威第六版 md 覆盖两套的正文源；`index.html` 的 title/description 与 UI 版本标识（顶栏、封面大标题、`tb-ver` 徽标）由「第五版」改为「第六版」；分别跑 `node scripts/build-content.mjs` 重新生成结构化内容（GLM → `content.ts` 22 节 138 目录 552 块；KIMIK3 → `doc.json` 且**逐行保真校验 1110 行一致**），再 `npm ci` + `vite build` 出单文件成品。重建后两套均显示第六版全文、含「第六版修订要点」；第二~五版修订要点作为历史对照按惯例保留，UI 里「第五版修订要点」这类**章节名**与 `build-content.mjs` 的 `UI_TEXT` 不动。
+- **铁律守住**：三套定级页内嵌的「定级依据：《…（第五版）》」「条目版本：2026-11-04」「终决条目」及主站 `character/guchensha.html` / `character/xiayouzhe.html` 的 `doc_basis` 均属**定级原文/条目元信息**，按「定级原文逐字保留」**一字未改**（该条目定级时第五版即当期有效版本）。「规则拉齐」只作用于规则栏目页面，不回溯改写历史定级结论。主站 `rules.html` / 两角色页及 `skins/observatory` / `skins/xuanheng` 的 diff 均仅 launcher 卡片数变化（rules 3→5、古尘沙 2、下游者 3），规则正文、定级原文零改动。
+- **栏目**：主站已有「下游者」`character/xiayouzhe.html` 与「古尘沙」`character/guchensha.html` 角色页，`build_site.py` 配色字典亦已预留 `character-xiayouzhe` / `character-guchensha`。`data/editions.json` 追加 5 条（累计 33 套）并给 `default.pages` 补这两个栏目，使主站对应角色页出现切换器。全部 `inject: minimal`。
+- **资源与字体**：5 套 `dist/` 下除 `index.html` 外的资源（璇玑 `img/` 10 图、朱版 `images/` 4 图 + `fonts/fonts.css` + `favicon.svg`、墨龙/穹弧/素卷各 `images/` 10 图）按原相对路径全量拷到 `skins/<id>/`，`./images/hero-${m}.jpg` 等动态路径实机抽查全 200。全包**无 woff2 文件**：璇玑/墨龙/穹弧的字体本就全 base64 内联（5/8/1 个 @font-face，0 404），一字未动；仅**朱版**（`fonts.css` 外链 5 个失效子集 woff2）与**素卷**（JS 模板字符串 `iv` 注入 5 个动态 `@font-face`，`Mu()` 拼 `fonts/*.woff2`）会各报 5 个 404 —— 已用最小侵入方式去掉这两处失效声明（朱版删该 stylesheet link、素卷删 5 行声明使 `iv` 变空串），页面自带系统字体栈（Songti SC / Noto Serif CJK SC / serif）回落，视觉与去除前一致、中文无方框。
+- **验收**：无头 Chromium 桌面 1440 / 移动 390 双端，对 5 套新皮肤 + 主站 rules/古尘沙/下游者共 8 页做「收起/打开/多次滚动」三态：dock 锚定边与 `bottom` 全程恒定、翻面状态一致、面板开合与 `aria-expanded` 正常、卡片数（5/2/3）与当前标记准确；两套规则页确为第六版全文；三套定级页「依据第五版」原文保留；**0 个 JS 报错、0 个 404**。跨 560px 缩放：墨龙/素卷桌面左↔移动右正确切换；璇玑/朱版因页面自带 `position:fixed` 全屏背景层被 `decideSide` 判为贯通左栏而桌面即贴右（桌面/移动 flip 恒为 True、全程稳定），属既有选边规则的稳定结果、非乱跳，未改动已修复的 `editions.js`。5 套实机截图存 `验收截图/skin12_*.png`。
+
 ## 2026-11-08（补11）· 新增三套整页皮肤：「宣衡」（规则·第六版）与「星涡」「蚀环」（江无夜），并把规则拉齐到最新
 
 - **来源**：用户上传的 `11.zip`（沙箱 `1794123658796248794-11.zip`）内含三个独立 Vite/React 整页工程，各带 `dist/index.html` 单文件构建产物：

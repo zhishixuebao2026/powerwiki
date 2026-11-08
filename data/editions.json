@@ -22,7 +22,9 @@
         "character-tianren": "character/tianren.html",
         "character-divinity": "character/divinity.html",
         "character-yog": "character/yog.html",
-        "character-jiangwuye": "character/jiangwuye.html"
+        "character-jiangwuye": "character/jiangwuye.html",
+        "character-guchensha": "character/guchensha.html",
+        "character-xiayouzhe": "character/xiayouzhe.html"
       }
     },
     {
@@ -376,6 +378,71 @@
       "thumb": "static/img/editions/jiangwuye-eclipsring.jpg",
       "pages": {
         "character-jiangwuye": "skins/jiangwuye-eclipsring/character-jiangwuye.html"
+      }
+    },
+    {
+      "id": "xuanji",
+      "name": "璇玑",
+      "tag": "XUAN JI · 浑天星图",
+      "note": "深空浑天仪、金线星轨与朱金印的衡天体系全文（暗色观测台，图/字体内联）；规则正文已对齐第六版·最新",
+      "source": "skins/_source/xuanji.html",
+      "section": "rules",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xuanji.jpg",
+      "pages": {
+        "rules": "skins/xuanji/rules.html"
+      }
+    },
+    {
+      "id": "zhuban",
+      "name": "朱版",
+      "tag": "ZHU BAN · 朱印典籍",
+      "note": "米纸朱印、大字衡天、竖排目录与版本牌的衡天体系全文（亮/暗双主题）；规则正文已对齐第六版·最新",
+      "source": "skins/_source/zhuban.html",
+      "section": "rules",
+      "inject": "minimal",
+      "thumb": "static/img/editions/zhuban.jpg",
+      "pages": {
+        "rules": "skins/zhuban/rules.html"
+      }
+    },
+    {
+      "id": "guchensha-molong",
+      "name": "墨龙",
+      "tag": "MO LONG · 青绿龙章",
+      "note": "青绿山水、水墨龙、朱印与毛笔大字的古尘沙（龙符）定级整页（亮/暗双主题，图/字体内联）",
+      "source": "skins/_source/guchensha-molong.html",
+      "section": "character-guchensha",
+      "inject": "minimal",
+      "thumb": "static/img/editions/guchensha-molong.jpg",
+      "pages": {
+        "character-guchensha": "skins/guchensha-molong/character-guchensha.html"
+      }
+    },
+    {
+      "id": "xiayouzhe-qionghu",
+      "name": "穹弧",
+      "tag": "QIONG HU · 巨行星弧",
+      "note": "深空巨大星球弧面、极简冷白留白的下游者（流形三部曲）定级整页（暗色，图/字体内联）",
+      "source": "skins/_source/xiayouzhe-qionghu.html",
+      "section": "character-xiayouzhe",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xiayouzhe-qionghu.jpg",
+      "pages": {
+        "character-xiayouzhe": "skins/xiayouzhe-qionghu/character-xiayouzhe.html"
+      }
+    },
+    {
+      "id": "xiayouzhe-sujuan",
+      "name": "素卷",
+      "tag": "SU JUAN · 水墨长卷",
+      "note": "米纸水墨长卷、淡红日与克制版式的下游者（流形三部曲）定级整页（亮色，图/字体内联）",
+      "source": "skins/_source/xiayouzhe-sujuan.html",
+      "section": "character-xiayouzhe",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xiayouzhe-sujuan.jpg",
+      "pages": {
+        "character-xiayouzhe": "skins/xiayouzhe-sujuan/character-xiayouzhe.html"
       }
     }
   ]

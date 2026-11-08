@@ -1,0 +1,50 @@
+/* 衡天体系 · 本地子集字体（相对路径，可离线/子路径部署） */
+
+/* 数学与符号层：ℵ ℶ ε Γ ω φ ⟹ ⊨ ↑ ⊙ ▽ ○ △ ◆ ☆ 上下标 ①②③ 等（STIX Two Math 子集）
+   仅声明符号区 unicode-range，使汉字与西文正文回落到衬线层 */
+@font-face {
+  font-family: "HengMath";
+  src: url("./math.woff2") format("woff2");
+  font-display: swap;
+  unicode-range:
+    U+0370-03FF,      /* 希腊字母 ε Γ ω φ κ λ π θ γ α Ω Σ … */
+    U+2032-2033,      /* 撇号 ′ ″ */
+    U+2070-209F,      /* 上下标 ⁰¹²³⁴⁵⁶⁷⁸⁹ ⁿ ⁽⁾ ₀₁₂₃… */
+    U+2135-2138,      /* ℵ ℶ */
+    U+2190-21FF,      /* 箭头 ↑ → ↦ ⇒ */
+    U+2200-22FF,      /* 数学算符 ∞ ∈ ∝ ≈ ≠ ≤ ≥ ∅ ∩ ∪ ⊂ ⊄ ⊙ ⊨ */
+    U+2460-2473,      /* 圈码 ①②③ */
+    U+25A0-25FF,      /* 几何符 △ ▽ ○ ◆ */
+    U+2600-26FF,      /* ★ ☆ ☉ */
+    U+27F0-27FF;      /* ⟹ */
+}
+
+/* 正文衬线层：Noto Serif SC 子集（仅收录本文用字） */
+@font-face {
+  font-family: "HengSerif";
+  src: url("./serif-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "HengSerif";
+  src: url("./serif-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "HengSerif";
+  src: url("./serif-900.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 标题题字：马善政毛笔（衡 天 二字） */
+@font-face {
+  font-family: "HengBrush";
+  src: url("./brush.woff2") format("woff2");
+  font-display: swap;
+}
