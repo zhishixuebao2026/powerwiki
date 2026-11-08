@@ -4,6 +4,14 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-08（全站自检）· 修掉新栏目切换器的失效链接，并补齐根 favicon 兜底
+
+- **修复 20 张失效链接**：上一批新增的 4 套「至高王座」皮肤在 `editions.json` 里把 `pages[character-zhigaowangzuo]` 误写成 `character/character-zhigaowangzuo.html`（既有主站页是 `character/zhigaowangzuo.html`，皮肤产物在 `skins/<id>/`）。生成器 `edition_launcher_html()` 直接拿这个值拼卡片 href，导致主站 4 张 + 4 套皮肤页各 4 张共 **20 张卡片点进去必然 404**，且四套指向同一个错误地址。已全部改为 `skins/<id>/character-zhigaowangzuo.html`，重跑生成器后 198 张卡片链接全有效。之前的验收只查了卡片名与面板开合、没实际点跳转，这次补上点击回归。
+- **补根 `favicon.ico`**：生成器只在 `inject == "minimal"` 时把 icon 声明补进 `<head>`；`archive`／`atlas`／`observatory`（未声明 inject，走完整注入、icon 落在 `</body>` 前）与 `futan-lamp`（打包 JS 里的 `</head>` 字面量干扰定位）共 4 套皮肤 head 里没有 icon，浏览器回退请求根 `/favicon.ico` 产生 404。按 Web 标准在站点根补一个多尺寸 `favicon.ico`（由 `static/img/icons/favicon-32.png` 生成），不改生成器、不重生成 36 套页面，全站兜底 404 清零。
+- **全站自检**（五层）：静态层 37 套登记字段齐全、id 唯一、`source`／`thumb`／`pages` 目标齐备、名字无重名、副标撞字 0；156 个 HTML 页浏览器加载 **156/156 全绿**（HTTP 200、0 资源 404、0 JS 报错）；198 张 launcher 卡片链接 0 失效；点击跳转回归 8/8（主站→4 套、4 次点回默认、4 次皮肤互切）；移动端 390 共 23 页 23/23（名字无截断、面板不超屏、锚定边恒定）；桌面 1440 共 14 页横跳回归 0 失败；4 套历史皮肤截图确认各自版式完整、无主站样式叠加污染。
+- **铁律守住**：改动仅 `data/editions.json` 4 行、5 个页面的 launcher 链接行、1 个新增 `favicon.ico`，共 6 改 + 1 增；`rules.html` 等主站页 diff 0 行，规则正文与角色定级原文零改动。
+- **非故障项**：`archive`／`atlas`／`observatory`／`moonfile` 4 条早期登记未显式写 `inject`，生成器按默认「完整注入」分支处理，行为确定且实机正常，仅为写法不统一，不影响功能，本次不动以免改变渲染行为。
+
 ## 2026-11-08（补3212）· 新增四套「至高王座」整页皮肤（开新栏目），并补齐缺图套的 8 张插图
 
 - **来源**：用户上传 `3212.zip`（176,999,579 B）。对话层附件因超限下载失败，改用附件里的对象存储签名链接直取。包内 4 个独立整页工程，均为「护国机神·至高王座（《斩！赤红之瞳》）」衡天定级页，各带 `dist/index.html` 成品与 `images/` / `generated/` 资源；其中一套目录自带「(缺图)」标注。

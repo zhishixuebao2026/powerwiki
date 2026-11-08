@@ -456,7 +456,7 @@
       "inject": "minimal",
       "thumb": "static/img/editions/zhigaowangzuo-rilun.jpg",
       "pages": {
-        "character-zhigaowangzuo": "character/character-zhigaowangzuo.html"
+        "character-zhigaowangzuo": "skins/zhigaowangzuo-rilun/character-zhigaowangzuo.html"
       }
     },
     {
@@ -469,7 +469,7 @@
       "inject": "minimal",
       "thumb": "static/img/editions/zhigaowangzuo-junzhen.jpg",
       "pages": {
-        "character-zhigaowangzuo": "character/character-zhigaowangzuo.html"
+        "character-zhigaowangzuo": "skins/zhigaowangzuo-junzhen/character-zhigaowangzuo.html"
       }
     },
     {
@@ -482,7 +482,7 @@
       "inject": "minimal",
       "thumb": "static/img/editions/zhigaowangzuo-yihuan.jpg",
       "pages": {
-        "character-zhigaowangzuo": "character/character-zhigaowangzuo.html"
+        "character-zhigaowangzuo": "skins/zhigaowangzuo-yihuan/character-zhigaowangzuo.html"
       }
     },
     {
@@ -495,7 +495,7 @@
       "inject": "minimal",
       "thumb": "static/img/editions/zhigaowangzuo-zhanchang.jpg",
       "pages": {
-        "character-zhigaowangzuo": "character/character-zhigaowangzuo.html"
+        "character-zhigaowangzuo": "skins/zhigaowangzuo-zhanchang/character-zhigaowangzuo.html"
       }
     }
   ]
