@@ -188,24 +188,14 @@ def build_skin_editions() -> int:
     #   · 不引入主站 app.css / pwa.js —— minimal 皮肤是整页 React 应用，外链样式会污染它；
     #   · 不写死任何顶栏类名 —— 36 套皮肤的顶栏有 .topbar / .site-header / Tailwind top-0
     #     等十几种写法，改为运行时按 computed style 找「贴顶的固定栏」；
-    #   · 已自带避让的皮肤（app.css 会加 padding-top）自动跳过，不重复下推；
+    #   · 只改几何：顶栏贴 top:0、内容向内 padding 下移、容器加高，让皮肤「自己的顶栏背景」
+    #     从 y=0 自然铺满状态栏区。绝不插入遮挡元素、绝不重绘背景色／渐变／纹理，
+    #     不新增任何纯色块、黑条或色带 —— 这是皮肤原设计，不是我们加的。
     #   · 只在 standalone 生效，普通浏览器里 data-pw-standalone 不设置，页面零变化。
     safearea_head = (
-        '<style data-pw-safearea>\n'
-        # 顶栏一律紧贴屏幕最上（top:0），只把顶栏内容向内 padding 下移，并把容器加高；
-        # 顶栏背景从 y=0 一路铺到状态栏，不再出现「状态栏与顶栏之间一条空白」。
-        # body / 内容容器的让位一律用 JS 读原值叠加，不覆盖（否则内容会被加高后的顶栏盖住）。
-        # 底色用「属性选择器 + CSS 变量 + 样式表 !important」承载：皮肤 JS 滚动时用
-        # className= 整体覆盖、或删掉 inline background-color 都影响不到它。
-        'html[data-pw-standalone="1"] [data-pw-bar-bg]{'
-        'background-color:var(--pw-bar-bg)!important;box-sizing:border-box!important}\n'
-        # 状态栏区兜底遮挡条：与页面同色的不透明纸色，盖住滚动到 y=0 的正文，
-        # 状态栏文字落在纯色上。独立元素，不受皮肤 JS 重建 DOM / 改 class 影响。
-        'html[data-pw-standalone="1"] [data-pw-statusbar]{'
-        'position:fixed;top:0;left:0;right:0;height:var(--pw-safe-top,0px);'
-        'background:var(--pw-status-bg,transparent);z-index:40;'
-        'pointer-events:none}\n'
-        '</style>\n'
+        # 不输出任何颜色规则：几何全部由脚本写 inline !important。
+        # 皮肤自己的顶栏背景（含渐变 / 半透明 / 纹理 / 金箔）从 y=0 自然铺满状态栏区，
+        # 不插入遮挡层、不重绘底色，因此不会出现与皮肤设计割裂的纯色块或黑条。
         '<script data-pw-safearea>\n'
         '(function(){var r=document.documentElement;'
         'var st=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||window.navigator.standalone===true;'
@@ -217,40 +207,11 @@ def build_skin_editions() -> int:
         'if(v<24)v=54;'
         'r.style.setProperty("--pw-safe-top",v+"px");'
         'r.style.setProperty("--pw-top-inset",v+"px");'
-        # 读颜色的 alpha：兼容 rgba(...,a) / color(srgb … / a) / oklab(… / a) / transparent
-        'function alphaOf(c){if(!c||c==="transparent")return 0;'
-        'var m=c.match(/\\/\\s*([\\d.]+)\\s*\\)/);if(m)return parseFloat(m[1]);'
-        'm=c.match(/^rgba\\([^)]*,\\s*([\\d.]+)\\s*\\)$/);if(m)return parseFloat(m[1]);'
-        'return 1}'
-        # 去 alpha 兜底（保留原色彩空间与通道值）
-        'function solid(c){if(!c||c==="transparent"||alphaOf(c)===0)return null;'
-        'var v=c.replace(/\\s*\\/\\s*[\\d.]+\\s*\\)$/,")");'
-        'v=v.replace(/^(rgba|hsla)\\(([^)]*),\\s*[\\d.]+\\)$/,'
-        'function(a,f,q){return f.slice(0,-1)+"("+q+")"});'
-        'return v}'
-        # 优先沿祖先链取「本来就不透明」的色（body/html 通常是纯 rgb，兼容性最好）；
-        # 全是半透明时，才把顶栏自身的色去掉 alpha 作兜底。
-        'function bgOf(e){var n=e,fb=null;'
-        'for(var k=0;n&&k<8;k++,n=n.parentElement){'
-        'var c=getComputedStyle(n).backgroundColor;'
-        'if(alphaOf(c)>=0.999)return c;'
-        'if(!fb)fb=solid(c)}'
-        'return fb}'
-        # 状态栏遮挡条：只建一次，颜色取页面自身背景（body→html），深浅自适应，不留白块。
-        'function statusBar(){if(r.querySelector("[data-pw-statusbar]"))return;'
-        'var b=document.body;if(!b)return;'
-        'var c=bgOf(b);if(!c)return;'
-        'r.style.setProperty("--pw-status-bg",c);'
-        'var d=document.createElement("div");'
-        'd.setAttribute("data-pw-statusbar","1");'
-        'b.appendChild(d)}'
         'function scan(){'
         'var ins=parseFloat(getComputedStyle(r).getPropertyValue("--pw-safe-top"))||0;if(!ins)return;'
         'var vw=window.innerWidth,els=document.querySelectorAll("body *");'
         'for(var i=0;i<els.length;i++){var e=els[i];'
         'if(e.dataset&&e.dataset.pwSafeDone)continue;'
-        # 遮挡条是脚本自己插入的固定元素，别把它当成页面顶栏处理（否则会被加高/改色）
-        'if(e.hasAttribute&&e.hasAttribute("data-pw-statusbar"))continue;'
         # 皮肤切换器浮层是站点自带控件，位置由 editions.js 管理，不动
         'if(e.closest&&e.closest(".pw-edition-dock"))continue;'
         'var s=getComputedStyle(e),b=e.getBoundingClientRect();'
@@ -293,11 +254,8 @@ def build_skin_editions() -> int:
         'var pad=parseFloat(s.paddingTop)||0,h=Math.round(b.height);'
         'if(e.dataset)e.dataset.pwSafeDone="1";'
         'e.style.setProperty("top","0","important");'
-        # 半透明顶栏会让滚动正文透到状态栏区；补一层取自皮肤自身纸色的不透明底。
-        # 用 CSS 变量交给样式表 !important 规则生效，避免皮肤 JS 滚动时重写 inline style 把它删掉。
-        'var bg=bgOf(e);'
-        'if(bg){e.classList.add("pw-safe-bar");e.dataset.pwBarBg=bg;'
-        'e.style.setProperty("--pw-bar-bg",bg)}'
+        # 刻意不改背景色：皮肤自己的顶栏背景（半透明 / 渐变 / 纹理）连同加高的容器
+        # 一起从 y=0 铺满状态栏区，是皮肤原设计；补纯色只会做出与皮肤割裂的色块。
         'if(pad<ins-10){'
         'e.style.setProperty("padding-top","calc("+pad+"px + var(--pw-safe-top))","important");'
         'e.style.setProperty("height","calc("+h+"px + var(--pw-safe-top))","important");'
@@ -326,12 +284,7 @@ def build_skin_editions() -> int:
         'var bp=parseFloat(getComputedStyle(b).paddingTop)||0;'
         'b.dataset.pwBodyOrig=bp+"px";b.dataset.pwBodyDone="1";'
         'b.style.setProperty("padding-top","calc("+bp+"px + var(--pw-safe-top))","important")}'
-        # 皮肤 JS 滚动时可能重写顶栏 inline style 或重建节点；重刷一次底色变量与让位状态。
-        'function refreshBars(){var bs=document.querySelectorAll("[data-pw-bar-bg]");'
-        'for(var i=0;i<bs.length;i++){var e=bs[i];'
-        'if(e.style.getPropertyValue("--pw-bar-bg")!==e.dataset.pwBarBg)'
-        'e.style.setProperty("--pw-bar-bg",e.dataset.pwBarBg)}}'
-        'function run(){try{statusBar();scan();padBody();refreshBars()}catch(e){}}'
+        'function run(){try{scan();padBody()}catch(e){}}'
         'if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run);else run();'
         '[200,700,1500,3000].forEach(function(t){setTimeout(run,t)});'
         'var tick=false;'
