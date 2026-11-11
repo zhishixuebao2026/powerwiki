@@ -87,7 +87,7 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
             + thumb_html
             + '<span class="pw-edition-meta">'
             + f'<span class="pw-edition-name">{esc(ed.get("name") or ed["id"])}{now_badge}</span>'
-            + f'<span class="pw-edition-tag">{esc(ed.get("tag") or "")}</span>'
+            + (f'<span class="pw-edition-tag">{esc(ed.get("tag"))}</span>' if ed.get("tag") else "")
             + f'<span class="pw-edition-note">{esc(ed.get("note") or "")}</span>'
             + "</span></a>"
         )
@@ -184,6 +184,60 @@ def patch_skin_fonts(doc: str) -> str:
 
 def build_skin_editions() -> int:
     """Take each skins/_source/*.html, inject the launcher, write skins/<id>/<section>.html."""
+    # iPhone 主屏（standalone）状态栏会压住页面顶部。这里的处理刻意做成自包含：
+    #   · 不引入主站 app.css / pwa.js —— minimal 皮肤是整页 React 应用，外链样式会污染它；
+    #   · 不写死任何顶栏类名 —— 36 套皮肤的顶栏有 .topbar / .site-header / Tailwind top-0
+    #     等十几种写法，改为运行时按 computed style 找「贴顶的固定栏」；
+    #   · 已自带避让的皮肤（app.css 会加 padding-top）自动跳过，不重复下推；
+    #   · 只在 standalone 生效，普通浏览器里 data-pw-standalone 不设置，页面零变化。
+    safearea_head = (
+        '<style data-pw-safearea>\n'
+        'html[data-pw-standalone="1"][data-pw-needs-pad="1"] body{padding-top:var(--pw-safe-top,0px)!important}\n'
+        'html[data-pw-standalone="1"] .pw-safe-push{top:var(--pw-safe-top,0px)!important}\n'
+        'html[data-pw-standalone="1"] .pw-safe-pad{padding-top:var(--pw-safe-top,0px)!important}\n'
+        '</style>\n'
+        '<script data-pw-safearea>\n'
+        '(function(){var r=document.documentElement;'
+        'var st=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||window.navigator.standalone===true;'
+        'if(!st)return;'
+        'r.setAttribute("data-pw-standalone","1");'
+        'var p=document.createElement("div");'
+        'p.style.cssText="position:fixed;top:0;left:0;width:0;height:env(safe-area-inset-top,0px);pointer-events:none;visibility:hidden";'
+        'r.appendChild(p);var v=p.getBoundingClientRect().height||0;p.remove();'
+        'if(v<24)v=54;'
+        'r.style.setProperty("--pw-safe-top",v+"px");'
+        'r.style.setProperty("--pw-top-inset",v+"px");'
+        'function scan(){'
+        'var ins=parseFloat(getComputedStyle(r).getPropertyValue("--pw-safe-top"))||0;if(!ins)return;'
+        'var vw=window.innerWidth,native=false,pushed=0,els=document.querySelectorAll("body *");'
+        'for(var i=0;i<els.length;i++){var e=els[i];if(e.dataset&&e.dataset.pwSafeDone)continue;'
+        'var s=getComputedStyle(e),b=e.getBoundingClientRect();'
+        'if(s.position!=="fixed"&&s.position!=="sticky"&&!(s.position==="absolute"&&b.height>220))continue;'
+        'if(b.top>20||b.top<-40||b.height<16||b.width<20)continue;'
+        'var big=b.height>220;'
+        'if(big){'
+        'if(b.width<vw*0.5)continue;'
+        'var tt=false,ks=e.querySelectorAll("*");'
+        'for(var k=0;k<ks.length;k++){var kb=ks[k].getBoundingClientRect();'
+        'if(kb.top>=-40&&kb.top<ins&&kb.height>=6){var nd=ks[k].childNodes,has=false;'
+        'for(var j=0;j<nd.length;j++){if(nd[j].nodeType===3&&nd[j].textContent.trim()){has=true;break}}'
+        'if(has){tt=true;break}}}'
+        'if(!tt)continue}'
+        'if(s.display==="none"||s.visibility==="hidden")continue;'
+        'if(e.dataset)e.dataset.pwSafeDone="1";'
+        'var pad=parseFloat(s.paddingTop)||0;'
+        'if(!big&&pad>=ins-10){native=true;continue}'
+        'e.classList.add(big?"pw-safe-pad":"pw-safe-push");pushed++}'
+        'if(!native)r.setAttribute("data-pw-needs-pad","1");'
+        '}'
+        'function run(){try{scan()}catch(e){}}'
+        'if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run);else run();'
+        '[200,700,1500,3000].forEach(function(t){setTimeout(run,t)});'
+        'window.addEventListener("resize",run);'
+        'window.addEventListener("orientationchange",function(){setTimeout(run,300)});'
+        '})();\n'
+        '</script>\n'
+    )
     built = 0
     for ed in editions_manifest()["editions"]:
         source = ed.get("source")
@@ -219,6 +273,14 @@ def build_skin_editions() -> int:
             f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/app.css")}">\n'
         )
         doc = src_path.read_text(encoding="utf-8", errors="replace")
+        # 历史注入 .topbar{padding-top:env(safe-area-inset-top,0px)!important} 有两个问题：
+        # ① !important 会把 app.css 的安全区 padding 覆盖成 0；② iPhone 主屏下 env() 常返回 0。
+        # 先移除，再由下面的统一机制接管。
+        doc = re.sub(r'<style[^>]*data-pw-safearea[^>]*>.*?</style>', '', doc, flags=re.I | re.S)
+        # env(safe-area-inset-*) 只有在 viewport 带 viewport-fit=cover 时才会被 iOS 赋值。
+        vm = re.search(r'(<meta[^>]*name=["\']viewport["\'][^>]*content=["\'])([^"\']*)(["\'])', doc, re.I)
+        if vm and "viewport-fit=cover" not in vm.group(2):
+            doc = doc[:vm.end(2)] + ", viewport-fit=cover" + doc[vm.end(2):]
         # minimal 皮肤大多没自带 icon，浏览器会回退请求站点根 /favicon.ico（线上 404）。
         # 自带 icon 的皮肤（如「绛翼」）保留自己的，不覆盖。
         has_icon = bool(re.search(r'<link[^>]+rel=["\']icon', doc))
@@ -256,6 +318,9 @@ def build_skin_editions() -> int:
         if ed.get("inject") == "minimal" and icon_tag:
             h, s, t = doc.rpartition("</head>")
             doc = h + icon_tag + s + t if s else icon_tag + doc
+        # 安全区脚本与样式同样落在 head 末尾：首帧即生效，避免顶栏先被压住再跳一下。
+        h, s, t = doc.rpartition("</head>")
+        doc = h + safearea_head + s + t if s else safearea_head + doc
         # 整页应用常把 "</body>" 当字符串写进打包后的 JS（DOMParser 之类），
         # 第一个匹配不是真实的结束标签；只认最后一个，别把注入塞进脚本里。
         head, sep, tail = doc.rpartition("</body>")

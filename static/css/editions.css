@@ -2,8 +2,8 @@
    衡天⊙ PowerWiki — 页面皮肤切换器（Edition Launcher）
    一套皮肤 = 一份整页设计。角落这枚小印章负责在它们之间跳转。
 
-   形态：默认只有 30px 的 ⊙ 圆点（半透明 · 不抢视线）
-         hover / 聚焦 → 展开成「⊙ 皮肤」
+   形态：默认只有一枚 42px 的薄纸方章（半透明 · 不抢视线），中心是
+        单色细线 ⊙；hover / 聚焦 → 展开成「⊙ 皮肤」方牌
          滚动时 → 淡到 14%，停下 600ms 后恢复
          点击 → 向上弹出皮肤面板
    避让：脚本实测页面自带的固定栏（左侧栏、底部工具栏），
@@ -41,59 +41,72 @@
   opacity: 1;
 }
 
-/* ── 圆点按钮（可展开成胶囊） ─────────────────────────────────────────── */
+/* ── 印章按钮（可展开成方牌） ───────────────────────────────────────────
+   形态：一枚 42px 的薄纸方章，中心是单色细线 ⊙。不用金属渐变球、
+   不用纯白圆钮——那两种都是任意站点都能套的悬浮按钮长相。
+   淡化隐藏的行为保留：dock 半透明、滚动淡出、hover / 聚焦 / 展开才实体化。 */
 .pw-edition-toggle {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 30px;
-  height: 30px;
+  width: 42px;
+  height: 42px;
   padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #1a1a1a;
+  border: 1px solid rgba(23, 24, 26, 0.18);
+  border-radius: 12px;
+  background: rgba(250, 249, 245, 0.84);
+  color: #23241f;
   font: inherit;
-  font-size: 11.5px;
+  font-size: 12px;
   white-space: nowrap;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
 }
 
-/* 悬停 / 聚焦 / 展开时才放文字出来，收起态始终是 30×30 的正圆 */
+/* 视觉 42px，实际可点区域 46px（触摸端更好按，且不改变布局与选边计算） */
+.pw-edition-toggle::before,
+.pw-edition-home-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+}
+
+/* 悬停 / 聚焦 / 展开时才放文字出来，收起态始终是一枚方章 */
 .pw-edition-dock:hover .pw-edition-toggle,
 .pw-edition-dock:focus-within .pw-edition-toggle,
 .pw-edition-dock.is-open .pw-edition-toggle {
   width: auto;
-  padding: 0 9px;
+  padding: 0 12px;
 }
 
 .pw-edition-toggle:hover {
-  border-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  border-color: rgba(23, 24, 26, 0.32);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .pw-edition-toggle:focus-visible {
-  outline: 2px solid #d4af6a;
+  outline: 2px solid #a9762c;
   outline-offset: 3px;
 }
 
+/* ⊙ 直接用当前文字色画，不再套一层金色立体球 */
 .pw-edition-glyph {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #d4af6a, #a9762c);
-  color: #fff;
-  font-size: 11px;
+  width: 22px;
+  height: 22px;
+  color: currentColor;
+  font-size: 20px;
+  font-weight: 400;
   line-height: 1;
   flex: 0 0 auto;
   transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -117,24 +130,25 @@
 .pw-edition-dock:hover .pw-edition-label,
 .pw-edition-dock:focus-within .pw-edition-label,
 .pw-edition-dock.is-open .pw-edition-label {
-  max-width: 46px;
-  margin-left: 6px;
+  max-width: 52px;
+  margin-left: 7px;
   opacity: 1;
 }
 
-/* ── 回主站首页的小按钮 ───────────────────────────────────────────────── */
+/* ── 回主站首页的小按钮：与印章同一套方章语言 ───────────────────────── */
 .pw-edition-home-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 42px;
+  height: 42px;
   flex: 0 0 auto;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(23, 24, 26, 0.18);
+  border-radius: 12px;
+  background: rgba(250, 249, 245, 0.84);
   color: #4a4a46;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
@@ -249,8 +263,9 @@
 }
 
 .pw-edition-card.is-current {
-  border-color: #c9a25c;
-  background: linear-gradient(180deg, #fffdf7, #fdf6e8);
+  border-color: rgba(169, 118, 44, 0.42);
+  background: #fbf9f3;
+  box-shadow: inset 3px 0 0 #a9762c;
 }
 
 .pw-edition-thumb {
@@ -281,9 +296,10 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
 }
 
 .pw-edition-now {
@@ -296,17 +312,15 @@
   letter-spacing: 0.06em;
 }
 
-.pw-edition-tag {
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: #a08050;
-  text-transform: uppercase;
+/* 命名已去掉统一英文副标模板；留空时不占高度也不留空行 */
+.pw-edition-tag:empty {
+  display: none;
 }
 
 .pw-edition-note {
-  font-size: 10.5px;
-  line-height: 1.45;
-  color: #6f6f6a;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #76766f;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -351,7 +365,7 @@
 }
 
 @media (max-width: 720px) {
-  /* 尺寸不再随宽度变化：皮肤页与主站、桌面与手机共用同一组 30×30 圆钮 */
+  /* 尺寸不随宽度变化：皮肤页与主站、桌面与手机共用同一组 42×42 方章 */
   .pw-edition-dock {
     left: 10px;
     gap: 6px;
@@ -370,7 +384,7 @@
     padding: 5px;
   }
   .pw-edition-note {
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
   }
 }
 
@@ -441,8 +455,9 @@ html[data-pw-edition] .aurora {
 }
 
 [data-theme="dark"] .pw-edition-card.is-current {
-  background: linear-gradient(180deg, #262a24, #20241f);
-  border-color: rgba(212, 175, 106, 0.55);
+  background: #22261f;
+  border-color: rgba(212, 175, 106, 0.42);
+  box-shadow: inset 3px 0 0 #c9a25c;
 }
 
 [data-theme="dark"] .pw-edition-now {
