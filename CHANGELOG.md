@@ -4,6 +4,18 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-11（主屏顶栏复修）· 改回「顶栏贴最上」，缝隙与重叠一起清掉
+
+上一版把顶栏整体下推 54px，方向错了：屏幕最顶 0–54px 露出页面背景，形成**通站都有的空白缝隙**；「金策」等套的顶栏内容没跟着下移，状态栏文字仍压在标题上。用户实测截图（衡天类 / 金策 / 滚动态）确认三处：① 顶栏被推到约 120px，上方一大条空白；② 状态栏 `19:10` 与「衡天 / 至高神性」重叠；③ 滚动后 `1993/1995` 等正文落在状态栏区。
+
+- **方向改为顶栏紧贴屏幕最上**：`top:0 !important`，只把顶栏**内容**用 `padding-top: calc(原值 + var(--pw-safe-top))` 往下挪，并 `height: calc(原高 + var(--pw-safe-top))` + `box-sizing:border-box` 同步加高容器 —— 内容区高度不变，顶栏背景从 y=0 一路铺到状态栏，不再有空白带。这与主站 `app.css` 原生规则（`padding-top` + `height: calc(原高 + inset)`）同向，不再用 `!important` 打架。旧的下推类 `pw-safe-push` / `pw-safe-pad` / `data-pw-needs-pad` 全部移除。
+- **body 让位按顶栏类型区分**：`sticky` 顶栏在文档流里，自身加高 54px 已经把内容推下去，再给 `body` 加 padding 会把顶栏起点推到 54px、重新制造缝隙 —— 所以有 sticky 顶栏时不动 body（且可撤销，防 React 异步挂载晚到）；只有 `fixed` 顶栏 / 无顶栏时才读 `body` 原 `padding-top` 做 `calc(原值 + 54px)` 叠加，不覆盖原值。
+- **半透明顶栏补不透明底**：星烬/夜钤记 `rgba(...,0.78)`、金策 `color(srgb …/0.95)`、同心符环/御言干脆透明，滚动正文会透到状态栏区。`bgOf()` 沿祖先链优先取本来就不透明的 `rgb()` 纸色/深色（暗色皮肤取到 `rgb(7,8,11)` 一类，不产生白块），只补 `background-color`，`background-image` 渐变纹理保留。底色用「属性选择器 `[data-pw-bar-bg]` + CSS 变量 + 样式表 `!important`」承载 —— 皮肤 JS 滚动时 `className=` 整体覆盖或删 inline `background-color`（月牍的 `oklab(…/0.78)` 毛玻璃）都影响不到它。兼容 `rgb/rgba/color(srgb)/oklab` 的 alpha 读取与去 alpha。
+- **状态栏区兜底遮挡条**：`fixed; top:0; height:var(--pw-safe-top); z-index:40; pointer-events:none`，颜色取页面自身背景（深浅自适应）。垫在正文之上、顶栏之下：有横贯顶栏时完全不可见、不改动设计；沉浸式无顶栏皮肤才露出来盖住滚到 y=0 的正文。用独立元素承载，不受皮肤 JS 重建 DOM / 改 class 影响。
+- **贴顶浮动控件下移**：终焉金环、墨龙山水、弧界、素卷没有横贯顶栏，只有 `fixed`、`z-index:50~60`、不满屏宽的悬浮胶囊工具条（☼ A ▲ A 目），原本正好落在状态栏 54px 内。筛选收紧到「横贯全宽 ≥70% 视口」才当顶栏（不再把浮动控件误拉到 `top:0`），窄而浅且带文字的控件改为 `top: calc(原值 + var(--pw-safe-top))`，实测从约 10px 下移到 63–66px。切换器浮层与遮挡条自身显式排除。
+- **抗覆写与异步**：`[200,700,1500,3000]` 分批重扫 + 滚动节流 120ms + resize/orientationchange 重跑，覆盖 React 异步挂载与皮肤 JS 滚动态重建。
+- **验证**：全量 36 套皮肤页、初始 + 滚动各一次：顶栏贴顶 36/36、顶栏内容文字 ≥54px 36/36、状态栏区 15 点全宽被不透明层覆盖 36/36、0 正文透出、0 横向溢出、0 JS 报错、0 个 4xx、遮挡条高度均为 54px；网页版 36/36 零变化（`data-pw-standalone` 与遮挡条均不出现）。滚动时状态栏区内文字经「临时启用命中」验证 3/3、1/1、0/0、1/1 全被遮挡条盖住，此前报的「透字」是 `pointer-events:none` 造成的命中测试假阳性。**定级原文与角色页正文零改动** —— 36 个改动 HTML 剥离注入后逐字一致。SW 升 `pw-v37`。
+
 ## 2026-11-11（主屏顶栏 / 命名 / 切换器）· 三处一起收拾
 
 - **主屏状态栏压住顶栏（严重，34/36 套）**：iPhone 保存到主屏后以 standalone 打开，状态栏覆盖页面顶部。实测 36 套皮肤里 34 套在顶部 54px 内有文字。根因有三：① 32 套 `minimal` 皮肤按设计不引入主站 `app.css`/`pwa.js`，拿不到 `--pw-top-inset`；② 历史注入的 `.topbar{padding-top:env(safe-area-inset-top,0px)!important}` 兜底是 0px，且 `!important` 会把 `app.css` 已有的避让覆盖掉；③ 2 套缺 `viewport-fit=cover`，iOS 上 `env()` 根本不赋值。
