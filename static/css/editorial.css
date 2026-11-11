@@ -1969,7 +1969,7 @@ body.wide-doc-mode .md-table-wrap { max-width: 100%; }
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: calc(18px + env(safe-area-inset-top, 0px) + var(--pw-top-inset, 0px))
+  padding: calc(18px + 0px)
             18px
             calc(18px + env(safe-area-inset-bottom, 0px));
 }
@@ -1989,7 +1989,7 @@ body.wide-doc-mode .md-table-wrap { max-width: 100%; }
 .pw-figure-close {
   position: absolute;
   z-index: 1;
-  top: calc(14px + env(safe-area-inset-top, 0px) + var(--pw-top-inset, 0px));
+  top: calc(14px + 0px);
   right: calc(14px + env(safe-area-inset-right, 0px));
   width: 44px;
   height: 44px;

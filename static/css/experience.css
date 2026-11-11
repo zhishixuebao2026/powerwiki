@@ -936,7 +936,7 @@ html {
   text-size-adjust: 100%;
 }
 
-/* --- Notched devices: honour safe-area insets (viewport-fit=cover) --- */
+/* --- Notched devices: honour safe-area insets (viewport-fit=auto) --- */
 .site-footer {
   padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
 }

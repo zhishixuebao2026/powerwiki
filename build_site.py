@@ -29,6 +29,52 @@ SKINS_OUT_DIR = ROOT / "skins"
 _EDITIONS_CACHE: Optional[Dict[str, Any]] = None
 
 
+# 皮肤状态栏明暗映射：由网页版顶部截图真实像素亮度中位数采样得到
+# （亮度 < 0.5 判深色 -> black，否则 -> default），共 36 套。
+# 用途仅限 iOS 18 及更早：让状态栏文字/底色与皮肤明暗协调，避免深色皮肤
+# 顶部出现浅色状态栏带。iOS 26.1+ 起该 meta 对系统状态栏 scrim 无影响
+# （见 WebKit Bug 325807），根治顶部模糊/重叠靠去掉 viewport-fit=cover，
+# 与本表无关。本表固化在源码中，重建不依赖任何 /tmp 临时文件。
+SKIN_STATUS_BAR_MODE: Dict[str, str] = {
+    "archive": "default",
+    "atlas": "default",
+    "bronze-coffin": "default",
+    "divinity-gilt": "default",
+    "divinity-radiance": "default",
+    "divinity-seal": "black",
+    "divinity-starember": "default",
+    "divinity-xuanjin": "default",
+    "futan-abyss": "black",
+    "futan-biyuan": "black",
+    "futan-lamp": "black",
+    "guchensha-molong": "black",
+    "jiangwuye-eclipsring": "black",
+    "jiangwuye-starvortex": "black",
+    "linfei-crystal": "black",
+    "linfei-inkseal": "black",
+    "material-shatter": "default",
+    "moonfile": "default",
+    "observatory": "black",
+    "ruphas-crimson": "black",
+    "ruphas-frostgate": "black",
+    "ruphas-gilded": "black",
+    "tianren-register": "black",
+    "tianren-zhoutian": "black",
+    "xiayouzhe-qionghu": "black",
+    "xiayouzhe-sujuan": "black",
+    "xuanheng": "black",
+    "xuanji": "black",
+    "yog-bronze-glow": "default",
+    "yog-bronze-key": "default",
+    "yog-teal-vortex": "default",
+    "zhigaowangzuo-junzhen": "black",
+    "zhigaowangzuo-rilun": "black",
+    "zhigaowangzuo-yihuan": "black",
+    "zhigaowangzuo-zhanchang": "black",
+    "zhuban": "black",
+}
+
+
 def editions_manifest() -> Dict[str, Any]:
     """Page-skin registry (data/editions.json). One entry == one whole-page design."""
     global _EDITIONS_CACHE
@@ -184,117 +230,10 @@ def patch_skin_fonts(doc: str) -> str:
 
 def build_skin_editions() -> int:
     """Take each skins/_source/*.html, inject the launcher, write skins/<id>/<section>.html."""
-    # iPhone 主屏（standalone）状态栏会压住页面顶部。这里的处理刻意做成自包含：
-    #   · 不引入主站 app.css / pwa.js —— minimal 皮肤是整页 React 应用，外链样式会污染它；
-    #   · 不写死任何顶栏类名 —— 36 套皮肤的顶栏有 .topbar / .site-header / Tailwind top-0
-    #     等十几种写法，改为运行时按 computed style 找「贴顶的固定栏」；
-    #   · 只改几何：顶栏贴 top:0、内容向内 padding 下移、容器加高，让皮肤「自己的顶栏背景」
-    #     从 y=0 自然铺满状态栏区。绝不插入遮挡元素、绝不重绘背景色／渐变／纹理，
-    #     不新增任何纯色块、黑条或色带 —— 这是皮肤原设计，不是我们加的。
-    #   · 只在 standalone 生效，普通浏览器里 data-pw-standalone 不设置，页面零变化。
-    safearea_head = (
-        # 不输出任何颜色规则：几何全部由脚本写 inline !important。
-        # 皮肤自己的顶栏背景（含渐变 / 半透明 / 纹理 / 金箔）从 y=0 自然铺满状态栏区，
-        # 不插入遮挡层、不重绘底色，因此不会出现与皮肤设计割裂的纯色块或黑条。
-        '<script data-pw-safearea>\n'
-        '(function(){var r=document.documentElement;'
-        'var st=(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)||window.navigator.standalone===true;'
-        'if(!st)return;'
-        'r.setAttribute("data-pw-standalone","1");'
-        'var p=document.createElement("div");'
-        'p.style.cssText="position:fixed;top:0;left:0;width:0;height:env(safe-area-inset-top,0px);pointer-events:none;visibility:hidden";'
-        'r.appendChild(p);var v=p.getBoundingClientRect().height||0;p.remove();'
-        'if(v<24)v=54;'
-        'r.style.setProperty("--pw-safe-top",v+"px");'
-        'r.style.setProperty("--pw-top-inset",v+"px");'
-        'function scan(){'
-        'var ins=parseFloat(getComputedStyle(r).getPropertyValue("--pw-safe-top"))||0;if(!ins)return;'
-        'var vw=window.innerWidth,els=document.querySelectorAll("body *");'
-        'for(var i=0;i<els.length;i++){var e=els[i];'
-        'if(e.dataset&&e.dataset.pwSafeDone)continue;'
-        # 皮肤切换器浮层是站点自带控件，位置由 editions.js 管理，不动
-        'if(e.closest&&e.closest(".pw-edition-dock"))continue;'
-        'var s=getComputedStyle(e),b=e.getBoundingClientRect();'
-        'if(s.position!=="fixed"&&s.position!=="sticky"&&!(s.position==="absolute"&&b.height>220))continue;'
-        'if(s.display==="none"||s.visibility==="hidden")continue;'
-        'if(b.height<16)continue;'
-        # 贴顶判定放宽到 ins+40：兼容「已被别的规则推下去」的顶栏，一律拉回 top:0
-        'if(b.top>ins+40||b.top<-40)continue;'
-        # 窄而浅的「悬浮胶囊工具条」：整体下移 ins，避免落进状态栏 54px 与状态栏文字挤在一起。
-        # 只处理带可见文字/按钮的控件，排除纯装饰层与全屏容器。
-        'if(b.width<vw*0.7&&b.height<=160){'
-        'var tt2=false,ks2=e.querySelectorAll("*");'
-        'for(var k2=0;k2<ks2.length;k2++){var nd2=ks2[k2].childNodes;'
-        'for(var j2=0;j2<nd2.length;j2++){if(nd2[j2].nodeType===3&&nd2[j2].textContent.trim()){tt2=true;break}}'
-        'if(tt2)break}'
-        'if(e.textContent&&e.textContent.trim())tt2=true;'
-        'if(tt2){if(e.dataset)e.dataset.pwSafeDone="1";'
-        'var t0=parseFloat(s.top)||0;'
-        'e.style.setProperty("top","calc("+Math.round(t0)+"px + var(--pw-safe-top))","important");'
-        'e.style.setProperty("margin-top","0px","important")}'
-        'continue}'
-        'if(b.width<vw*0.7)continue;'
-        'var big=b.height>220;'
-        'if(big){'
-        'if(b.width<vw*0.5)continue;'
-        'var tt=false,ks=e.querySelectorAll("*");'
-        'for(var k=0;k<ks.length;k++){var kb=ks[k].getBoundingClientRect();'
-        'if(kb.top>=-40&&kb.top<ins+40&&kb.height>=6){var nd=ks[k].childNodes;'
-        'for(var j=0;j<nd.length;j++){if(nd[j].nodeType===3&&nd[j].textContent.trim()){tt=true;break}}}'
-        'if(tt)break}'
-        'if(!tt)continue;'
-        # 全屏抽屉/目录：带 transform，改 top 会被抵消，只加顶部 padding
-        'var bp=parseFloat(s.paddingTop)||0;'
-        'if(e.dataset)e.dataset.pwSafeDone="1";'
-        'if(bp<ins-10){'
-        'e.style.setProperty("padding-top","calc("+bp+"px + var(--pw-safe-top))","important");'
-        'e.style.setProperty("box-sizing","border-box","important")}'
-        'continue}'
-        # 顶栏：紧贴屏幕最上，内容向内下移 ins，容器同步加高 ins（内容区高度不变，背景铺满 0..原高+ins）
-        'var pad=parseFloat(s.paddingTop)||0,h=Math.round(b.height);'
-        'if(e.dataset)e.dataset.pwSafeDone="1";'
-        'e.style.setProperty("top","0","important");'
-        # 刻意不改背景色：皮肤自己的顶栏背景（半透明 / 渐变 / 纹理）连同加高的容器
-        # 一起从 y=0 铺满状态栏区，是皮肤原设计；补纯色只会做出与皮肤割裂的色块。
-        'if(pad<ins-10){'
-        'e.style.setProperty("padding-top","calc("+pad+"px + var(--pw-safe-top))","important");'
-        'e.style.setProperty("height","calc("+h+"px + var(--pw-safe-top))","important");'
-        'e.style.setProperty("box-sizing","border-box","important")}'
-        '}'
-        '}'
-        # 内容让位：sticky 顶栏在文档流里，自身加高 ins 已把内容推下去，不能再动 body
-        # （否则顶栏起点被推到 ins，顶部出现一条空白＝缝隙）。仅 fixed 顶栏 / 无顶栏时，
-        # 读 body 原 padding-top 叠加 ins，不覆盖原值。
-        'function hasStickyBar(){var vw=window.innerWidth;'
-        'var es=document.querySelectorAll("body *");'
-        'for(var i=0;i<es.length;i++){var e=es[i],s=getComputedStyle(e),b=e.getBoundingClientRect();'
-        'if(s.position!=="sticky")continue;'
-        'if(s.display==="none"||s.visibility==="hidden")continue;'
-        'if(b.width<vw*0.6||b.height<24||b.height>220)continue;'
-        'if(b.top>insGlobal()+40||b.top<-40)continue;'
-        'return true}return false}'
-        'function insGlobal(){return parseFloat(getComputedStyle(r).getPropertyValue("--pw-safe-top"))||0}'
-        # 可撤销：React 异步挂载的 sticky 顶栏晚到时，把先前误加的 body 让位写回原值。
-        'function padBody(){var b=document.body;if(!b)return;'
-        'if(hasStickyBar()){'
-        'if(b.dataset.pwBodyDone){'
-        'b.style.setProperty("padding-top",b.dataset.pwBodyOrig||"0px","important");'
-        'delete b.dataset.pwBodyDone}return}'
-        'if(b.dataset.pwBodyDone)return;'
-        'var bp=parseFloat(getComputedStyle(b).paddingTop)||0;'
-        'b.dataset.pwBodyOrig=bp+"px";b.dataset.pwBodyDone="1";'
-        'b.style.setProperty("padding-top","calc("+bp+"px + var(--pw-safe-top))","important")}'
-        'function run(){try{scan();padBody()}catch(e){}}'
-        'if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run);else run();'
-        '[200,700,1500,3000].forEach(function(t){setTimeout(run,t)});'
-        'var tick=false;'
-        'window.addEventListener("scroll",function(){if(tick)return;tick=true;'
-        'setTimeout(function(){tick=false;run()},120)},{passive:true});'
-        'window.addEventListener("resize",run);'
-        'window.addEventListener("orientationchange",function(){setTimeout(run,300)});'
-        '})();\n'
-        '</script>\n'
-    )
+    # 状态栏由 iOS 系统绘制（apple-mobile-web-app-status-bar-style=default）。
+    # 网页视口天然从状态栏下方开始，不顶到 y=0，因此不需要任何让位脚本、
+    # 顶栏加高、padding 下移或遮挡层。皮肤顶栏保持 100% 原设计。
+    # 详见 CHANGELOG 2026-11-12 条目。
     built = 0
     for ed in editions_manifest()["editions"]:
         source = ed.get("source")
@@ -325,7 +264,6 @@ def build_skin_editions() -> int:
             f'<link rel="icon" type="image/png" sizes="32x32" href="{_rel_from(page_dir, "static/img/icons/favicon-32.png")}">\n'
             f'<meta name="apple-mobile-web-app-capable" content="yes">\n'
             f'<meta name="mobile-web-app-capable" content="yes">\n'
-            f'<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n'
             f'<meta name="apple-mobile-web-app-title" content="衡天 Wiki">\n'
             f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/app.css")}">\n'
         )
@@ -334,10 +272,30 @@ def build_skin_editions() -> int:
         # ① !important 会把 app.css 的安全区 padding 覆盖成 0；② iPhone 主屏下 env() 常返回 0。
         # 先移除，再由下面的统一机制接管。
         doc = re.sub(r'<style[^>]*data-pw-safearea[^>]*>.*?</style>', '', doc, flags=re.I | re.S)
-        # env(safe-area-inset-*) 只有在 viewport 带 viewport-fit=cover 时才会被 iOS 赋值。
-        vm = re.search(r'(<meta[^>]*name=["\']viewport["\'][^>]*content=["\'])([^"\']*)(["\'])', doc, re.I)
-        if vm and "viewport-fit=cover" not in vm.group(2):
-            doc = doc[:vm.end(2)] + ", viewport-fit=cover" + doc[vm.end(2):]
+        # 去掉 viewport-fit=cover：它会把视口顶边推到 y=0 的状态栏后面。
+        # 交还系统绘制状态栏后，视口天然落在状态栏下方，网页无需任何安全区让位。
+        doc = re.sub(r'(<meta[^>]*name=["\']viewport["\'][^>]*content=["\'][^"\']*?)'
+                    r',\s*viewport-fit=cover', r'\1', doc, flags=re.I)
+        doc = re.sub(r'(<meta[^>]*name=["\']viewport["\'][^>]*content=["\'])'
+                    r'\s*viewport-fit=cover,?\s*', r'\1', doc, flags=re.I)
+        # 源页面里有 35 套自带历史安全区补丁（data-pw-safearea / pw-skin-safearea /
+        # data-pw-safe-area / 裸 style 四种变体），全用 env(safe-area-inset-top) 给顶栏
+        # 加高或 padding 下移。不能依赖「去掉 cover 后 iOS 会返回 0」——Chromium
+        # 里 env 恒为 0，无法验证 iOS 真实行为。这里直接把顶部 inset 全部归零，
+        # 让顶栏恒定回到皮肤原始设计高度；底部/左右 inset 保留。源页面不改。
+        doc = re.sub(r'(?:env|constant)\(\s*safe-area-inset-top\s*(?:,\s*0px\s*)?\)',
+                     '0px', doc, flags=re.I)
+        # 同步修正历史注释里「页面已启用 viewport-fit=cover」的过时描述
+        doc = doc.replace('viewport-fit=cover', 'viewport-fit=auto')
+        # 状态栏 meta 统一收口到 <head>：源页面 36 套全部不带该 meta，而 32 套
+        # minimal 皮肤根本不注入 app_tags，所以必须在 doc 层按皮肤明暗注入一份。
+        # 先清掉源页面可能自带的旧值，再插到 <head> 开头，保证每页恰好一份。
+        sbs = SKIN_STATUS_BAR_MODE.get(ed["id"], "default")
+        doc = re.sub(r'<meta[^>]+name=["\']apple-mobile-web-app-status-bar-style["\'][^>]*>\s*',
+                     '', doc, flags=re.I)
+        doc = re.sub(r'(<head\b[^>]*>)',
+                     lambda m: m.group(1) + '\n  <meta name="apple-mobile-web-app-status-bar-style" content="' + sbs + '">',
+                     doc, count=1, flags=re.I)
         # minimal 皮肤大多没自带 icon，浏览器会回退请求站点根 /favicon.ico（线上 404）。
         # 自带 icon 的皮肤（如「绛翼」）保留自己的，不覆盖。
         has_icon = bool(re.search(r'<link[^>]+rel=["\']icon', doc))
@@ -375,9 +333,6 @@ def build_skin_editions() -> int:
         if ed.get("inject") == "minimal" and icon_tag:
             h, s, t = doc.rpartition("</head>")
             doc = h + icon_tag + s + t if s else icon_tag + doc
-        # 安全区脚本与样式同样落在 head 末尾：首帧即生效，避免顶栏先被压住再跳一下。
-        h, s, t = doc.rpartition("</head>")
-        doc = h + safearea_head + s + t if s else safearea_head + doc
         # 整页应用常把 "</body>" 当字符串写进打包后的 JS（DOMParser 之类），
         # 第一个匹配不是真实的结束标签；只认最后一个，别把注入塞进脚本里。
         head, sep, tail = doc.rpartition("</body>")
@@ -1031,7 +986,7 @@ def render_shell(
 <html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}" data-boot-bg-light="{boot_light}" data-boot-bg-dark="{boot_dark}">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" id="theme-color-meta" content="{boot_light}">
   <meta name="color-scheme" content="light dark">
   <link rel="manifest" href="{r}manifest.webmanifest">
@@ -1040,7 +995,7 @@ def render_shell(
   <link rel="icon" type="image/png" sizes="192x192" href="{r}static/img/icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="衡天 Wiki">
   <meta name="application-name" content="衡天 Wiki">
   <title>{esc(title)} · 衡天⊙ PowerWiki</title>

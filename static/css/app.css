@@ -4,13 +4,9 @@
    本文件只负责主屏幕启动时的安全区留白，离线缓存由 pwa.js + service-worker.js 处理。
    ========================================================================== */
 
-/* ── 独立窗口：让出刘海与 Home 指示条 ────────────────────────────────── */
-/* --pw-top-inset 由 pwa.js 实测写入：独立窗口（主屏幕启动）默认 54px，
-   并额外取 env(safe-area-inset-top, 0px) 的较大值；普通浏览器里是 0。 */
-html[data-standalone="1"] .site-header {
-  padding-top: var(--pw-top-inset, 0px);
-  height: calc(var(--header-h) + var(--pw-top-inset, 0px));
-}
+/* ── 独立窗口：状态栏由 iOS 系统绘制，网页不造顶部让位 ────────────── */
+/* 仅保留左右（横屏刘海）与底部（Home 指示条）的安全区避让；
+   顶部不再加高顶栏：视口天然从状态栏下方开始，顶栏 top:0 即紧贴。 */
 
 html[data-standalone="1"] .main-nav,
 html[data-standalone="1"] .header-inner {
@@ -27,9 +23,3 @@ html[data-standalone="1"] .site-footer {
   padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
 }
 
-/* 皮肤页（整页产物）在独立窗口下也让出顶部安全区 */
-html[data-standalone="1"] .topbar,
-html[data-standalone="1"] header.fixed.inset-x-0.top-0 {
-  padding-top: var(--pw-top-inset, 0px);
-  height: calc(var(--pw-topbar-base, 63px) + var(--pw-top-inset, 0px));
-}

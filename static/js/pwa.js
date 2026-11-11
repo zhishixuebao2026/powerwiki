@@ -1,7 +1,10 @@
 /* ==========================================================================
    衡天⊙ PowerWiki — 静默离线层（PWA）
-   只做四件事：注册 service worker、预热常用页面、独立窗口的安全区适配、
+   只做三件事：注册 service worker、预热常用页面、
    主屏幕启动时接管左边缘返回手势。
+
+   独立窗口（主屏 App）的状态栏由 iOS 系统绘制，视口天然落在状态栏下方，
+   网页不做任何顶部安全区适配，也不量 inset、不兜底 54px。
 
    按项目要求，全站不提供任何「装成 App / 下载本地 / 添加到主屏幕」的
    按钮、气泡或引导面板。离线能力照常工作，但完全静默、不打扰阅读。
@@ -20,16 +23,8 @@
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
   if (STANDALONE) {
+    // 状态栏由 iOS 系统绘制，网页视口天然在其下方，无需量 inset、无需 54px 兜底。
     root.setAttribute("data-standalone", "1");
-    // 主屏幕启动时没有地址栏，状态栏会压住顶栏：量一条安全边距写进 CSS 变量。
-    var probe = document.createElement("div");
-    probe.style.cssText =
-      "position:fixed;top:0;left:0;width:0;height:env(safe-area-inset-top,0px);pointer-events:none;visibility:hidden";
-    document.documentElement.appendChild(probe);
-    var inset = probe.getBoundingClientRect().height || 0;
-    probe.remove();
-    if (inset < 24) inset = 54; // iPhone 刘海 / 灵动岛量级的兜底值
-    root.style.setProperty("--pw-top-inset", inset + "px");
   }
   if (iOS) root.setAttribute("data-ios", "1");
   if (FROM_APP) root.setAttribute("data-app-launch", "1");
