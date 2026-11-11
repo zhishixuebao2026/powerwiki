@@ -329,6 +329,15 @@ def build_skin_editions() -> int:
             doc = patch_skin_fonts(doc)
         # 标记这是皮肤页面，editions.css 用它做合成层校正（不改外观）
         doc = doc.replace("<html", '<html data-pw-edition="' + esc(ed["id"]) + '"', 1)
+        # 顶栏清晰化：关掉皮肤自带的 backdrop-filter 毛玻璃，用皮肤自身色把底色变实。
+        # 纯 CSS、按 data-pw-edition 精确作用域、不改几何、不新增元素、无运行时脚本。
+        clearbar_tag = (
+            f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/clearbar.css")}">\n'
+        )
+        # 打包 JS 里也有 "</head>" 字面量（DOMParser 模板字符串），第一个匹配不是
+        # 真实的 head 结束标签；与下方 favicon / </body> 注入保持一致，只认最后一个。
+        cb_h, cb_sep, cb_t = doc.rpartition("</head>")
+        doc = cb_h + clearbar_tag + cb_sep + cb_t if cb_sep else doc + clearbar_tag
         # 补 favicon 要落在 head 真正的末尾（打包 JS 里也有 "</head>" 字面量）
         if ed.get("inject") == "minimal" and icon_tag:
             h, s, t = doc.rpartition("</head>")

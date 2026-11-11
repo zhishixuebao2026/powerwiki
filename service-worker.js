@@ -8,7 +8,7 @@
      - 站内资源随看随缓存，离线时可用的页面会越来越多
    注意：service worker 只在 https 或 localhost 下注册，本地 file:// 打开不受影响。
    ========================================================================== */
-const VERSION = "pw-v39";
+const VERSION = "pw-v40";
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 
@@ -25,6 +25,7 @@ const SHELL = [
   "./static/css/editorial.css",
   "./static/css/experience.css",
   "./static/css/editions.css",
+  "./static/css/clearbar.css",
   "./static/css/polish.css",
   "./static/css/app.css",
   "./static/js/theme.js",
