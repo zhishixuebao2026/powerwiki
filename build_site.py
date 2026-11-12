@@ -29,10 +29,15 @@ SKINS_OUT_DIR = ROOT / "skins"
 _EDITIONS_CACHE: Optional[Dict[str, Any]] = None
 
 
-# 皮肤状态栏明暗映射：由网页版顶部截图真实像素亮度中位数采样得到
-# （亮度 < 0.5 判深色 -> black，否则 -> default），共 36 套。
+# 皮肤状态栏明暗映射，共 36 套。判定方法：渲染每套皮肤，取状态栏正下方
+# (195, 22) 处像素背后首个非透明背景色，按 0.2126R+0.7152G+0.0722B 求亮度，
+# ≥128 判浅 -> default，<128 判深 -> black。用「整页亮度中位数」会被正文里的
+# 深色卡片/图片拉偏（xiayouzhe-sujuan 就是这样被漏判过一次），故不再使用。
 # 只决定 iOS 主屏状态栏的文字/底色，与顶栏几何无关：顶栏避让一律由源页面
 # 自带的 env(safe-area-inset-top) 自适应处理（配合 viewport-fit=cover）。
+# 已知边界：31/36 套源自带 data-theme 双主题并跟随系统深色模式，深色模式下
+# 页面底色会变近黑；iOS 状态栏样式在 PWA 启动时锁定、运行时改 meta 不可靠，
+# 因此本表保证的是默认（系统浅色）模式下的正确性。复判脚本见 tools/audit_site.py。
 # 本表固化在源码中，重建不依赖任何 /tmp 临时文件。
 SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "archive": "default",
@@ -60,7 +65,7 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "tianren-register": "black",
     "tianren-zhoutian": "black",
     "xiayouzhe-qionghu": "black",
-    "xiayouzhe-sujuan": "black",
+    "xiayouzhe-sujuan": "default",
     "xuanheng": "default",
     "xuanji": "black",
     "yog-bronze-glow": "default",
@@ -235,17 +240,21 @@ def patch_skin_fonts(doc: str) -> str:
 #                        children:[ … "data-dock-toggle":!0 … ]})
 # 这个底部 dock 在移动端显示（lg:hidden），与顶部导航构成上下两个目录，重复。
 #
-# 这里在构建期把该组件的整个 return 表达式替换成 `return null`：
-#   · 组件仍存在、hooks 顺序不变、bundle 其余字节一字不动 —— JS 语法风险为零；
-#   · React 运行时根本不生成这个 DOM，是「真删」而非 display:none；
-#   · 顶部导航、构建器注入的「⊙ 皮肤」切换器、页面正文全部保留。
+# 构建期做两步「真删」，React 运行时连这个组件都不会挂载：
+#   ① 把 dock 组件的整个 return 表达式替换成 `return null`（不再生成 DOM）；
+#   ② 把该组件唯一的 e.jsx(...) 挂载点替换成 `null`（组件不挂载，其内部
+#      useEffect 注册的滚动监听、每次滚动的 setState 也不会再执行）。
+#   组件定义与函数体其余字节一字不动、hooks 顺序不变 —— JS 语法风险为零。
+#   顶部导航、构建器注入的「⊙ 皮肤」切换器、页面正文全部保留。
 #
 # 判定只认结构指纹，绝不认皮肤 id：
 #   ① 命中 className 含 `fixed … bottom-0 … lg:hidden`（移动端底部 dock）；
 #   ② 该 return 表达式内含 `data-dock-toggle`（确认是目录 dock，不是别的底栏）；
-#   ③ 括号严格配平、替换边界精确到匹配的 `)`。
+#   ③ 括号严格配平、替换边界精确到匹配的 `)`；
+#   ④ 挂载点只在「组件定义唯一 + 调用点唯一」时才摘，否则跳过（fail-safe）。
 # 任何皮肤（现有 + 未来新增）只要带这个结构就自动去重；不带的原样不动。
-# 配平失败 / 指纹不全 → 跳过并告警，绝不产出坏 bundle（fail-safe）。
+# 单个候选不成立时「跳过并继续找下一个」，不提前 break —— 避免文档里先出现
+# 同款非目录底栏时漏掉后面真正的 dock。配平失败一律跳过并告警，绝不产出坏 bundle。
 _DOCK_CLASS_RE = re.compile(r'className:"fixed[^"]*bottom-0[^"]*lg:hidden[^"]*"')
 
 
@@ -296,33 +305,75 @@ def _match_return_paren(doc: str, op: int, win: int = 80000) -> int:
     return -1
 
 
+def _dock_component_name(doc: str, ret: int):
+    """从 dock 组件的 return 位置向前找出所属函数名。仅当函数定义唯一、
+    JSX 调用点也唯一时才返回名字，否则返回 None（fail-safe，不摘挂载点）。"""
+    fs = doc.rfind("function ", 0, ret)
+    if fs < 0:
+        return None
+    m = re.match(r"function\s+(\$?\w+)\s*\(", doc[fs:fs + 60])
+    if not m:
+        return None
+    name = m.group(1)
+    if len(re.findall(r"function\s+" + re.escape(name) + r"\s*\(", doc)) != 1:
+        return None
+    if len(re.findall(r"e\.jsx\(" + re.escape(name) + r"\s*,", doc)) != 1:
+        return None
+    return name
+
+
+def _strip_dock_callsite(doc: str, comp: str) -> tuple:
+    """把 dock 组件唯一的 e.jsx(comp,{...}) 挂载点换成 null，使组件根本不挂载。
+    任何一步不成立都原样返回；这一步失败不影响前一步（DOM 仍已真删）。"""
+    m = re.search(r"e\.jsx\(" + re.escape(comp) + r"\s*,", doc)
+    if not m:
+        return doc, 0
+    op = doc.find("(", m.start())
+    if op < 0:
+        return doc, 0
+    close = _match_return_paren(doc, op)
+    if close < 0:
+        return doc, 0
+    return doc[:m.start()] + "null" + doc[close + 1:], 1
+
+
 def strip_duplicate_dock(doc: str) -> tuple:
     """按结构指纹摘除重复的移动端底部目录 dock（构建期真删）。
-    返回 (新 doc, 摘除处数)。不认皮肤 id；fail-safe：任何一步不成立就原样返回。"""
-    removed = 0
-    for _ in range(10):  # 安全阀：防止异常输入下死循环
-        m = _DOCK_CLASS_RE.search(doc)
+    返回 (新 doc, 摘除 dock 数, 摘除挂载点数)。不认皮肤 id；
+    任何一步不成立就跳过该候选并继续找下一个，绝不产出坏 bundle。"""
+    edits = []
+    pos = 0
+    for _ in range(20):  # 安全阀：防止异常输入下死循环
+        m = _DOCK_CLASS_RE.search(doc, pos)
         if not m:
             break
+        pos = m.end()
         # 向前找最近的 return e.jsx( / e.jsxs( —— dock 组件的 return 起点
         ret = doc.rfind("return e.jsx", 0, m.start())
-        if ret < 0 or m.start() - ret > 40:
-            break
+        if ret < 0 or m.start() - ret > 200:
+            continue  # 不是紧邻 return 的 dock；跳过，继续找下一个候选
         op = doc.find("(", ret)
         if op < 0 or op > m.start():
-            break
+            continue
         close = _match_return_paren(doc, op)
         if close < 0:
             print("[WARN] strip_duplicate_dock: 括号配平失败，跳过（不破坏 bundle）")
-            break
+            continue
         expr = doc[ret:close + 1]
         if "data-dock-toggle" not in expr:
-            # 是别的底栏而非目录 dock，不动
-            break
-        expr_start = ret + len("return ")
-        doc = doc[:expr_start] + "null" + doc[close + 1:]
-        removed += 1
-    return doc, removed
+            continue  # 是别的底栏而非目录 dock；跳过，继续找下一个候选
+        edits.append((ret + len("return "), close + 1, _dock_component_name(doc, ret)))
+    if not edits:
+        return doc, 0, 0
+    # 从后往前替换，前面的偏移不受影响
+    for start, end, _ in sorted(edits, key=lambda e: e[0], reverse=True):
+        doc = doc[:start] + "null" + doc[end:]
+    calls = 0
+    for _, _, comp in edits:
+        if comp:
+            doc, n = _strip_dock_callsite(doc, comp)
+            calls += n
+    return doc, len(edits), calls
 
 
 def build_skin_editions() -> int:
@@ -367,9 +418,9 @@ def build_skin_editions() -> int:
         doc = src_path.read_text(encoding="utf-8", errors="replace")
         # 重复目录去重：按结构指纹把移动端底部 dock 组件的 return 换成 null
         # （真删，非 CSS 隐藏）。只认结构不认皮肤 id，未来新增皮肤自动生效。
-        doc, n_dock = strip_duplicate_dock(doc)
+        doc, n_dock, n_calls = strip_duplicate_dock(doc)
         if n_dock:
-            print(f"[dock] {ed['id']}: 摘除重复底部目录 {n_dock} 处（结构指纹命中）")
+            print(f"[dock] {ed['id']}: 真删底部目录 {n_dock} 处、挂载点 {n_calls} 处（结构指纹命中）")
         # 源页面 36/36 自带 <style data-pw-safearea> / id="pw-skin-safearea" /
         # data-pw-safe-area / 裸 <style> 四种变体的沉浸式安全区补丁，全部原样保留。
         # pw-v36 曾用一行 re.sub 删掉 data-pw-safearea 块并交由注入脚本接管，
