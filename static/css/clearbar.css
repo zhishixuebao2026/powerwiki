@@ -1,11 +1,17 @@
 /* ==========================================================================
    顶栏清晰化 — 皮肤自带半透明 + backdrop-filter:blur() 会把顶栏背后内容糊成
-   一片发虚带（与 iOS 版本、状态栏模式无关）。这里只做两件事：
+   一片发虚带（与 iOS 版本、状态栏模式无关）。上半部分只做两件事：
      1) 关掉顶栏自身的毛玻璃；
      2) 用皮肤自己的 --bg（或该顶栏实测显示色）把底色变不透明，
         保留 background-image 的纸纹 / 渐变 / 金箔，保留 border / box-shadow。
-   不改 height / padding / top / position，不新增任何元素，不使用运行时脚本。
    每条规则按 data-pw-edition 精确作用域，不影响主站与其他皮肤。
+
+   下半部分「沉浸式避让」：部分皮肤源页面的安全区补丁选择器写成了 .topbar
+   或只加 padding-top 不加 height，而真实顶栏叫 .site-header / header.bar 等，
+   补丁没命中 → 状态栏文字压住顶栏内容。这里按同一套精确作用域补齐，
+   用 env(safe-area-inset-top) 自适应：内容延伸到状态栏后时顶栏背景从 y=0
+   铺满、内容自动下移；env 为 0 的网页版/桌面端 height 回到原高，零影响。
+   不新增元素、不使用运行时脚本、不重绘颜色、不改 top / position。
    ========================================================================== */
 
 html[data-pw-edition="archive"] header.topbar {
@@ -205,3 +211,103 @@ html[data-pw-edition="zhuban"] header.topbar {
     backdrop-filter: none !important;
     background-color: var(--bg) !important;
 }
+
+/* ── 沉浸式避让：源页面补丁未命中真实顶栏的 16 套 ──────────────────────
+   H0 = 390px 视口实测的顶栏原始高度；border-box 下 padding 计入 height，
+   所以内容区恒为 H0，整体上移/下移完全由 env() 决定。*/
+html[data-pw-edition="divinity-gilt"] header.site-header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(64px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="divinity-radiance"] header.topbar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(59px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="divinity-starember"] div.topbar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(60px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="divinity-xuanjin"] div.topbar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(60px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="futan-biyuan"] header.fixed.inset-x-0 {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(57px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="jiangwuye-starvortex"] header.bar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="material-shatter"] header.topbar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(63px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(58px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="tianren-zhoutian"] header.site-header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(68px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="xuanheng"] header.topbar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(60px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="yog-bronze-glow"] header.fixed.inset-x-0 {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(53px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="yog-bronze-key"] header.site-header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(63px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="yog-teal-vortex"] header.fixed.inset-x-0 {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(57px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="zhigaowangzuo-junzhen"] header.topbar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(64px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="zhigaowangzuo-rilun"] header.site-header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(66px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+html[data-pw-edition="zhigaowangzuo-yihuan"] header.sticky.top-0 {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(80px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+

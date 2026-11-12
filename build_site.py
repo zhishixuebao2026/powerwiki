@@ -31,10 +31,9 @@ _EDITIONS_CACHE: Optional[Dict[str, Any]] = None
 
 # 皮肤状态栏明暗映射：由网页版顶部截图真实像素亮度中位数采样得到
 # （亮度 < 0.5 判深色 -> black，否则 -> default），共 36 套。
-# 用途仅限 iOS 18 及更早：让状态栏文字/底色与皮肤明暗协调，避免深色皮肤
-# 顶部出现浅色状态栏带。iOS 26.1+ 起该 meta 对系统状态栏 scrim 无影响
-# （见 WebKit Bug 325807），根治顶部模糊/重叠靠去掉 viewport-fit=cover，
-# 与本表无关。本表固化在源码中，重建不依赖任何 /tmp 临时文件。
+# 只决定 iOS 主屏状态栏的文字/底色，与顶栏几何无关：顶栏避让一律由源页面
+# 自带的 env(safe-area-inset-top) 自适应处理（配合 viewport-fit=cover）。
+# 本表固化在源码中，重建不依赖任何 /tmp 临时文件。
 SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "archive": "default",
     "atlas": "default",
@@ -230,10 +229,10 @@ def patch_skin_fonts(doc: str) -> str:
 
 def build_skin_editions() -> int:
     """Take each skins/_source/*.html, inject the launcher, write skins/<id>/<section>.html."""
-    # 状态栏由 iOS 系统绘制（apple-mobile-web-app-status-bar-style=default）。
-    # 网页视口天然从状态栏下方开始，不顶到 y=0，因此不需要任何让位脚本、
-    # 顶栏加高、padding 下移或遮挡层。皮肤顶栏保持 100% 原设计。
-    # 详见 CHANGELOG 2026-11-12 条目。
+    # 顶栏沿用源页面自带的沉浸式安全区适配：viewport-fit=cover + env(safe-area-inset-top)
+    # 让顶栏背景从 y=0 铺满、内容在状态栏下方；状态栏配色按皮肤明暗注入 black/default，
+    # 保证文字可读。不注入任何让位脚本、不加遮挡层、不硬编码高度、不重绘顶栏颜色。
+    # 详见 CHANGELOG 2026-11-12 的 pw-v41 条目。
     built = 0
     for ed in editions_manifest()["editions"]:
         source = ed.get("source")
@@ -268,25 +267,32 @@ def build_skin_editions() -> int:
             f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/app.css")}">\n'
         )
         doc = src_path.read_text(encoding="utf-8", errors="replace")
-        # 历史注入 .topbar{padding-top:env(safe-area-inset-top,0px)!important} 有两个问题：
-        # ① !important 会把 app.css 的安全区 padding 覆盖成 0；② iPhone 主屏下 env() 常返回 0。
-        # 先移除，再由下面的统一机制接管。
-        doc = re.sub(r'<style[^>]*data-pw-safearea[^>]*>.*?</style>', '', doc, flags=re.I | re.S)
-        # 去掉 viewport-fit=cover：它会把视口顶边推到 y=0 的状态栏后面。
-        # 交还系统绘制状态栏后，视口天然落在状态栏下方，网页无需任何安全区让位。
-        doc = re.sub(r'(<meta[^>]*name=["\']viewport["\'][^>]*content=["\'][^"\']*?)'
-                    r',\s*viewport-fit=cover', r'\1', doc, flags=re.I)
-        doc = re.sub(r'(<meta[^>]*name=["\']viewport["\'][^>]*content=["\'])'
-                    r'\s*viewport-fit=cover,?\s*', r'\1', doc, flags=re.I)
-        # 源页面里有 35 套自带历史安全区补丁（data-pw-safearea / pw-skin-safearea /
-        # data-pw-safe-area / 裸 style 四种变体），全用 env(safe-area-inset-top) 给顶栏
-        # 加高或 padding 下移。不能依赖「去掉 cover 后 iOS 会返回 0」——Chromium
-        # 里 env 恒为 0，无法验证 iOS 真实行为。这里直接把顶部 inset 全部归零，
-        # 让顶栏恒定回到皮肤原始设计高度；底部/左右 inset 保留。源页面不改。
-        doc = re.sub(r'(?:env|constant)\(\s*safe-area-inset-top\s*(?:,\s*0px\s*)?\)',
-                     '0px', doc, flags=re.I)
-        # 同步修正历史注释里「页面已启用 viewport-fit=cover」的过时描述
-        doc = doc.replace('viewport-fit=cover', 'viewport-fit=auto')
+        # 源页面 36/36 自带 <style data-pw-safearea> / id="pw-skin-safearea" /
+        # data-pw-safe-area / 裸 <style> 四种变体的沉浸式安全区补丁，全部原样保留。
+        # pw-v36 曾用一行 re.sub 删掉 data-pw-safearea 块并交由注入脚本接管，
+        # 但注入脚本在 pw-v39 已删除，形成「删了补丁又没人补」的空档（26 套产物页
+        # 完全没有顶部避让）。此处不再删除任何源页面样式。
+        # 36 套源页面全部自带 env(safe-area-inset-top) 沉浸式顶栏避让：
+        # height: calc(原高 + env(...)) + padding-top: env(...)。这是上传时的原设计，
+        # 必须原样保留 —— 内容延伸到状态栏后时顶栏背景从 y=0 铺满、内容自动下移；
+        # 桌面/普通浏览器 env() 为 0，几何零影响。pw-v39 曾把 env() 硬替换成 0px
+        # 并删掉 viewport-fit=cover，导致「所有」皮肤顶栏一起失去避让（状态栏压内容、
+        # 顶部出现空隙）。此处撤销该改动，源页面不改。
+        # 34 套源页面自带 viewport-fit=cover，缺的两套补上，保证真机 env() 有真值。
+        def _ensure_cover(m):
+            tag = m.group(0)
+            if re.search(r'viewport-fit\s*=\s*cover', tag, re.I):
+                return tag
+            return re.sub(r'(content=["\'][^"\']*)(["\'])',
+                          r'\1, viewport-fit=cover\2', tag, count=1)
+
+        doc, n_cover = re.subn(r'<meta[^>]*name=["\']viewport["\'][^>]*>',
+                               _ensure_cover, doc, count=1, flags=re.I)
+        if n_cover == 0:
+            doc = re.sub(r'(<head\b[^>]*>)',
+                         lambda m: m.group(1)
+                         + '\n  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">',
+                         doc, count=1, flags=re.I)
         # 状态栏 meta 统一收口到 <head>：源页面 36 套全部不带该 meta，而 32 套
         # minimal 皮肤根本不注入 app_tags，所以必须在 doc 层按皮肤明暗注入一份。
         # 先清掉源页面可能自带的旧值，再插到 <head> 开头，保证每页恰好一份。
@@ -995,7 +1001,7 @@ def render_shell(
 <html lang="zh-CN" data-theme="light" data-root="{r}" data-page-id="{esc(page_id)}" data-boot-bg-light="{boot_light}" data-boot-bg-dark="{boot_dark}">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" id="theme-color-meta" content="{boot_light}">
   <meta name="color-scheme" content="light dark">
   <link rel="manifest" href="{r}manifest.webmanifest">

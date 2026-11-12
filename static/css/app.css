@@ -4,9 +4,26 @@
    本文件只负责主屏幕启动时的安全区留白，离线缓存由 pwa.js + service-worker.js 处理。
    ========================================================================== */
 
-/* ── 独立窗口：状态栏由 iOS 系统绘制，网页不造顶部让位 ────────────── */
-/* 仅保留左右（横屏刘海）与底部（Home 指示条）的安全区避让；
-   顶部不再加高顶栏：视口天然从状态栏下方开始，顶栏 top:0 即紧贴。 */
+/* ── 沉浸式顶栏：恢复上传源页面原设计的 env() 自适应 ─────────────────
+   36 套皮肤源页面均自带 height:calc(原高 + env(safe-area-inset-top)) 与
+   padding-top:env(...)，主站顶栏在此补齐同一规则：内容延伸到状态栏后时，
+   顶栏背景从 y=0 铺满、内容自动下移到状态栏下方；桌面/普通浏览器 env()
+   为 0，几何与原设计完全一致。不硬编码高度、不新增元素、不用运行时脚本。
+   主站顶栏原本用半透明 --bg-header(0.86) + 毛玻璃，滚动正文会透过状态栏区
+   露出来，形成「顶部空隙/发虚」，这里改成跟随主题的不透明实底。
+   仅作用于主站（皮肤页 html 带 data-pw-edition），不影响任何皮肤设计。 */
+html:not([data-pw-edition]) .site-header {
+  height: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+}
+html:not([data-pw-edition]) .site-header::before {
+  background-color: var(--bg-canvas);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ── 独立窗口：仅保留左右（横屏刘海）与底部（Home 指示条）避让 ──────
+   顶部由上面的 env() 规则自适应，不再全站下移、不再造遮挡层。 */
 
 html[data-standalone="1"] .main-nav,
 html[data-standalone="1"] .header-inner {

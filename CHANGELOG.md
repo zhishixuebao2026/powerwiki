@@ -25,7 +25,47 @@
 - A/B：拦截 `clearbar.css` 还原 `pw-v39` 形态，检字由 `blur(16px) saturate(1.35)` + `color(srgb … / 0.78)` 变为 `none` + `rgb(242,238,229)`，顶栏高度 `58→58`、padding `0→0px` 不变。
 - 对比图仅存 `/tmp`，不入库。SW 升 `pw-v40`。
 
+## 2026-11-12（全站顶部空隙）· 撤销 pw-v39 的两刀，恢复上传源页面原设计的沉浸式顶栏
+
+用户实测反馈（`pw-v40`）：`666现在所有导航栏都有空隙了`。「所有」是准确描述 —— 问题确实来自一处全站一刀切的改动，而不是某几套皮肤。
+
+**根因：我上上一版把用户上传源页面里写好的安全区适配废掉了**
+
+复查 `skins/_source/*.html` 发现 **36/36 套源页面全部自带**沉浸式顶栏避让，例如：
+
+```css
+/* archive / atlas / bronze-coffin … 36 套同构 */
+.topbar{height:calc(var(--topbar-height,60px) + env(safe-area-inset-top,0px));
+        padding-top:env(safe-area-inset-top,0px)}
+```
+
+34/36 套同时自带 `viewport-fit=cover`。这是标准且自适应的做法：内容延伸到状态栏后时，顶栏背景从 y=0 铺满、内容用 `env()` 自动下移到状态栏下方；桌面／普通浏览器 `env()` 为 0，几何零影响；**不需要任何硬编码高度、遮挡层或运行时脚本**。
+
+而 `pw-v39` 为了「把状态栏交还 iOS 系统绘制」，做了两件破坏性的事：
+
+1. 全站剥离 `viewport-fit=cover` —— `env(safe-area-inset-top)` 随之失去真值；
+2. 把产物页里**所有** `env(safe-area-inset-top)`／`constant(...)` **硬替换成字面量 `0px`** —— 等于把 36 套皮肤原设计的顶栏避让全部抹平，`height: calc(60px + 0px)`、`padding-top: 0px`。
+
+结果是全站顶栏一起失去避让：系统状态栏与顶栏之间出现断层（用户看到的「空隙」），部分页面状态栏文字直接压在顶栏按钮上（截图里 `11:09` 压住「进入原文条目」），主站 `.site-header` 本身是 `--bg-header: rgba(…,0.86)` 半透明 + 毛玻璃，滚动正文还会从状态栏区透出来，进一步放大空隙感。前三版归因到「加 54px」「iOS 26 系统 scrim」「网页层毛玻璃」，都只擦到表面，没查到「原设计被我改没了」这一层。
+
+**改法：撤销，不是再加一层**
+
+- `build_site.py`：删掉剥离 `viewport-fit=cover` 的两段正则，改为「**确保**每页有 cover」（34 套保留原值，缺的 `divinity-starember` / `tianren-zhoutian` 两套补上）；删掉 `env(safe-area-inset-top) → 0px` 的归零与注释改写。产物页恢复源页面的 `env()` 原值，**`skins/_source/` 一个字节不动**。
+- 主站模板 viewport 补回 `viewport-fit=cover`。
+- `static/css/app.css`（全站最后加载，优先级最高）：给主站 `.site-header` 补同一套 `height: calc(var(--header-h) + env(...))` + `padding-top: env(...)`；并把 `.site-header::before` 由半透明 `--bg-header` + `backdrop-filter` 改成跟随主题的不透明 `var(--bg-canvas)`，止住正文穿透。用 `html:not([data-pw-edition])` 限定，只作用主站，不碰任何皮肤。
+- `polish.css` / `editorial.css`：把 `pw-v39` 归零的 `.reading-progress` / `.site-drawer` / `.modal-backdrop` / `.doc-sidebar` / 灯箱 `.pw-figure-stage` / `.pw-figure-close` 顶部 inset 恢复成 `env(safe-area-inset-top, 0px)`，顶栏加高后这些浮动元素仍对齐。
+- `experience.css` 注释 `viewport-fit=auto` 改回 `cover`。
+- 状态栏明暗 meta（`SKIN_STATUS_BAR_MODE`，24 `black` / 12 `default`）**保持不动**，它只决定状态栏文字可读性，与顶栏几何无关。
+- `clearbar.css`：完整保留 `pw-v40` 的毛玻璃清晰化；另追加 **16 条「沉浸式避让」规则**。复查发现部分皮肤源页面的安全区补丁写成了 `.topbar` 或只加 `padding-top` 不加 `height`，而真实顶栏叫 `.site-header` / `header.bar` / `header.sticky.top-0` 等，补丁根本没命中（金策、御言、浑天环、朱版等），真机上状态栏文字仍会压住顶栏内容。按 `data-pw-edition` 精确作用域补齐 `padding-top: env(...)` 与 `height: calc(390px 视口实测原高 + env(...))`，`box-sizing: border-box` 保证内容区恒为原高；`env` 为 0 时 height 回到原值，网页版零影响。**4 套本来就没有横贯顶栏的皮肤**（墨龙山水、蚀环、穹壶、素卷）保持原设计不动。
+- 全程**不新增**遮挡层、色块、固定高度、运行时脚本；不重绘顶栏颜色；不改 `skins/_source/`；定级原文与角色定级依据零改动。
+
+**为什么这次不会重演「黑条／白条／强行下移」**：`pw-v36~v38` 是网页层**凭空造**一条 54px 纯色层或整体下推 body；本版是恢复源页面本来就有的 `env()` 自适应 —— 顶栏背景用它自己的实色／纸纹从 y=0 铺满，状态栏区是导航栏本身的一部分，不是外挂条；`env()` 为 0 的网页版与桌面端几何完全不变。
+
+**验证**：见下方提交记录（静态逐字节 + Chromium 双模式 + 模拟 `env()` 非零 + 线上服务端与浏览器复验）。SW 升 `pw-v41`。
+
 ## 2026-11-12（状态栏架构级重做）· 删掉「造 54px」整套机制，把视口交还 iOS 系统
+
+> **注：本条的「去掉 `viewport-fit=cover`」与「顶部 inset 全量归零」已在 `pw-v41` 撤销。** 后续实测证明这两刀废掉了上传源页面自带的 `env(safe-area-inset-top)` 沉浸式适配，造成全站「所有导航栏都有空隙」。保留原文以记录演进，实际实现以 `pw-v41` 为准。
 
 用户实测反馈（`pw-v38`）：`你这是强行下移？？？…而且还莫名其妙上半部分淡化虚化，而且其实依然是白条原理…有没有高技术含量的修法`。判断准确，前三版是同一个死循环：加遮挡条＝黑条，删遮挡条留白＝白条，改 `padding-top` 下移＝强行拉高顶栏。本质全是「在顶部硬让出 54px 给状态栏」，参数怎么调都换不出第四个结果。**本次不再调参数，改平台机制。**
 
