@@ -227,6 +227,104 @@ def patch_skin_fonts(doc: str) -> str:
     return doc
 
 
+# ── 重复目录去重（构建期真删，非 CSS 隐藏）────────────────────────────────
+# 部分整页皮肤（弗坦系列等）自带「顶部导航 + 底部可展开目录」两套目录：
+# 顶部是 fixed top-0 导航栏，底部是 React 运行时渲染的独立组件，其
+# return 形如：
+#   return e.jsxs("div",{className:"fixed inset-x-0 bottom-0 z-40 lg:hidden",
+#                        children:[ … "data-dock-toggle":!0 … ]})
+# 这个底部 dock 在移动端显示（lg:hidden），与顶部导航构成上下两个目录，重复。
+#
+# 这里在构建期把该组件的整个 return 表达式替换成 `return null`：
+#   · 组件仍存在、hooks 顺序不变、bundle 其余字节一字不动 —— JS 语法风险为零；
+#   · React 运行时根本不生成这个 DOM，是「真删」而非 display:none；
+#   · 顶部导航、构建器注入的「⊙ 皮肤」切换器、页面正文全部保留。
+#
+# 判定只认结构指纹，绝不认皮肤 id：
+#   ① 命中 className 含 `fixed … bottom-0 … lg:hidden`（移动端底部 dock）；
+#   ② 该 return 表达式内含 `data-dock-toggle`（确认是目录 dock，不是别的底栏）；
+#   ③ 括号严格配平、替换边界精确到匹配的 `)`。
+# 任何皮肤（现有 + 未来新增）只要带这个结构就自动去重；不带的原样不动。
+# 配平失败 / 指纹不全 → 跳过并告警，绝不产出坏 bundle（fail-safe）。
+_DOCK_CLASS_RE = re.compile(r'className:"fixed[^"]*bottom-0[^"]*lg:hidden[^"]*"')
+
+
+def _match_return_paren(doc: str, op: int, win: int = 80000) -> int:
+    """从 '(' 位置 op 起，只在 code 状态数圆括号（跳过字符串/模板/注释），
+    返回与之匹配的 ')' 下标；失配返回 -1。"""
+    depth = 0
+    k = op
+    end = op + win
+    st = "code"
+    n = len(doc)
+    while k < n and k < end:
+        c = doc[k]
+        nx = doc[k + 1] if k + 1 < n else ""
+        if st == "code":
+            if c == '"' or c == "'":
+                st = c
+            elif c == "`":
+                st = "tpl"
+            elif c == "/" and nx == "/":
+                st = "lc"
+            elif c == "/" and nx == "*":
+                st = "bc"
+            elif c == "(":
+                depth += 1
+            elif c == ")":
+                depth -= 1
+                if depth == 0:
+                    return k
+        elif st in ('"', "'"):
+            if c == "\\":
+                k += 1
+            elif c == st:
+                st = "code"
+        elif st == "tpl":
+            if c == "\\":
+                k += 1
+            elif c == "`":
+                st = "code"
+        elif st == "lc":
+            if c == "\n":
+                st = "code"
+        elif st == "bc":
+            if c == "*" and nx == "/":
+                st = "code"
+                k += 1
+        k += 1
+    return -1
+
+
+def strip_duplicate_dock(doc: str) -> tuple:
+    """按结构指纹摘除重复的移动端底部目录 dock（构建期真删）。
+    返回 (新 doc, 摘除处数)。不认皮肤 id；fail-safe：任何一步不成立就原样返回。"""
+    removed = 0
+    for _ in range(10):  # 安全阀：防止异常输入下死循环
+        m = _DOCK_CLASS_RE.search(doc)
+        if not m:
+            break
+        # 向前找最近的 return e.jsx( / e.jsxs( —— dock 组件的 return 起点
+        ret = doc.rfind("return e.jsx", 0, m.start())
+        if ret < 0 or m.start() - ret > 40:
+            break
+        op = doc.find("(", ret)
+        if op < 0 or op > m.start():
+            break
+        close = _match_return_paren(doc, op)
+        if close < 0:
+            print("[WARN] strip_duplicate_dock: 括号配平失败，跳过（不破坏 bundle）")
+            break
+        expr = doc[ret:close + 1]
+        if "data-dock-toggle" not in expr:
+            # 是别的底栏而非目录 dock，不动
+            break
+        expr_start = ret + len("return ")
+        doc = doc[:expr_start] + "null" + doc[close + 1:]
+        removed += 1
+    return doc, removed
+
+
 def build_skin_editions() -> int:
     """Take each skins/_source/*.html, inject the launcher, write skins/<id>/<section>.html."""
     # 顶栏沿用源页面自带的沉浸式安全区适配：viewport-fit=cover + env(safe-area-inset-top)
@@ -267,6 +365,11 @@ def build_skin_editions() -> int:
             f'<link rel="stylesheet" href="{_rel_from(page_dir, "static/css/app.css")}">\n'
         )
         doc = src_path.read_text(encoding="utf-8", errors="replace")
+        # 重复目录去重：按结构指纹把移动端底部 dock 组件的 return 换成 null
+        # （真删，非 CSS 隐藏）。只认结构不认皮肤 id，未来新增皮肤自动生效。
+        doc, n_dock = strip_duplicate_dock(doc)
+        if n_dock:
+            print(f"[dock] {ed['id']}: 摘除重复底部目录 {n_dock} 处（结构指纹命中）")
         # 源页面 36/36 自带 <style data-pw-safearea> / id="pw-skin-safearea" /
         # data-pw-safe-area / 裸 <style> 四种变体的沉浸式安全区补丁，全部原样保留。
         # pw-v36 曾用一行 re.sub 删掉 data-pw-safearea 块并交由注入脚本接管，

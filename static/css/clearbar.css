@@ -311,15 +311,3 @@ html[data-pw-edition="zhigaowangzuo-yihuan"] header.sticky.top-0 {
     box-sizing: border-box !important;
 }
 
-/* ── 弗坦·沉墨长卷：移除底部目录长条栏 ─────────────────────────────────
-   用户要求「去重」——该皮肤自带顶部「⊙ 弗坦 A− A+」栏与底部
-   「01 档案 / 量级栏 / 目录·CONTENTS」栏两套导航，底部那套是
-   className 全局唯一出现 1 次的 <div class="fixed inset-x-0 bottom-0
-   z-40 lg:hidden">（源 skins/_source/futan-abyss.html 自带，含
-   data-dock-toggle 展开抽屉）。这里按 data-pw-edition 精确作用域用纯
-   CSS 隐藏该 div，不动源 bundle、不新增元素、无运行时脚本。
-   顶部「⊙ 弗坦」栏与构建器注入的右下角「⊙ 皮肤」切换器均保留。 */
-html[data-pw-edition="futan-abyss"] div.fixed.inset-x-0.bottom-0.z-40 {
-    display: none !important;
-}
-
