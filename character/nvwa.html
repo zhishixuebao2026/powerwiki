@@ -50,6 +50,7 @@
   </script>
   <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" as="image" href="../static/img/character-chronicle.jpg">
+  <link rel="preload" as="image" href="../static/img/characters/nvwa/nvwa-portrait.jpg">
   <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
        子集各约 99 KB，原本与站点 CSS 一起阻塞首次绘制，是冷启动白屏主因。
        font-display:swap 已保证文字始终先用系统字体可见、字体到位后平滑替换，
@@ -196,38 +197,54 @@
             </div>
 
 
-            <div class="dossier-body">
-              <div class="dossier-top">
-                <div class="dossier-title-block">
-                  <div class="char-monogram lg">女</div>
-                  <div>
-                    <h1 class="page-title">女娲</h1>
-                    <div class="dossier-submeta"><span>形态：合集 · 先秦至明清文献与口传多版本分别定级</span><span>·</span><span>别称：女娲氏 / 女希 / 女皇 / 娲皇氏 / 女娲娘娘</span><span>·</span><span>定级日期：2026-11-12</span></div>
+            <div class="dossier-body has-portrait">
+              <div class="dossier-main-col">
+                <div class="char-tags">
+                  <span class="tag-pill accent">恒星系阶</span>
+                  <span class="tag-pill">中国神话·合集</span>
+                  <span class="tag-pill">综合 ⊙弱化弱恒星系（范围对照）〔下〕</span><span class="tag-pill">保底 补天立极〔实〕，不落档</span><span class="tag-pill">《淮南子》⊙星△（范围对照）</span><span class="tag-pill">《红楼梦》⊙城☆（累计 · 需时）</span>
+                </div>
+
+                <div>
+                  <h1 class="page-title">女娲</h1>
+                  <div class="dossier-submeta"><span>形态：合集 · 先秦至明清文献与口传多版本分别定级</span><span>·</span><span>别称：女娲氏 / 女希 / 女皇 / 娲皇氏 / 女娲娘娘</span><span>·</span><span>定级日期：2026-11-12</span></div>
+                </div>
+
+                <p class="page-desc">按最小读法，《列子·汤问》里归墟的距离给出天地尺寸的下限，重立四极的范围就是整个天地；档位只作范围对照，能量无依据。各版本分别定级、不合并。</p>
+
+                <div class="dossier-kpi-grid">
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">综合主档定级</div>
+                    <div class="kpi-value">
+                      <a class="kpi-tier-link mono" href="../tier/system-weak.html" title="查看所属主档规格页">
+                        <span>⊙ 系▽ · 弱恒星系（#57）</span>
+                        <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">保底量级</div>
+                    <div class="kpi-value">补天立极<span class="ev-badge ev-confirmed">〔实〕</span>，不落档（去掉「按范围对照到行星尺度」这一步）</div>
                   </div>
                 </div>
 
-                <div class="dossier-seal-col">
-                  <a class="tier-seal-link mono" href="../tier/system-weak.html" title="查看所属主档规格页">
-                    <span>⊙ 系▽</span>
-                    <span>弱恒星系</span>
-                    <span>#57</span>
-                    <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-                  </a>
-                  <div class="char-tags">
-                    <span class="tag-pill accent">恒星系阶</span>
-                    <span class="tag-pill">综合 ⊙弱化弱恒星系（范围对照）〔下〕</span><span class="tag-pill">保底 补天立极〔实〕，不落档</span><span class="tag-pill">《淮南子》⊙星△（范围对照）</span><span class="tag-pill">《红楼梦》⊙城☆（累计 · 需时）</span>
-                  </div>
+                <div class="dossier-actions-row"><a class="text-link" href="../rules.html#sec-4-3-恒星系级-系-半球扩散">对照衡天规则原文 →</a></div>
+
+                <div class="full-writing-box">
+                  <div class="box-kicker">正式完整书写摘要</div>
+                  <div>女娲（中国神话·合集）的综合量级为 ⊙弱化弱恒星系（范围对照）<span class="ev-badge ev-lower">〔下〕</span>——约 1.8×10⁴⁷～2.0×10⁴⁷ J 的尺度段，相当于一次覆盖直径约 2.8～2.9 个天文单位（火星轨道到小行星带）的范围：取自《列子·汤问》夏革讲述女娲练五色石以补其阙、断鳌之足以立四极，同篇归墟在渤海之东「不知几亿万里」，按最小读法天地至少约 4.2 亿～4.4 亿公里。档位只表示她重整的对象有多大，所需的能量没有依据，记<span class="ev-badge ev-missing">〔缺〕</span>。不取归墟这一句时，同篇「中州以东四十万里」为 ⊙星☆（范围对照）<span class="ev-badge ev-lower">〔下〕</span>；《淮南子》由正文直叙的同一件事为 ⊙星△（范围对照）。保底量级为补天立极<span class="ev-badge ev-confirmed">〔实〕</span>，不落档。本条目是合集，各版本分别定级、不合并。</div>
+                  <div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>—（各版本没有关于自身体量或居所大小的记述；「人头蛇身」「七十化」记入特性）</span></div>
+                  <div class="box-subnote">证据链核验摘要：中偏低。综合量级取的是一个代表版本，不是各版本的合并；取《列子》，因为它是能落到档位的最高一版，夏革是《汤问》全篇的讲述者，他的话按设定采信。有争议的两步：一是「不知几亿万里」只给数量级、按最小读法取下限；二是拿范围去对照档位，保底已经去掉。</div>
                 </div>
               </div>
 
-              <p class="page-desc">按最小读法，《列子·汤问》里归墟的距离给出天地尺寸的下限，重立四极的范围就是整个天地；档位只作范围对照，能量无依据。各版本分别定级、不合并。</p>
+              <aside class="char-portrait-stage" aria-label="女娲">
+                <div class="char-portrait-canvas">
 
-              <div class="full-writing-box">
-                <div class="box-kicker">正式完整书写摘要</div>
-                <div>女娲（中国神话·合集）的综合量级为 ⊙弱化弱恒星系（范围对照）<span class="ev-badge ev-lower">〔下〕</span>——约 1.8×10⁴⁷～2.0×10⁴⁷ J 的尺度段，相当于一次覆盖直径约 2.8～2.9 个天文单位（火星轨道到小行星带）的范围：取自《列子·汤问》夏革讲述女娲练五色石以补其阙、断鳌之足以立四极，同篇归墟在渤海之东「不知几亿万里」，按最小读法天地至少约 4.2 亿～4.4 亿公里。档位只表示她重整的对象有多大，所需的能量没有依据，记<span class="ev-badge ev-missing">〔缺〕</span>。不取归墟这一句时，同篇「中州以东四十万里」为 ⊙星☆（范围对照）<span class="ev-badge ev-lower">〔下〕</span>；《淮南子》由正文直叙的同一件事为 ⊙星△（范围对照）。保底量级为补天立极<span class="ev-badge ev-confirmed">〔实〕</span>，不落档。本条目是合集，各版本分别定级、不合并。</div>
-                <div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>—（各版本没有关于自身体量或居所大小的记述；「人头蛇身」「七十化」记入特性）</span></div>
-                <div class="box-subnote">证据链核验摘要：中偏低。综合量级取的是一个代表版本，不是各版本的合并；取《列子》，因为它是能落到档位的最高一版，夏革是《汤问》全篇的讲述者，他的话按设定采信。有争议的两步：一是「不知几亿万里」只给数量级、按最小读法取下限；二是拿范围去对照档位，保底已经去掉。</div>
-              </div>
+                  <img class="char-portrait-img fade-on-load" src="../static/img/characters/nvwa/nvwa-portrait.jpg" alt="女娲" width="1024" height="1536">
+                </div>
+
+              </aside>
             </div>
 
           </section>

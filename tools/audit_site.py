@@ -16,7 +16,9 @@
   3. 登记表：editions.json ↔ 产物目录 ↔ section 路径 ↔ source 一致性
   4. 双主题皮肤清单：列出跟随系统深色模式的皮肤（记录已知边界，不判失败）
   5. 首页 Hero 亮色版：双图资源 + 亮色主题样式分支齐全（防深色块复发）
-  6. 状态栏明暗：--render 时逐套量取状态栏正下方 (195,22) 真实底色亮度，
+  6. 角色配图：每个角色都有 16:9 卡片图 + 2:3 肖像图且文件存在（防漏图 /
+     回退 monogram / 比例错乱）
+  7. 状态栏明暗：--render 时逐套量取状态栏正下方 (195,22) 真实底色亮度，
      与 SKIN_STATUS_BAR_MODE 比对（能抓出整页中位数采样抓不到的漏判）
 
 退出码：有问题 1，全通过 0。可直接接进 CI / 发布前钩子。
@@ -290,6 +292,56 @@ def check_hero_light():
     return issues, light.stat().st_size if light.exists() else 0
 
 
+# 采用「1536x864 卡片图 + 1024x1536 肖像图」规范制作的角色。
+# 历史角色（含 yog / divinity / lufasi / tianren 等）的配图比例本就多样，
+# 由 CSS 的 contain / cover 正常兜底，属既有设计，不参与比例校验。
+# 日后新增角色若沿用同一规范，把 slug 加进这里即可自动纳入。
+STD_MEDIA_SLUGS = {"nvwa", "shiva", "sunwukong", "pangu"}
+
+
+def check_character_media():
+    """角色配图回归：每个角色都要登记配图且文件真实可读，防止回退 monogram / 破图。
+
+    STD_MEDIA_SLUGS 里的角色额外校验精确比例：卡片图 16:9、肖像图 2:3（±2%）。
+    """
+    issues = []
+    data = ROOT / "data/characters.json"
+    if not data.exists():
+        return ["characters.json 缺失"], 0
+    chars = json.loads(data.read_text(encoding="utf-8"))["characters"]
+    with_img = 0
+    ratio_checked = 0
+    for c in chars:
+        slug = c["slug"]
+        for field in ("image_url", "portrait_url"):
+            rel = c.get(field) or ""
+            if not rel:
+                issues.append("%s 缺 %s（会回退成 monogram）" % (slug, field))
+                continue
+            f = ROOT / rel.lstrip("./")
+            if not f.is_file():
+                issues.append("%s 的 %s 指向的文件不存在：%s" % (slug, field, rel))
+                continue
+            try:
+                from PIL import Image
+                w, h = Image.open(f).size
+                if w <= 0 or h <= 0:
+                    issues.append("%s 的 %s 尺寸无效：%dx%d" % (slug, field, w, h))
+                    continue
+                # 仅规范名单内的角色校验精确比例
+                if slug in STD_MEDIA_SLUGS:
+                    want = 16 / 9 if field == "image_url" else 2 / 3
+                    ratio_checked += 1
+                    if abs(w / h - want) > 0.02:
+                        issues.append("%s 的 %s 比例错乱：%dx%d (%.4f)，期望 %.4f"
+                                      % (slug, field, w, h, w / h, want))
+            except Exception as exc:
+                issues.append("%s 的 %s 无法读取尺寸：%s" % (slug, field, exc))
+        if c.get("image_url") and c.get("portrait_url"):
+            with_img += 1
+    return issues, with_img, ratio_checked
+
+
 def main():
     ap = argparse.ArgumentParser(description="PowerWiki 全站体检")
     ap.add_argument("--build", action="store_true", help="先运行 build_site.py 再体检")
@@ -335,8 +387,15 @@ def main():
     print(f"  双图资源与亮色样式分支{'齐全' if not hero_issues else '缺失'}；亮色底图 {hero_size} B")
     all_issues += hero_issues
 
+    print("=== 6) 角色配图（缺图 / 破图 / 新配图比例）===")
+    media_issues, with_img, ratio_checked = check_character_media()
+    total_chars = len(json.loads((ROOT/"data/characters.json").read_text(encoding="utf-8"))["characters"])
+    print(f"  已配图角色 {with_img}/{total_chars}；规范化新配图校验 {ratio_checked} 张；"
+          f"缺图或比例异常 {len(media_issues)} 项")
+    all_issues += media_issues
+
     if args.render:
-        print("=== 6) 状态栏明暗渲染复判 ===")
+        print("=== 7) 状态栏明暗渲染复判 ===")
         result, mism = render_statusbar(args.url.rstrip("/"))
         if result is None:
             print("  " + mism[0])
