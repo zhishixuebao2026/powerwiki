@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="char-shiva" data-boot-bg-light="#f1f2ed" data-boot-bg-dark="#080d11">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" id="theme-color-meta" content="#f1f2ed">
+  <meta name="color-scheme" content="light dark">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../static/img/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="衡天 Wiki">
+  <meta name="application-name" content="衡天 Wiki">
+  <title>湿婆 · 角色战力档案 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第六版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <!-- 首帧底色：这段内联 CSS 在 <head> 里、所有外链样式表之前生效，浏览器在字体与
+       样式表全部到达前就用它画整个画布，杜绝冷启动白屏。颜色由生成器按页面写入，
+       必须等于该页 CSS 最终生效的 --bg-canvas；用 :where() 让优先级为 0，
+       外部 CSS 到达后即可无缝接管，不会干扰任何最终样式。切主题只改 data-theme，
+       属性选择器自动换色，JS 不再写 inline 底色。 -->
+  <style>
+    :where(html), :where(html) > :where(body) { background-color: #f1f2ed; }
+    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #080d11; }
+  </style>
+  <script>
+    (function() {
+      var root = document.documentElement;
+      var t = null;
+      try { t = localStorage.getItem('pw_theme_v2'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        try {
+          var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          t = dark ? 'dark' : 'light';
+          localStorage.setItem('pw_theme_v2', t);
+        } catch (e) { t = 'light'; }
+      }
+      root.setAttribute('data-theme', t);
+      root.classList.add('js');
+      /* 首帧底色已由 <head> 内联 <style> 按 data-theme 画好，这里只同步状态栏颜色。
+         不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
+         data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
+      var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
+        || (t === 'dark' ? '#080d11' : '#f1f2ed');
+      var mc = document.getElementById('theme-color-meta');
+      if (mc) mc.setAttribute('content', canvas);
+    })();
+  </script>
+  <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" as="image" href="../static/img/character-chronicle.jpg">
+  <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
+       子集各约 99 KB，原本与站点 CSS 一起阻塞首次绘制，是冷启动白屏主因。
+       font-display:swap 已保证文字始终先用系统字体可见、字体到位后平滑替换，
+       不会出现无样式内容闪现；noscript 环境仍按普通样式表加载。 -->
+  <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="../static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css">
+    <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css">
+  </noscript>
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="../static/css/editorial.css">
+  <link rel="stylesheet" href="../static/css/experience.css">
+  <link rel="stylesheet" href="../static/css/editions.css">
+  <link rel="stylesheet" href="../static/css/polish.css">
+  <link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body class="site-characters character-site character-shiva">
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
+        <a class="brand-link" href="../index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+        </a>
+      </div>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link" href="../index.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></span><span>首页</span></a>
+        <a class="nav-link nav-cat" href="../tiers.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg></span><span>量级</span></a>
+        <a class="nav-link nav-cat active" href="../characters.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg></span><span>角色</span></a>
+        <a class="nav-link nav-doc" href="../rules.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg></span><span>规则</span></a>
+        <a class="nav-link nav-doc" href="../materials.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg></span><span>材质</span></a>
+      </nav>
+
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="search-btn-label">检索…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题" aria-pressed="false">
+          <span class="pw-theme-icon pw-icon-sun"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
+          <span class="pw-theme-icon pw-icon-moon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="../index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">查阅</div>
+        <a class="drawer-card-link" href="../tiers.html"><span class="drawer-card-title"><span>量级天梯</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档 · 从昆虫到论天</span></a>
+        <a class="drawer-card-link active" href="../characters.html"><span class="drawer-card-title"><span>角色档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">定级结论与完整证据原文</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">规则与资料</div>
+        <a class="drawer-doc-link" href="../rules.html"><span>衡天体系 · 第六版</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../materials.html"><span>材质与能量 · 第二版</span><span>→</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        <a class="drawer-doc-link" href="../index.html"><span>返回首页总览</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../search.html"><span>全站即时检索</span><span>→</span></a>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {
+        if (window.__PW_SYNC_LOCK__) { window.__PW_SYNC_LOCK__(); return; }
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }
+      function closeAll() {
+        if (window.__PW_CLOSE_ALL__) { window.__PW_CLOSE_ALL__(); return; }
+        drawer.classList.remove('open');
+        sync();
+      }
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      });
+      if (closeBtn) { closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }
+      if (backdrop) { backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {
+        links[j].addEventListener('click', function() { drawer.classList.remove('open'); sync(); });
+      }
+      window.addEventListener('pageshow', function() { drawer.classList.remove('open'); sync(); });
+    })();
+  </script>
+
+  <main>
+
+        <div class="container detail-stack character-detail character-shiva">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>湿婆</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img fade-on-load" src="../static/img/character-chronicle.jpg" alt="">
+            </div>
+
+
+            <div class="dossier-body">
+              <div class="dossier-top">
+                <div class="dossier-title-block">
+                  <div class="char-monogram lg">湿</div>
+                  <div>
+                    <h1 class="page-title">湿婆</h1>
+                    <div class="dossier-submeta"><span>形态：合集 · 吠陀、史诗与各部往世书多版本分别定级</span><span>·</span><span>别称：大天（Mahādeva）/ 楼陀罗（Rudra）/ 商羯罗（Śaṅkara）/ 兽主（Paśupati）/ 青颈 / 三眼者</span><span>·</span><span>定级日期：2026-11-12</span></div>
+                  </div>
+                </div>
+
+                <div class="dossier-seal-col">
+                  <a class="tier-seal-link mono" href="../tier/system-strong.html" title="查看所属主档规格页">
+                    <span>⊙ 系△</span>
+                    <span>强恒星系</span>
+                    <span>#59</span>
+                    <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                  </a>
+                  <div class="char-tags">
+                    <span class="tag-pill accent">恒星系阶</span>
+                    <span class="tag-pill">综合 ⊙强化系△〔下〕（掌控式 · 需时）</span><span class="tag-pill">保底 ⊙国○〔实〕</span><span class="tag-pill">《摩诃婆罗多》⊙国☆（持诸神合成的车、弓、箭）</span><span class="tag-pill">依据设定陈述 · 〔下〕</span>
+                  </div>
+                </div>
+              </div>
+
+              <p class="page-desc">「无数宇宙」要看原文：英译的 universe 多是梵卵，按往世书自己的里数只有太阳系内层尺度；最高一版来自风神对世界规则的平实交代，人物赞语不参与排序。</p>
+
+              <div class="full-writing-box">
+                <div class="box-kicker">正式完整书写摘要</div>
+                <div>湿婆（印度神话·合集）的综合量级为 ⊙强化系△<span class="ev-badge ev-lower">〔下〕</span>（掌控式 · 需时）——恒星系级，约 1.7×10⁵⁶ J（区间 6.6×10⁵⁵～2.3×10⁵⁶ J），在系△之上、接近系☆：取自《湿婆往世书·风神本集》第 10 章，风神讲世界规则，梵卵「以千计的俱胝」即至少一百亿个，「最终的收摄是主独自的游戏」，万物按生成的倒序消回未显；按同书里数，每个梵卵至少一俱胝由旬（0.5～1 个天文单位），按覆盖范围折成能量再乘个数。这是对整个世界的整体收回，记掌控式；按倒序逐步完成，注需时。保底量级为 ⊙国○<span class="ev-badge ev-confirmed">〔实〕</span>：《摩诃婆罗多》里乌玛遮住他双眼，他额上生出第三只眼，「一瞬间」烧尽整个雪山（约 59.5 万平方公里），没有借助任何神或器具；同书一箭焚毁三连城为 ⊙国☆（持诸神合成的车、弓、箭）。英译本里的 universe 原文多是梵卵，按往世书自己的里数不是现代意义的宇宙；各派往世书里的颂辞和赞语不参与排序。</div>
+                <div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>《林伽往世书》化作火柱，梵天称它「没有开端、没有终点、没有中间」，毗湿奴化野猪向下、梵天化天鹅向上各找一千年不见尽头；《摩诃婆罗多》三连城之战的战车以大地为车身、日月为车轮<span class="ev-badge ev-confirmed">〔实〕</span>，同书写明日直径一万由旬（约 8 万～15 万公里）。这些是体量、装备与身份的规模，不折算能量。</span></div>
+                <div class="box-subnote">证据链核验摘要：中偏低。综合量级依据的是叙述者对世界规则的交代，不是一次具体的经过；梵卵的大小书里只写了一部分，取能确定的最小值，所以记<span class="ev-badge ev-lower">〔下〕</span>。收摄的「主」在本颂没有点名，按本章称湿婆为超出三德的主归到他名下。保底量级来自《摩诃婆罗多》，是他独自、瞬间完成的一件，按现实地理的面积定档。</div>
+              </div>
+            </div>
+
+          </section>
+
+          <div class="char-identity-fx" aria-hidden="true"></div>
+
+        <section class="char-info-panel" aria-label="量级信息图">
+          <div class="char-info-kicker">量级刻度 / TIER SCALE</div>
+          <div class="char-info-head">
+            <span class="char-info-main">⊙ 系△<span class="char-info-code">〔主档〕</span></span>
+            <span class="char-info-note">综合 ⊙强化系△〔下〕（掌控式 · 需时） · 保底 ⊙国○〔实〕 · 《摩诃婆罗多》⊙国☆（持诸神合成的车、弓、箭） · 依据设定陈述 · 〔下〕</span>
+          </div>
+          <div class="char-scale">
+            <div class="char-scale-track">
+              <span class="char-scale-fill" style="--pos:60%"></span>
+              <i class="char-scale-mark" style="--pos:60%"></i>
+            </div>
+            <div class="char-scale-labels"><span style="left:28%">城</span><span style="left:33%">国</span><span style="left:53%">恒</span><span style="left:80%">宇</span></div>
+          </div>
+          <div class="char-dims"><div class="char-dim "><b>破</b><span>化系△〔推〕</span></div><div class="char-dim "><b>控</b><span>化系△〔下〕</span></div><div class="char-dim "><b>域</b><span>现身时大地畏缩、</span></div><div class="char-dim "><b>御</b><span>〔实〕</span></div><div class="char-dim is-missing"><b>速</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>算</b><span>〔缺〕</span></div><div class="char-dim "><b>性</b><span>第三只眼；使因陀</span></div></div>
+
+        </section>
+
+          <div class="doc-layout">
+            <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
+              <div class="toc-head">
+                <div class="toc-head-row">
+                  <span>档案章节目录</span>
+                  <span class="mono toc-count">35 节</span>
+                  <button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭章节目录">
+                    <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
+                </div>
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
+              </div>
+              <nav class="toc-list" id="toc-nav">
+                <a class="toc-item toc-lvl-2" href="#sec-对象信息">对象信息</a><a class="toc-item toc-lvl-2" href="#sec-量级栏">量级栏</a><a class="toc-item toc-lvl-2" href="#sec-合集总览">合集总览</a><a class="toc-item toc-lvl-2" href="#sec-量级栏用语说明">量级栏用语说明</a><a class="toc-item toc-lvl-2" href="#sec-概述">概述</a><a class="toc-item toc-lvl-2" href="#sec-一-定级方法">一、定级方法</a><a class="toc-item toc-lvl-3" href="#sec-版本边界">版本边界</a><a class="toc-item toc-lvl-3" href="#sec-译文与引文">译文与引文</a><a class="toc-item toc-lvl-3" href="#sec-由旬">由旬</a><a class="toc-item toc-lvl-3" href="#sec-按面积定档">按面积定档</a><a class="toc-item toc-lvl-3" href="#sec-借来的力量和器具怎么记">借来的力量和器具怎么记</a><a class="toc-item toc-lvl-2" href="#sec-二-摩诃婆罗多">二、《摩诃婆罗多》</a><a class="toc-item toc-lvl-3" href="#sec-一-书里的世界">（一）书里的世界</a><a class="toc-item toc-lvl-3" href="#sec-二-三连城">（二）三连城</a><a class="toc-item toc-lvl-3" href="#sec-三-第三只眼焚雪山">（三）第三只眼焚雪山</a><a class="toc-item toc-lvl-3" href="#sec-四-其他作为">（四）其他作为</a><a class="toc-item toc-lvl-3" href="#sec-五-限度与位次">（五）限度与位次</a><a class="toc-item toc-lvl-3" href="#sec-六-本版结论">（六）本版结论</a><a class="toc-item toc-lvl-2" href="#sec-三-薄伽梵往世书">三、《薄伽梵往世书》</a><a class="toc-item toc-lvl-2" href="#sec-四-湿婆往世书">四、《湿婆往世书》</a><a class="toc-item toc-lvl-3" href="#sec-一-世界有多大">（一）世界有多大</a><a class="toc-item toc-lvl-3" href="#sec-二-最终的收摄">（二）最终的收摄</a><a class="toc-item toc-lvl-3" href="#sec-三-火柱">（三）火柱</a><a class="toc-item toc-lvl-3" href="#sec-四-无数宇宙的毁灭者">（四）「无数宇宙的毁灭者」</a><a class="toc-item toc-lvl-3" href="#sec-五-本版结论">（五）本版结论</a><a class="toc-item toc-lvl-2" href="#sec-五-林伽往世书">五、《林伽往世书》</a><a class="toc-item toc-lvl-2" href="#sec-六-罗摩衍那-及其他">六、《罗摩衍那》及其他</a><a class="toc-item toc-lvl-2" href="#sec-七-合集结论">七、合集结论</a><a class="toc-item toc-lvl-3" href="#sec-排序">排序</a><a class="toc-item toc-lvl-3" href="#sec-版本之间的对照">版本之间的对照</a><a class="toc-item toc-lvl-3" href="#sec-为什么不更高">为什么不更高</a><a class="toc-item toc-lvl-3" href="#sec-为什么不更低">为什么不更低</a><a class="toc-item toc-lvl-3" href="#sec-对战判定">对战判定</a><a class="toc-item toc-lvl-2" href="#sec-存疑">存疑</a><a class="toc-item toc-lvl-2" href="#sec-参考资料">参考资料</a>
+              </nav>
+              <div class="toc-foot">
+                <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+                <a class="toc-foot-btn" href="../search.html">全站检索</a>
+              </div>
+            </aside>
+
+            <article class="doc-panel">
+              <div class="doc-toolbar">
+                <div class="doc-source-info">
+                  <span>定级档案全文</span>
+                  <span>·</span>
+                  <span>依据《衡天⊙ 多维战力量级体系（第六版）》</span>
+                </div>
+              </div>
+
+              <div class="markdown-body">
+                <blockquote><p>条目版本：2026-11-12</p>
+<p>本条目是合集。湿婆是印度教现存信仰中的主神，这里评定的是典籍文本里写出来的形象，不涉及信仰本身。各部典籍里的湿婆差别很大，分别定级，不合并。本版完成了《摩诃婆罗多》一个版本的通检；《湿婆往世书》《林伽往世书》《薄伽梵往世书》只核对了与定级相关的章节，《罗摩衍那》为转述，后续可逐部补充。</p></blockquote>
+<h2 id="sec-对象信息">对象信息<a class="heading-anchor" href="#sec-对象信息" data-target-id="sec-对象信息" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">名称</td><td style="text-align:left">湿婆（Śiva）；又称大天（Mahādeva）、楼陀罗（Rudra）、商羯罗（Śaṅkara）、兽主（Paśupati）、青颈（Nīlakaṇṭha）、三眼者</td></tr><tr><td style="text-align:left">性质</td><td style="text-align:left">印度教三大主神之一，司毁灭与再生；前身是吠陀里的风暴神楼陀罗</td></tr><tr><td style="text-align:left">形象</td><td style="text-align:left">三眼，青颈，束发，持三叉戟与毕那迦弓，以公牛为坐骑和旗徽，居雪山（凯拉萨）</td></tr><tr><td style="text-align:left">相关人物</td><td style="text-align:left">配偶乌玛（雪山神女）；梵天、毗湿奴（那罗延、黑天）；因陀罗等诸神</td></tr><tr><td style="text-align:left">本条目所用文本</td><td style="text-align:left">《摩诃婆罗多》K. M. Ganguli 英译本（十九世纪末，公版）；《湿婆往世书》《林伽往世书》J. L. Shastri 英译本；《薄伽梵往世书》通行英译；《湿婆往世书》个别章节对照梵文</td></tr></tbody></table></div>
+<h2 id="sec-量级栏">量级栏<a class="heading-anchor" href="#sec-量级栏" data-target-id="sec-量级栏" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>⊙强化系△<span class="ev-badge ev-lower">〔下〕</span>（掌控式·需时）</strong>——恒星系级，约 1.7×10⁵⁶ J（区间 6.6×10⁵⁵～2.3×10⁵⁶ J），在系△之上、接近系☆。取自《湿婆往世书·风神本集》第 10 章：风神讲世界规则，梵卵"以千计的俱胝"，即至少一百亿个；"最终的收摄是主独自的游戏"，万物按生成的倒序消回未显。按同书的里数，每个梵卵至少一俱胝由旬（0.5～1 天文单位），按覆盖范围折成能量再乘个数。这是对整个世界的整体收回，记掌控式；按倒序逐步完成，注需时</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left"><strong>⊙国○<span class="ev-badge ev-confirmed">〔实〕</span>（《摩诃婆罗多》）</strong>——不靠世界设定、有具体经过的事里，最稳的一件：乌玛遮住他的双眼，他额上生出第三只眼，"一瞬间"烧尽整个雪山（喜马拉雅山脉约 59.5 万平方公里），没有借助任何神或器具。同书一箭焚毁三连城是 <strong>国☆</strong>（持诸神合成的车、弓、箭）</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">《林伽往世书》：化作火柱，梵天称它"没有开端、没有终点、没有中间"，毗湿奴化野猪向下、梵天化天鹅向上，各找一千年都没有到头。《摩诃婆罗多》：三连城之战的战车以大地为车身、日月为车轮<span class="ev-badge ev-confirmed">〔实〕</span>，同书写明日的直径一万由旬，约 8 万～15 万公里。这些是体量、装备和身份的规模，不折算能量</td></tr><tr><td style="text-align:left">可信度</td><td style="text-align:left">中偏低。综合量级依据的是叙述者对世界规则的交代，不是一次具体的经过；梵卵的大小书里只写了一部分，取的是能确定的最小值，所以记<span class="ev-badge ev-lower">〔下〕</span>。收摄的「主」在本颂没有点名，按本章称湿婆为超出三德的主归到他名下。保底量级来自《摩诃婆罗多》，是他独自、瞬间完成的一件，按现实地理的面积定档</td></tr><tr><td style="text-align:left">破（破坏力）</td><td style="text-align:left">《湿婆往世书》：强化系△<span class="ev-badge ev-inferred">〔推〕</span>，由整体收摄推出。《摩诃婆罗多》：一箭焚毁三连城，国☆<span class="ev-badge ev-confirmed">〔实〕</span>；第三只眼瞬间焚尽雪山，国○<span class="ev-badge ev-confirmed">〔实〕</span>；一箭射穿祭祀之神的心<span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">控（掌控）</td><td style="text-align:left">《湿婆往世书》：收摄全部梵卵，强化系△<span class="ev-badge ev-lower">〔下〕</span>（掌控式·需时，依据设定陈述）。《摩诃婆罗多》：瞬间把烧毁的雪山恢复原状<span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">御（防御）</td><td style="text-align:left">阿周那的箭雨"毫发无伤"，剑砍在头冠上碎裂<span class="ev-badge ev-confirmed">〔实〕</span>；吞下笼罩大地的毒药而只在喉间留下青痕<span class="ev-badge ev-confirmed">〔实〕</span>；承接自天而降的恒河<span class="ev-badge ev-confirmed">〔实〕</span>。能量均<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">域（影响范围）</td><td style="text-align:left">现身时大地畏缩、群山震动、日月失色；授出兽主法宝时整个大地震动</td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">第三只眼；使因陀罗的手臂瘫痪；进入他人身体；化身（猎人、小儿）；吞噬来袭的兵器；复原被毁之物</td></tr><tr><td style="text-align:left">作品内位次</td><td style="text-align:left">《摩诃婆罗多》里两派说法并存：有的篇章说梵天、毗湿奴的威能都源于他，有的篇章说他生自那罗延的怒气，与那罗延交战时是那罗延占了上风。《薄伽梵往世书》把他放在毗湿奴之下，《湿婆往世书》把他放在梵天、毗湿奴之上</td></tr></tbody></table></div>
+<p>速度、计算层级没有可用的表现，未列出。收摄按倒序逐步完成，用了多久没有写，综合量级注「需时」。</p>
+<h2 id="sec-合集总览">合集总览<a class="heading-anchor" href="#sec-合集总览" data-target-id="sec-合集总览" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">版本</th><th style="text-align:left">立场</th><th style="text-align:left">湿婆做了什么</th><th style="text-align:left">结论</th></tr></thead><tbody><tr><td style="text-align:left">《摩诃婆罗多》</td><td style="text-align:left">史诗，各派篇章混编</td><td style="text-align:left">一箭焚三连城；第三只眼焚雪山又复原；吞毒；接恒河；化身猎人试阿周那；毁达刹祭祀</td><td style="text-align:left">⊙国☆（持诸神合成的车弓箭）；⊙国○（本人）</td></tr><tr><td style="text-align:left">《薄伽梵往世书》</td><td style="text-align:left">毗湿奴派</td><td style="text-align:left">以掌捧毒饮下；被得了恩赐的阿修罗追得逃遍宇宙；与黑天交战时被呵欠法宝迷住</td><td style="text-align:left">未定级；位次在毗湿奴之下</td></tr><tr><td style="text-align:left"><strong>《湿婆往世书》</strong></td><td style="text-align:left">湿婆派</td><td style="text-align:left">世界规则：梵卵至少一百亿个，最终的收摄由主独自完成；化作火柱立于梵天、毗湿奴之间</td><td style="text-align:left"><strong>⊙强化系△<span class="ev-badge ev-lower">〔下〕</span>（掌控式·需时）</strong>，依据设定陈述；火柱记位格</td></tr><tr><td style="text-align:left">《林伽往世书》</td><td style="text-align:left">湿婆派</td><td style="text-align:left">火柱无始无终，二神各找一千年不见尽头</td><td style="text-align:left">未定级；火柱记位格</td></tr><tr><td style="text-align:left">《罗摩衍那》</td><td style="text-align:left">史诗</td><td style="text-align:left">以发髻接住恒河；用脚趾压住罗波那举起的凯拉萨山</td><td style="text-align:left">转述，未定级</td></tr></tbody></table></div>
+<ul><li><strong>最高的一版</strong>：《湿婆往世书》，强化系△<span class="ev-badge ev-lower">〔下〕</span>，也是综合量级的出处。</li><li><strong>区间</strong>：国○（《摩诃婆罗多》，本人一击）～强化系△<span class="ev-badge ev-lower">〔下〕</span>（《湿婆往世书》，整体收摄）。</li><li><strong>「宇宙」是梵卵</strong>：英译本里的 universe，原文多是梵卵（brahmāṇḍa）。按往世书自己给出的里数，一个梵卵约是太阳系内层的尺度，不是现代意义的宇宙；数目是一百亿以上的有限数。</li><li>各派往世书里「湿婆即至高」「宇宙由他而生」「无数宇宙的毁灭者」一类的话很多，都是颂辞和人物的赞语，没有对应的作为，不参与排序。</li></ul>
+<h2 id="sec-量级栏用语说明">量级栏用语说明<a class="heading-anchor" href="#sec-量级栏用语说明" data-target-id="sec-量级栏用语说明" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">代字或标签</th><th style="text-align:left">全称与含义</th></tr></thead><tbody><tr><td style="text-align:left">⊙</td><td style="text-align:left">综合量级标记</td></tr><tr><td style="text-align:left">国○、国△、国☆</td><td style="text-align:left">爆国级的三档，按一击毁掉的面积划分：国○ 约 37.8 万平方公里（日本）起，国△ 约 100 万平方公里（埃及）起，国☆ 约 300 万平方公里（印度）起，到 770 万平方公里（澳大利亚）之下。对应能量约 2.1×10²¹ J、9.4×10²¹ J、4.8×10²² J</td></tr><tr><td style="text-align:left">由旬</td><td style="text-align:left">古印度的长度单位，各家估计多在 8～15 公里之间</td></tr><tr><td style="text-align:left">俱胝、洛叉</td><td style="text-align:left">古印度的计数单位，一俱胝为一千万，一洛叉为十万</td></tr><tr><td style="text-align:left">梵卵</td><td style="text-align:left">往世书里的一个世界单元，内有大地、日月星辰、上下诸界和各自的梵天、毗湿奴、楼陀罗，外裹多层元素</td></tr><tr><td style="text-align:left">掌控式</td><td style="text-align:left">对一片范围（连同其中的物质和范围本身）整体接管，例如收回、重组</td></tr><tr><td style="text-align:left">系▽、系○、系△、系☆</td><td style="text-align:left">恒星系级的四档，按一次覆盖的直径划分：系▽ 40～80 天文单位，系○ 1000～3000 天文单位，系△ 1 万～3 万天文单位（2.3×10⁵⁴～2.1×10⁵⁵ J），系☆ 1.5～2 光年（2.1×10⁵⁶～3.7×10⁵⁶ J）</td></tr><tr><td style="text-align:left">强化系△</td><td style="text-align:left">超过系△、不到系☆，须写出具体焦耳数</td></tr><tr><td style="text-align:left">需时</td><td style="text-align:left">规模是逐步达到的，不是一瞬间</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-inferred">〔推〕</span></td><td style="text-align:left">推定：由已确认的表现经一步推出，这里是由整体掌控推出破坏</td></tr><tr><td style="text-align:left">设定陈述</td><td style="text-align:left">叙述者对世界规则的平实交代，不是人物的赞语</td></tr><tr><td style="text-align:left">位格</td><td style="text-align:left">存在规模等证据过关的记录，与综合量级并列，互不推出</td></tr><tr><td style="text-align:left">未定级</td><td style="text-align:left">破坏、整体掌控两方面都没有过关的证据，不是高于一切档位的位置</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td><td style="text-align:left">已确认：文本直接叙述了该表现</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">下限：只能确认至少如此</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td><td style="text-align:left">缺：文本没有可用的数据</td></tr></tbody></table></div>
+<h2 id="sec-概述">概述<a class="heading-anchor" href="#sec-概述" data-target-id="sec-概述" title="复制本节锚点链接">#</a></h2>
+<p>讨论湿婆的战力，常被引用的是这样几件事：一箭烧掉三连城、第三只眼、吞下搅乳海的毒药、用头发接住恒河、火柱无头无尾、劫末毁灭世界。把它们放回原文之后，情况是：</p>
+<ul><li><strong>三连城有尺寸。</strong> 《摩诃婆罗多》写明每座城长宽各一百由旬，这是全部材料里少有的数字，可以按面积算。</li><li><strong>第三只眼烧的是整座雪山。</strong> 这一段知道的人少，却是最干净的一件：没有别的神帮忙，一瞬间，对象是现实里的山脉。</li><li><strong>吞毒、接恒河是承受。</strong> 毒有多烈、水有多少，原文都没有数字。</li><li><strong>火柱是体量。</strong> 两位大神上下各找一千年都没到头，说的是它有多大，没有写它烧了什么、压了什么。</li><li><strong>「无数宇宙」要看原文。</strong> 最常被引的几句，一处是女子图拉西对毗湿奴说的赞语；一处是风神讲世界规则，说梵卵至少一百亿个、最终由主独自收摄。后一处是真正的设定，综合量级就取自这里；不过梵卵按书中自己的里数只有太阳系内层的尺度，乘上个数是恒星系级，不是现代意义的「多元宇宙」。</li><li><strong>劫末毁灭只有比喻。</strong> 《摩诃婆罗多》里多次用「像劫末的楼陀罗」来形容别人，没有正面写过他毁灭世界的场面。</li></ul>
+<p>另有一点贯穿所有典籍：湿婆的位次随教派而变。湿婆派的书里他是至高，毗湿奴派的书里他要向毗湿奴求救。《摩诃婆罗多》把两种篇章都收了进去，所以同一部书里他既被称为万物之源，又有输给那罗延的记载。</p>
+<h2 id="sec-一-定级方法">一、定级方法<a class="heading-anchor" href="#sec-一-定级方法" data-target-id="sec-一-定级方法" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-版本边界">版本边界<a class="heading-anchor" href="#sec-版本边界" data-target-id="sec-版本边界" title="复制本节锚点链接">#</a></h3>
+<p>一部典籍算一个版本，只用它自己写明的世界和人物。《摩诃婆罗多》成书时间很长，内部有湿婆派和毗湿奴派的篇章，这里仍作为一个版本，但把互相抵触的说法并列写出，不替它调和。</p>
+<h3 id="sec-译文与引文">译文与引文<a class="heading-anchor" href="#sec-译文与引文" data-target-id="sec-译文与引文" title="复制本节锚点链接">#</a></h3>
+<p>所据是英译本。条目里的中文是转述，放在「」里的是意译；需要逐字对照的地方保留英译原句，放在 "" 里。章节号按 Ganguli 译本。</p>
+<h3 id="sec-由旬">由旬<a class="heading-anchor" href="#sec-由旬" data-target-id="sec-由旬" title="复制本节锚点链接">#</a></h3>
+<p>由旬的长度古来没有定数。常见的估计有 8 公里、约 11～13 公里、约 15 公里几种，《薄伽梵往世书》的通行英译按 8 英里（约 12.9 公里）换算。本条目取 8～15 公里为区间，13 公里为中间值。</p>
+<h3 id="sec-按面积定档">按面积定档<a class="heading-anchor" href="#sec-按面积定档" data-target-id="sec-按面积定档" title="复制本节锚点链接">#</a></h3>
+<p>三连城和雪山都是一次作用毁掉一大片，能量没有直接的依据，按被毁的面积对照档位：三百万平方公里以上是国☆，一百万以上是国△，约三十八万以上是国○。这一步用的是面积，不是算出来的焦耳数。</p>
+<h3 id="sec-借来的力量和器具怎么记">借来的力量和器具怎么记<a class="heading-anchor" href="#sec-借来的力量和器具怎么记" data-target-id="sec-借来的力量和器具怎么记" title="复制本节锚点链接">#</a></h3>
+<p>三连城一战，战车、弓、箭都由诸神和天地之物合成，一种讲法里他还先取了诸神一半的力量。条目照实写出来源，档位后面注明「持诸神合成的车、弓、箭」；另取一件完全由他本人完成的事作保底。</p>
+<h2 id="sec-二-摩诃婆罗多">二、《摩诃婆罗多》<a class="heading-anchor" href="#sec-二-摩诃婆罗多" data-target-id="sec-二-摩诃婆罗多" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-一-书里的世界">（一）书里的世界<a class="heading-anchor" href="#sec-一-书里的世界" data-target-id="sec-一-书里的世界" title="复制本节锚点链接">#</a></h3>
+<p>《毗湿摩篇》第 6、12 节给了一组尺寸：须弥山高八万四千由旬；"The diameter of the moon ... is stated to be eleven thousand Yojanas"，月的直径一万一千由旬；日的直径一万由旬。按 8～15 公里换算，日的直径约 8 万～15 万公里，须弥山高约 67 万～126 万公里。</p>
+<p>这是一个有里数的古代世界，不是现代意义的宇宙。书里常说的「三界」指天、空、地，没有给出总尺寸。</p>
+<h3 id="sec-二-三连城">（二）三连城<a class="heading-anchor" href="#sec-二-三连城" data-target-id="sec-二-三连城" title="复制本节锚点链接">#</a></h3>
+<p>书里讲了两遍。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left"></th><th style="text-align:left">《迦尔纳篇》第 33～34 节</th><th style="text-align:left">《德罗纳篇》第 202 节</th></tr></thead><tbody><tr><td style="text-align:left">讲述者</td><td style="text-align:left">难敌对沙利耶讲，说是摩根德耶仙人传下来的</td><td style="text-align:left">毗耶娑对阿周那讲</td></tr><tr><td style="text-align:left">三城</td><td style="text-align:left">金城在天，银城在空，铁城在地，各自旋转</td><td style="text-align:left">三城都在天上，"excellent and large"</td></tr><tr><td style="text-align:left">尺寸</td><td style="text-align:left">"Each of those cities measured a hundred yojanas in breadth and a hundred in length."</td><td style="text-align:left">没有写</td></tr><tr><td style="text-align:left">别的神打不动</td><td style="text-align:left">因陀罗用雷霆四面攻打，穿不透</td><td style="text-align:left">因陀罗"With all his weapons"也无可奈何</td></tr><tr><td style="text-align:left">条件</td><td style="text-align:left">三城千年一合，须一箭贯穿；梵天说除湿婆外无人能做到</td><td style="text-align:left">他"stood immovable for a thousand years"，等三城相合</td></tr><tr><td style="text-align:left">借力</td><td style="text-align:left">他先说诸神承受不了他一半的力量，改为取诸神合力的一半："Taking half of their energies from all of them, he became superior in might."</td><td style="text-align:left">没有这一节</td></tr><tr><td style="text-align:left">战车</td><td style="text-align:left">大地为车，曼陀罗山为轴，四吠陀为马，梵天为御者</td><td style="text-align:left">大地为车，"made the moon and the sun the two wheels"，须弥山为旗，梵天为御者</td></tr><tr><td style="text-align:left">弓箭</td><td style="text-align:left">弓是「年」，弦是死夜；箭由毗湿奴、苏摩、阿耆尼合成，又合入兽主法宝</td><td style="text-align:left">曼陀罗山为弓，蛇王婆苏吉为弦，毗湿奴为箭</td></tr><tr><td style="text-align:left">结果</td><td style="text-align:left">"Burning those Asuras, he threw them down into the Western ocean. Thus was the triple city burnt"</td><td style="text-align:left">一箭贯穿，三城起火</td></tr><tr><td style="text-align:left">余波</td><td style="text-align:left">他亲手熄了火，说"Do not reduce the three worlds to ashes."</td><td style="text-align:left">乌玛带着化作小儿的他来看火</td></tr></tbody></table></div>
+<p>两处讲的是同一件事，主干相同：三城别的神打不动，只有他能一箭贯穿，结果是三城俱焚。细节各有出入，尺寸只有《迦尔纳篇》有。</p>
+<p><strong>面积。</strong></p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">由旬取值</th><th style="text-align:left">每城边长</th><th style="text-align:left">每城面积</th><th style="text-align:left">三城合计</th><th style="text-align:left">对应档位</th></tr></thead><tbody><tr><td style="text-align:left">8 公里</td><td style="text-align:left">800 公里</td><td style="text-align:left">64 万平方公里</td><td style="text-align:left">192 万平方公里</td><td style="text-align:left">国△</td></tr><tr><td style="text-align:left">13 公里</td><td style="text-align:left">1300 公里</td><td style="text-align:left">169 万平方公里</td><td style="text-align:left">507 万平方公里</td><td style="text-align:left">国☆</td></tr><tr><td style="text-align:left">15 公里</td><td style="text-align:left">1500 公里</td><td style="text-align:left">225 万平方公里</td><td style="text-align:left">675 万平方公里</td><td style="text-align:left">国☆</td></tr></tbody></table></div>
+<p>三城合一时一箭俱焚，按三城合计的面积算，国△～国☆，中间值落在国☆。</p>
+<p><strong>要注明的几点。</strong></p>
+<ul><li>这一箭不是空手射的。箭本身由三位神合成，车和御者也都是神；《迦尔纳篇》里他还取了诸神一半的力量。车一度被压得下沉，是那罗延化作公牛把它托起来的。</li><li>同一篇里他又说过，诸神连他一半的力量都承受不起。这是他自己的话，记为陈述。</li><li>条件苛刻：三城千年才相合一次，他是等到那一刻才出手的。</li><li>事后那句「不要把三界烧成灰」也是他自己的话，说明火还能更大，但没有演示，不据此升档。</li></ul>
+<h3 id="sec-三-第三只眼焚雪山">（三）第三只眼焚雪山<a class="heading-anchor" href="#sec-三-第三只眼焚雪山" data-target-id="sec-三-第三只眼焚雪山" title="复制本节锚点链接">#</a></h3>
+<p>《教诫篇》第 140 节，毗湿摩转述那罗陀讲的故事。湿婆在雪山修行，乌玛从背后开玩笑遮住他的双眼，一时"all the regions became dark"，"the universe seemed to become sunless"。随即他额上生出第三只眼，火焰升到天上：</p>
+<ul><li>"In a moment, the Himavat mountains were consumed, with their minerals and summits and blazing herbs."</li><li>见乌玛不忍，他看了一眼，"In a moment the whole of Himavat was restored to his former condition"。</li><li>他事后解释："The high energy of that eye crushed and consumed this mountain"，为了让她高兴又把山修复了。</li></ul>
+<p>这一段的特点：</p>
+<ul><li><strong>没有外力。</strong> 火出自他自己的眼睛，没有借用任何神或器具。</li><li><strong>一瞬间。</strong> 原文两次用「一瞬间」，烧毁和复原都是。</li><li><strong>对象是现实地理。</strong> 雪山（Himavat）就是喜马拉雅。现实中的喜马拉雅山脉长约 2500 公里，宽 200～400 公里，总面积约 59.5 万平方公里。</li></ul>
+<p>按面积对照，59.5 万平方公里在国○一档。原文说的是连同矿藏和峰顶一起烧尽，若理解为山体本身也毁了，能量还要高得多；但山体毁到什么程度没有写，这里只按「整座山脉的地表被烧尽」取面积，用作保底。</p>
+<p>顺带一提，瞬间把整座山脉恢复原状，是他在这部书里最明确的一次掌控类表现。</p>
+<h3 id="sec-四-其他作为">（四）其他作为<a class="heading-anchor" href="#sec-四-其他作为" data-target-id="sec-四-其他作为" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">章节</th><th style="text-align:left">事情</th><th style="text-align:left">说明</th></tr></thead><tbody><tr><td style="text-align:left">《初篇》第 18 节</td><td style="text-align:left">搅乳海时出现毒药，"Engulfing the Earth it suddenly blazed up like a fire"，三界昏迷；湿婆应梵天之请吞下，含在喉中，得名青颈</td><td style="text-align:left">承受类。毒的威力没有数字</td></tr><tr><td style="text-align:left">《森林篇》第 108～109 节</td><td style="text-align:left">恒河女神说三界之中只有湿婆承受得住她的下降；他立在雪山上接住从天而降的恒河</td><td style="text-align:left">承受类。水量没有数字</td></tr><tr><td style="text-align:left">《森林篇》第 39～40 节</td><td style="text-align:left">化作猎人与阿周那交手：箭雨之下"stood unwounded, immovable like a hill"，把箭全部吞没，剑砍在头冠上碎裂，最后把阿周那打昏；授兽主法宝时整个大地震动</td><td style="text-align:left">对手是凡人英雄。阿周那说他所求的这件法宝能在劫末毁灭整个宇宙，是人物的话，书里没有演示</td></tr><tr><td style="text-align:left">《德罗纳篇》第 202 节</td><td style="text-align:left">化作乌玛膝上的小儿，因陀罗要用雷霆打他，他"smiling, quickly paralysed the arm of the enraged Sakra"</td><td style="text-align:left">特性</td></tr><tr><td style="text-align:left">《夜袭篇》第 18 节</td><td style="text-align:left">毁达刹的祭祀：他一到，大地畏缩、群山震动、日月失色；一箭射穿祭祀之神的心，折断、挖去几位神的手臂、眼睛和牙齿，用弓梢使众神瘫痪</td><td style="text-align:left">对手是诸神，没有可折算的防御</td></tr><tr><td style="text-align:left">《夜袭篇》第 7 节</td><td style="text-align:left">赐剑给马勇，并"entered Ashvatthama's body"</td><td style="text-align:left">特性</td></tr></tbody></table></div>
+<h3 id="sec-五-限度与位次">（五）限度与位次<a class="heading-anchor" href="#sec-五-限度与位次" data-target-id="sec-五-限度与位次" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>弓弦被震断。</strong> 毁达刹祭祀时，众神齐声一喊，"the string of the bow broke"（《夜袭篇》第 18 节）。</li><li><strong>造物一事被人替代。</strong> 梵天让他创造众生，他入水苦行太久，梵天等不及，另造了一位去做（《夜袭篇》第 17 节）。</li><li><strong>与那罗延交战。</strong> 《和平篇》第 343 节：两位交手时大地震动、海水干涸、雪山开裂，梵天出面劝和。那罗延说"There is no difference between thee and me"，但讲述者的结论是"the latter got the victory"，胜的是那罗延；他喉上的青痕在这里被说成是那罗延的手印。</li><li><strong>谁生谁，两种说法。</strong> 《和平篇》第 340 节，那罗延说"The deity Rudra, born of my wrath, is sprung from my forehead."；《教诫篇》第 14 节，优波曼纽说创造梵天、毗湿奴、楼陀罗的那一位，其威能"was derived from Mahadeva"。</li><li><strong>青颈的由来有三种。</strong> 吞毒、被蛇咬、被那罗延扼喉，书里都有。</li></ul>
+<p>同一部书里这些说法并存。本条目只取有具体经过的事来定级，位次照录，不作裁断。</p>
+<h3 id="sec-六-本版结论">（六）本版结论<a class="heading-anchor" href="#sec-六-本版结论" data-target-id="sec-六-本版结论" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>综合量级：⊙国☆（持诸神合成的车、弓、箭）。</strong> 三连城，按面积。</li><li><strong>保底：⊙国○<span class="ev-badge ev-confirmed">〔实〕</span>。</strong> 第三只眼焚雪山，本人、瞬间。</li><li><strong>位格：</strong> 以大地为车、日月为轮；闭眼则世界无光。</li></ul>
+<h2 id="sec-三-薄伽梵往世书">三、《薄伽梵往世书》<a class="heading-anchor" href="#sec-三-薄伽梵往世书" data-target-id="sec-三-薄伽梵往世书" title="复制本节锚点链接">#</a></h2>
+<p>毗湿奴派的典籍。只核对了三章。</p>
+<ul><li><strong>吞毒</strong>（第八篇第 7 章）：毒药"forcefully spreading up and down in all directions"，诸神向湿婆求救，他"compassionately took the whole quantity of poison in his palm and drank it"。比《摩诃婆罗多》多了「用手掌捧起全部毒药」一句，仍然没有数字。</li><li><strong>弗栗迦</strong>（第十篇第 88 章）：阿修罗弗栗迦求得恩赐，手按谁的头谁就死，随即要拿湿婆来试。"Lord Śiva fled swiftly from his abode in the north, shaking with terror"，逃遍天地，直到毗湿奴的住处；毗湿奴化作少年，哄得弗栗迦把手按在自己头上。</li><li><strong>与黑天交战</strong>（第十篇第 63 章）：湿婆为信徒波那出战，黑天逐一化解他的兵器，用那罗延法宝抵住兽主法宝，然后"bewildering Lord Śiva by making him yawn with a yawning weapon"。</li></ul>
+<p>这一版的世界有尺寸：第五篇第 21 章写明宇宙的直径是五十俱胝由旬，英译本换算为约四十亿英里。但湿婆在这部书里没有针对这个世界的作为。他自己给出的恩赐能要他的命，要靠毗湿奴解围，这是书里写明的限度。记未定级。</p>
+<h2 id="sec-四-湿婆往世书">四、《湿婆往世书》<a class="heading-anchor" href="#sec-四-湿婆往世书" data-target-id="sec-四-湿婆往世书" title="复制本节锚点链接">#</a></h2>
+<p>湿婆派的典籍，湿婆在书中是至高的主。全书很长，这里核对了与定级直接相关的四章。</p>
+<h3 id="sec-一-世界有多大">（一）世界有多大<a class="heading-anchor" href="#sec-一-世界有多大" data-target-id="sec-一-世界有多大" title="复制本节锚点链接">#</a></h3>
+<p><strong>梵卵的数目。</strong> 《风神本集》上卷第 10 章，风神向众婆罗门讲创世：</p>
+<ul><li>一个梵卵里有须弥山、海洋、群山，"the moon, sun, stars, planets and Vāyu are in this cosmic egg"（第 32 颂）；外面裹着水，水外是火，火外是风，"ten times bigger"，再往外是空、元素之始、大、未显（第 33～35 颂）。</li><li>"There are thousands and crores of such eggs stationed at the sides, above and below since Pradhāna is present everywhere."（第 42 颂）每个梵卵里各有自己的梵天、毗湿奴、楼陀罗（第 43 颂）。</li><li>《乌玛本集》第 19 章也说原质生出的梵卵是「千千又万万」（第 24 颂）。</li></ul>
+<p>第 42 颂英译作「成千、成俱胝」，梵文是 koṭyo jñeyāḥ sahasraśaḥ，「俱胝」是复数，「以千计」是修饰它的副词，意思是「以千计的俱胝」，是相乘，不是相加。按最小的读法也有 1000 × 1000 万 = 10¹⁰ 个。全书别处也有「无数梵卵」的说法，但同一部书里给过具体的数，按有限数记，取 10¹⁰ 为下限。</p>
+<p><strong>每个梵卵的大小。</strong> 《乌玛本集》第 19 章给了一部分高度：日轮在地上一洛叉由旬，月在日上一洛叉由旬，再往上是星宿、诸行星、七仙人、北极星；摩诃世界在一俱胝由旬处；苦行世界是人世界的四倍，真理世界又在其六倍之外。人世界的数字这一章没有给，所以梵卵的总尺寸书里没有写全，能确定的只是至少一俱胝由旬，约 8000 万～1.5 亿公里，相当于 0.5～1 个天文单位。</p>
+<p>所以这部书里的「宇宙」是梵卵：数目很多，每个大约是太阳系内层的尺度。</p>
+<h3 id="sec-二-最终的收摄">（二）最终的收摄<a class="heading-anchor" href="#sec-二-最终的收摄" data-target-id="sec-二-最终的收摄" title="复制本节锚点链接">#</a></h3>
+<p>同一章接着交代世界怎样消亡：</p>
+<ul><li>"When the time of dissolution arrives it gets dissolved in the reverse order."（第 39 颂）万物按生成的倒序消回未显。</li><li>"The ultimate dissolution is effected sportively by the lord alone at the end."（第 45 颂）</li><li>原质"In the end it devours them"（第 47 颂），而原质的运作出于"the thought of supreme lord"（第 48 颂）。</li></ul>
+<p>这里的「主」没有在本颂点名，但本章开头称"Lord Śiva who is beyond the three Guṇas"（第 9 颂），又说"Everything is identical with Śiva"（第 12 颂），整部本集的主就是湿婆。</p>
+<p>这一段的性质：</p>
+<ul><li><strong>是设定，不是赞语。</strong> 讲述者是风神，语境是交代创世和消亡的规则。</li><li><strong>作用于全体。</strong> 一切出自未显的东西都要倒序消回，所有梵卵都在其内；收回的不只是物质，连包裹梵卵的空、大等也一层层消回。这是整体收回，记掌控式。</li><li><strong>逐步完成。</strong> 按倒序一层一层消回，用了多久没有写。</li><li><strong>是规律，不是一场具体的事件。</strong> 书里没有描写某一次收摄的经过。</li></ul>
+<p>第 45 颂的梵文是"ātyantikaś ca pralayo 'ntakāle līlākṛtaḥ kevalam īśvarasya"，即「终末之时的究竟消亡，唯是主的游戏」；第 48 颂又说原质所生诸因的存续和运作，都出于"the thought of supreme lord"。</p>
+<p><strong>记法</strong>：控：收摄全部梵卵<span class="ev-badge ev-lower">〔下〕</span>（掌控式，需时，依据设定陈述）。整体掌控可以推出同等规模的破坏，破记同档<span class="ev-badge ev-inferred">〔推〕</span>。</p>
+<p><strong>折算。</strong> 世界有多大（第 42 颂和《乌玛本集》的里数）、对整个世界做了什么（第 39、45 颂），两步都出自叙述者对规则的交代，这一规模就是收摄的规模。按覆盖范围折算：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">由旬取值</th><th style="text-align:left">每个梵卵的直径（至少一俱胝由旬）</th><th style="text-align:left">每个梵卵</th><th style="text-align:left">乘 10¹⁰ 个</th><th style="text-align:left">档位</th></tr></thead><tbody><tr><td style="text-align:left">8 公里</td><td style="text-align:left">0.53 天文单位</td><td style="text-align:left">6.6×10⁴⁵ J</td><td style="text-align:left">6.6×10⁵⁵ J</td><td style="text-align:left">强化系△</td></tr><tr><td style="text-align:left">13 公里</td><td style="text-align:left">0.87 天文单位</td><td style="text-align:left">1.7×10⁴⁶ J</td><td style="text-align:left">1.7×10⁵⁶ J</td><td style="text-align:left">强化系△</td></tr><tr><td style="text-align:left">15 公里</td><td style="text-align:left">1.0 天文单位</td><td style="text-align:left">2.3×10⁴⁶ J</td><td style="text-align:left">2.3×10⁵⁶ J</td><td style="text-align:left">系☆</td></tr></tbody></table></div>
+<p>取中间值，约 1.7×10⁵⁶ J，强化系△。梵卵的大小和个数都取的是能确定的最小值，所以记<span class="ev-badge ev-lower">〔下〕</span>。梵卵外面那几层「十倍」的外壳没有计入，算法见存疑。</p>
+<h3 id="sec-三-火柱">（三）火柱<a class="heading-anchor" href="#sec-三-火柱" data-target-id="sec-三-火柱" title="复制本节锚点链接">#</a></h3>
+<p>《毗底耶湿伐罗本集》第 7 章：梵天与毗湿奴争谁更大，两军对阵之际，湿婆化作"a huge column of fire"立在中间。毗湿奴化作野猪向下找根，梵天化作天鹅向上找顶。"Viṣṇu could not see the root of the fiery column"；梵天也没有找到顶，却拉了一朵花作伪证说找到了。找了多久，这一章没有给出年数。</p>
+<p>火柱的规模见下一节《林伽往世书》，那里写得更具体。</p>
+<h3 id="sec-四-无数宇宙的毁灭者">（四）「无数宇宙的毁灭者」<a class="heading-anchor" href="#sec-四-无数宇宙的毁灭者" data-target-id="sec-四-无数宇宙的毁灭者" title="复制本节锚点链接">#</a></h3>
+<p>《楼陀罗本集·战争篇》第 41 章：毗湿奴假扮成商古丘达，骗过他的妻子图拉西。图拉西以为丈夫从与湿婆的战场上回来，说湿婆是"the annihilator of innumerable universes"，"in a single moment according to whose calculation a crore cosmic worlds undergo destruction"，"in whose minutest time many Viṣṇus, Brahmās and others pass away"，接着问："It is with such a Śiva that you had gone to fight."（第 14～18 颂）</p>
+<p>这几句常被拿来证明湿婆能毁灭成千上万个宇宙，但要注意两点：</p>
+<ul><li><strong>说话的是书中人物。</strong> 图拉西在惊疑之中称颂湿婆，是人物的赞语，不是叙述者交代的设定。</li><li><strong>说的是时间尺度。</strong> 「按他的计算，一瞬间就有一俱胝个世界毁灭」「在他最短的时间里，许多毗湿奴、梵天逝去」，意思是他的一瞬抵得上无数世界的寿命，并没有说是他把它们毁掉的。</li></ul>
+<p>这一段不进入定级。</p>
+<h3 id="sec-五-本版结论">（五）本版结论<a class="heading-anchor" href="#sec-五-本版结论" data-target-id="sec-五-本版结论" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>⊙强化系△<span class="ev-badge ev-lower">〔下〕</span>（掌控式·需时）</strong>，约 1.7×10⁵⁶ J，依据设定陈述。合集的综合量级取这一版。</li><li><strong>位格：火柱。</strong></li><li>这部书里的三连城、毁达刹祭祀、焚爱神等故事本条目没有逐章核对，以后可以补。</li></ul>
+<h2 id="sec-五-林伽往世书">五、《林伽往世书》<a class="heading-anchor" href="#sec-五-林伽往世书" data-target-id="sec-五-林伽往世书" title="复制本节锚点链接">#</a></h2>
+<p>湿婆派的典籍，以林伽的起源为名。核对了第 17 章「林伽的起源」，讲述者是梵天本人。</p>
+<ul><li>火柱出现在争执的二神之间："It had thousands of clusters of flames"，"It had neither a beginning nor an end nor a middle"（第 34 颂），"It was the source of the universe"（第 35 颂）。</li><li>毗湿奴化作一头黑色野猪，身长一百由旬、围十由旬，向下找；梵天化作天鹅，以风与心念的速度向上找（第 37～43 颂）。</li><li>二神各找了一千年，都没有到头，疲惫而回（第 43～46 颂）。随后柱中发出「唵」声，现出湿婆。</li></ul>
+<p><strong>怎么记。</strong></p>
+<ul><li><strong>它是体量。</strong> 原文只写了它有多长、找不到头，没有写它烧了什么、压了什么。体量再大也不是破坏，和孙悟空的「身高万丈」是一个道理。</li><li><strong>「无始无终」是梵天的话。</strong> 他是在场的人，但也是当事一方，这四个字更像对湿婆本性的称颂。即便当真，也只是说火柱无限长，仍属体量。</li><li><strong>长度算不出来。</strong> 一千年是用时，速度只写了「风与心念的速度」，没有数字。野猪身长一百由旬，约 800～1500 公里，可以想见它走得不慢，但这仍然推不出火柱有多长。</li></ul>
+<p><strong>本版结论</strong>：未定级；火柱记位格。</p>
+<h2 id="sec-六-罗摩衍那-及其他">六、《罗摩衍那》及其他<a class="heading-anchor" href="#sec-六-罗摩衍那-及其他" data-target-id="sec-六-罗摩衍那-及其他" title="复制本节锚点链接">#</a></h2>
+<p>以下为转述，没有逐句核对原文。</p>
+<ul><li><strong>《罗摩衍那》</strong>：恒河下降时他用发髻把她困住多年，才放她流到地上；罗刹王罗波那想把凯拉萨山连根举起，他用脚趾一压，把罗波那的手臂压在山下。后一件是力量类的表现，对象是一座山。</li><li><strong>吠陀</strong>：《梨俱吠陀》里的楼陀罗是持弓的风暴神，人们祈求他不要伤害牲畜和子孙。「湿婆」（吉祥者）起初是用来称呼他的形容词。</li></ul>
+<h2 id="sec-七-合集结论">七、合集结论<a class="heading-anchor" href="#sec-七-合集结论" data-target-id="sec-七-合集结论" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-排序">排序<a class="heading-anchor" href="#sec-排序" data-target-id="sec-排序" title="复制本节锚点链接">#</a></h3>
+<ol><li><strong>《湿婆往世书》</strong>：强化系△<span class="ev-badge ev-lower">〔下〕</span>（收摄全部梵卵，掌控式·需时，依据设定陈述）。综合量级取这一版。</li><li><strong>《摩诃婆罗多》</strong>：国☆（三连城，持诸神合成的车弓箭）；国○（焚雪山，本人）。保底量级取国○。</li><li><strong>《林伽往世书》</strong>：火柱，位格；未定级。</li><li><strong>《薄伽梵往世书》</strong>：未定级；位次在毗湿奴之下。</li><li><strong>《罗摩衍那》</strong>：转述，未定级。</li></ol>
+<p><strong>为什么综合量级取《湿婆往世书》。</strong> 叙述者交代了世界有多大，又交代了对象对整个世界做了什么，两步都成立，世界的规模就是这一表现的规模，不必另找一场具体的经过。它的弱点是依据设定陈述、尺寸只写了一部分、逐步完成，这些都已用<span class="ev-badge ev-lower">〔下〕</span>和「需时」注明。不认设定陈述的读者，可以看保底量级：《摩诃婆罗多》里有具体经过的国○～国☆。</p>
+<h3 id="sec-版本之间的对照">版本之间的对照<a class="heading-anchor" href="#sec-版本之间的对照" data-target-id="sec-版本之间的对照" title="复制本节锚点链接">#</a></h3>
+<p>以下只作对照，不拿来互相补充：</p>
+<ul><li><strong>位次随教派而变。</strong> 同是吞毒，《摩诃婆罗多》里是应梵天之请，《薄伽梵往世书》里是诸神直接来向他求救。同是交战，对上那罗延和黑天，他都没有赢。</li><li><strong>兽主法宝。</strong> 《摩诃婆罗多》说它是三连城那一箭的一部分，又说它能在劫末毁灭宇宙；《薄伽梵往世书》里它被那罗延法宝抵消。</li><li><strong>第三只眼。</strong> 《摩诃婆罗多》里它烧的是雪山；流传更广的「烧死爱神」见于往世书和后来的诗歌。</li></ul>
+<h3 id="sec-为什么不更高">为什么不更高<a class="heading-anchor" href="#sec-为什么不更高" data-target-id="sec-为什么不更高" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>「三界」没有尺寸。</strong> 他说过不要把三界烧成灰，也被称为三界之主，但《摩诃婆罗多》没有给出三界的总大小，这句话也没有演示。</li><li><strong>劫末毁灭只是比喻。</strong> 书里用「劫末的楼陀罗」形容别人的凶猛，没有正面写他毁灭世界。</li><li><strong>以日月为车轮是装备的规模。</strong> 车有多大不等于一箭的威力有多大，射中的是三座城。</li><li><strong>火柱是体量。</strong> 两位大神各找一千年不到头，说明它极长；即便照梵天的话当它无始无终，也只是体量无限，没有写它造成了什么。</li><li><strong>英译的 universe 多是梵卵。</strong> 往世书自己给的里数，一个梵卵约是太阳系内层的尺度，数目也是有限的；把它当成现代宇宙再乘上一百亿，就会算到多元宇宙级，那是把梵卵的尺寸换掉了。</li><li><strong>人物的赞语不算。</strong> 「无数宇宙的毁灭者」出自图拉西之口，说的又是时间尺度。</li><li><strong>梵卵是恒星系级，不是宇宙级。</strong> 一百亿个太阳系内层大小的世界，按覆盖范围折算在系△与系☆之间；要到星系级以上，须把外壳按尺寸算进去，原文说不清。</li><li><strong>颂辞不算。</strong> 「万物之源」「至高之我」出自赞颂和教义，同一部书里就有相反的说法。</li><li><strong>不套现代宇宙。</strong> 这些典籍的世界有自己的里数；《薄伽梵往世书》的宇宙直径约四十亿英里，比海王星的轨道还小，不能换成可观测宇宙。</li></ul>
+<h3 id="sec-为什么不更低">为什么不更低<a class="heading-anchor" href="#sec-为什么不更低" data-target-id="sec-为什么不更低" title="复制本节锚点链接">#</a></h3>
+<ul><li>三连城的尺寸是原文直接写的数字；按最短的由旬算，三城合计也有约 190 万平方公里。</li><li>焚雪山是独自、瞬间完成的，对象是现实里的山脉，不依赖任何换算。</li><li>因陀罗的雷霆打不动三连城，书里两处都写了，说明这不是寻常神祇做得到的事。</li></ul>
+<h3 id="sec-对战判定">对战判定<a class="heading-anchor" href="#sec-对战判定" data-target-id="sec-对战判定" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>先指明版本。</strong> 《湿婆往世书》《摩诃婆罗多》《薄伽梵往世书》的湿婆不是一个强度。</li><li><strong>《湿婆往世书》</strong>：按强化系△<span class="ev-badge ev-lower">〔下〕</span>的整体收摄算，掌控式、需时；它是世界规则，不是一场战斗里的出手，与对手正面交锋时不宜直接套用。</li><li><strong>《摩诃婆罗多》</strong>：出手按国○（本人）到国☆（持车弓箭）。三连城那样的一击需要准备和条件，不是随手可为；第三只眼则是瞬发。承受方面有吞毒、接恒河的事实，但没有能量数字，遇到爆大陆级以上的攻击不可判定。</li><li><strong>特性上的威胁</strong>：使对手肢体瘫痪、吞没来袭兵器、进入他人身体、瞬间复原被毁之物。</li><li><strong>已写明的限度</strong>：弓弦被众神震断；与那罗延交战落败；往世书里被呵欠法宝迷住、被自己给出的恩赐追杀。</li></ul>
+<h2 id="sec-存疑">存疑<a class="heading-anchor" href="#sec-存疑" data-target-id="sec-存疑" title="复制本节锚点链接">#</a></h2>
+<ol><li><strong>由旬的长度</strong>：取 8～15 公里。古代文献里还有短到 3.5 公里的说法，按它算三城合计只有约 37 万平方公里，降到国○的下沿。保底量级不受影响。</li><li><strong>三城按合计还是按一座</strong>：原文说三城「合为一体」后被一箭贯穿。本条目按三城面积相加；若认为合体后只占一座城的地方，面积是 64 万～225 万平方公里，对应国○～国△。</li><li><strong>讲述层次</strong>：三连城的尺寸出自难敌之口，他讲这个故事是为了劝沙利耶去给迦尔纳驾车。同一件事另有毗耶娑的讲述可以印证，但尺寸只此一处。</li><li><strong>借力算谁的</strong>：《迦尔纳篇》写他取了诸神一半的力量，箭又是三位神合成的。本条目把这一档记在他名下并注明来源；若认为应当剔除，就以保底的国○为准。</li><li><strong>雪山的范围</strong>：原文的 Himavat 既指整条山脉，也可以只指他修行的那一带。本条目按整条山脉取面积，依据是原文说连同矿藏和峰顶一起烧尽，以及「整座雪山」被复原。若只是一山一地，面积要小得多。</li><li><strong>烧到什么程度</strong>：若按山体本身被毁来算，结果会远高于国○。原文没有写山体的状况，没有取。</li><li><strong>译本</strong>：所据为十九世纪末的英译，所依梵文底本与今天的精校本有出入，个别章节在精校本里被判为后加。</li><li><strong>未通检的典籍</strong>：《薄伽梵往世书》《湿婆往世书》只核对了个别章节；《林伽往世书》《室建陀往世书》等没有涉及；《罗摩衍那》和吠陀部分为转述。这些版本的结论都是暂定。</li></ol>
+<ol><li><strong>「主」是谁</strong>：《风神本集》第 10 章第 45 颂说最终的收摄由「主」独自完成，本颂没有点名，所用的「究竟消亡」（ātyantika）在别的往世书里有时专指个人的解脱，这里按上下文理解为世界的消亡；本章第 9、12 颂把湿婆称为超出三德的主、说一切与湿婆同一，本条目据此归到湿婆名下。同一章又说梵卵里各有自己的楼陀罗，一个梵卵之内的毁灭由那一位以「时」的身份执行。</li><li><strong>梵卵的个数</strong>：书中一处说「以千计的俱胝」，一处说千千又万万，别处又有「无数」。本条目按有限数记，取最小读法 10¹⁰ 为下限。</li><li><strong>梵卵的大小</strong>：《乌玛本集》第 19 章只给了一部分高度，第 8 颂的一俱胝由旬是摩诃世界的高度还是它本身的范围，读法也不一。别的往世书有五十俱胝由旬的说法（约 40 亿～75 亿公里），那是另一部书，不拿来补这一版。</li><li><strong>外壳算不算</strong>：梵卵外的水、火、风各「十倍」（daśaguṇa），没说是厚度、直径还是分量。若按体积理解，三层合起来直径约大 10 倍，结果约 1.7×10⁵⁸ J（弱化弱爆星团）；若按直径理解，约大 1000 倍，结果约 1.7×10⁶² J（河▽，星系级）。读法不定，本条目没有计入，所以记<span class="ev-badge ev-lower">〔下〕</span>。</li><li><strong>火柱的长度</strong>：原文只有「一千年」和「风与心念的速度」，没有数字；《湿婆往世书》的同一故事没有给年数。</li></ol>
+<h2 id="sec-参考资料">参考资料<a class="heading-anchor" href="#sec-参考资料" data-target-id="sec-参考资料" title="复制本节锚点链接">#</a></h2>
+<ul><li><a href="https://www.ibiblio.org/sripedia/ebooks/mb/m08/m08033.htm" target="_blank" rel="noopener">《摩诃婆罗多·迦尔纳篇》第 33 节（Ganguli 英译）</a>、<a href="https://www.ibiblio.org/sripedia/ebooks/mb/m08/m08034.htm" target="_blank" rel="noopener">第 34 节</a></li><li><a href="https://www.ibiblio.org/sripedia/ebooks/mb/m07/m07197.htm" target="_blank" rel="noopener">《摩诃婆罗多·德罗纳篇》第 202 节</a></li><li><a href="https://www.ibiblio.org/sripedia/ebooks/mb/m13/m13b105.htm" target="_blank" rel="noopener">《摩诃婆罗多·教诫篇》第 140 节</a>、<a href="https://www.ibiblio.org/sripedia/ebooks/mb/m13/m13a014.htm" target="_blank" rel="noopener">第 14 节</a></li><li><a href="https://www.ibiblio.org/sripedia/ebooks/mb/m03/m03039.htm" target="_blank" rel="noopener">《摩诃婆罗多·森林篇》第 39 节</a>、<a href="https://www.ibiblio.org/sripedia/ebooks/mb/m03/m03108.htm" target="_blank" rel="noopener">第 108 节</a>、<a href="https://www.ibiblio.org/sripedia/ebooks/mb/m03/m03109.htm" target="_blank" rel="noopener">第 109 节</a></li><li><a href="https://www.ibiblio.org/sripedia/ebooks/mb/m01/m01019.htm" target="_blank" rel="noopener">《摩诃婆罗多·初篇》第 18 节</a></li><li><a href="https://www.ibiblio.org/sripedia/ebooks/mb/m10/m10007.htm" target="_blank" rel="noopener">《摩诃婆罗多·夜袭篇》第 7 节</a>、<a href="https://www.ibiblio.org/sripedia/ebooks/mb/m10/m10017.htm" target="_blank" rel="noopener">第 17 节</a>、<a href="https://www.ibiblio.org/sripedia/ebooks/mb/m10/m10018.htm" target="_blank" rel="noopener">第 18 节</a></li><li><a href="https://www.ibiblio.org/sripedia/ebooks/mb/m12/m12c039.htm" target="_blank" rel="noopener">《摩诃婆罗多·和平篇》第 340 节</a>、<a href="https://www.ibiblio.org/sripedia/ebooks/mb/m12/m12c042.htm" target="_blank" rel="noopener">第 343 节</a></li><li><a href="https://www.ibiblio.org/sripedia/ebooks/mb/m06/m06006.htm" target="_blank" rel="noopener">《摩诃婆罗多·毗湿摩篇》第 6 节</a>、<a href="https://www.ibiblio.org/sripedia/ebooks/mb/m06/m06012.htm" target="_blank" rel="noopener">第 12 节</a></li><li><a href="https://vedabase.io/en/library/sb/8/7/" target="_blank" rel="noopener">《薄伽梵往世书》第八篇第 7 章</a></li><li><a href="https://vedabase.net/sb/10/63/index.htm" target="_blank" rel="noopener">《薄伽梵往世书》第十篇第 63 章</a>、<a href="https://vedabase.net/sb/10/88/index.htm" target="_blank" rel="noopener">第 88 章</a></li><li><a href="https://vedabase.io/en/library/sb/5/21/1/" target="_blank" rel="noopener">《薄伽梵往世书》5.21.1</a></li><li><a href="https://www.wisdomlib.org/hinduism/book/shiva-purana-english/d/doc225552.html" target="_blank" rel="noopener">《湿婆往世书·毗底耶湿伐罗本集》第 7 章（J. L. Shastri 英译）</a></li><li><a href="https://www.wisdomlib.org/hinduism/book/shiva-purana-english/d/doc226646.html" target="_blank" rel="noopener">《湿婆往世书·风神本集》上卷第 10 章</a>（<a href="https://vedapath.app/en/shiva-purana/vayu/purva-bhaga/10" target="_blank" rel="noopener">梵文对照</a>）</li><li><a href="https://www.wisdomlib.org/hinduism/book/shiva-purana-english/d/doc226182.html" target="_blank" rel="noopener">《湿婆往世书·楼陀罗本集·战争篇》第 41 章</a></li><li><a href="https://vedapath.app/en/shiva-purana/uma/19" target="_blank" rel="noopener">《湿婆往世书·乌玛本集》第 19 章（梵文与译文）</a></li><li><a href="https://www.wisdomlib.org/hinduism/book/the-linga-purana/d/doc1195230.html" target="_blank" rel="noopener">《林伽往世书》第 17 章（J. L. Shastri 英译）</a></li><li><a href="https://en.wikipedia.org/wiki/Yojana" target="_blank" rel="noopener">由旬的各种估计（Wikipedia：Yojana）</a></li><li><a href="https://www.britannica.com/place/Himalayas" target="_blank" rel="noopener">喜马拉雅山脉的面积与长宽（Britannica：Himalayas）</a></li></ul>
+              </div>
+            </article>
+
+            <aside class="reader-rail" role="group" aria-label="阅读显示设置">
+              <span class="reader-rail-label mono" aria-hidden="true">字号</span>
+              <div class="reader-rail-btns">
+                <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+                <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+                <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
+              </div>
+              <span class="reader-rail-readout mono" id="doc-font-readout">15.5px</span>
+            </aside>
+          </div>
+
+
+          <div class="pager-grid">
+            <a class="pager-card" href="nvwa.html">
+                  <span class="pager-dir">← 上一位角色（更低量级）</span>
+                  <span class="pager-title">女娲</span>
+                  <span class="pager-sub mono">⊙ 系▽ · 首字母 N</span>
+                </a>
+            <a class="pager-card next" href="wuxianbaoshi.html">
+                  <span class="pager-dir">下一位角色（更高量级） →</span>
+                  <span class="pager-title">无限宝石</span>
+                  <span class="pager-sub mono">⊙ 宇○ · 首字母 W</span>
+                </a>
+          </div>
+        </div>
+
+  </main>
+
+  <div class="floating-dock" aria-label="快捷工具">
+    <button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录" aria-label="展开章节目录"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg></button>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
+      <div class="search-modal-head">
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第六版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="../search.html">进入独立搜索页 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 第六版基准</span>
+      </div>
+      <div class="footer-links">
+        <a href="../tiers.html">量级天梯</a>
+        <a href="../characters.html">角色档案</a>
+        <a href="../rules.html">衡天体系全文</a>
+        <a href="../materials.html">材质能量库</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>window.__PW_INDEX_SRC__ = "../static/js/search-index.js";</script>
+  <script src="../static/js/theme.js"></script>
+  <script src="../static/js/app.js"></script>
+  <script src="../static/js/pwa.js"></script>
+
+  <script src="../static/js/chrome.js"></script>
+  <script src="../static/js/editions.js"></script>
+</body>
+</html>
