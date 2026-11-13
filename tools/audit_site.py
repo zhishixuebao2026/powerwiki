@@ -14,9 +14,10 @@
      状态栏 meta、皮肤切换器、沉浸式避让、clearbar.css、文件完整闭合
   2. 切换器链路：148+ 卡片链接与缩略图目标是否存在（防 404 / 破图）
   3. 登记表：editions.json ↔ 产物目录 ↔ section 路径 ↔ source 一致性
-  4. 状态栏明暗：--render 时逐套量取状态栏正下方 (195,22) 真实底色亮度，
+  4. 双主题皮肤清单：列出跟随系统深色模式的皮肤（记录已知边界，不判失败）
+  5. 首页 Hero 亮色版：双图资源 + 亮色主题样式分支齐全（防深色块复发）
+  6. 状态栏明暗：--render 时逐套量取状态栏正下方 (195,22) 真实底色亮度，
      与 SKIN_STATUS_BAR_MODE 比对（能抓出整页中位数采样抓不到的漏判）
-  5. 双主题皮肤清单：列出跟随系统深色模式的皮肤（记录已知边界，不判失败）
 
 退出码：有问题 1，全通过 0。可直接接进 CI / 发布前钩子。
 """
@@ -254,6 +255,41 @@ def render_statusbar(base_url):
     return {"checked": checked, "mismatches": mismatches, "skipped": skipped}, mismatches
 
 
+def check_hero_light():
+    """首页 Hero 亮色版回归：双图资源 + 亮色主题样式分支必须同时存在。
+
+    防止日后重构 CSS 时把 hero 又写死成深色（亮色页面里冒出深色块），
+    也防止只改图片或只改样式导致明暗两版不同步。
+    """
+    issues = []
+    idx = ROOT / "index.html"
+    css = ROOT / "static/css/editorial.css"
+    dark = ROOT / "static/img/cosmic-atlas-hero.jpg"
+    light = ROOT / "static/img/cosmic-atlas-hero-light.jpg"
+
+    if not idx.exists():
+        return ["首页 index.html 缺失"], 0
+    html = idx.read_text(encoding="utf-8")
+    for cls in ("hero-art-dark", "hero-art-light"):
+        if cls not in html:
+            issues.append("首页 Hero 缺少 %s 底图层" % cls)
+    for f in (dark, light):
+        if not f.exists():
+            issues.append("Hero 底图缺失：%s" % f.name)
+    if not css.exists():
+        issues.append("editorial.css 缺失")
+    else:
+        c = css.read_text(encoding="utf-8")
+        for sel in ('html[data-theme="light"] .hero-banner',
+                    'html[data-theme="light"] .hero-backdrop::after',
+                    'html[data-theme="light"] .hero-heading'):
+            if sel not in c:
+                issues.append("editorial.css 缺少亮色 Hero 规则：%s" % sel)
+        if not re.search(r'html\[data-theme="light"\][^{]*\.hero-art-light\s*\{', c):
+            issues.append("editorial.css 缺少亮色 Hero 图层规则（light → hero-art-light）")
+    return issues, light.stat().st_size if light.exists() else 0
+
+
 def main():
     ap = argparse.ArgumentParser(description="PowerWiki 全站体检")
     ap.add_argument("--build", action="store_true", help="先运行 build_site.py 再体检")
@@ -294,8 +330,13 @@ def main():
     print(f"=== 4) 双主题皮肤（跟随系统深色模式，已知边界）: {len(themes)} 套 ===")
     print("  " + ", ".join(themes[:8]) + (" …" if len(themes) > 8 else ""))
 
+    print("=== 5) 首页 Hero 亮色版（明暗双版同源）===")
+    hero_issues, hero_size = check_hero_light()
+    print(f"  双图资源与亮色样式分支{'齐全' if not hero_issues else '缺失'}；亮色底图 {hero_size} B")
+    all_issues += hero_issues
+
     if args.render:
-        print("=== 5) 状态栏明暗渲染复判 ===")
+        print("=== 6) 状态栏明暗渲染复判 ===")
         result, mism = render_statusbar(args.url.rstrip("/"))
         if result is None:
             print("  " + mism[0])
