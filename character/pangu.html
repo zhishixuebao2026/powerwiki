@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="char-pangu" data-boot-bg-light="#f1f2ed" data-boot-bg-dark="#080d11">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" id="theme-color-meta" content="#f1f2ed">
+  <meta name="color-scheme" content="light dark">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../static/img/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="衡天 Wiki">
+  <meta name="application-name" content="衡天 Wiki">
+  <title>盘古 · 角色战力档案 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第六版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <!-- 首帧底色：这段内联 CSS 在 <head> 里、所有外链样式表之前生效，浏览器在字体与
+       样式表全部到达前就用它画整个画布，杜绝冷启动白屏。颜色由生成器按页面写入，
+       必须等于该页 CSS 最终生效的 --bg-canvas；用 :where() 让优先级为 0，
+       外部 CSS 到达后即可无缝接管，不会干扰任何最终样式。切主题只改 data-theme，
+       属性选择器自动换色，JS 不再写 inline 底色。 -->
+  <style>
+    :where(html), :where(html) > :where(body) { background-color: #f1f2ed; }
+    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #080d11; }
+  </style>
+  <script>
+    (function() {
+      var root = document.documentElement;
+      var t = null;
+      try { t = localStorage.getItem('pw_theme_v2'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        try {
+          var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          t = dark ? 'dark' : 'light';
+          localStorage.setItem('pw_theme_v2', t);
+        } catch (e) { t = 'light'; }
+      }
+      root.setAttribute('data-theme', t);
+      root.classList.add('js');
+      /* 首帧底色已由 <head> 内联 <style> 按 data-theme 画好，这里只同步状态栏颜色。
+         不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
+         data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
+      var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
+        || (t === 'dark' ? '#080d11' : '#f1f2ed');
+      var mc = document.getElementById('theme-color-meta');
+      if (mc) mc.setAttribute('content', canvas);
+    })();
+  </script>
+  <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" as="image" href="../static/img/character-chronicle.jpg">
+  <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
+       子集各约 99 KB，原本与站点 CSS 一起阻塞首次绘制，是冷启动白屏主因。
+       font-display:swap 已保证文字始终先用系统字体可见、字体到位后平滑替换，
+       不会出现无样式内容闪现；noscript 环境仍按普通样式表加载。 -->
+  <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="../static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css">
+    <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css">
+  </noscript>
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="../static/css/editorial.css">
+  <link rel="stylesheet" href="../static/css/experience.css">
+  <link rel="stylesheet" href="../static/css/editions.css">
+  <link rel="stylesheet" href="../static/css/polish.css">
+  <link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body class="site-characters character-site character-pangu">
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
+        <a class="brand-link" href="../index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+        </a>
+      </div>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link" href="../index.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></span><span>首页</span></a>
+        <a class="nav-link nav-cat" href="../tiers.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg></span><span>量级</span></a>
+        <a class="nav-link nav-cat active" href="../characters.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg></span><span>角色</span></a>
+        <a class="nav-link nav-doc" href="../rules.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg></span><span>规则</span></a>
+        <a class="nav-link nav-doc" href="../materials.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg></span><span>材质</span></a>
+      </nav>
+
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="search-btn-label">检索…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题" aria-pressed="false">
+          <span class="pw-theme-icon pw-icon-sun"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
+          <span class="pw-theme-icon pw-icon-moon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="../index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">查阅</div>
+        <a class="drawer-card-link" href="../tiers.html"><span class="drawer-card-title"><span>量级天梯</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档 · 从昆虫到论天</span></a>
+        <a class="drawer-card-link active" href="../characters.html"><span class="drawer-card-title"><span>角色档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">定级结论与完整证据原文</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">规则与资料</div>
+        <a class="drawer-doc-link" href="../rules.html"><span>衡天体系 · 第六版</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../materials.html"><span>材质与能量 · 第二版</span><span>→</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        <a class="drawer-doc-link" href="../index.html"><span>返回首页总览</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../search.html"><span>全站即时检索</span><span>→</span></a>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {
+        if (window.__PW_SYNC_LOCK__) { window.__PW_SYNC_LOCK__(); return; }
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }
+      function closeAll() {
+        if (window.__PW_CLOSE_ALL__) { window.__PW_CLOSE_ALL__(); return; }
+        drawer.classList.remove('open');
+        sync();
+      }
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      });
+      if (closeBtn) { closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }
+      if (backdrop) { backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {
+        links[j].addEventListener('click', function() { drawer.classList.remove('open'); sync(); });
+      }
+      window.addEventListener('pageshow', function() { drawer.classList.remove('open'); sync(); });
+    })();
+  </script>
+
+  <main>
+
+        <div class="container detail-stack character-detail character-pangu">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>盘古</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img fade-on-load" src="../static/img/character-chronicle.jpg" alt="">
+            </div>
+
+
+            <div class="dossier-body">
+              <div class="dossier-top">
+                <div class="dossier-title-block">
+                  <div class="char-monogram lg">盘</div>
+                  <div>
+                    <h1 class="page-title">盘古</h1>
+                    <div class="dossier-submeta"><span>形态：合集 · 文献 8 种、口传 13 则分别定级，不合并</span><span>·</span><span>别称：盘古氏 / 盘古真人 / 盘古王 / 浑沌氏</span><span>·</span><span>定级日期：2026-11-12</span></div>
+                  </div>
+                </div>
+
+                <div class="dossier-seal-col">
+                  <a class="tier-seal-link mono" href="../tier/planet-strong.html" title="查看所属主档规格页">
+                    <span>⊙ 星△</span>
+                    <span>强爆行星</span>
+                    <span>#46</span>
+                    <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                  </a>
+                  <div class="char-tags">
+                    <span class="tag-pill accent">行星至恒星阶</span>
+                    <span class="tag-pill">综合 ⊙星△（范围对照）· 需时</span><span class="tag-pill">保底 开辟整个天地〔实〕，不落档</span><span class="tag-pill">最高一版 创造有限多重天地〔下〕（掌控式）</span><span class="tag-pill">《众喜宝卷》暂定 ⊙弱化弱恒星系（未核原书）</span>
+                  </div>
+                </div>
+              </div>
+
+              <p class="page-desc">综合量级取一个代表版本，不是各版本的合并。选《开辟演义》，因为主动开辟的版本里只有它写了天地的尺寸；争议最大的一步是拿范围去对照档位，保底已经把这一步去掉。</p>
+
+              <div class="full-writing-box">
+                <div class="box-kicker">正式完整书写摘要</div>
+                <div>盘古（中国神话·合集）的综合量级为 ⊙星△（范围对照）· 需时——强爆行星级的尺度段（两倍地球到木星下限，4.48×10³²～2.06×10³⁶ J），本条目只借用它的尺度段：取自《开辟演义》，盘古伸身把天顶高、把地压低，再用斧凿把还连着的地方劈开，「久而天地乃分」<span class="ev-badge ev-confirmed">〔实〕</span>；回末引《广雅》给出天地的尺寸，亿按十万读，天去地约 9.0 万～12.5 万公里、南北约 9.7 万～13.4 万公里，是地球直径的 7～10 倍，接近木星直径，按范围对照到星△。档位只表示被分开的对象有多大；被劈开的是混沌或「气」，材质不明，分开之后清者上升、浊者下沉是它们自己的趋势，没有依据的数值不凭空设定，能量记<span class="ev-badge ev-missing">〔缺〕</span>；「久而」乃分，记需时。选《开辟演义》作代表版本，是因为主动开辟的版本里只有它写了天地的尺寸。保底量级为开辟整个天地<span class="ev-badge ev-confirmed">〔实〕</span>、不落档，去掉的是「按范围对照到行星尺度」这一步；只取最早的四种文献时为未定级。本条目是合集，各版本分别定级、不合并：最高的一版是《天尊老君名号历劫经略》里受经之后造出「五亿五千五百五十亿万重天地」的盘古真人（创造<span class="ev-badge ev-lower">〔下〕</span>、掌控式，借所受经书之力，重数有限、每重尺寸未写，不折算能量）；《众喜宝卷》按九重天里数暂定 ⊙弱化弱恒星系（约 3.4×10⁴⁷～5.8×10⁴⁷ J），但只见到转录、原书未核，暂不作代表。</div>
+                <div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>存在规模：身长约 1.5 万公里，与天同高（《三五历纪》）<span class="ev-badge ev-confirmed">〔实〕</span>；遗体化为天地间的日月山川（《五运历年纪》《述异记》）<span class="ev-badge ev-confirmed">〔实〕</span>；居所玉京山周回九万里（《元始上真众仙记》）<span class="ev-badge ev-confirmed">〔实〕</span>。各项分属不同版本，不相加。</span></div>
+                <div class="box-subnote">证据链核验摘要：综合量级取的是一个代表版本，不是各版本的合并。选《开辟演义》，是因为主动开辟的版本里只有它写了天地的尺寸。争议最大的一步是拿范围去对照档位，保底已经去掉。天地里数中的「亿」按十万读（依据《周髀算经》古注、《五经算术》及同一批文献里数的量级）；若按万万读，《开辟演义》所引的南北里数约合 0.56～0.77 个天文单位，范围要改记为水星公转轨道一带。《开辟演义》成书于明末，当时的读者也可能按万万理解，这一点无法确认。《众喜宝卷》只见到转录、原书未核，暂不作代表。</div>
+              </div>
+            </div>
+
+          </section>
+
+          <div class="char-identity-fx" aria-hidden="true"></div>
+
+        <section class="char-info-panel" aria-label="量级信息图">
+          <div class="char-info-kicker">量级刻度 / TIER SCALE</div>
+          <div class="char-info-head">
+            <span class="char-info-main">⊙ 星△<span class="char-info-code">〔主档〕</span></span>
+            <span class="char-info-note">综合 ⊙星△（范围对照）· 需时 · 保底 开辟整个天地〔实〕，不落档 · 最高一版 创造有限多重天地〔下〕（掌控式） · 《众喜宝卷》暂定 ⊙弱化弱恒星系（未核原书）</span>
+          </div>
+          <div class="char-scale">
+            <div class="char-scale-track">
+              <span class="char-scale-fill" style="--pos:47%"></span>
+              <i class="char-scale-mark" style="--pos:47%"></i>
+            </div>
+            <div class="char-scale-labels"><span style="left:28%">城</span><span style="left:33%">国</span><span style="left:53%">恒</span><span style="left:80%">宇</span></div>
+          </div>
+          <div class="char-dims"><div class="char-dim "><b>破</b><span>〔实〕</span></div><div class="char-dim "><b>控</b><span>〔下〕</span></div><div class="char-dim is-missing"><b>域</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>御</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>速</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>算</b><span>〔缺〕</span></div><div class="char-dim "><b>性</b><span>一日九变；垂死化</span></div></div>
+
+        </section>
+
+          <div class="doc-layout">
+            <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
+              <div class="toc-head">
+                <div class="toc-head-row">
+                  <span>档案章节目录</span>
+                  <span class="mono toc-count">34 节</span>
+                  <button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭章节目录">
+                    <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
+                </div>
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
+              </div>
+              <nav class="toc-list" id="toc-nav">
+                <a class="toc-item toc-lvl-2" href="#sec-对象信息">对象信息</a><a class="toc-item toc-lvl-2" href="#sec-量级栏">量级栏</a><a class="toc-item toc-lvl-2" href="#sec-合集总览">合集总览</a><a class="toc-item toc-lvl-2" href="#sec-量级栏用语说明">量级栏用语说明</a><a class="toc-item toc-lvl-2" href="#sec-概述">概述</a><a class="toc-item toc-lvl-2" href="#sec-一-定级方法">一、定级方法</a><a class="toc-item toc-lvl-3" href="#sec-版本边界">版本边界</a><a class="toc-item toc-lvl-3" href="#sec-引文">引文</a><a class="toc-item toc-lvl-3" href="#sec-开辟怎么记">开辟怎么记</a><a class="toc-item toc-lvl-3" href="#sec-古代的天地不按现代宇宙算">古代的天地不按现代宇宙算</a><a class="toc-item toc-lvl-3" href="#sec-尺-里-亿的换算">尺、里、亿的换算</a><a class="toc-item toc-lvl-2" href="#sec-二-古籍三种">二、古籍三种</a><a class="toc-item toc-lvl-3" href="#sec-一-三五历纪">（一）《三五历纪》</a><a class="toc-item toc-lvl-3" href="#sec-二-五运历年纪">（二）《五运历年纪》</a><a class="toc-item toc-lvl-3" href="#sec-三-述异记">（三）《述异记》</a><a class="toc-item toc-lvl-2" href="#sec-三-道经两种">三、道经两种</a><a class="toc-item toc-lvl-3" href="#sec-一-元始上真众仙记">（一）《元始上真众仙记》</a><a class="toc-item toc-lvl-3" href="#sec-二-天尊老君名号历劫经略">（二）《天尊老君名号历劫经略》</a><a class="toc-item toc-lvl-3" href="#sec-咒语里的提及">咒语里的提及</a><a class="toc-item toc-lvl-2" href="#sec-四-明清小说与宝卷">四、明清小说与宝卷</a><a class="toc-item toc-lvl-3" href="#sec-一-开辟演义">（一）《开辟演义》</a><a class="toc-item toc-lvl-3" href="#sec-二-盘古至唐虞传">（二）《盘古至唐虞传》</a><a class="toc-item toc-lvl-3" href="#sec-三-纲鉴通俗演义">（三）《纲鉴通俗演义》</a><a class="toc-item toc-lvl-3" href="#sec-四-众喜宝卷-暂定-未核原书">（四）《众喜宝卷》（暂定，未核原书）</a><a class="toc-item toc-lvl-2" href="#sec-五-各地口传">五、各地口传</a><a class="toc-item toc-lvl-2" href="#sec-六-合集结论">六、合集结论</a><a class="toc-item toc-lvl-3" href="#sec-排序">排序</a><a class="toc-item toc-lvl-3" href="#sec-版本之间的对照">版本之间的对照</a><a class="toc-item toc-lvl-3" href="#sec-不另算版本的转录">不另算版本的转录</a><a class="toc-item toc-lvl-3" href="#sec-其他文献里的提及">其他文献里的提及</a><a class="toc-item toc-lvl-3" href="#sec-为什么不更高">为什么不更高</a><a class="toc-item toc-lvl-3" href="#sec-对战判定">对战判定</a><a class="toc-item toc-lvl-2" href="#sec-存疑">存疑</a><a class="toc-item toc-lvl-2" href="#sec-参考资料">参考资料</a>
+              </nav>
+              <div class="toc-foot">
+                <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+                <a class="toc-foot-btn" href="../search.html">全站检索</a>
+              </div>
+            </aside>
+
+            <article class="doc-panel">
+              <div class="doc-toolbar">
+                <div class="doc-source-info">
+                  <span>定级档案全文</span>
+                  <span>·</span>
+                  <span>依据《衡天⊙ 多维战力量级体系（第六版）》</span>
+                </div>
+              </div>
+
+              <div class="markdown-body">
+                <blockquote><p>条目版本：2026-11-12</p>
+<p>本条目是合集。「盘古」在不同文献里是不同的版本：有的只是随天地一起长高，有的拿斧凿把天地分开，有的受了经书去造出许多重天地。各版本分别定级，不合并。量级栏的综合量级取一个代表版本并注明出处；合集总览列出全部版本的结论、最高的一版和区间。</p></blockquote>
+<h2 id="sec-对象信息">对象信息<a class="heading-anchor" href="#sec-对象信息" data-target-id="sec-对象信息" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">名称</td><td style="text-align:left">盘古；各书又作盘古氏、盘古真人、盘古王、浑沌氏</td></tr><tr><td style="text-align:left">性质</td><td style="text-align:left">中国神话中天地开辟之初的人物。本条目收文献 8 种、口传 13 则</td></tr><tr><td style="text-align:left">最早记载</td><td style="text-align:left">三国吴徐整《三五历纪》《五运历年纪》</td></tr><tr><td style="text-align:left">形象</td><td style="text-align:left">各版本不同：《开辟演义》写"身长三丈六尺，头角狰狞"；《纲鉴通俗演义》写"龙首人身，身长百尺"；口传里有狮头人身的巨人</td></tr><tr><td style="text-align:left">结局</td><td style="text-align:left">多数版本里死后或隐去时身体化为日月山川；《开辟演义》里被接回西方；《历劫经略》里后一位盘古白日升仙</td></tr></tbody></table></div>
+<h2 id="sec-量级栏">量级栏<a class="heading-anchor" href="#sec-量级栏" data-target-id="sec-量级栏" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>⊙星△（范围对照）· 需时</strong>——强爆行星级的尺度段（两倍地球到木星下限）。取自《开辟演义》：伸身顶天、斧凿劈开相连处，"久而天地乃分"<span class="ev-badge ev-confirmed">〔实〕</span>；被分开的天地南北约 9.7 万～13.4 万公里，是地球直径的 7～10 倍，略小于木星直径。档位只表示被分开的对象有多大；劈开所需的能量没有依据，记<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left"><strong>开辟整个天地<span class="ev-badge ev-confirmed">〔实〕</span>，不落档</strong>——去掉的是「按范围对照到行星尺度」这一步。只取最早的四种文献时为未定级</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">存在规模：身长约 1.5 万公里，与天同高（《三五历纪》）<span class="ev-badge ev-confirmed">〔实〕</span>；遗体化为天地间的日月山川（《五运历年纪》《述异记》）<span class="ev-badge ev-confirmed">〔实〕</span>；居所玉京山周回九万里（《元始上真众仙记》）<span class="ev-badge ev-confirmed">〔实〕</span>。各项分属不同版本，不相加</td></tr><tr><td style="text-align:left">可信度</td><td style="text-align:left">综合量级取的是一个代表版本，不是各版本的合并。选《开辟演义》，是因为主动开辟的版本里只有它写了天地的尺寸。争议最大的一步是拿范围去对照档位，保底已经去掉。天地里数中的「亿」按十万读，见存疑 1</td></tr><tr><td style="text-align:left">破（破坏力）</td><td style="text-align:left">劈分整个天地<span class="ev-badge ev-confirmed">〔实〕</span>，能量<span class="ev-badge ev-missing">〔缺〕</span>（《开辟演义》）；凿断一处山顶连接后天地自行两分，触发式（《纲鉴通俗演义》）；凿开山岩放出日月（《盘古至唐虞传》）</td></tr><tr><td style="text-align:left">控（整体掌控）</td><td style="text-align:left">创造多重天地<span class="ev-badge ev-lower">〔下〕</span>，数量有限，借所受经书之力，不折算能量（《历劫经略》）</td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">一日九变；垂死化身；天地未分时已存在。各见所属版本</td></tr><tr><td style="text-align:left">作品内位次</td><td style="text-align:left">《元始上真众仙记》里是最高的神；其余有别的神出场的版本里，都是受命或受经的一方</td></tr></tbody></table></div>
+<p>防御、速度、影响范围、计算层级没有可用的表现，未列出。</p>
+<h2 id="sec-合集总览">合集总览<a class="heading-anchor" href="#sec-合集总览" data-target-id="sec-合集总览" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">版本</th><th style="text-align:left">年代</th><th style="text-align:left">盘古做了什么</th><th style="text-align:left">综合量级</th></tr></thead><tbody><tr><td style="text-align:left">《三五历纪》</td><td style="text-align:left">三国吴（唐代类书引）</td><td style="text-align:left">生在混沌中，天地自行开辟，他每天长高一丈，长了一万八千年</td><td style="text-align:left">未定级；身长约 1.5 万公里</td></tr><tr><td style="text-align:left">《五运历年纪》</td><td style="text-align:left">三国吴（清代史书引）</td><td style="text-align:left">天地分开后出生，临死时身体化为日月山川</td><td style="text-align:left">未定级</td></tr><tr><td style="text-align:left">《述异记》</td><td style="text-align:left">旧题南朝梁</td><td style="text-align:left">死后身体化为山岳、日月、江海；并列记了四种传闻</td><td style="text-align:left">未定级</td></tr><tr><td style="text-align:left">《元始上真众仙记》</td><td style="text-align:left">旧题东晋</td><td style="text-align:left">天地未分时已存在，自号元始天王，天地是自己分开的</td><td style="text-align:left">未定级</td></tr><tr><td style="text-align:left">《天尊老君名号历劫经略》</td><td style="text-align:left">北宋《云笈七签》收</td><td style="text-align:left">受经之后"成天立地，化造万物"，造出"五亿五千五百五十亿万重天地"</td><td style="text-align:left">创造（掌控式）<span class="ev-badge ev-lower">〔下〕</span>；数量有限，每重尺寸未写，不折算能量</td></tr><tr><td style="text-align:left">《开辟演义》</td><td style="text-align:left">明末</td><td style="text-align:left">伸身把天顶高，再用斧凿把相连处劈开，"久而天地乃分"</td><td style="text-align:left">⊙星△（范围对照）· 需时；范围约 9～13 万公里；能量<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">《盘古至唐虞传》</td><td style="text-align:left">明末</td><td style="text-align:left">天地自己在分，他在黏住的地方凿了一下；又凿开山岩放出日月</td><td style="text-align:left">开辟（触发式）<span class="ev-badge ev-confirmed">〔实〕</span>；范围未写，不落档</td></tr><tr><td style="text-align:left">《众喜宝卷》（暂定，未核原书）</td><td style="text-align:left">清</td><td style="text-align:left">毗多崩沙那佛的光射入东土石中，化为盘古，「凿开混沌，分为世界」；同书记九重天，最外一重宗动天离地六亿四千七百余万里</td><td style="text-align:left">暂定 ⊙弱化弱恒星系（范围对照）· 约 3.4×10⁴⁷～5.8×10⁴⁷ J；能量<span class="ev-badge ev-missing">〔缺〕</span>；只见到转录</td></tr><tr><td style="text-align:left">《纲鉴通俗演义》</td><td style="text-align:left">清雍正</td><td style="text-align:left">天地自己在分，他凿断昆仑山顶与月轮天的连接，"用功多时"</td><td style="text-align:left">⊙星△（范围对照）· 触发式 · 需时；范围约 5～10 万公里；能量<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">各地口传 13 则</td><td style="text-align:left">近现代采录</td><td style="text-align:left">撑开、扯开、打爆、斧劈，各不相同</td><td style="text-align:left">多数为开辟、范围未写；一则写明开出的天「没几丈高」</td></tr></tbody></table></div>
+<ul><li><strong>最高的一版</strong>：《天尊老君名号历劫经略》里的盘古真人。按整体作为的范围，它最大：造出的天地以「重」计，数目很大但有限。这一版的力量来自所受的经书，盘古是操作者。</li><li><strong>有尺寸可以对照的最高一版</strong>：数字上是《众喜宝卷》，世界直径约 4～5 个天文单位。但这部宝卷只见到网上的转录，有明显的错字，原书没有核对，暂不作代表。已核对原文的最高一版是《开辟演义》：被分开的天地南北约 9～13 万公里，接近木星直径，量级栏的综合量级取这一版。原书核对之后，若文字无误，综合量级改取《众喜宝卷》。</li><li><strong>最低的一组</strong>：最早的三种古籍和《元始上真众仙记》。盘古在其中没有任何主动的破坏或掌控，综合量级写未定级。</li><li><strong>区间</strong>：未定级 — 星△（范围对照，能量<span class="ev-badge ev-missing">〔缺〕</span>）— 有限多重天地的创造（不折算能量）；暂定的《众喜宝卷》为弱化弱恒星系（范围对照）。</li></ul>
+<h2 id="sec-量级栏用语说明">量级栏用语说明<a class="heading-anchor" href="#sec-量级栏用语说明" data-target-id="sec-量级栏用语说明" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">代字或标签</th><th style="text-align:left">全称与含义</th></tr></thead><tbody><tr><td style="text-align:left">⊙</td><td style="text-align:left">综合量级标记</td></tr><tr><td style="text-align:left">未定级</td><td style="text-align:left">破坏、整体掌控两维都没有过关的证据，不是高于一切档位的位置</td></tr><tr><td style="text-align:left">开辟</td><td style="text-align:left">本条目用语：把连成一体的天地分开。记为对整体的一次劈分，属破坏维度，不是整体掌控</td></tr><tr><td style="text-align:left">范围</td><td style="text-align:left">一次作用涉及的对象有多大，与能量分开标注；本条目的开辟只有范围，没有能量依据</td></tr><tr><td style="text-align:left">星△</td><td style="text-align:left">强爆行星级：打爆两倍地球质量的行星，上至木星下限（4.48×10³²～2.06×10³⁶ J）。本条目只借用它的尺度段</td></tr><tr><td style="text-align:left">范围对照</td><td style="text-align:left">档位按被作用对象的尺寸对照得出，没有能量依据。本条目的对象是几万到十几万公里的天地，介于地球直径（1.27 万公里）与木星直径（14.0 万公里）之间，对到星△</td></tr><tr><td style="text-align:left">掌控式</td><td style="text-align:left">主档来自整体掌控或创造</td></tr><tr><td style="text-align:left">触发式</td><td style="text-align:left">作用者只提供触发，变化的动力来自对象自身</td></tr><tr><td style="text-align:left">需时</td><td style="text-align:left">规模要靠较长时间逐步达到，记为弱化</td></tr><tr><td style="text-align:left">位格</td><td style="text-align:left">存在规模、计算层级、层级轴中证据过关的记录，与综合量级并列，互不推出</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span></td><td style="text-align:left">已确认：文本直接叙述了该表现</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-lower">〔下〕</span></td><td style="text-align:left">下限：只能确认至少如此</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span></td><td style="text-align:left">缺：文本没有可用的数据</td></tr></tbody></table></div>
+<h2 id="sec-概述">概述<a class="heading-anchor" href="#sec-概述" data-target-id="sec-概述" title="复制本节锚点链接">#</a></h2>
+<p>盘古是中国神话里开天辟地的人物，但各种文献对他的写法差别很大，按年代看有一条清楚的变化线：</p>
+<ul><li><strong>现存文献里，盘古最早见于三国。</strong> 先秦两汉的传世文献没有他的名字；东汉王充《论衡·谢短篇》还说"天地始开、帝王初立者，主名为谁，儒生又不知也"。口头流传可能更早，但没有留下可以定级的文字。</li><li><strong>三国到南朝的记载里，盘古不开天。</strong> 天地是自己开辟的，盘古在其中随之长高，死后身体化为万物。</li><li><strong>道教经典里，盘古是神系中的一员。</strong> 一种说他是天地未分时就有的元始天王，一种说他受了上位神授的经书才造出天地。</li><li><strong>斧子出自明代以后的小说和口传。</strong> 小说里他用斧凿把天地分开，而且多半是天地本来就在分、他只处理黏连的地方。</li><li><strong>口传各则差别最大。</strong> 有伸懒腰撑开的，有夫妻两人扯开的，有一拳把气球打爆的，也有开出的天只有几丈高的。</li></ul>
+<p>这些版本落在三类结果里：没有主动作为的记未定级；把天地分开的记开辟，按被分开的天地有多大对照范围；造出天地的记创造。</p>
+<h2 id="sec-一-定级方法">一、定级方法<a class="heading-anchor" href="#sec-一-定级方法" data-target-id="sec-一-定级方法" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-版本边界">版本边界<a class="heading-anchor" href="#sec-版本边界" data-target-id="sec-版本边界" title="复制本节锚点链接">#</a></h3>
+<ul><li>一部文献算一个版本。同一作者的两部书，叙述互相对不上的，也分开：徐整的《三五历纪》写盘古生在未分的混沌里，《五运历年纪》写天地先分、盘古后生，两者分别定级。</li><li>后世类书、道书整段转录前代文字而没有增加内容的，不另算版本，见第六节「不另算版本的转录」。</li><li>小说按作品各算一个版本。口传故事一则算一个版本。</li><li>每个版本只用它自己写明的世界和其他角色，不拿甲版本的天地尺寸去配乙版本的作为。</li></ul>
+<h3 id="sec-引文">引文<a class="heading-anchor" href="#sec-引文" data-target-id="sec-引文" title="复制本节锚点链接">#</a></h3>
+<p>古籍引文据原文转为简体，标点为整理所加。口传各则没有见到原书，只作转述，不加引号。</p>
+<h3 id="sec-开辟怎么记">开辟怎么记<a class="heading-anchor" href="#sec-开辟怎么记" data-target-id="sec-开辟怎么记" title="复制本节锚点链接">#</a></h3>
+<p>把天地分开，有三点要分清：</p>
+<ol><li><strong>它是劈分，不是整体掌控。</strong> 整体掌控要求同时支配范围内的全部物质与范围本身。各版本里盘古分开天地之后，日月风雨多是自己生成的，他没有接管天地。</li><li><strong>能量没有依据。</strong> 被劈开的东西是混沌或「气」，材质不明；分开之后"清者上为天，浊者下为地"，上升和下沉是它们自己的趋势。没有依据的数值不凭空设定，能量记<span class="ev-badge ev-missing">〔缺〕</span>。</li><li><strong>只能对照范围。</strong> 能量与范围分开标注，本条目对开辟只写范围：被分开的天地有多大，写明尺寸的换算成公里，与现实天体的尺度对照；没写尺寸的记「范围未写」，不落档。对照的办法：小于木星直径的按行星各档的尺度段；木星直径到太阳直径之间只写到星☆并标<span class="ev-badge ev-lower">〔下〕</span>；超过一颗恒星的直径，按覆盖直径对照恒星级以上各档，并写出对应的焦耳数。</li></ol>
+<p>多数版本的开辟还带两个修饰：花了很长时间的记「需时」；天地本来就在分、盘古只除掉最后一处黏连的记「触发式」。</p>
+<h3 id="sec-古代的天地不按现代宇宙算">古代的天地不按现代宇宙算<a class="heading-anchor" href="#sec-古代的天地不按现代宇宙算" data-target-id="sec-古代的天地不按现代宇宙算" title="复制本节锚点链接">#</a></h3>
+<p>这些文献里的天地是盖天说、浑天说一类的结构：天有高度，地有边，日月是天上的小物件。能量轴是按现代宇宙观的世界设计的，「宇宙尺寸未写按标准宇宙」的默认值也只针对现代意义的完整宇宙，这里都不套用。天地的大小以文献自己写的里数为准。</p>
+<h3 id="sec-尺-里-亿的换算">尺、里、亿的换算<a class="heading-anchor" href="#sec-尺-里-亿的换算" data-target-id="sec-尺-里-亿的换算" title="复制本节锚点链接">#</a></h3>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">取值</th><th style="text-align:left">说明</th></tr></thead><tbody><tr><td style="text-align:left">汉尺</td><td style="text-align:left">约 23.1 厘米</td><td style="text-align:left">魏晋尺略长，通常取 24.2 厘米</td></tr><tr><td style="text-align:left">明清营造尺</td><td style="text-align:left">约 32 厘米</td><td style="text-align:left"></td></tr><tr><td style="text-align:left">里</td><td style="text-align:left">1800 尺</td><td style="text-align:left">汉代三百步、每步六尺；清代三百六十步、每步五尺，都是 1800 尺。汉里约 0.416 公里，明清里约 0.576 公里</td></tr><tr><td style="text-align:left">清代的斤</td><td style="text-align:left">约 597 克</td><td style="text-align:left"></td></tr><tr><td style="text-align:left">亿</td><td style="text-align:left">十万或万万</td><td style="text-align:left">北周甄鸾《五经算术》记古代有两种数法："其下数者，十十变之。若言十万曰亿"，"中数者，万万变之。若言万万曰亿"。《周髀算经》古注在引过八极里数之后写明"夫言亿者，十万曰亿也"。本条目对这组天地里数按十万读，另一种读法的结果见存疑 1</td></tr></tbody></table></div>
+<h2 id="sec-二-古籍三种">二、古籍三种<a class="heading-anchor" href="#sec-二-古籍三种" data-target-id="sec-二-古籍三种" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-一-三五历纪">（一）《三五历纪》<a class="heading-anchor" href="#sec-一-三五历纪" data-target-id="sec-一-三五历纪" title="复制本节锚点链接">#</a></h3>
+<p>三国吴徐整撰，原书已佚，文字见唐代《艺文类聚》卷一所引：</p>
+<blockquote><p>"天地混沌如鸡子，盘古生其中。万八千岁，天地开辟，阳清为天，阴浊为地。盘古在其中，一日九变，神于天，圣于地。天日高一丈，地日厚一丈，盘古日长一丈。如此万八千岁，天数极高，地数极深，盘古极长。后乃有三皇。数起于一，立于三，成于五，盛于七，处于九，故天去地九万里。"</p></blockquote>
+<p><strong>盘古做了什么</strong>：没有主动的作为。原文是"天地开辟"，没有写谁去开；盘古"在其中"，每天随天地长高一丈。</p>
+<p><strong>身长</strong>：</p>
+<ul><li>日数：一万八千年，按每年 360 日为 6,480,000 日，按 365.25 日为 6,574,500 日。</li><li>身长：每日一丈，共约 648 万～657 万丈，折 36,000～36,525 里。</li><li>换算：一丈取 2.31～2.42 米，约 1.50 万～1.59 万公里，约为地球直径的 1.2 倍。</li></ul>
+<p><strong>天地的大小</strong>：按"天日高一丈"推，天高与盘古身长相同，约三万六千里；原文末句另给"天去地九万里"，约 3.7 万～3.9 万公里。两个数对不上。九万里是从"数起于一……处于九"推出来的象数，不是量出来的距离，两者都照录，不互相修正。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>未定级</strong>——破坏、整体掌控两维都没有表现</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left">—</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">存在规模：身长约 1.5 万公里，与天同高<span class="ev-badge ev-confirmed">〔实〕</span>。体量不折算成破坏</td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">"一日九变"；"神于天，圣于地"是关系性的说法，不携带规模</td></tr></tbody></table></div>
+<h3 id="sec-二-五运历年纪">（二）《五运历年纪》<a class="heading-anchor" href="#sec-二-五运历年纪" data-target-id="sec-二-五运历年纪" title="复制本节锚点链接">#</a></h3>
+<p>同为徐整撰，原书已佚，文字见清代马骕《绎史》卷一所引：</p>
+<blockquote><p>"元气蒙鸿，萌芽兹始，遂分天地，肇立乾坤，启阴感阳，分布元气，乃孕中和，是为人也。首生盘古，垂死化身：气成风云，声为雷霆，左眼为日，右眼为月，四肢五体为四极五岳，血液为江河，筋脉为地里，肌肉为田土，发髭为星辰，皮毛为草木，齿骨为金石，精髓为珠玉，汗流为雨泽，身之诸虫，因风所感，化为黎甿。"</p></blockquote>
+<p>北宋《云笈七签》卷五十六《元气论》有同一段文字，没有注明出处。</p>
+<p><strong>盘古做了什么</strong>：天地先分，盘古后生，是天地间孕育出的第一个人；临死时身体化为日月、星辰、山岳、江河、草木和人民。</p>
+<p><strong>化身怎么记</strong>：化身是临死时的转化，不是对一片范围的接管，不进整体掌控；它说明的是身体有多大、由什么变成，记入特性和存在规模。</p>
+<p><strong>身体的大小</strong>：没有写尺寸。"四肢五体为四极五岳"说明身体铺开至少盖住五岳所在的地方；按五岳的现实位置，恒山到衡山南北约 1,400 公里，泰山到华山东西约 670 公里。这是下限，四极在五岳之外，上限没有写。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>未定级</strong>——没有破坏或整体掌控的表现</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left">—</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">存在规模：遗体化为这一版本天地之间的日月、星辰、山川、草木，至少覆盖五岳所在的范围（南北约 1,400 公里），上限未写<span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">垂死化身：身体各部分分别化为天象、地貌、物产与人民</td></tr></tbody></table></div>
+<h3 id="sec-三-述异记">（三）《述异记》<a class="heading-anchor" href="#sec-三-述异记" data-target-id="sec-三-述异记" title="复制本节锚点链接">#</a></h3>
+<p>旧题南朝梁任昉撰，成书年代有争议。卷上：</p>
+<blockquote><p>"昔盘古氏之死也，头为四岳，目为日月，脂膏为江海，毛发为草木。秦汉间俗说：盘古氏头为东岳，腹为中岳，左臂为南岳，右臂为北岳，足为西岳。先儒说：盘古氏泣为江河，气为风，声为雷，目瞳为电。古说：盘古氏喜为晴，怒为阴。吴楚间说：盘古氏夫妻，阴阳之始也。今南海有盘古氏墓，亘三百余里，俗云后人追葬盘古之魂也。"</p></blockquote>
+<p><strong>这一版的特点</strong>：书里把几种说法并排记下，标明是"秦汉间俗说""先儒说""古说""吴楚间说"，没有裁定哪一种为准。这些是转述的传闻，照录，不合并成一个盘古。</p>
+<ul><li><strong>化身</strong>：与《五运历年纪》同类，记特性和存在规模。</li><li><strong>"喜为晴，怒为阴"</strong>：天气随他的情绪变化。这是「古说」，范围没有写，记入特性，不进影响范围的定量。</li><li><strong>墓"亘三百余里"</strong>：约 125～130 公里。原文说是"后人追葬盘古之魂"，葬的是魂，不能当作遗体的尺寸。</li></ul>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>未定级</strong></td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left">—</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">存在规模：遗体化为四岳、日月、江海、草木，尺寸未写<span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">化身；喜怒对应晴阴（传闻）</td></tr></tbody></table></div>
+<h2 id="sec-三-道经两种">三、道经两种<a class="heading-anchor" href="#sec-三-道经两种" data-target-id="sec-三-道经两种" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-一-元始上真众仙记">（一）《元始上真众仙记》<a class="heading-anchor" href="#sec-一-元始上真众仙记" data-target-id="sec-一-元始上真众仙记" title="复制本节锚点链接">#</a></h3>
+<p>旧题东晋葛洪撰，又名《枕中书》。书中的说法出自一位神人的口授，其中《真书》一段：</p>
+<blockquote><p>"已有盘古真人，天地之精，自号元始天王，游乎其中。"</p></blockquote>
+<blockquote><p>"复经四劫，二仪始分，相去三万六千里"</p></blockquote>
+<blockquote><p>"元始天王在天中心之上，名曰玉京山"</p></blockquote>
+<p>《真记》一段写玉京山：</p>
+<blockquote><p>"玄都玉京七宝山，周回九万里，在大罗之上"</p></blockquote>
+<blockquote><p>"上宫是盘古真人元始天王、太元圣母所治"</p></blockquote>
+<p><strong>盘古做了什么</strong>：</p>
+<ul><li>天地未分、状如鸡子的时候已经存在，在其中游行。</li><li>天地是经过若干劫之后"二仪始分"，没有写他去分。</li><li>居于天中心之上的玉京山；与太元圣母生天皇与九光玄女。</li></ul>
+<p><strong>作品内位次</strong>：这一版里他是最高的神，中宫的金阙老君、下宫的诸真王都在其下。位次不推出任何维度。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>未定级</strong>——没有破坏或整体掌控的表现</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left">—</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">存在规模：居所玉京山"周回九万里，在大罗之上"，周长约 3.7 万～3.9 万公里<span class="ev-badge ev-confirmed">〔实〕</span></td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">天地未分时已存在；天地之精</td></tr></tbody></table></div>
+<h3 id="sec-二-天尊老君名号历劫经略">（二）《天尊老君名号历劫经略》<a class="heading-anchor" href="#sec-二-天尊老君名号历劫经略" data-target-id="sec-二-天尊老君名号历劫经略" title="复制本节锚点链接">#</a></h3>
+<p>收在北宋张君房所辑《云笈七签》卷三：</p>
+<blockquote><p>"尔时盘古真人，因立功德见召于天中。盘古乃稽首元始虚皇道君，请受《灵宝内经》三百七十五卷。时高上虚皇太上道君则授以《三皇内经》三十六卷。而盘古真人乃法则斯经，运行功用，成天立地，化造万物。下游天地，发圆珠之应万六千日月明三辰天元而起，遂有五亿五千五百五十亿万重天地焉。"</p></blockquote>
+<p>同篇后文还有第二位盘古：三十六万岁之后的神人氏，"其状神异，若盘古真人，而亦号盘古"。他起初不能分别天地日月，得老君授经之后才"按经图分画天地"；又"以道治世万九千九百九十九载，白日升仙，上昆仑，登太清天中，授号曰元始天王"。原文接着说："但世人相聚，只知有此盘古，岂明今天前始之初复有盘古者哉？"</p>
+<p><strong>盘古做了什么</strong>：</p>
+<ul><li>前一位盘古真人：受经之后"成天立地，化造万物"，造出"五亿五千五百五十亿万重天地"。</li><li>后一位神人氏盘古：受经之后按经图划分一方天地。</li></ul>
+<p><strong>创造怎么记</strong>：造出整个天地属于创造，进整体掌控，标掌控式。原文只写结果，没有写过程和耗时，记<span class="ev-badge ev-lower">〔下〕</span>。</p>
+<p><strong>数量</strong>："五亿五千五百五十亿万重"怎么断读、亿按十万还是万万，都有不同读法，结果大致在 10¹² 到 10²¹ 之间。无论怎么读都是有限的数。</p>
+<p><strong>每一重有多大</strong>：没有写。这里的「重」是层叠的天地，是否各自完整、彼此独立也没有交代，所以不当作 N 个完整宇宙计数；按上文「古代的天地不按现代宇宙算」，也不折算能量。</p>
+<p><strong>力量来源</strong>：原文写明他是"法则斯经，运行功用"才做到的，经书由虚皇道君所授。来源与操作者要分开：造出天地的规模记在这次作为上，同时注明盘古是凭经书操作的一方。后一位盘古在得经之前"不能决定"，也说明这一点。</p>
+<p><strong>作品内位次</strong>：盘古是"见召于天中"、向虚皇道君稽首请经的一方，位在虚皇道君、老君之下。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>创造（掌控式）<span class="ev-badge ev-lower">〔下〕</span></strong>——范围：这一版本的全部天地，共"五亿五千五百五十亿万重"，数量有限；每重尺寸未写，不折算能量档。借所受经书之力</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left">创造一套天地（"成天立地，化造万物"），尺寸未写——去掉的是重数这一步</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">—（没有关于自身体量、居所或层级的记述）</td></tr><tr><td style="text-align:left">控（整体掌控）</td><td style="text-align:left">创造全部天地<span class="ev-badge ev-lower">〔下〕</span>；过程与耗时未写</td></tr></tbody></table></div>
+<h3 id="sec-咒语里的提及">咒语里的提及<a class="heading-anchor" href="#sec-咒语里的提及" data-target-id="sec-咒语里的提及" title="复制本节锚点链接">#</a></h3>
+<p>《太上三洞神呪》卷一的咒文里有"盘古开化，盘古开化。三界十方，无极神王，大化身无量"，另有几部晚出道经的咒文用了相近的句子。咒语是仪式性的文字，不升档，也没有叙述任何具体的事，不另算版本，不定级。</p>
+<h2 id="sec-四-明清小说与宝卷">四、明清小说与宝卷<a class="heading-anchor" href="#sec-四-明清小说与宝卷" data-target-id="sec-四-明清小说与宝卷" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-一-开辟演义">（一）《开辟演义》<a class="heading-anchor" href="#sec-一-开辟演义" data-target-id="sec-一-开辟演义" title="复制本节锚点链接">#</a></h3>
+<p>明末周游撰，全名《开辟衍绎通俗志传》。第一回里，盘古是佛前一位菩萨受世尊之命下到南赡部洲所化：</p>
+<blockquote><p>"身长三丈六尺，头角狰狞，神眉怒目，獠牙巨口，遍体皆毛；将身一伸，天即渐高，地便坠下，而天地更有相连者，左手执凿，右手持斧，或用斧劈，或以凿开，自是神力。久而天地乃分，二气升降，清者上为天，浊者下为地。"</p></blockquote>
+<p>事成之后立了一块石碑，刻"吾乃盘古氏，开天辟地基。亥子重交媾，依旧似今时"，随后被接回西方。</p>
+<p><strong>盘古做了什么</strong>：</p>
+<ul><li>伸身把天顶高、把地压低。</li><li>用斧凿把还连着的地方劈开。</li><li>"久而天地乃分"，花了很长时间。</li></ul>
+<p><strong>天地的大小</strong>：回末引《广雅》："天去地凡二亿一万六千七百八十一里半，度地之厚与天之高等。南北相凡二亿三万三千五十七里二十五步，东西相去，短减四步。"亿按十万读：</p>
+<ul><li>天去地 216,781.5 里，约 9.0 万～12.5 万公里；</li><li>南北 233,057 里，约 9.7 万～13.4 万公里。</li></ul>
+<p>前一个数按汉里算，后一个数按明里算。两头都落在地球直径的 7～10 倍，接近木星直径。</p>
+<p><strong>身体</strong>：身长三丈六尺，约 11.5 米。这一版的盘古个头不大，开辟靠的是原文所说的"神力"。</p>
+<p><strong>作品内位次</strong>：受世尊差遣的菩萨，事成后被收回，位在世尊之下。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>⊙星△（范围对照）· 需时</strong>——开辟整个天地<span class="ev-badge ev-confirmed">〔实〕</span>；范围南北约 9.7 万～13.4 万公里（地球直径的 7～10 倍，接近木星直径）；能量<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left">开辟整个天地，范围未写——去掉的是回末所引的《广雅》里数</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">破（破坏力）</td><td style="text-align:left">劈分整个天地<span class="ev-badge ev-confirmed">〔实〕</span>：伸身顶开，斧凿劈断相连处；"久而"乃分，记需时。能量<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">身长约 11.5 米；原文称"自是神力"，没有可换算的数据</td></tr></tbody></table></div>
+<h3 id="sec-二-盘古至唐虞传">（二）《盘古至唐虞传》<a class="heading-anchor" href="#sec-二-盘古至唐虞传" data-target-id="sec-二-盘古至唐虞传" title="复制本节锚点链接">#</a></h3>
+<p>明末刊本，题钟惺编。第一回里，天地本来就在分："清的渐渐成天，浊的渐渐成地"，只是有的地方"被那重浊的黏带住"。盘古找来一把能大能小的石斧和一柄"约有十余丈大"的铁椎：</p>
+<blockquote><p>"见有黏带不得开交的，把斧一凿，滑喇喇的一声响，天拔上去，地坠下来。于是两仪始奠，阴阳分矣。"</p></blockquote>
+<p>几百年后，他又凿开两处山岩，放出太阳和月亮："现出一轮红日，大如山"，"现出一轮明月，月亦大如山"。此后"盘古氏乃敕月宫中八万三千户，用斤凿修理之"。天皇氏出世后，他"遂逸而不见，把头化为四岳，两目寄于日月；脂膏浑于江海，毛发付于山木"。</p>
+<p><strong>盘古做了什么</strong>：</p>
+<ul><li><strong>开辟</strong>：只凿了黏住的地方，天地随即自行分开，属于触发式。天地多大没有写。</li><li><strong>凿山放出日月</strong>：凿开的是挡住日月的山岩；日月都"大如山"，说明这一版的日月是山那么大的物件。山和岩壁的尺寸没有写，不能换算。</li><li><strong>号令月宫</strong>：敕月宫中的八万三千户修理月亮，是权位上的支配，记入特性。</li><li><strong>化身</strong>：与古籍同类，记特性。</li></ul>
+<p><strong>世界的线索</strong>：原文提到扶桑在东海东岸，"登岸一万里"，其地"地方万里"，约 5,800 公里。这只说明天地至少有几万里，不是总尺寸。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>开辟（触发式）<span class="ev-badge ev-confirmed">〔实〕</span></strong>——范围未写，不落档</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left">同综合量级</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">破（破坏力）</td><td style="text-align:left">凿开山岩两处<span class="ev-badge ev-confirmed">〔实〕</span>，尺寸未写，能量<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">所持斧、椎能大能小；能号令月宫；隐去时化身为四岳、日月、江海、山木</td></tr></tbody></table></div>
+<h3 id="sec-三-纲鉴通俗演义">（三）《纲鉴通俗演义》<a class="heading-anchor" href="#sec-三-纲鉴通俗演义" data-target-id="sec-三-纲鉴通俗演义" title="复制本节锚点链接">#</a></h3>
+<p>清雍正年间吕抚撰，后来改名《二十四史通俗演义》。第一回先交代了天地的结构，再写盘古。</p>
+<p><strong>天地的结构</strong>：这一版用的是明末传入的九重天说，并写了地上有五大洲。</p>
+<ul><li>"其诸重天，各相去九万里零"；</li><li>"日大穿心一千七百五十里零，月大穿心六百里零"；</li><li>"地面之大，穿心九万里零，厚二万八千六百三十六里零，去月轮天周围隔海四万五千余里零"。</li></ul>
+<p>按清里换算：地的直径约 5.2 万公里，厚约 1.65 万公里；月轮天离地约 2.6 万公里；日的直径约 1,000 公里，月的直径约 350 公里。</p>
+<p><strong>盘古</strong>：生于大荒山腰，"龙首人身，身长百尺"，约 32 米。</p>
+<blockquote><p>"且天渐渐高起来，地渐渐低下去，渐次将开，相附而动，仔细一看，见昆仑山顶，与月轮天相连，坚不可破。"</p></blockquote>
+<p>他在西方找到一斧一凿，约重千斤，约合 600 公斤：</p>
+<blockquote><p>"或用斧劈，或用凿开，用功多时。忽然一日凿开，有如天崩地裂，大响一声，天地两分。轻清者为天，渐高而运转；重浊者为地，渐低而凝静。"</p></blockquote>
+<p><strong>盘古做了什么</strong>：</p>
+<ul><li>天地本来就在"渐次将开"，卡住它们的是昆仑山顶与月轮天相连的一处。</li><li>他凿断的是这一处连接，而且"用功多时"。</li><li>连接一断，天地自行两分。属于触发式，并记需时。</li></ul>
+<p><strong>范围</strong>：被分开的是地与月轮天以内的部分，地径约 5.2 万公里，加上到月轮天的距离，总尺度约 5 万～10 万公里，是地球直径的 4～8 倍，对到星△。</p>
+<p><strong>本人的出力</strong>：一个三十多米高的巨人，用六百公斤左右的斧凿，花了很久凿断一处山顶。山顶连接处的尺寸没有写，不能换算。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级</strong></td><td style="text-align:left"><strong>⊙星△（范围对照）· 触发式 · 需时</strong>——天地两分<span class="ev-badge ev-confirmed">〔实〕</span>；范围约 5 万～10 万公里（地径约 5.2 万公里，月轮天距地约 2.6 万公里，为地球直径的 4～8 倍）；能量<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left">凿断昆仑山顶与月轮天的一处连接<span class="ev-badge ev-confirmed">〔实〕</span>，尺寸未写，不落档——去掉的是把触发后的结果算在他名下这一步</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">—</td></tr><tr><td style="text-align:left">破（破坏力）</td><td style="text-align:left">凿断一处"坚不可破"的山顶连接<span class="ev-badge ev-confirmed">〔实〕</span>，"用功多时"，能量<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">身长约 32 米；使用约 600 公斤的斧凿</td></tr></tbody></table></div>
+<h3 id="sec-四-众喜宝卷-暂定-未核原书">（四）《众喜宝卷》（暂定，未核原书）<a class="heading-anchor" href="#sec-四-众喜宝卷-暂定-未核原书" data-target-id="sec-四-众喜宝卷-暂定-未核原书" title="复制本节锚点链接">#</a></h3>
+<p>清代陈众喜所作的宝卷，属民间宗教的劝善唱本。这部书的原书和影印本都没有找到，下面的文字据网上流传的转录，其中有明显的错字（如「石三中」「阴氜」），只作转述和暂定。</p>
+<p><strong>转录所见</strong>：</p>
+<ul><li>盘古的来历：元气下降，混混沌沌，「又有西方毗多崩沙那佛，光射于东土石三中，化为盘古，凿开混沌，分为世界」；另一处说他「生于山野」，后为元始天尊。</li><li>九重天的高度：最外的宗动天「离地高六万四千七百三十万八千六百九十余里」，往下依次是经宿天、填星天、岁星天、荧惑天、日轮天、太白天、辰星天，最内的月轮天「离地高四十八万二千五百廿二里」。这组数字与明末利玛窦《乾坤体义》所列诸天离地的里数一致，是当时传入的西洋天文学的数字。</li></ul>
+<p><strong>若文字无误</strong>：</p>
+<ul><li>盘古「凿开混沌，分为世界」，是对整个世界的开辟，记劈分，能量<span class="ev-badge ev-missing">〔缺〕</span>。</li><li>这部书的世界以宗动天为界，半径约六亿四千七百万里。里的长度按利玛窦体系（地周九万里，每里约 0.445 公里）和清代营造尺（每里约 0.576 公里）两种取区间，世界直径约 5.8 亿～7.5 亿公里，即 3.8～5.0 个天文单位。</li><li>超过一颗恒星的直径，按覆盖直径对照：约 3.4×10⁴⁷～5.8×10⁴⁷ J，弱化弱恒星系（木星轨道一带）。</li></ul>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">定级</th></tr></thead><tbody><tr><td style="text-align:left"><strong>综合量级（暂定）</strong></td><td style="text-align:left"><strong>⊙弱化弱恒星系（范围对照）</strong>——约 3.4×10⁴⁷～5.8×10⁴⁷ J；能量<span class="ev-badge ev-missing">〔缺〕</span>；未核原书</td></tr><tr><td style="text-align:left"><strong>保底量级</strong></td><td style="text-align:left">开辟整个世界，范围未核，不落档</td></tr><tr><td style="text-align:left"><strong>位格</strong></td><td style="text-align:left">后为元始天尊</td></tr></tbody></table></div>
+<h2 id="sec-五-各地口传">五、各地口传<a class="heading-anchor" href="#sec-五-各地口传" data-target-id="sec-五-各地口传" title="复制本节锚点链接">#</a></h2>
+<p>以下各则据近现代采录的民间故事与歌本转述，没有见到原书，证据只作参考，不进入合集的最高与区间。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">流传地或篇名</th><th style="text-align:left">转述内容</th><th style="text-align:left">记法</th></tr></thead><tbody><tr><td style="text-align:left">中原一带（出处未能核实）</td><td style="text-align:left">盘古睡醒伸懒腰，把天地撑开；每伸一回，天升一丈、地落一丈</td><td style="text-align:left">开辟；逐步撑高，需时；范围未写</td></tr><tr><td style="text-align:left">四川宜宾《天地、太阳、白天、黑夜的由来》</td><td style="text-align:left">盘古王与妻子抱住混沌一扯两半，上半成天、下半成地；两人后来化成日月</td><td style="text-align:left">开辟，二人合力；范围未写</td></tr><tr><td style="text-align:left">四川崇庆</td><td style="text-align:left">世界是一个充满气的球，球外有十个太阳。球里长出狮头人身的巨人，握拳乱打，气球爆炸，天地分开；后来他被十个太阳晒得受不住，倒地而死，身体化为山海草木</td><td style="text-align:left">开辟（触发式）；范围未写。防御：耐不住十个太阳的照射</td></tr><tr><td style="text-align:left">天萝藤的故事（出处未能核实）</td><td style="text-align:left">盘古开天辟地之后，天没几丈高，百姓顺着藤就能爬上天；后来是玉帝派天将斩断藤、把天升到九重</td><td style="text-align:left">开辟；范围：天高只有几丈。把天升高的不是盘古</td></tr><tr><td style="text-align:left">浙江嘉善《盘古开天地》</td><td style="text-align:left">天地原是一体，玉帝叫大将军盘古用宝斧拦腰一斩，分出天地</td><td style="text-align:left">开辟；范围未写。位在玉帝之下</td></tr><tr><td style="text-align:left">陕北</td><td style="text-align:left">盘古用巨斧劈开天地，活到一万八千岁，死后身体化为日月、山岳、海洋、草木</td><td style="text-align:left">开辟；范围未写。化身记特性</td></tr><tr><td style="text-align:left">布依族《日、月、星》</td><td style="text-align:left">盘古王修炼九千九百九十九年造出大板斧；力大无穷，肩挑两山，日行万里；连劈三斧，劈开白雾、劈穿海底、劈开森林，分出天上、人间、龙宫三界；不久病死</td><td style="text-align:left">开辟；造斧需时；范围未写。力量：肩挑两山（山的大小未写）。速度：日行万里，约每秒 60 米</td></tr><tr><td style="text-align:left">布依族另一则</td><td style="text-align:left">玉皇大帝派盘古开天辟地，砍了三年才砍开；又向龙王借来两盏灯挂成日月，撒珍珠为星</td><td style="text-align:left">开辟，需时三年；范围未写。受玉皇差遣；日月是借来的灯</td></tr><tr><td style="text-align:left">土家族《盘古开天女娲补天》</td><td style="text-align:left">盘古砍了三年零六个月把天地砍开；雾气不散，他又乱砍，把天砍穿、把地打出几个大凹，成了湖海，惹出大水；太上老君一口气吹散了雾，女娲再来补天</td><td style="text-align:left">开辟，需时三年半；范围未写。破坏：打出湖海大小的凹陷（尺寸未写）。散雾的是老君</td></tr><tr><td style="text-align:left">苗族古歌《开天立地》</td><td style="text-align:left">只有「盘古开天，南火立地」一句</td><td style="text-align:left">开辟；没有细节</td></tr><tr><td style="text-align:left">湖北神农架《黑暗传》</td><td style="text-align:left">盘古得到金石所化的石斧，一斧劈开混元石，清气上升、浊气下沉</td><td style="text-align:left">开辟；范围未写</td></tr><tr><td style="text-align:left">《黑暗传》宜昌雾渡河本</td><td style="text-align:left">盘古伸腰撑破黑暗与混沌；斩了绕昆仑山三圈多的黑龙；所持石斧重万斤；又劈山填海</td><td style="text-align:left">开辟；范围未写。力量：使用万斤（约 5～6 吨）的石斧</td></tr><tr><td style="text-align:left">《地母传》唱本</td><td style="text-align:left">盘古开天地之后，阳气上升高万丈，阴气下沉万丈深</td><td style="text-align:left">开辟；范围：天高万丈，约 30 公里</td></tr></tbody></table></div>
+<p>另有宁夏西吉的一则只把盘古开天辟地当作前情，讲的是玉皇教盘古、女娲结为夫妻，没有可记的表现。</p>
+<p><strong>口传各则的共同点</strong>：</p>
+<ul><li>尺寸几乎都没有写；写了的两则，天高只有几丈或一万丈。</li><li>多半要花很长时间：三年、三年零六个月，或一回一丈地撑。</li><li>凡是有其他神出场的，盘古都是受差遣的一方，上面有玉皇、玉帝或太上老君。</li></ul>
+<h2 id="sec-六-合集结论">六、合集结论<a class="heading-anchor" href="#sec-六-合集结论" data-target-id="sec-六-合集结论" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-排序">排序<a class="heading-anchor" href="#sec-排序" data-target-id="sec-排序" title="复制本节锚点链接">#</a></h3>
+<p>按已确认的整体作为的范围，由高到低：</p>
+<ol><li><strong>《天尊老君名号历劫经略》</strong>：创造 10¹²～10²¹ 重天地<span class="ev-badge ev-lower">〔下〕</span>，借经书之力；每重尺寸未写，不折算能量。</li><li><strong>《开辟演义》</strong>：开辟整个天地<span class="ev-badge ev-confirmed">〔实〕</span>，范围约 9.7 万～13.4 万公里，需时，能量<span class="ev-badge ev-missing">〔缺〕</span>。</li><li><strong>《纲鉴通俗演义》</strong>：开辟（触发式）<span class="ev-badge ev-confirmed">〔实〕</span>，范围约 5 万～10 万公里，需时，能量<span class="ev-badge ev-missing">〔缺〕</span>；本人出力只是凿断一处山顶。</li><li><strong>《盘古至唐虞传》</strong>：开辟（触发式）<span class="ev-badge ev-confirmed">〔实〕</span>，范围未写。</li><li><strong>《三五历纪》《五运历年纪》《述异记》《元始上真众仙记》</strong>：未定级。</li></ol>
+<p>第 1 项与第 2～4 项量的东西不同，一个是造出的天地有多少重，一个是分开的天地有多宽，排在前面只表示涉及的整体更大，不表示能量更高。</p>
+<h3 id="sec-版本之间的对照">版本之间的对照<a class="heading-anchor" href="#sec-版本之间的对照" data-target-id="sec-版本之间的对照" title="复制本节锚点链接">#</a></h3>
+<p>以下几点是各版本并排之后看到的现象，只作对照，不拿来互相补充：</p>
+<ul><li><strong>三万六千里</strong>：《三五历纪》按每日一丈、一万八千年推出的天高，与《元始上真众仙记》写的天地"相去三万六千里"相合；《三五历纪》自己写的却是九万里。</li><li><strong>谁来开天</strong>：魏晋南朝的四种都没有写盘古去开；写他动手的是道经《历劫经略》和明清小说。</li><li><strong>工具</strong>：斧、凿、椎只见于明清小说和口传。</li><li><strong>化身</strong>：见于《五运历年纪》《述异记》《盘古至唐虞传》和几则口传，都是死后或隐去时的事。</li><li><strong>位次</strong>：有其他神出场的版本里，只有《元始上真众仙记》把他放在最高。</li></ul>
+<h3 id="sec-不另算版本的转录">不另算版本的转录<a class="heading-anchor" href="#sec-不另算版本的转录" data-target-id="sec-不另算版本的转录" title="复制本节锚点链接">#</a></h3>
+<p>明代朱权《天皇至道太清玉册》《原始秘书》等书整段转录了《三五历纪》与《述异记》的文字，并附上各种天地里数（如《太清玉册》的"天体东西南北径三十五万七千里""下至九幽洞渊，上至星天一千二百一十八万里"）；《承天纪》同样转录「天地混沌，盘古生其中」一段，并附浑天说的里数；元代《大涤洞天记》只在行文中提到一句盘古开辟。这些书里盘古仍是随天地长高，没有新增作为，归入所转录的版本，不另定级。附带的里数是各书自己的天地，不拿来给《三五历纪》补尺寸。</p>
+<h3 id="sec-其他文献里的提及">其他文献里的提及<a class="heading-anchor" href="#sec-其他文献里的提及" data-target-id="sec-其他文献里的提及" title="复制本节锚点链接">#</a></h3>
+<p>以下文献也被用来讨论盘古的强度。除另有说明外，原书都没有核对，只作转述：</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">文献</th><th style="text-align:left">性质</th><th style="text-align:left">内容</th><th style="text-align:left">记法</th></tr></thead><tbody><tr><td style="text-align:left">《黑暗传》</td><td style="text-align:left">湖北神农架一带的口传史诗，近代整理</td><td style="text-align:left">盘古所用的斧、柄由四方之星所化（西方金星化石斧）</td><td style="text-align:left">口传；斧的来历是组成，不折算破坏</td></tr><tr><td style="text-align:left">《吕祖全书·三品仙经》</td><td style="text-align:left">清代扶乩道书</td><td style="text-align:left">盘古是元始天尊的化身，「顶天履地」</td><td style="text-align:left">身份陈述，记位格；无作为</td></tr><tr><td style="text-align:left">《文帝全书》《太上三洞神咒》《月光皇后圣母天尊孔雀明王经》</td><td style="text-align:left">道经、咒文、民间经卷</td><td style="text-align:left">「盘古应化十方三界」「大化身无量」「盘古化十方世界」</td><td style="text-align:left">颂辞与咒文，不升档</td></tr><tr><td style="text-align:left">《阴山老祖经》</td><td style="text-align:left">民间经卷</td><td style="text-align:left">开辟无穷天地</td><td style="text-align:left">经文陈述，没有经过</td></tr><tr><td style="text-align:left">《地母传》</td><td style="text-align:left">唱本</td><td style="text-align:left">「阳气上升高万丈，阴气下沉万丈深」</td><td style="text-align:left">开出的天只有万丈，约三十公里</td></tr><tr><td style="text-align:left">《刍荛集》、《太上治生法会伊始真人解悟真经合注》</td><td style="text-align:left">明人诗集、道经颂文</td><td style="text-align:left">诗、颂里提到盘古开天地</td><td style="text-align:left">文学性提及，不算版本</td></tr><tr><td style="text-align:left">《老子化胡经》（敦煌本）</td><td style="text-align:left">道经</td><td style="text-align:left">讲三十三天、三千大千国土、百亿日月</td><td style="text-align:left">没有写盘古；不能拿来给《历劫经略》的天地补尺寸</td></tr></tbody></table></div>
+<h3 id="sec-为什么不更高">为什么不更高<a class="heading-anchor" href="#sec-为什么不更高" data-target-id="sec-为什么不更高" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>不套标准宇宙</strong>：各版本的天地都是有高度、有边界的结构，文献自己给的尺寸在几万到几十万里。把「天地」直接换成直径 930 亿光年的可观测宇宙，是把现代的词义加给了古代的文本。</li><li><strong>化身不是创造整体的作为</strong>：身体化为日月山川，说明体量与组成，不折算成破坏，也不构成掌控。</li><li><strong>开辟不是粉碎</strong>：分开天地是把一个整体劈成两半，比破碎程度里最低的一档「大碎块」还低；多数版本里天升地降还是天地自己的趋势。</li><li><strong>触发式不归本人出力</strong>：天地自己在分、他只除掉黏连的版本，结果的规模与他本人打出的力量分开记。</li><li><strong>咒语、赞颂不升档</strong>："三界十方"「大化身无量」出现在咒文里，没有对应的叙述。</li><li><strong>有限的大数仍是有限</strong>："五亿五千五百五十亿万重"是确定的有限数，不是无限，不过论外门槛。</li></ul>
+<h3 id="sec-对战判定">对战判定<a class="heading-anchor" href="#sec-对战判定" data-target-id="sec-对战判定" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>先指明版本</strong>：跨作品比较时必须说明用的是哪一个版本的盘古，不同版本不能合并成一个角色。</li><li><strong>古籍三种与《元始上真众仙记》</strong>：未定级，没有可用于交手的破坏或掌控记录，对战写「不可判定」。体量可作参考：《三五历纪》的盘古身长约 1.5 万公里。</li><li><strong>明清小说三种</strong>：能确认的是开辟的范围，能量<span class="ev-badge ev-missing">〔缺〕</span>。与以能量定级的对象比较时写「不可判定」，并说明缺的是能量依据。</li><li><strong>《历劫经略》</strong>：造出的天地数量很大，但每重尺寸未写，力量又来自经书。与其他作品比较时，只有对方的规模同样以「若干个尺寸不明的世界」计时才可比较数量；否则写「不可判定」。</li></ul>
+<h2 id="sec-存疑">存疑<a class="heading-anchor" href="#sec-存疑" data-target-id="sec-存疑" title="复制本节锚点链接">#</a></h2>
+<ol><li><strong>「亿」的读法</strong>：古代的亿有十万和万万两种用法，今天通行的是万万。本条目对《广雅》《淮南子》一系的天地里数按十万读。依据有三点：一是《周髀算经》古注引《河图括地象》《淮南子·墜形训》的八极里数之后，直接说"夫言亿者，十万曰亿也"；二是东汉郑玄注经用的也是十万为亿的下数；三是同一批文献里的其他里数——《淮南子》的"阖四海之内，东西二万八千里，南北二万六千里"、《三五历纪》的九万里、《元始上真众仙记》的三万六千里——都在几万到几十万里，按十万读才是同一个量级。若按万万读，《开辟演义》所引的南北里数约为两亿里，合 0.56～0.77 个天文单位，与水星公转轨道的直径（约 0.77 个天文单位）相当，范围要改记为这一尺度。《开辟演义》成书于明末，当时的读者也可能按万万理解，这一点无法确认。四是明代《天皇至道太清玉册》同一页里，天的直径写作"三十五万七千里"，东极到西陲写作"径过二亿二万三千五百里"，亿若作万万，大地比包着它的天还大几百倍，只有按十万读才前后一致。</li><li><strong>《开辟演义》所引《广雅》的数字</strong>：与今本《广雅·释天》有出入。今本写天的广度是"南北二亿三万三千五百里七十五步，东西短减四步，周六亿十万七百里二十五步，从地至天一亿一万六千七百八十七里，下度地之厚与天高等"。本条目按小说自己印出的数字计算，两者差别不影响尺度的结论。</li><li><strong>里的长度</strong>：古书里的里数出自汉魏，小说成于明清。本条目把汉里与明清里两种换算都列出，取区间。</li><li><strong>《历劫经略》的重数</strong>：断读有分歧，数量级在 10¹² 到 10²¹ 之间。若把每一重都当作一个完整的现代宇宙，数量轴上会落到很高的有限多元；原文没有这样的交代，本条目不采用。</li><li><strong>《众喜宝卷》</strong>：只见到转录，原书未核。九重天的数字来自利玛窦一系的西洋天文学，书中里的长度未见交代，按 0.445～0.576 公里取区间。若核对原书后文字无误，这一版会成为有尺寸可对照的最高一版，综合量级随之改取。</li><li><strong>《五运历年纪》的来源</strong>：只见于清代《绎史》的引文和《云笈七签》中一段未注出处的同文，原书面貌无从核对。</li><li><strong>《述异记》的年代</strong>：旧题任昉，是否出自其手、成书于何时都有争议。书中各种说法本身是转述，本条目照转述处理。</li><li><strong>《开辟演义》的引文</strong>：据公开的整理文本，没有核对明刊本。</li><li><strong>《纲鉴通俗演义》的文字</strong>：所见文本此处有讹字，斧凿"约重千斤"一句只作转述。书中"地面之大，穿心九万里零，厚二万八千六百三十六里零"两个数恰好满足 90000×7÷22≈28636，像是把周长当成了直径；本条目按书中印出的数字计算。</li><li><strong>口传各则</strong>：都没有见到原书，流传地与篇名据转录时所附的说明；中原一带的一则和天萝藤的一则连出处也没有核实。</li></ol>
+<h2 id="sec-参考资料">参考资料<a class="heading-anchor" href="#sec-参考资料" data-target-id="sec-参考资料" title="复制本节锚点链接">#</a></h2>
+<ul><li><a href="https://zh.wikisource.org/wiki/藝文類聚/卷001" target="_blank" rel="noopener">《艺文类聚》卷一（引徐整《三五历纪》）</a></li><li><a href="https://zh.wikisource.org/wiki/繹史_(四庫全書本" target="_blank" rel="noopener">《绎史》卷一（引《五运历年纪》）</a>/卷001)</li><li><a href="https://zh.wikisource.org/wiki/雲笈七籤/56" target="_blank" rel="noopener">《云笈七签》卷五十六《元气论》</a></li><li><a href="https://zh.wikisource.org/wiki/述異記" target="_blank" rel="noopener">《述异记》</a></li><li><a href="https://zh.wikisource.org/wiki/元始上真眾仙記" target="_blank" rel="noopener">《元始上真众仙记》</a></li><li><a href="https://zh.wikisource.org/wiki/雲笈七籤/03" target="_blank" rel="noopener">《云笈七签》卷三《天尊老君名号历劫经略》</a></li><li><a href="https://zh.wikisource.org/wiki/天皇至道太清玉冊" target="_blank" rel="noopener">《天皇至道太清玉册》</a></li><li><a href="https://zh.wikisource.org/wiki/太上三洞神呪/1" target="_blank" rel="noopener">《太上三洞神呪》卷一</a></li><li><a href="https://m.gushiwen.cn/guwen/bookv_ff58090b7f26.aspx" target="_blank" rel="noopener">《开辟演义》第一回</a></li><li><a href="https://zh.wikisource.org/wiki/盤古至唐虞傳/1" target="_blank" rel="noopener">《盘古至唐虞传》第一回</a></li><li><a href="https://zh.wikisource.org/wiki/歷代興衰演義/01" target="_blank" rel="noopener">吕抚《纲鉴通俗演义》第一回（收入《历代兴衰演义》）</a></li><li><a href="https://zh.wikisource.org/wiki/廣雅_(四庫全書本" target="_blank" rel="noopener">《广雅》卷九《释天》</a>/卷09)</li><li><a href="https://zh.wikisource.org/wiki/淮南子/墜形訓" target="_blank" rel="noopener">《淮南子·墜形训》</a></li><li><a href="https://zh.wikisource.org/wiki/五經算術" target="_blank" rel="noopener">甄鸾《五经算术》</a></li><li><a href="https://zh.wikisource.org/wiki/周髀算經_(四庫全書本" target="_blank" rel="noopener">《周髀算经》卷上之三（古注）</a>/卷上之3)</li><li><a href="https://zh.wikisource.org/wiki/論衡/36" target="_blank" rel="noopener">王充《论衡·谢短篇》</a></li></ul>
+              </div>
+            </article>
+
+            <aside class="reader-rail" role="group" aria-label="阅读显示设置">
+              <span class="reader-rail-label mono" aria-hidden="true">字号</span>
+              <div class="reader-rail-btns">
+                <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+                <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+                <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
+              </div>
+              <span class="reader-rail-readout mono" id="doc-font-readout">15.5px</span>
+            </aside>
+          </div>
+
+
+          <div class="pager-grid">
+            <a class="pager-card" href="yutu.html">
+                  <span class="pager-dir">← 上一位角色（更低量级）</span>
+                  <span class="pager-title">御兔</span>
+                  <span class="pager-sub mono">⊙ 国△ · 首字母 Y</span>
+                </a>
+            <a class="pager-card next" href="nvwa.html">
+                  <span class="pager-dir">下一位角色（更高量级） →</span>
+                  <span class="pager-title">女娲</span>
+                  <span class="pager-sub mono">⊙ 系▽ · 首字母 N</span>
+                </a>
+          </div>
+        </div>
+
+  </main>
+
+  <div class="floating-dock" aria-label="快捷工具">
+    <button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录" aria-label="展开章节目录"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg></button>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
+      <div class="search-modal-head">
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第六版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="../search.html">进入独立搜索页 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 第六版基准</span>
+      </div>
+      <div class="footer-links">
+        <a href="../tiers.html">量级天梯</a>
+        <a href="../characters.html">角色档案</a>
+        <a href="../rules.html">衡天体系全文</a>
+        <a href="../materials.html">材质能量库</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>window.__PW_INDEX_SRC__ = "../static/js/search-index.js";</script>
+  <script src="../static/js/theme.js"></script>
+  <script src="../static/js/app.js"></script>
+  <script src="../static/js/pwa.js"></script>
+
+  <script src="../static/js/chrome.js"></script>
+  <script src="../static/js/editions.js"></script>
+</body>
+</html>
