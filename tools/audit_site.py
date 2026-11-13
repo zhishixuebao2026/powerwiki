@@ -292,11 +292,12 @@ def check_hero_light():
     return issues, light.stat().st_size if light.exists() else 0
 
 
-# 采用「1536x864 卡片图 + 1024x1536 肖像图」规范制作的角色。
+# 采用「卡片图精确 16:9 + 肖像图精确 2:3」规范制作的角色。
+# 分辨率不限（既有 1536x864/1024x1536，也有官方高清 2560x1440/1200x1800）。
 # 历史角色（含 yog / divinity / lufasi / tianren 等）的配图比例本就多样，
 # 由 CSS 的 contain / cover 正常兜底，属既有设计，不参与比例校验。
 # 日后新增角色若沿用同一规范，把 slug 加进这里即可自动纳入。
-STD_MEDIA_SLUGS = {"nvwa", "shiva", "sunwukong", "pangu"}
+STD_MEDIA_SLUGS = {"nvwa", "shiva", "sunwukong", "pangu", "starkiller", "luofeng"}
 
 
 def check_character_media():
