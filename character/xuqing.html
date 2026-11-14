@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="char-xuqing" data-boot-bg-light="#f1f2ed" data-boot-bg-dark="#080d11">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" id="theme-color-meta" content="#f1f2ed">
+  <meta name="color-scheme" content="light dark">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../static/img/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="衡天 Wiki">
+  <meta name="application-name" content="衡天 Wiki">
+  <title>许青 · 角色战力档案 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第六版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <!-- 首帧底色：这段内联 CSS 在 <head> 里、所有外链样式表之前生效，浏览器在字体与
+       样式表全部到达前就用它画整个画布，杜绝冷启动白屏。颜色由生成器按页面写入，
+       必须等于该页 CSS 最终生效的 --bg-canvas；用 :where() 让优先级为 0，
+       外部 CSS 到达后即可无缝接管，不会干扰任何最终样式。切主题只改 data-theme，
+       属性选择器自动换色，JS 不再写 inline 底色。 -->
+  <style>
+    :where(html), :where(html) > :where(body) { background-color: #f1f2ed; }
+    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #080d11; }
+  </style>
+  <script>
+    (function() {
+      var root = document.documentElement;
+      var t = null;
+      try { t = localStorage.getItem('pw_theme_v2'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        try {
+          var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          t = dark ? 'dark' : 'light';
+          localStorage.setItem('pw_theme_v2', t);
+        } catch (e) { t = 'light'; }
+      }
+      root.setAttribute('data-theme', t);
+      root.classList.add('js');
+      /* 首帧底色已由 <head> 内联 <style> 按 data-theme 画好，这里只同步状态栏颜色。
+         不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
+         data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
+      var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
+        || (t === 'dark' ? '#080d11' : '#f1f2ed');
+      var mc = document.getElementById('theme-color-meta');
+      if (mc) mc.setAttribute('content', canvas);
+    })();
+  </script>
+  <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" as="image" href="../static/img/character-chronicle.jpg">
+  <link rel="preload" as="image" href="../static/img/characters/xuqing/xuqing-portrait.jpg">
+  <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
+       子集各约 99 KB，原本与站点 CSS 一起阻塞首次绘制，是冷启动白屏主因。
+       font-display:swap 已保证文字始终先用系统字体可见、字体到位后平滑替换，
+       不会出现无样式内容闪现；noscript 环境仍按普通样式表加载。 -->
+  <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="../static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css">
+    <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css">
+  </noscript>
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="../static/css/editorial.css">
+  <link rel="stylesheet" href="../static/css/experience.css">
+  <link rel="stylesheet" href="../static/css/editions.css">
+  <link rel="stylesheet" href="../static/css/polish.css">
+  <link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body class="site-characters character-site character-xuqing">
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
+        <a class="brand-link" href="../index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+        </a>
+      </div>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link" href="../index.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></span><span>首页</span></a>
+        <a class="nav-link nav-cat" href="../tiers.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg></span><span>量级</span></a>
+        <a class="nav-link nav-cat active" href="../characters.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg></span><span>角色</span></a>
+        <a class="nav-link nav-doc" href="../rules.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg></span><span>规则</span></a>
+        <a class="nav-link nav-doc" href="../materials.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg></span><span>材质</span></a>
+      </nav>
+
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="search-btn-label">检索…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题" aria-pressed="false">
+          <span class="pw-theme-icon pw-icon-sun"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
+          <span class="pw-theme-icon pw-icon-moon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="../index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">查阅</div>
+        <a class="drawer-card-link" href="../tiers.html"><span class="drawer-card-title"><span>量级天梯</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档 · 从昆虫到论天</span></a>
+        <a class="drawer-card-link active" href="../characters.html"><span class="drawer-card-title"><span>角色档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">定级结论与完整证据原文</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">规则与资料</div>
+        <a class="drawer-doc-link" href="../rules.html"><span>衡天体系 · 第六版</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../materials.html"><span>材质与能量 · 第二版</span><span>→</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        <a class="drawer-doc-link" href="../index.html"><span>返回首页总览</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../search.html"><span>全站即时检索</span><span>→</span></a>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {
+        if (window.__PW_SYNC_LOCK__) { window.__PW_SYNC_LOCK__(); return; }
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }
+      function closeAll() {
+        if (window.__PW_CLOSE_ALL__) { window.__PW_CLOSE_ALL__(); return; }
+        drawer.classList.remove('open');
+        sync();
+      }
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      });
+      if (closeBtn) { closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }
+      if (backdrop) { backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {
+        links[j].addEventListener('click', function() { drawer.classList.remove('open'); sync(); });
+      }
+      window.addEventListener('pageshow', function() { drawer.classList.remove('open'); sync(); });
+    })();
+  </script>
+
+  <main>
+
+        <div class="container detail-stack character-detail character-xuqing">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>许青</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img fade-on-load" src="../static/img/character-chronicle.jpg" alt="">
+            </div>
+
+
+            <div class="dossier-body has-portrait">
+              <div class="dossier-main-col">
+                <div class="char-tags">
+                  <span class="tag-pill accent">星团至宇宙阶</span>
+                  <span class="tag-pill">《光阴之外》· 耳根</span>
+                  <span class="tag-pill">综合 ⊙宇◆〔推〕（掌控式·弱化·需时）</span><span class="tag-pill">保底 ⊙宇△〔实〕（青天封天）</span><span class="tag-pill">推定链二环 · 起点〔下〕</span><span class="tag-pill">已实现整体掌控只到强宇宙级</span><span class="tag-pill">位格 跨平行世界存在（元·多）</span>
+                </div>
+
+                <div>
+                  <h1 class="page-title">许青</h1>
+                  <div class="dossier-submeta"><span>形态：单版本 · 正文至第一千三百五十四章「光阴之外（终）」与番外；耳根前五部作品同属一个世界，但前作的轮回、时空等描写属于各自的主角，不计入许青</span><span>·</span><span>别称：时空宪 / 至尊（上行的极限）</span><span>·</span><span>定级日期：2026-11-13</span></div>
+                </div>
+
+                <p class="page-desc">宇宙级全部来自「掌控式」，不是打出来的。综合量级靠两环推定，起点是终章至尊；亲手两次封天、墨阳认主这两处不靠推定的整体掌控，只到强宇宙级，且都凭仙宫、仙简这类权柄。</p>
+
+                <div class="dossier-kpi-grid">
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">综合主档定级</div>
+                    <div class="kpi-value">
+                      <a class="kpi-tier-link mono" href="../tier/universe-extreme.html" title="查看所属主档规格页">
+                        <span>⊙ 宇◆ · 极宇宙（#81）</span>
+                        <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">保底量级</div>
+                    <div class="kpi-value">⊙宇△<span class="ev-badge ev-confirmed">〔实〕</span>（掌控式）——强宇宙级（可观测宇宙直径的 1～1 万倍，8.0×10⁷⁷～8.0×10⁸⁵ J）：青天封天<span class="ev-badge ev-confirmed">〔实〕</span>，第一千二百二十八章以仙宫权限刹那封印整个天外天，按最小读法取两个可观测宇宙大小的区域，约 1.3×10⁷⁸ J 起；与推定链互相独立。若连凭权限的封锁也不算整体掌控，保底退到一念灭星系的标准星系级（4.6×10⁶³～1.15×10⁶⁵ J）</div>
+                  </div>
+                </div>
+
+                <div class="dossier-actions-row"><a class="text-link" href="../rules.html#sec-4-9-宇宙级-宇-半球扩散-第二版重新分档">对照衡天规则原文 →</a></div>
+
+                <div class="full-writing-box">
+                  <div class="box-kicker">正式完整书写摘要</div>
+                  <div>许青（《光阴之外》·耳根）的综合量级为 ⊙宇◆<span class="ev-badge ev-inferred">〔推〕</span>（掌控式·弱化·需时；推定链二环）——极宇宙级，覆盖直径为可观测宇宙的 1 万～1 亿倍，8.0×10⁸⁵～8.0×10⁹³ J，按最小读法落在下限，约 8.0×10⁸⁵ J 起。推定链第五节：起点是终章至尊<span class="ev-badge ev-lower">〔下〕</span>，大师兄在许青身上「感知到了一般远超神主的气息」，问「神尊?仙尊?」又说「小阿青怎么成了尊」，紫青说神尊与仙尊之道「其实都没有前后境界的区分」「这是上行的极限!」，随后许青走入神明脐带。第一环是尊的已确认表现：第一千二百三十八章第五星环仙尊「且将整个第五星环，划下十二天外天！又填平了中心」，重划整个星环；许青至尊，照此可整体掌控一个星环<span class="ev-badge ev-inferred">〔推〕</span>，仙尊这件事历时多年、带领众人完成，记弱化、需时。第二环是同类星环的尺寸套用：第一千二百六十二章许青读第四星环星图，「原来，这里距离第五星环只隔着上万宇宙」，测得第四星环至少横跨上万个宇宙宽，这是测量、不算一环，假设同类星环尺寸相近。换算按覆盖模型 E = 2πD²F\*（F\* = 1.64×10²³ J/m²），每个宇宙至少一个可观测宇宙，(10⁴)² × 8.0×10⁷⁷ = 8.0×10⁸⁵ J。已实现、不靠推定的整体掌控有两处，都在强宇宙级：青天<span class="ev-badge ev-confirmed">〔实〕</span>，第一千二百二十章极光仙宫化成仙基「以此仙基，驾驭天外天」，第一千二百二十八章「无尽范围，无数星辰，无数星系，无数宇宙都在这一刻，在许青的仙宫权限下，在他对这天外天的掌握中刹那封印」，天外天里的宇宙个数没写，按最小读法取两个可观测宇宙大小的区域，直径约为可观测宇宙的 1.26 倍，约 1.3×10⁷⁸ J 起；墨阳宇宙<span class="ev-badge ev-lower">〔下〕</span>，第一千一百九十五章凭仙简成为墨阳宇宙之主，墨阳「近七百万亿星系」，按星系数换算直径约为可观测宇宙的 7～15 倍，约 3.9×10⁷⁹～1.8×10⁸⁰ J。保底量级 ⊙宇△<span class="ev-badge ev-confirmed">〔实〕</span>：去掉推定链里争议最大的第二环，整体掌控一个星环按第五星环自身数据只到强宇宙级，与推定链互相独立的青天封天也在这一档；若连青天凭权限的封锁也不算整体掌控，保底退到一念灭星系的标准星系级（4.6×10⁶³～1.15×10⁶⁵ J）。第十极之后的平行世界（宇△<span class="ev-badge ev-inferred">〔推〕</span>，个数未定）也在强宇宙级，「无穷平行」按夸饰处理，只取能确认的不止一个。夏仙之后能换算范围的只有平行世界<span class="ev-badge ev-inferred">〔推〕</span>和各境界的已确认表现<span class="ev-badge ev-inferred">〔推〕</span>；与紫青交战时「时间归一，空间归一，时空归一，平行归一，命运……亦归一」属规则、命运层面的胜负，没有范围。第五星环的军团在第四星环清理「这片上千宇宙」，第一千三百三十四章望古所在的煌天「只是第九星环的一小部分」，这些尺寸只作结构与测量的旁证。前作与本书同属一个世界，前作若写明厚土的尺寸可以补进夏仙一条的范围，但前作主角的战绩不借给许青。</div>
+                  <div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>存在规模：跨平行世界存在（元·多）。第十极之后，许青的宪衍生出「一个个平行世界」，按完整世界推定、个数未定；第九极时期的时空，许青后来自认是「伪平行」，只作结构标注。层级轴：下行星环与上行三十六星环；神修与仙修两套位阶并行；终章至尊，即「上行的极限」。第十极大成时是全部三十六星环修行时空者的最前列之一，「在全部三十六星环里，还有五位存在，与他平列」，只作结构标注，不推出量级。计算层级<span class="ev-badge ev-missing">〔缺〕</span>。各项不相加。</span></div>
+                  <div class="box-subnote">证据链核验摘要：综合量级来自推定链（二环），起点<span class="ev-badge ev-lower">〔下〕</span>、两环<span class="ev-badge ev-inferred">〔推〕</span>；已实现的整体掌控只到强宇宙级，青天<span class="ev-badge ev-confirmed">〔实〕</span>、墨阳<span class="ev-badge ev-lower">〔下〕</span>，都凭仙宫、仙简这类权柄。存疑：青天封锁凭仙宫权限，原文也说对神灵真名「存在缺口」，若不算整体掌控则保底退到标准星系级；墨阳认主后神念仍被黑阳区域隔绝，也没有改动整个宇宙的表现，记<span class="ev-badge ev-lower">〔下〕</span>；星环跨度一环把第四星环的测量用到被掌控的星环上，要假定同类星环尺寸相近，「隔着」若按体积排列读只有约 21 个宇宙宽、约 3.7×10⁸⁰ J，仍是宇△；境界推定里夏仙一条只在厚土成立，神主一条是成神时的余波、坍缩只是开始，仙尊重划星环是一人、历时多年、带领众人完成；后期主之层次与尊的许青远强于主宰、准仙期，但已实现的记录仍是青天与墨阳，这是证据的空缺，不代表后期更弱。「一念可让星系灭」接在「至高存在，拥有绝对的权利」之后，也可读成凭权柄下令，按旁白对他本人能力的交代记<span class="ev-badge ev-lower">〔下〕</span>。</div>
+                </div>
+              </div>
+
+              <aside class="char-portrait-stage" aria-label="许青">
+                <div class="char-portrait-canvas">
+
+                  <img class="char-portrait-img fade-on-load" src="../static/img/characters/xuqing/xuqing-portrait.jpg" alt="许青" width="1200" height="1800">
+                </div>
+
+              </aside>
+            </div>
+
+          </section>
+
+          <div class="char-identity-fx" aria-hidden="true"></div>
+
+        <section class="char-info-panel" aria-label="量级信息图">
+          <div class="char-info-kicker">量级刻度 / TIER SCALE</div>
+          <div class="char-info-head">
+            <span class="char-info-main">⊙ 宇◆<span class="char-info-code">〔主档〕</span></span>
+            <span class="char-info-note">综合 ⊙宇◆〔推〕（掌控式·弱化·需时） · 保底 ⊙宇△〔实〕（青天封天） · 推定链二环 · 起点〔下〕 · 已实现整体掌控只到强宇宙级</span>
+          </div>
+          <div class="char-scale">
+            <div class="char-scale-track">
+              <span class="char-scale-fill" style="--pos:83%"></span>
+              <i class="char-scale-mark" style="--pos:83%"></i>
+            </div>
+            <div class="char-scale-labels"><span style="left:28%">城</span><span style="left:33%">国</span><span style="left:53%">恒</span><span style="left:80%">宇</span></div>
+          </div>
+          <div class="char-dims"><div class="char-dim "><b>破</b><span>宇△〔推〕</span></div><div class="char-dim "><b>控</b><span>宇△〔实〕</span></div><div class="char-dim "><b>域</b><span>〔推〕</span></div><div class="char-dim is-missing"><b>御</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>速</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>算</b><span>〔缺〕</span></div><div class="char-dim "><b>性</b><span>时空宪，宪律名「</span></div></div>
+
+        </section>
+
+          <div class="doc-layout">
+            <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
+              <div class="toc-head">
+                <div class="toc-head-row">
+                  <span>档案章节目录</span>
+                  <span class="mono toc-count">13 节</span>
+                  <button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭章节目录">
+                    <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
+                </div>
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
+              </div>
+              <nav class="toc-list" id="toc-nav">
+                <a class="toc-item toc-lvl-2" href="#sec-作品与角色">作品与角色</a><a class="toc-item toc-lvl-2" href="#sec-量级栏">量级栏</a><a class="toc-item toc-lvl-2" href="#sec-用语说明">用语说明</a><a class="toc-item toc-lvl-2" href="#sec-世界结构">世界结构</a><a class="toc-item toc-lvl-2" href="#sec-分析">分析</a><a class="toc-item toc-lvl-3" href="#sec-一-青天-整个天外天">一、青天：整个天外天</a><a class="toc-item toc-lvl-3" href="#sec-二-墨阳宇宙">二、墨阳宇宙</a><a class="toc-item toc-lvl-3" href="#sec-三-保底">三、保底</a><a class="toc-item toc-lvl-3" href="#sec-四-后期的表现">四、后期的表现</a><a class="toc-item toc-lvl-3" href="#sec-五-境界设定的已确认表现">五、境界设定的已确认表现</a><a class="toc-item toc-lvl-3" href="#sec-六-平行世界">六、平行世界</a><a class="toc-item toc-lvl-2" href="#sec-存疑与风险">存疑与风险</a><a class="toc-item toc-lvl-2" href="#sec-参考资料">参考资料</a>
+              </nav>
+              <div class="toc-foot">
+                <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+                <a class="toc-foot-btn" href="../search.html">全站检索</a>
+              </div>
+            </aside>
+
+            <article class="doc-panel">
+              <div class="doc-toolbar">
+                <div class="doc-source-info">
+                  <span>定级档案全文</span>
+                  <span>·</span>
+                  <span>依据《衡天⊙ 多维战力量级体系（第六版）》</span>
+                </div>
+              </div>
+
+              <div class="markdown-body">
+                <blockquote><p>条目版本：2026-11-13　｜　范围：《光阴之外》正文（至第一千三百五十四章「光阴之外（终）」）与番外。耳根前五部作品与本书同属一个世界（见「世界结构」），但前作里的轮回、时空等描写属于各自的主角，不计入许青。</p>
+<p>阅读方式：未通读全书。终局各章（第一千三百四十七章起）大多读过，各境界节点、关键战斗所在章节读过；其余按实体名与关键词（宇宙、光年、星环、天外天、之主、权限、封、神尊、仙尊、平行、时空等）检索选读。可能漏掉不含这些词的掌控、权柄类段落，以及第一千一百章之前的大范围表现。</p></blockquote>
+<h2 id="sec-作品与角色">作品与角色<a class="heading-anchor" href="#sec-作品与角色" data-target-id="sec-作品与角色" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">作品</td><td style="text-align:left">《光阴之外》，耳根著，正文一千三百五十四章，另有番外两篇</td></tr><tr><td style="text-align:left">角色</td><td style="text-align:left">许青，从望古大陆起步，后经第五星环、第四星环，宪为时空</td></tr><tr><td style="text-align:left">境界路线</td><td style="text-align:left">凝气 → 筑基 → 金丹 → 元婴 → 灵藏 → 归墟 → 蕴神 → 主宰 → 准仙 → 夏仙（第九步）→ 仙主 → 尊（上行的极限）</td></tr><tr><td style="text-align:left">终点</td><td style="text-align:left">第一千三百五十二章，许青以仙主现身："且不是寻常的仙主，而是仙主这个层次的巅峰"；第一千三百五十三章："吞噬了原始母星后，许青的修为已达神主巅峰"。终章若干年后，大师兄"他在许青身上，感知到了一般远超神主的气息"，问"神尊?仙尊?"，又说"小阿青怎么成了尊"，随后许青走入神明脐带。紫青说神尊与仙尊之道"其实都没有前后境界的区分"，"这是上行的极限!"</td></tr></tbody></table></div>
+<h2 id="sec-量级栏">量级栏<a class="heading-anchor" href="#sec-量级栏" data-target-id="sec-量级栏" title="复制本节锚点链接">#</a></h2>
+<p><strong>综合量级：⊙宇◆<span class="ev-badge ev-inferred">〔推〕</span>（掌控式·弱化·需时；推定链二环）</strong>——极宇宙级（可观测宇宙直径的 1 万～1 亿倍，8.0×10⁸⁵～8.0×10⁹³ J），按最小读法落在下限，约 8.0×10⁸⁵ J 起。推定链（第五节）：</p>
+<ul><li><strong>起点：终章至尊<span class="ev-badge ev-lower">〔下〕</span></strong>。旁白写大师兄"他在许青身上，感知到了一般远超神主的气息"，他问"神尊?仙尊?"，又说"小阿青怎么成了尊"；紫青说他所走的仙尊之道"这是上行的极限!"，随后许青走入神明脐带。</li><li><strong>第一环：尊的已确认表现</strong>。第一千二百三十八章，第五星环仙尊"且将整个第五星环，划下十二天外天！又填平了中心"，是重划整个星环；许青至尊，照此可整体掌控一个星环<span class="ev-badge ev-inferred">〔推〕</span>。仙尊这件事历时多年、带领众人完成，记弱化、需时。</li><li><strong>第二环：同类星环的尺寸套用</strong>。第一千二百六十二章，许青读第四星环的星图："原来，这里距离第五星环只隔着上万宇宙"，测得第四星环至少横跨上万个宇宙宽（测量，不计环）；把这一跨度用到被掌控的星环上，假设同类星环尺寸相近。</li><li><strong>换算</strong>：每个宇宙至少一个可观测宇宙，(10⁴)² × 8.0×10⁷⁷ = 8.0×10⁸⁵ J。</li></ul>
+<p>已实现、不靠推定的整体掌控有两处，都在强宇宙级（可观测宇宙直径的 1～1 万倍，8.0×10⁷⁷～8.0×10⁸⁵ J）：</p>
+<ul><li><strong>青天<span class="ev-badge ev-confirmed">〔实〕</span></strong>：第一千二百二十章至第一千二百二十八章，极光仙宫化成许青的仙基，"以此仙基，驾驭天外天"；他两次封闭整个天外天，第一千二百二十八章写"无尽范围，无数星辰，无数星系，无数宇宙都在这一刻，在许青的仙宫权限下，在他对这天外天的掌握中刹那封印"。天外天里的宇宙个数没写，按最小读法取两个可观测宇宙大小的区域，约 1.3×10⁷⁸ J 起。</li><li><strong>墨阳宇宙<span class="ev-badge ev-lower">〔下〕</span></strong>：第一千一百九十五章，许青凭仙简成为墨阳宇宙之主。墨阳"近七百万亿星系"，按星系数换算，直径约为可观测宇宙的 7～15 倍，约 3.9×10⁷⁹～1.8×10⁸⁰ J。</li></ul>
+<p>第十极之后的平行世界（宇△<span class="ev-badge ev-inferred">〔推〕</span>，个数未定）也在强宇宙级。</p>
+<p><strong>保底量级：⊙宇△<span class="ev-badge ev-confirmed">〔实〕</span></strong>——去掉推定链里争议最大的第二环（第四星环的跨度用于别的星环，且「隔着」另有体积排列的读法），整体掌控一个星环按第五星环自身的数据只到强宇宙级；与推定链互相独立的青天封天<span class="ev-badge ev-confirmed">〔实〕</span>也在这一档，按最小读法约 1.3×10⁷⁸ J。若连青天凭权限的封锁也不算整体掌控，保底退到一念灭星系的标准星系级（4.6×10⁶³～1.15×10⁶⁵ J）。</p>
+<p><strong>位格</strong>：</p>
+<ul><li>存在规模：跨平行世界存在。第十极之后，许青的宪衍生出"一个个平行世界"，按完整世界推定，个数未定（元·多）；第九极时期的时空，许青后来自认是「伪平行」，只作结构标注（见第六节）。</li><li>层级轴：下行星环与上行三十六星环；神修与仙修两套位阶并行；终章至尊，即"上行的极限"。第十极大成时，许青是全部三十六星环修行时空者的最前列之一，"在全部三十六星环里，还有五位存在，与他平列"。只作结构标注，不推出量级。</li><li>计算层级：<span class="ev-badge ev-missing">〔缺〕</span>。</li></ul>
+<p><strong>可信度</strong>：综合量级来自推定链（二环），起点<span class="ev-badge ev-lower">〔下〕</span>、两环<span class="ev-badge ev-inferred">〔推〕</span>；已实现的整体掌控只到强宇宙级，青天<span class="ev-badge ev-confirmed">〔实〕</span>、墨阳<span class="ev-badge ev-lower">〔下〕</span>，都凭仙宫、仙简这类权柄。夏仙之后能换算范围的，只有平行世界<span class="ev-badge ev-inferred">〔推〕</span>和各境界的已确认表现<span class="ev-badge ev-inferred">〔推〕</span>；规则、命运层面的胜负没有范围。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">维度</th><th style="text-align:left">记录</th></tr></thead><tbody><tr><td style="text-align:left">破（破坏）</td><td style="text-align:left">宇◆<span class="ev-badge ev-inferred">〔推〕</span>（推定链三环）：由至尊后整体掌控一个星环推出；宇△<span class="ev-badge ev-inferred">〔推〕</span>：由青天、墨阳的整体掌控推出；宇△<span class="ev-badge ev-inferred">〔推〕</span>（元·多）：第一千三百二十一章，宪律风暴中"平行世界如泡沫般被一一碾碎"；河○<span class="ev-badge ev-lower">〔下〕</span>：一念可让星系灭（墨阳）。亲手打出的：一挥让一片星空"好似化作了镜面，刹那崩溃"（第一千二百九十三章），范围未写；击杀真神，"身躯瞬间崩溃，神魂刹那瓦解"（第一千二百八十八章）</td></tr><tr><td style="text-align:left">控（整体掌控）</td><td style="text-align:left">宇△<span class="ev-badge ev-confirmed">〔实〕</span>（元·多）：青天封天；宇△<span class="ev-badge ev-lower">〔下〕</span>：墨阳宇宙认主（持仙简），昆吾所在的黑阳区域曾隔绝他的神念；宇△<span class="ev-badge ev-inferred">〔推〕</span>（元·多）：第一千三百零五章，第十极成就时，他的宪所化的平行世界"万物众生都发生了翻天覆地的改变"；宇◆<span class="ev-badge ev-inferred">〔推〕</span>（推定链二环；弱化·需时）：至尊后整体掌控一个星环（见量级栏）；境界推定（第五节）：在厚土可笼罩整个厚土星环<span class="ev-badge ev-inferred">〔推〕</span></td></tr><tr><td style="text-align:left">域（影响范围）</td><td style="text-align:left">全知：第一千二百二十一章，"以体内仙宫之权，凝望众生万物"，看见天外天内所有宇宙；天道：第一千三百二十七章重定望古天道，影响范围整个望古；神念：尊这一层的神念可传遍上行三十六星环<span class="ev-badge ev-inferred">〔推〕</span>；星环扰动：神主成形时扰动整个星环<span class="ev-badge ev-inferred">〔推〕</span>；抽离：第一千三百一十五章，把古仙宪化的大海层层拆解直至湮灭；平行界：第一千三百一十七章「开平行界」，逆转古仙在各平行世界的因果与命运投影；命运：与紫青交战时"时间归一，空间归一，时空归一，平行归一，命运……亦归一。"</td></tr><tr><td style="text-align:left">御（防御）</td><td style="text-align:left">无可换算的数值<span class="ev-badge ev-missing">〔缺〕</span></td></tr><tr><td style="text-align:left">速（速度）</td><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span>；牵引光阴之线瞬间移动，记特性</td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">时空宪，宪律名「维」（指拆解与整合的独立方向，不代表空间维数）；归一：各时空的自身心意相通，仙识贯通全部平行（跨界存在，只记特性，不按个数相乘）；神灵之身与仙灵之身融合，双子两个本体；持神格与命运之权</td></tr></tbody></table></div>
+<h2 id="sec-用语说明">用语说明<a class="heading-anchor" href="#sec-用语说明" data-target-id="sec-用语说明" title="复制本节锚点链接">#</a></h2>
+<ul><li><strong>覆盖模型</strong>：一击毁掉、或整体掌控一片范围，按 E = 2πD²F* 折算，D 为覆盖直径，F* = 1.64×10²³ J/m²。宇宙级按「可观测宇宙直径的几倍」计，能量随直径的平方增长；标准宇宙（直径约 930 亿光年）为 8.0×10⁷⁷ J。</li><li><strong>掌控式</strong>：整体接管一片范围内的全部物质与空间，可以推出能毁掉这片范围；破坏一栏因此记<span class="ev-badge ev-inferred">〔推〕</span>。</li><li><strong>元·多</strong>：涉及多个宇宙或完整世界，原文没有写出个数，按能确认的最小个数计。</li><li><strong>推定链</strong>：从已确认的证据出发，经过写明的若干环推出的结果，记<span class="ev-badge ev-inferred">〔推〕</span>并写出环数。从原文读出尺寸、距离、数量属于测量，等同事实，不算一环；同为<span class="ev-badge ev-inferred">〔推〕</span>时，环数少的更可靠。</li><li><strong>外·门</strong>：论外门槛，即可数无限（ℵ₀）。<strong>〔若采信〕</strong>：按字面采信某句话时的结果，只作参考，不计入量级。</li><li><strong><span class="ev-badge ev-confirmed">〔实〕</span></strong>：原文直接写出；<strong><span class="ev-badge ev-lower">〔下〕</span></strong>：只能确认至少如此；<strong><span class="ev-badge ev-inferred">〔推〕</span></strong>：经写明的推定链推出；<strong><span class="ev-badge ev-missing">〔缺〕</span></strong>：原文没有可用的数字。</li><li><strong>结构标注</strong>：只确认有某种层级或结构，没有可换算的倍率或数目。</li></ul>
+<h2 id="sec-世界结构">世界结构<a class="heading-anchor" href="#sec-世界结构" data-target-id="sec-世界结构" title="复制本节锚点链接">#</a></h2>
+<ul><li><strong>这片宇宙与三十六星环</strong>：第一千零三章，一位老者对许青说："你们也好，老夫也罢，所在的这片宇宙，存在了三十六星环"；"每一个星环，都浩瀚无尽，蕴多域"。三十六上行星环围成一个巨环，中间是源海；其下另有下行星环，厚土是其中之一。</li><li><strong>天外天与宇宙</strong>：第五星环被仙尊"划下十二天外天"，每个天外天里有许多宇宙。九岸天"宇宙数量众多"，墨阳是其中之一；宇宙之间隔着星空，墨阳与天兜"只间隔了七八个宇宙范围的星空中"。本书的「宇宙」一词有两种用法：一是全部星环的总和，一是星环里一个个有星系的天地，下文都指后者。</li><li><strong>星环的跨度</strong>：第一千二百六十二章，许青读取第四星环的星图："原来，这里距离第五星环只隔着上万宇宙"；第五星环的军团在第四星环清理"这片上千宇宙"。第一千三百三十四章写望古所在的煌天"只是第九星环的一小部分"。厚土虽是下行星环，也有多个宇宙："那意志，是厚土所有宇宙内全部生灵的集体之意"。</li><li><strong>光年</strong>：全书只有一处光年，是极光少主（觅明）成神主时的余波，见第五节。</li><li><strong>与耳根前作同属一个世界</strong>：第一千一百三十一章插入一段以光阴自述的文字，说它遇到几个"强大到可以真正看见我的程度"的朋友：拿花的、乘船的、问宿命的、"想让我给他写一个欠条"的、"喜欢穿黑衣的人"，从描写看是前几部的主角（写欠条是《我欲封天》孟浩的标志）。正文另有厚土星环、九大夏仙、李家老祖的画轴等线索；第一千三百五十三章，许青在通往厚土未来的封印前遇到一位白发夏仙，对方自称"我姓王"。</li><li><strong>天文写法</strong>：本书照现实天文写（太阳、行星、星系、旋臂、星域），所以星系数可以借现实宇宙的星系密度换算尺寸，未写尺寸的宇宙至少按一个可观测宇宙计。</li></ul>
+<h2 id="sec-分析">分析<a class="heading-anchor" href="#sec-分析" data-target-id="sec-分析" title="复制本节锚点链接">#</a></h2>
+<h3 id="sec-一-青天-整个天外天">一、青天：整个天外天<a class="heading-anchor" href="#sec-一-青天-整个天外天" data-target-id="sec-一-青天-整个天外天" title="复制本节锚点链接">#</a></h3>
+<p>第一千二百二十章，极光少主把极光仙宫连同极光天外天送给许青。许青由主宰突破准仙时，仙宫"融入其头顶，融入其体内，融入其仙胚"，从此"以此仙基，驾驭天外天"，天外天改名青天。第一千二百二十一章，他"以体内仙宫之权，凝望众生万物"，看见天外天内所有宇宙、族群与神灵监狱的痕迹；半个时辰后封天，流光"以超越认知的速度、蔓延所有宇宙"，"直至将整个天外天笼罩后、关闭离开权限，封锁星空"。第一千二百二十八章，为困住一尊真神，他再次封天："无尽范围，无数星辰，无数星系，无数宇宙都在这一刻，在许青的仙宫权限下，在他对这天外天的掌握中刹那封印"，又以整个天外天之力化出黑洞牢笼，"将这天外天，整体都化作了一个浩瀚的监狱"。</p>
+<ul><li><strong>是不是整体掌控</strong>：封印落在天外天里的全部星辰、星系、宇宙上，范围是整个天外天；他能开闭出入的权限、全知其中、调动整个天外天之力。按整体掌控记<span class="ev-badge ev-confirmed">〔实〕</span>。原文同时说"这种隔绝，并不彻底，就如同渔网一样，虽笼罩下去，但存在缺口"，缺口指的是神灵真名的来去，不影响封锁本身。</li><li><strong>借力</strong>：同章写"尽管他的修为不够，他的手段对于真神缺少有效的制裁，可……这仙宫自身，就是最好的杀器"。仙宫已化为仙基，由他心念驱动，"坐在其内，手掌权限，这一刻的许青，便是天外天之主"，所以照记，注明「以仙宫为仙基」。</li><li><strong>尺寸</strong>：天外天里的宇宙个数没写，「无数宇宙」按夸饰处理，只取「不止一个」。走出这片天外天时，"他们每一步，都跨越多个宇宙，最终走到了这天外天的尽头"，宇宙之间又隔着星空，所以整个天外天至少是两个可观测宇宙大小的区域：直径约为可观测宇宙的 1.26 倍（2 的立方根），约 1.3×10⁷⁸ J。这只是下限；同为天外天的九岸天里，单是墨阳一个宇宙就有近七百万亿星系。</li></ul>
+<h3 id="sec-二-墨阳宇宙">二、墨阳宇宙<a class="heading-anchor" href="#sec-二-墨阳宇宙" data-target-id="sec-二-墨阳宇宙" title="复制本节锚点链接">#</a></h3>
+<p>第一千一百九十五章，许青以第五星环飞升者的身份获赐墨阳宇宙。仙简融入体内的一刻，"墨阳宇宙已经完成认主"："而认主之后，这个宇宙已经在许青心中一念散开如惊世巨狼，摧枯拉朽横扫所有星域星系，所有星辰。"随后属下报告："墨阳宇宙内存在近七百万亿星系"。</p>
+<ul><li><strong>尺寸</strong>：近七百万亿即约 7×10¹⁴ 个星系。现实中可观测宇宙的星系数估计在两千亿到两万亿之间，墨阳是它的 350～3500 倍；按同样的星系密度，直径约为可观测宇宙的 7～15 倍，约 3.9×10⁷⁹～1.8×10⁸⁰ J。</li><li><strong>是不是整体掌控</strong>：旁白称他是"至高存在，拥有绝对的权利"。但认主之前"他的神念，也无法笼罩整个宇宙"；认主之后，昆吾占据的黑阳区域仍是"许青的神念里仅有的漆黑区域，其内隔绝神念"，他也没有展示对整个宇宙的改动。所以记<span class="ev-badge ev-lower">〔下〕</span>，并作为保底去掉的一步。</li><li><strong>借力</strong>：仙简"他的作用不仅仅是传送，更是墨阳宇宙的至高凭证"，档位照记并注明「持仙简」。</li></ul>
+<h3 id="sec-三-保底">三、保底<a class="heading-anchor" href="#sec-三-保底" data-target-id="sec-三-保底" title="复制本节锚点链接">#</a></h3>
+<p>去掉墨阳认主等于整体掌控这一步，青天封天仍然成立：那是许青亲手两次封闭整个天外天的直接叙述。按最小读法，保底为强宇宙级，约 1.3×10⁷⁸ J。更保守的读法是把凭权限的封锁一并剔除，这时只剩同章旁白"即便他如今是这墨阳宇宙的至高存在，拥有绝对的权利，一念之下，可让星系灭。"，即标准星系级。</p>
+<h3 id="sec-四-后期的表现">四、后期的表现<a class="heading-anchor" href="#sec-四-后期的表现" data-target-id="sec-四-后期的表现" title="复制本节锚点链接">#</a></h3>
+<ul><li><strong>望古天地战古仙</strong>（第一千三百一十五至一千三百一十七章）：古仙的宪化作一片大海，"此海，来自无数世界。"许青依次抽离时空、平行、「无数」、高度，大海化为水滴、碎片、点，最后湮灭，记入域；「无数世界」是对这片海的描写，不按多个宇宙计。随后他「开平行界」，神通碎片化成镜片，"折射古仙无限的因果与命运"，旁白说"那是平行、那是不同时空的不同世界"；"一字出口、平行逆转、万界大乱"，这些世界里"赤星坠地焚山裂海、灵河倒灌吞噬城池"，最后以归一把颠倒的因果命运灌回古仙本体。作用对象是古仙在各世界的因果与命运，写到的天灾只到一片大地，记入域。</li><li><strong>许愿与故事</strong>（第一千三百二十一章）：与母河神主交手，许青"微微一按"，宪律爆发"如同一场席卷多元宇宙的超级风暴"，"平行世界如泡沫般被一一碾碎，然后又被重新拼凑成全新的荒诞且恐怖的模样"，"归一的力量，更是将所有破碎的时空、混乱的规则，统统强行融合"。前一句是比喻；后一句按第六节的推定记破 宇△<span class="ev-badge ev-inferred">〔推〕</span>（元·多）。</li><li><strong>重定望古天道</strong>（第一千三百二十七章）：许青"今日封古灵皇，一眼一道，九十九眼，成望古九十九天道"，又"封你为望古第一天道"。改的是整个望古的天道，按单一要素记入域，影响范围整个望古；望古的尺寸原文没写。</li><li><strong>命中归一</strong>（第一千三百四十三章）：与神主紫青的命运之战，把四周的命运碎片全部改写成此刻的自己，属于命运层面的规则胜负，只在本作内部成立。</li><li><strong>正面击败的对手</strong>：古仙、母河神主、紫青、跌落神尊位格的德罗子，都没有可换算的防御记录，不能借交手抬高许青。</li></ul>
+<h3 id="sec-五-境界设定的已确认表现">五、境界设定的已确认表现<a class="heading-anchor" href="#sec-五-境界设定的已确认表现" data-target-id="sec-五-境界设定的已确认表现" title="复制本节锚点链接">#</a></h3>
+<p>境界名本身不推出量级；但作品写过某个境界做到了什么，到了这个境界的人可以照此推定<span class="ev-badge ev-inferred">〔推〕</span>。许青先后到过夏仙、神主巅峰、仙主巅峰，终章至尊。需要注意的是，第一千三百二十七章时他还自知"他知晓自身与神尊之间的差距，依旧是天与地"，尊这一层的推定只用于终章。</p>
+<ul><li><strong>夏仙</strong>：第一千一百零四章，"夏仙，在厚土星环，可一念笼罩整个星环，除了不能崩溃所在星环外，其他几乎无所不能。"紧接着"可在望古，却做不到。"同章解释了原因："上下行的压制力不同，所以表现出的战力，也有所不同"，"就好似大世界与小世界的区别"，上行三十六星环对一切修士都有压制。所以这条设定不是对夏仙能力的否定，而是只在厚土成立。许青远在夏仙之上，到了厚土至少能笼罩整个厚土星环<span class="ev-badge ev-inferred">〔推〕</span>；厚土有多个宇宙，与青天同在强宇宙级。「不能崩溃所在星环」写明了，不由此推出破坏。</li><li><strong>神主</strong>：极光少主在第四星环的原始母星成神主（真名觅明）。第一千二百七十六章，"整个星环的结构仿佛被极光少主那一抓之下，强行弯曲"，"各个星域内，各个宇宙中，各个星系里，众多的轨道同时偏移"；第一千二百七十八章，神格成形时"亿万万光年范围内的所有恒星系，皆如同被吸进漩涡的尘埃，开始向原始母星疯狂坍缩"，"整个第四星环，为之一暗"。许青走的是同一条路的极致：觅明只与母星短暂融合，许青吞下了第九星环的双子原始母星，"吞噬了原始母星后，许青的修为已达神主巅峰"。坍缩只是「开始」，是成神时的余波，所以记入域：扰动整个星环<span class="ev-badge ev-inferred">〔推〕</span>。「亿万万光年」的最小读法（亿万按一亿，再乘一万）是 10¹² 光年，约 9.2×10⁷⁹ J；字面相乘是 10¹⁶ 光年，约 9.2×10⁸⁷ J。</li><li><strong>尊</strong>：第一千二百三十八章追述第五星环仙尊"一步步，经历千辛万苦，走过无数浩劫"，"最终镇了神尊，押了神主，断了所有神属之源，奴了无数神灵之族，且将整个第五星环，划下十二天外天！又填平了中心"。这是重划整个星环，属于整体掌控与创造；但历时长久、带领众人完成，记弱化、需时。第一千二百九十七章，一位老神尊的"神念，传遍整个上行三十六星环"。终章许青至尊<span class="ev-badge ev-lower">〔下〕</span>（依据大师兄的感知和他随后走神明脐带）。由此推定：许青可整体掌控一个星环<span class="ev-badge ev-inferred">〔推〕</span>（弱化·需时），神念可及全部上行星环（域）<span class="ev-badge ev-inferred">〔推〕</span>。</li><li><strong>一个星环有多大</strong>：只看原文直接写的，第五星环有十二天外天，至少包含墨阳，整体掌控一个星环至少是强宇宙级。再加上第一千二百六十二章"原来，这里距离第五星环只隔着上万宇宙"：星环之间相邻，按沿途排列的读法，一个星环至少横跨上万个宇宙宽，每个宇宙至少一个可观测宇宙，整个星环至少 (10⁴)² × 8.0×10⁷⁷ = 8.0×10⁸⁵ J，到极宇宙级下限。这与「亿万万光年」的字面读法（10¹⁶ 光年，约为可观测宇宙直径的 10 万倍）在数量级上互相印证。整条链：起点至尊<span class="ev-badge ev-lower">〔下〕</span>；第一环，尊的已确认表现；第二环，把第四星环的跨度用到被掌控的星环上。「隔着上万宇宙」是对第四星环的测量，不算一环。由此记综合量级 ⊙宇◆<span class="ev-badge ev-inferred">〔推〕</span>（推定链二环）。</li></ul>
+<h3 id="sec-六-平行世界">六、平行世界<a class="heading-anchor" href="#sec-六-平行世界" data-target-id="sec-六-平行世界" title="复制本节锚点链接">#</a></h3>
+<p>许青的时空之道分前后两段，两段的「时空」不是一回事。</p>
+<p><strong>第九极（主宰期）</strong>：第一千一百一十七章，他从沙砾的移动悟出时间分支，想到"额外产生的时间线，加上一个独属于那条时间线的空间"，即"一个与我本源一样但未来不同的……命运"，称之为"基于我产生的时空"，随后试着把自己的空间之能变成盒子，去容纳时间线。第一千一百八十一章写第九极："如时光沙漠最原始的沙砾一样，一次次移动，形成了一条条时间线，化作了一个个时空。这些时空，理论上是无限的，变化亦是如此。"这时的归一，是"通过这些门，能勾连所有时空的自身，且彼此心意相通，思维相通"，许青称之为"并宇叠宙"。到第一千三百零一章，他自己否定了这一段："所以，我所见那些时空，都是修士"，"甚至可以说，都是我自己所想象的自己，那种平行，是伪平行"。所以这一段的时空只作结构标注；归一连通的是各时空里的自身，记为特性，不按时空个数乘进当量。</p>
+<p><strong>第十极之后</strong>：同在第一千三百零一章，许青在时空乱流里看到真正的平行，是"人生百态"，无数光点"这些光点任何一个，都似乎蕴含了一个世界，蕴含了一片时空，蕴含了那片时空内万物众生的轨迹"。第一千三百零五章，第十极成就："那些以许青的宪所衍生出的一个个平行世界"汇入他的真身，"亦使得许青宪所化的无穷平行内，万物众生都发生了翻天覆地的改变"，"一条条在各自时空的山川河流，似被一双无形的大手重塑"，"种种不可思议的变化，在许青的思绪里形成，在他的平行中诞生"。</p>
+<ul><li><strong>算不算完整世界</strong>：每个平行世界有自己的时间线、空间、山川河流与万物众生，原文也用「不同时空的不同世界」称呼平行，按完整世界推定<span class="ev-badge ev-inferred">〔推〕</span>。尺寸没有写，每个按一个标准宇宙计，这一步是约定。风险：原文写到的改变是山川、江河、鸟兽与众生，规模只到一片有生灵的大地；只按写到的层级计，就是若干个行星级的世界。</li><li><strong>一次作用</strong>：第十极成就是一次事件，原文直接写了各个时空同时改变，按一次作用波及全部平行世界计，记入控；第一千三百二十一章的宪律风暴是一击，其中多个平行世界被碾碎，同样按一次作用计，记入破。</li><li><strong>有多少个</strong>：「无穷平行」只出现在这一句。四章之前的第一千三百零一章，原文说的是"这数不清的平行时空，我现在只是具备看见的资格"，光点还在增加，"他赫然感知到有更多的点，正在形成"；第九极时也只说"理论上是无限的"。第一千三百一十六章许青自己也说："准确的说、现在的归一、更大的可能性是在特定范畴内、有限的归一"。所以「无穷」按夸饰处理，个数记为未定，只取能确认的「不止一个」，落在强宇宙级；要到极宇宙级需要上亿个，原文没有交代。</li><li><strong>若按字面采信「无穷」</strong>：可记论外门槛「外·门（ℵ₀）」〔若采信〕。即便如此，分支再分支、归一再归一，也只是同一个可数无限里更长的结构，不会升到更高的基数。</li></ul>
+<h2 id="sec-存疑与风险">存疑与风险<a class="heading-anchor" href="#sec-存疑与风险" data-target-id="sec-存疑与风险" title="复制本节锚点链接">#</a></h2>
+<ol><li><strong>青天是否整体掌控</strong>：封锁凭的是仙宫权限，原文也说封锁对神灵真名"存在缺口"；物质层面写的是封印落在全部星辰、星系、宇宙上，并调动整个天外天之力。若不算整体掌控，保底退到标准星系级。</li><li><strong>墨阳认主是否整体掌控</strong>：神念横扫全部星域，但有隔绝神念的区域，也没有改动整个宇宙的表现。</li><li><strong>宇宙与天外天的尺寸</strong>：墨阳的直径按现实宇宙的星系密度换算；若墨阳的星系更密，尺寸会更小。天外天只按两个宇宙的最小读法计，实际远不止。</li><li><strong>境界推定</strong>：夏仙一条只在厚土成立；神主一条是成神时的余波，坍缩只是开始；仙尊重划星环是一人、历时多年、带领众人完成，许青至尊依据的是大师兄的感知和他随后走神明脐带。这些都只记<span class="ev-badge ev-inferred">〔推〕</span>。</li><li><strong>星环的跨度（推定链第二环）</strong>：「只隔着上万宇宙」测的是第四星环，用到被掌控的星环上要假定同类星环尺寸相近；「隔着」按沿途排列读，若指之间有上万个宇宙、按体积排列，跨度只有约 21 个宇宙宽，整个星环约 3.7×10⁸⁰ J，仍是强宇宙级；还假定相邻星环之间的空隙不大（第一千二百九十七章写第四星环有一处"无限接近第五星环"）。按最小读法结果恰在极宇宙级下限，宇宙之间还隔着星空，实际只会更大。</li><li><strong>后期的范围数字</strong>：主之层次与尊的许青远强于主宰、准仙期，但后期的范围只能靠平行世界与境界推定得出；已实现的记录仍是主宰、准仙期的青天与墨阳。这是证据的空缺，不代表后期更弱。</li><li><strong>「一念可让星系灭」的归属</strong>：这句接在「至高存在，拥有绝对的权利」之后，也可以读成凭权柄下令；按旁白对他本人能力的交代记<span class="ev-badge ev-lower">〔下〕</span>。</li><li><strong>其他作品的描写</strong>：前作与本书同属一个世界，但前作里关于轮回、时空的段落属于各自的主角，不借给许青；「第九步」「夏仙」的位次也不把前作主角的战绩带给他。前作若写明了厚土的尺寸，可以补进第五节夏仙一条的范围。</li><li><strong>平行时空是否完整</strong>：按完整世界推定是一步推定，风险见第六节。</li><li><strong>原文版本</strong>：所用全文第一千一百八十二章等个别章节有字被成批替换（如「有」作「没」），条目不取这些章节的文字。</li></ol>
+<h2 id="sec-参考资料">参考资料<a class="heading-anchor" href="#sec-参考资料" data-target-id="sec-参考资料" title="复制本节锚点链接">#</a></h2>
+<ul><li>耳根：《光阴之外》正文及番外。</li><li>可观测宇宙的星系数：Conselice 等（2016）估计约两万亿；2021 年依据新视野号观测的研究给出数千亿。</li></ul>
+              </div>
+            </article>
+
+            <aside class="reader-rail" role="group" aria-label="阅读显示设置">
+              <span class="reader-rail-label mono" aria-hidden="true">字号</span>
+              <div class="reader-rail-btns">
+                <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+                <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+                <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
+              </div>
+              <span class="reader-rail-readout mono" id="doc-font-readout">15.5px</span>
+            </aside>
+          </div>
+
+
+          <div class="pager-grid">
+            <a class="pager-card" href="tongguan.html">
+                  <span class="pager-dir">← 上一位角色（更低量级）</span>
+                  <span class="pager-title">三世铜棺之主</span>
+                  <span class="pager-sub mono">⊙ 宇◆ · 首字母 T</span>
+                </a>
+            <a class="pager-card next" href="zhangyan.html">
+                  <span class="pager-dir">下一位角色（更高量级） →</span>
+                  <span class="pager-title">张衍</span>
+                  <span class="pager-sub mono">⊙ 宇◆ · 首字母 Z</span>
+                </a>
+          </div>
+        </div>
+
+  </main>
+
+  <div class="floating-dock" aria-label="快捷工具">
+    <button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录" aria-label="展开章节目录"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg></button>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
+      <div class="search-modal-head">
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第六版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="../search.html">进入独立搜索页 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 第六版基准</span>
+      </div>
+      <div class="footer-links">
+        <a href="../tiers.html">量级天梯</a>
+        <a href="../characters.html">角色档案</a>
+        <a href="../rules.html">衡天体系全文</a>
+        <a href="../materials.html">材质能量库</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>window.__PW_INDEX_SRC__ = "../static/js/search-index.js";</script>
+  <script src="../static/js/theme.js"></script>
+  <script src="../static/js/app.js"></script>
+  <script src="../static/js/pwa.js"></script>
+
+  <script src="../static/js/chrome.js"></script>
+  <script src="../static/js/editions.js"></script>
+</body>
+</html>

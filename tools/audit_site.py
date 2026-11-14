@@ -297,7 +297,7 @@ def check_hero_light():
 # 历史角色（含 yog / divinity / lufasi / tianren 等）的配图比例本就多样，
 # 由 CSS 的 contain / cover 正常兜底，属既有设计，不参与比例校验。
 # 日后新增角色若沿用同一规范，把 slug 加进这里即可自动纳入。
-STD_MEDIA_SLUGS = {"nvwa", "shiva", "sunwukong", "pangu", "starkiller", "luofeng"}
+STD_MEDIA_SLUGS = {"nvwa", "shiva", "sunwukong", "pangu", "starkiller", "luofeng", "xuqing", "zhangyan"}
 
 
 def check_character_media():
