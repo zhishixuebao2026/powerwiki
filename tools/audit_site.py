@@ -18,13 +18,20 @@
   5. 首页 Hero 亮色版：双图资源 + 亮色主题样式分支齐全（防深色块复发）
   6. 角色配图：每个角色都有 16:9 卡片图 + 2:3 肖像图且文件存在（防漏图 /
      回退 monogram / 比例错乱）
-  7. 状态栏明暗：--render 时逐套量取状态栏正下方 (195,22) 真实底色亮度，
+  7. 已定级内容基线：角色定级字段、角色归档原文、data/tiers.json 量级数值
+     与基线指纹比对（规则/皮肤同步时误改定级会直接判失败）
+  8. 状态栏明暗：--render 时逐套量取状态栏正下方 (195,22) 真实底色亮度，
      与 SKIN_STATUS_BAR_MODE 比对（能抓出整页中位数采样抓不到的漏判）
+
+规则更新的允许改动范围见 docs/需求与约定.md：只动规则文档、规则页、
+版本标签与皮肤展示层；已定级的角色档位与量级数值一律不动。确需改档时
+用 --update-baseline 显式重建基线并在 CHANGELOG 记录。
 
 退出码：有问题 1，全通过 0。可直接接进 CI / 发布前钩子。
 """
 import argparse
 import glob
+import hashlib
 import json
 import os
 import re
@@ -343,11 +350,87 @@ def check_character_media():
     return issues, with_img, ratio_checked
 
 
+# --- 7) 已定级内容基线 ---------------------------------------------------
+# 规则/皮肤同步只允许改「规则文档、规则页、版本标签、皮肤展示层」；
+# 已定级的角色档位、定级归档原文、量级数值表一律锁死。
+BASELINE_PATH = ROOT / "tools" / "grading_baseline.json"
+# 这些是展示/配图字段，允许随配图调整变动，不计入定级指纹
+GRADING_MUTABLE_FIELDS = {
+    "image_url", "portrait_url", "portrait_caption", "image_map", "visual",
+}
+
+
+def _sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def _grading_snapshot():
+    chars = json.loads(
+        (ROOT / "data/characters.json").read_text(encoding="utf-8")
+    )["characters"]
+    char_fp = {}
+    for c in chars:
+        locked = {k: v for k, v in c.items() if k not in GRADING_MUTABLE_FIELDS}
+        blob = json.dumps(locked, ensure_ascii=False, sort_keys=True,
+                          separators=(",", ":"))
+        char_fp[c["slug"]] = _sha(blob.encode("utf-8"))
+    doc_fp = {}
+    for p in sorted((ROOT / "data/docs/characters").glob("*.md")):
+        doc_fp[p.relative_to(ROOT).as_posix()] = _sha(p.read_bytes())
+    return {
+        "characters": char_fp,
+        "character_docs": doc_fp,
+        "tiers_json": _sha((ROOT / "data/tiers.json").read_bytes()),
+    }
+
+
+def check_grading_baseline(update=False):
+    """返回 (问题列表, 说明)。新增角色/归档不拦，已有内容被改一律判失败。"""
+    snap = _grading_snapshot()
+    if update or not BASELINE_PATH.exists():
+        payload = {
+            "note": "已定级内容指纹基线；规则/皮肤同步不得改动下列数据。"
+                    "确需改档时显式运行 audit_site.py --update-baseline 并在 CHANGELOG 记录。",
+            **snap,
+        }
+        BASELINE_PATH.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        action = "已更新" if update else "首次生成"
+        return [], (f"{action}基线：{len(snap['characters'])} 角色 / "
+                    f"{len(snap['character_docs'])} 归档 / tiers.json")
+
+    base = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
+    issues = []
+    old_chars = base.get("characters", {})
+    for slug, fp in snap["characters"].items():
+        if slug in old_chars and old_chars[slug] != fp:
+            issues.append(
+                f"角色 {slug} 的已定级字段被改动（规则同步不得触碰；"
+                f"确需改档请 --update-baseline 并记 CHANGELOG）"
+            )
+    old_docs = base.get("character_docs", {})
+    for path, fp in snap["character_docs"].items():
+        if path in old_docs and old_docs[path] != fp:
+            issues.append(f"角色定级归档被改动：{path}")
+    for path in old_docs:
+        if path not in snap["character_docs"]:
+            issues.append(f"角色定级归档缺失：{path}")
+    if base.get("tiers_json") != snap["tiers_json"]:
+        issues.append("data/tiers.json 量级数值被改动（规则同步不得触碰）")
+    summary = (f"{len(snap['characters'])} 角色 / "
+               f"{len(snap['character_docs'])} 归档 / tiers.json")
+    return issues, summary if issues else summary + " 全部与基线一致"
+
+
 def main():
     ap = argparse.ArgumentParser(description="PowerWiki 全站体检")
     ap.add_argument("--build", action="store_true", help="先运行 build_site.py 再体检")
     ap.add_argument("--render", action="store_true", help="渲染复判状态栏明暗")
     ap.add_argument("--url", default="http://localhost:8137", help="--render 用的站点根 URL")
+    ap.add_argument("--update-baseline", action="store_true",
+                    help="显式重建已定级内容基线（仅在确实调整角色定级时使用）")
     args = ap.parse_args()
 
     if args.build:
@@ -395,8 +478,13 @@ def main():
           f"缺图或比例异常 {len(media_issues)} 项")
     all_issues += media_issues
 
+    print("=== 7) 已定级内容基线（规则/皮肤同步不得改动定级）===")
+    base_issues, base_msg = check_grading_baseline(update=args.update_baseline)
+    print(f"  {base_msg}；异常 {len(base_issues)} 项")
+    all_issues += base_issues
+
     if args.render:
-        print("=== 7) 状态栏明暗渲染复判 ===")
+        print("=== 8) 状态栏明暗渲染复判 ===")
         result, mism = render_statusbar(args.url.rstrip("/"))
         if result is None:
             print("  " + mism[0])
