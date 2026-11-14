@@ -31,6 +31,15 @@
   right: max(16px, env(safe-area-inset-right, 0px));
 }
 
+/* 启动期：水平锚点还没定稿前先隐藏，避免「CSS 默认左下 → JS 翻右下」
+   的首屏跳变（移动端 10px→288px 那一下）。这个 class 由 editions.js 在
+   boot 时添加、lockAnchor() 时移除；若脚本完全没加载，class 不会出现，
+   印章仍按原位置可见可用 —— 不会因为改定位就让入口消失。 */
+.pw-edition-dock.pw-dock-pending {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .pw-edition-dock.is-dim {
   opacity: 0.14;
 }
