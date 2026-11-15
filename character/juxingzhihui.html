@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="char-juxingzhihui" data-boot-bg-light="#f1f2ed" data-boot-bg-dark="#080d11">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" id="theme-color-meta" content="#f1f2ed">
+  <meta name="color-scheme" content="light dark">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../static/img/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="衡天 Wiki">
+  <meta name="application-name" content="衡天 Wiki">
+  <title>巨型智慧 · 角色战力档案 · 衡天⊙ PowerWiki</title>
+  <meta name="description" content="衡天⊙ PowerWiki — 基于《衡天⊙ 多维战力量级体系（第六版）》与《材质与破坏能量数据库（第二版）》构建的多维战力与量级百科。">
+  <!-- 首帧底色：这段内联 CSS 在 <head> 里、所有外链样式表之前生效，浏览器在字体与
+       样式表全部到达前就用它画整个画布，杜绝冷启动白屏。颜色由生成器按页面写入，
+       必须等于该页 CSS 最终生效的 --bg-canvas；用 :where() 让优先级为 0，
+       外部 CSS 到达后即可无缝接管，不会干扰任何最终样式。切主题只改 data-theme，
+       属性选择器自动换色，JS 不再写 inline 底色。 -->
+  <style>
+    :where(html), :where(html) > :where(body) { background-color: #f1f2ed; }
+    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #080d11; }
+  </style>
+  <script>
+    (function() {
+      var root = document.documentElement;
+      var t = null;
+      try { t = localStorage.getItem('pw_theme_v2'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        try {
+          var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          t = dark ? 'dark' : 'light';
+          localStorage.setItem('pw_theme_v2', t);
+        } catch (e) { t = 'light'; }
+      }
+      root.setAttribute('data-theme', t);
+      root.classList.add('js');
+      /* 首帧底色已由 <head> 内联 <style> 按 data-theme 画好，这里只同步状态栏颜色。
+         不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
+         data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
+      var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
+        || (t === 'dark' ? '#080d11' : '#f1f2ed');
+      var mc = document.getElementById('theme-color-meta');
+      if (mc) mc.setAttribute('content', canvas);
+    })();
+  </script>
+  <link rel="preload" href="../static/fonts/space-grotesk/files/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" as="image" href="../static/img/character-chronicle.jpg">
+  <link rel="preload" as="image" href="../static/img/characters/juxingzhihui/juxingzhihui-portrait.jpg">
+  <!-- 字体 CSS 只含 @font-face、不含任何布局规则，改成非阻塞加载：两个中文
+       子集各约 99 KB，原本与站点 CSS 一起阻塞首次绘制，是冷启动白屏主因。
+       font-display:swap 已保证文字始终先用系统字体可见、字体到位后平滑替换，
+       不会出现无样式内容闪现；noscript 环境仍按普通样式表加载。 -->
+  <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="../static/fonts/space-grotesk/index.css">
+  <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="../static/fonts/noto-sans-sc/index.css">
+    <link rel="stylesheet" href="../static/fonts/noto-serif-sc/index.css">
+  </noscript>
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="../static/css/editorial.css">
+  <link rel="stylesheet" href="../static/css/experience.css">
+  <link rel="stylesheet" href="../static/css/editions.css">
+  <link rel="stylesheet" href="../static/css/polish.css">
+  <link rel="stylesheet" href="../static/css/app.css">
+</head>
+<body class="site-characters character-site character-juxingzhihui">
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <button type="button" class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-drawer">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/></svg>
+        </button>
+        <a class="brand-link" href="../index.html">
+          <span class="brand-mark">⊙</span>
+          <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+        </a>
+      </div>
+
+      <nav class="main-nav" id="main-nav" aria-label="主导航">
+        <a class="nav-link" href="../index.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9M10 19v-5h4v5"/></svg></span><span>首页</span></a>
+        <a class="nav-link nav-cat" href="../tiers.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-32 12 12)"/><path d="M5 5.8 18.8 18.4"/></svg></span><span>量级</span></a>
+        <a class="nav-link nav-cat active" href="../characters.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2M4 4h3M17 4h3"/></svg></span><span>角色</span></a>
+        <a class="nav-link nav-doc" href="../rules.html"><span class="nav-icon"><svg class="svg-icon portal-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5A3.5 3.5 0 0 1 7 2h5v17H7a3.5 3.5 0 0 0-3.5 3.5ZM20.5 5.5A3.5 3.5 0 0 0 17 2h-5v17h5a3.5 3.5 0 0 1 3.5 3.5Z"/></svg></span><span>规则</span></a>
+        <a class="nav-link nav-doc" href="../materials.html"><span class="nav-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg></span><span>材质</span></a>
+      </nav>
+
+      <div class="header-right">
+        <button type="button" class="search-btn" id="global-search-trigger" title="全站即时检索 (Ctrl+K 或 /)">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="search-btn-label">检索…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+        <button type="button" class="icon-btn" id="theme-toggle-btn" aria-label="切换明暗主题" aria-pressed="false">
+          <span class="pw-theme-icon pw-icon-sun"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>
+          <span class="pw-theme-icon pw-icon-moon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="site-drawer" id="site-drawer" aria-label="全站导航抽屉" aria-hidden="true">
+    <div class="site-drawer-head">
+      <a class="brand-link" href="../index.html">
+        <span class="brand-mark">⊙</span>
+        <span class="brand-copy"><span class="brand-name">衡天 PowerWiki</span><span class="brand-subtitle">MULTIDIMENSIONAL ARCHIVE</span></span>
+      </a>
+      <button type="button" class="icon-btn" id="site-drawer-close" aria-label="关闭导航菜单">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="site-drawer-body">
+      <div class="drawer-group">
+        <div class="drawer-group-label">查阅</div>
+        <a class="drawer-card-link" href="../tiers.html"><span class="drawer-card-title"><span>量级天梯</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">98 档 · 从昆虫到论天</span></a>
+        <a class="drawer-card-link active" href="../characters.html"><span class="drawer-card-title"><span>角色档案</span><svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span><span class="drawer-card-sub">定级结论与完整证据原文</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">规则与资料</div>
+        <a class="drawer-doc-link" href="../rules.html"><span>衡天体系 · 第六版</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../materials.html"><span>材质与能量 · 第二版</span><span>→</span></a>
+      </div>
+      <div class="drawer-group">
+        <div class="drawer-group-label">快捷导航</div>
+        <a class="drawer-doc-link" href="../index.html"><span>返回首页总览</span><span>→</span></a>
+        <a class="drawer-doc-link" href="../search.html"><span>全站即时检索</span><span>→</span></a>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var drawer = document.getElementById('site-drawer');
+      var closeBtn = document.getElementById('site-drawer-close');
+      var backdrop = document.getElementById('drawer-backdrop');
+      if (!btn || !drawer) return;
+      function sync() {
+        if (window.__PW_SYNC_LOCK__) { window.__PW_SYNC_LOCK__(); return; }
+        var open = drawer.classList.contains('open');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (backdrop) backdrop.classList.toggle('open', open);
+        document.body.classList.toggle('is-scroll-locked', open);
+      }
+      function closeAll() {
+        if (window.__PW_CLOSE_ALL__) { window.__PW_CLOSE_ALL__(); return; }
+        drawer.classList.remove('open');
+        sync();
+      }
+      btn.dataset.navBound = '1';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var modals = document.querySelectorAll('.modal-backdrop.open');
+        for (var i = 0; i < modals.length; i++) modals[i].classList.remove('open');
+        var sb = document.getElementById('doc-sidebar');
+        if (sb) sb.classList.remove('drawer-open');
+        drawer.classList.toggle('open');
+        sync();
+      });
+      if (closeBtn) { closeBtn.dataset.bound = '1'; closeBtn.addEventListener('click', closeAll); }
+      if (backdrop) { backdrop.dataset.bound = '1'; backdrop.addEventListener('click', closeAll); }
+      drawer.dataset.linksBound = '1';
+      var links = drawer.querySelectorAll('a');
+      for (var j = 0; j < links.length; j++) {
+        links[j].addEventListener('click', function() { drawer.classList.remove('open'); sync(); });
+      }
+      window.addEventListener('pageshow', function() { drawer.classList.remove('open'); sync(); });
+    })();
+  </script>
+
+  <main>
+
+        <div class="container detail-stack character-detail character-juxingzhihui">
+          <div class="subpage-bar">
+            <button type="button" class="back-btn js-smart-back" data-fallback="characters.html" data-fallback-name="角色档案库">
+              <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg> <span class="js-back-label">返回角色档案库</span>
+            </button>
+            <nav class="breadcrumbs" aria-label="面包屑">
+              <a href="../index.html">首页</a>
+              <span>/</span>
+              <a href="../characters.html">角色分类</a>
+              <span>/</span>
+              <span>巨型智慧</span>
+            </nav>
+          </div>
+
+          <section class="dossier-header">
+            <div class="page-header-art" aria-hidden="true">
+              <img class="page-header-img fade-on-load" src="../static/img/character-chronicle.jpg" alt="">
+            </div>
+
+
+            <div class="dossier-body has-portrait">
+              <div class="dossier-main-col">
+                <div class="char-tags">
+                  <span class="tag-pill accent">星团至宇宙阶</span>
+                  <span class="tag-pill">《自指引擎》（Self-Reference ENGINE）· 圆城塔（丁丁虫中译本）</span>
+                  <span class="tag-pill">综合 ⊙宇○〔下〕（掌控式）</span><span class="tag-pill">保底 ⊙团○〔下〕（半径 30 光年 → 直径 60 光年）</span><span class="tag-pill">计算层级：有限〔实〕（原文自陈）</span><span class="tag-pill">位格 层级轴：人类之上是巨型智慧，其上是超越智慧体</span><span class="tag-pill">设定宣称「无限接近于全能」「事实上什么都可以做」不参与定级</span>
+                </div>
+
+                <div>
+                  <h1 class="page-title">巨型智慧</h1>
+                  <div class="dossier-submeta"><span>形态：单版本 · 按单个巨型智慧定级，不取群体合计；自称比邻星人的超越智慧体、讲述者「机械之无」只作对照，不并入</span><span>·</span><span>别称：世界树 / 基歇尔 / 柏拉图 / 希尔德加德 / 彭特考斯特二世 / 山姆大叔等（书中具名的十余个巨型智慧写法相同，按单个个体定级）</span><span>·</span><span>定级日期：2026-11-15</span></div>
+                </div>
+
+                <p class="page-desc">宇宙级全部来自「掌控式」的设定陈述，不是打出来的：靠的是第五章对世界规则的交代「宇宙依靠……巨型智慧的运算保持自己的形态」。书里把限度写得同样直白，有限、不全知、算不动时空修复，最后还推出自己已经灭绝。</p>
+
+                <div class="dossier-kpi-grid">
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">综合主档定级</div>
+                    <div class="kpi-value">
+                      <a class="kpi-tier-link mono" href="../tier/universe-std.html" title="查看所属主档规格页">
+                        <span>⊙ 宇○ · 标准宇宙（#79）</span>
+                        <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="dossier-kpi-card">
+                    <div class="kpi-label">保底量级</div>
+                    <div class="kpi-value">⊙团○<span class="ev-badge ev-lower">〔下〕</span>（掌控式）——标准星团级（覆盖直径 50～100 光年，2.3×10⁵⁹～9.2×10⁵⁹ J），约 3.3×10⁵⁹ J 起。去掉争议最大的「宇宙按可观测宇宙计」一步，改用书里唯一的尺寸：第十七章那个宇宙「至少已经观测到了半径30光年的地表」，直径 60 光年</div>
+                  </div>
+                </div>
+
+                <div class="dossier-actions-row"><a class="text-link" href="../rules.html#sec-4-9-宇宙级-宇-半球扩散-第二版重新分档">对照衡天规则原文 →</a></div>
+
+                <div class="full-writing-box">
+                  <div class="box-kicker">正式完整书写摘要</div>
+                  <div>巨型智慧（《自指引擎》· 圆城塔）的综合量级为 ⊙宇○<span class="ev-badge ev-lower">〔下〕</span>（掌控式）——标准宇宙级，即整体掌控一个宇宙（按可观测宇宙计，直径约 930 亿光年，8.0×10⁷⁷ J），只能确认至少如此。依据第五章「此时此刻，宇宙依靠与各自的宇宙自然现象同一化的巨型智慧的运算保持自己的形态」：一个巨型智慧就是它那个宇宙的自然法则，宇宙连同其中的一切靠它的运算存在；第十一章还写到它们另外算出过一个没有人类的宇宙。宇宙的大小书里没有写，按通例取可观测宇宙。保底量级 ⊙团○<span class="ev-badge ev-lower">〔下〕</span>（掌控式）——标准星团级（2.3×10⁵⁹～9.2×10⁵⁹ J），约 3.3×10⁵⁹ J 起，去掉的是「宇宙按可观测宇宙计」这一步，改用第十七章书里唯一的尺寸「至少已经观测到了半径30光年的地表」，直径 60 光年。已写出的作为有：把时空间弹道导弹的损害预先运算成没有发生过、改变过去是日常操作、生成没有人类或没有某次来访的宇宙。限度同样直白：「它们也不过是伫立在无限之前的有限之物」「超越自然现象的计算速度是不存在的」「修正时空构造这样的作业，远远超越了巨型智慧的运算能力」，时空再统合计划的胜算是零、北美中西部确实消失，最后还论证出自己已经灭绝。计算层级有限，位格层级轴上人类之上是巨型智慧、其上是超越智慧体，但更高存在的规模不倒记在它名下。</div>
+                  <div class="box-rankline"><span class="box-rank-kicker mono">位格</span><span>存在规模：与综合量级同档（宇○ 起<span class="ev-badge ev-lower">〔下〕</span>），巨型智慧「与自然现象本身化为一体」。计算层级：有限，原文自陈最快的算法也「必须有着大于0的有限的最小步骤间隔」，速度就是自然现象本身的速度。层级轴（结构标注）：人类之上是巨型智慧，巨型智慧之上是超越智慧体；老人自称中间隔着约三十层，巨型智慧内部对这话的真假有分歧。设定宣称（不参与定级）：「无限接近于全能」「事实上什么都可以做」、能造出自己搬不动的石头再搬动它、宇宙有「无数」个、某个宇宙是住着无限个人的无限平面。各项不相加，更高存在的规模不倒记在巨型智慧名下。</span></div>
+                  <div class="box-subnote">证据链核验摘要：中。综合量级靠叙述者对世界规则的交代（设定陈述），不是一场写出经过的事件；好在书里对巨型智慧的限度写得同样直白，上下都有原话可依。存疑：①「维持宇宙的形态」算不算整体掌控，综合量级全系于此，若只认写出经过的事件则只有局部时空改写、规模无数字；②宇宙大小按通例取可观测宇宙，保底用的三十光年出自丽塔那个宇宙，是否与世界树等所在宇宙同一个、由谁维持，书里没说；③「无限平面、无限的人」原文说没人知道是不是真的，未采用；④「无数宇宙」是推测，群体合计可到可数无限个宇宙，单个仍是一个宇宙；⑤所据为中译本，未对照日文原文，「巨大基数」按大基数理解；⑥第一、二、四、六、七、九、十三、十五章未细读，若有针对多个宇宙的一次性作为，综合量级要相应上调。</div>
+                </div>
+              </div>
+
+              <aside class="char-portrait-stage" aria-label="巨型智慧">
+                <div class="char-portrait-canvas">
+
+                  <img class="char-portrait-img fade-on-load" src="../static/img/characters/juxingzhihui/juxingzhihui-portrait.jpg" alt="巨型智慧" width="1200" height="1800">
+                </div>
+
+              </aside>
+            </div>
+
+          </section>
+
+          <div class="char-identity-fx" aria-hidden="true"></div>
+
+        <section class="char-info-panel" aria-label="量级信息图">
+          <div class="char-info-kicker">量级刻度 / TIER SCALE</div>
+          <div class="char-info-head">
+            <span class="char-info-main">⊙ 宇○<span class="char-info-code">〔主档〕</span></span>
+            <span class="char-info-note">综合 ⊙宇○〔下〕（掌控式） · 保底 ⊙团○〔下〕（半径 30 光年 → 直径 60 光年） · 计算层级：有限〔实〕（原文自陈） · 位格 层级轴：人类之上是巨型智慧，其上是超越智慧体</span>
+          </div>
+          <div class="char-scale">
+            <div class="char-scale-track">
+              <span class="char-scale-fill" style="--pos:81%"></span>
+              <i class="char-scale-mark" style="--pos:81%"></i>
+            </div>
+            <div class="char-scale-labels"><span style="left:28%">城</span><span style="left:33%">国</span><span style="left:53%">恒</span><span style="left:80%">宇</span></div>
+          </div>
+          <div class="char-dims"><div class="char-dim "><b>破</b><span>宇○〔推〕</span></div><div class="char-dim "><b>控</b><span>宇○〔下〕</span></div><div class="char-dim "><b>域</b><span>把时空间弹道导弹</span></div><div class="char-dim is-missing"><b>御</b><span>〔缺〕</span></div><div class="char-dim is-missing"><b>速</b><span>〔缺〕</span></div><div class="char-dim "><b>算</b><span>〔实〕</span></div><div class="char-dim "><b>性</b><span>与自然现象同一；</span></div></div>
+
+        </section>
+
+          <div class="doc-layout">
+            <aside class="doc-sidebar" id="doc-sidebar" aria-label="定级档案目录">
+              <div class="toc-head">
+                <div class="toc-head-row">
+                  <span>档案章节目录</span>
+                  <span class="mono toc-count">12 节</span>
+                  <button type="button" class="toc-close" id="toc-drawer-close" aria-label="关闭章节目录">
+                    <svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
+                </div>
+                <input type="search" class="toc-filter" id="toc-filter-input" placeholder="筛选章节…" autocomplete="off">
+              </div>
+              <nav class="toc-list" id="toc-nav">
+                <a class="toc-item toc-lvl-2" href="#sec-对象与作品">对象与作品</a><a class="toc-item toc-lvl-2" href="#sec-量级栏">量级栏</a><a class="toc-item toc-lvl-2" href="#sec-用语说明">用语说明</a><a class="toc-item toc-lvl-2" href="#sec-概述">概述</a><a class="toc-item toc-lvl-2" href="#sec-一-定级方法">一、定级方法</a><a class="toc-item toc-lvl-2" href="#sec-二-世界">二、世界</a><a class="toc-item toc-lvl-2" href="#sec-三-巨型智慧能做什么">三、巨型智慧能做什么</a><a class="toc-item toc-lvl-2" href="#sec-四-原文写明的限度">四、原文写明的限度</a><a class="toc-item toc-lvl-2" href="#sec-五-同书其他对象-供对照">五、同书其他对象（供对照）</a><a class="toc-item toc-lvl-2" href="#sec-六-综合定级">六、综合定级</a><a class="toc-item toc-lvl-2" href="#sec-存疑">存疑</a><a class="toc-item toc-lvl-2" href="#sec-参考资料">参考资料</a>
+              </nav>
+              <div class="toc-foot">
+                <button type="button" class="toc-foot-btn" id="toc-open-nav-btn">全站导航</button>
+                <a class="toc-foot-btn" href="../search.html">全站检索</a>
+              </div>
+            </aside>
+
+            <article class="doc-panel">
+              <div class="doc-toolbar">
+                <div class="doc-source-info">
+                  <span>定级档案全文</span>
+                  <span>·</span>
+                  <span>依据《衡天⊙ 多维战力量级体系（第六版）》</span>
+                </div>
+              </div>
+
+              <div class="markdown-body">
+                <blockquote><p>条目版本：2026-11-15</p>
+<p>对象是《自指引擎》里的巨型智慧，按单个个体定级；书中有名字的十余个（世界树、基歇尔、柏拉图、希尔德加德、彭特考斯特二世、山姆大叔等）写法相同，不分别立条。自称比邻星人的超越智慧体、讲述者「机械之无」放在第五节对照。</p>
+<p>阅读方式：未通读。全书（序、二十章、跋，约十三万字）建成检索库后，细读了第五章《Event》后大半、第十章《Daemon》主体、第十八章《Disappear》、第二十章结尾和跋，以及第三章结尾、第十一章《Contact》、第十七章《Infinity》的相关段落。其余各章按关键词检索：基数、序数、集合、公理、无限、宇宙的个数、巨型智慧的能力与限度、超越智慧体、时间束。可能漏掉这些词没有覆盖到的具体事件，尤其是第一、二、四、六、七、九、十三、十五章这些故事性较强的篇目。</p></blockquote>
+<h2 id="sec-对象与作品">对象与作品<a class="heading-anchor" href="#sec-对象与作品" data-target-id="sec-对象与作品" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">项目</th><th style="text-align:left">内容</th></tr></thead><tbody><tr><td style="text-align:left">作品</td><td style="text-align:left">《自指引擎》（Self-Reference ENGINE），圆城塔著；所据为丁丁虫中译本</td></tr><tr><td style="text-align:left">对象</td><td style="text-align:left">巨型智慧：人类建造的大型计算机，后来放弃电路，与自然现象合为一体</td></tr><tr><td style="text-align:left">背景</td><td style="text-align:left">「事件」粉碎了时空，宇宙分裂成许多个；每个宇宙由一个巨型智慧维持，彼此进行「运算战」</td></tr><tr><td style="text-align:left">相关对象</td><td style="text-align:left">超越智慧体（自称比邻星人的老人；书末提到的巴丰特）；机械之无（全书的讲述者，自称不存在）；詹姆、丽塔等人类</td></tr></tbody></table></div>
+<h2 id="sec-量级栏">量级栏<a class="heading-anchor" href="#sec-量级栏" data-target-id="sec-量级栏" title="复制本节锚点链接">#</a></h2>
+<p><strong>综合量级：⊙宇○<span class="ev-badge ev-lower">〔下〕</span>（掌控式）</strong>——标准宇宙级，即整体掌控一个宇宙（按可观测宇宙计，直径约 930 亿光年，8.0×10⁷⁷ J），只能确认至少如此。依据是第五章的交代："此时此刻，宇宙依靠与各自的宇宙自然现象同一化的巨型智慧的运算保持自己的形态"。一个巨型智慧就是它那个宇宙的自然法则，宇宙连同其中的一切靠它的运算存在；第十一章还写到它们另外算出过一个没有人类的宇宙。宇宙的大小书里没有写，按通例取可观测宇宙。</p>
+<p><strong>保底量级：⊙团○<span class="ev-badge ev-lower">〔下〕</span>（掌控式）</strong>——星团级，约 3.3×10⁵⁹ J。去掉的是「宇宙按可观测宇宙计」这一步，改用书里唯一的尺寸：第十七章说那个宇宙 "至少已经观测到了半径30光年的地表"，直径 60 光年。</p>
+<p><strong>位格</strong>：</p>
+<ul><li>存在规模：与综合量级同档。巨型智慧 "与自然现象本身化为一体"。</li><li>计算层级：有限。书里明说 "超越自然现象的计算速度是不存在的"，最快的算法 "必须有着大于0的有限的最小步骤间隔"；巨型智慧的速度就是自然现象本身的速度。</li><li>层级轴（结构标注）：人类之上是巨型智慧，巨型智慧之上是超越智慧体。老人自称中间隔着约三十层，巨型智慧内部对这话的真假有分歧。</li></ul>
+<p><strong>设定宣称</strong>（不参与定级）："无限接近于全能"；"事实上什么都可以做"；能造出自己搬不动的石头再搬动它；宇宙有「无数」个；某个宇宙是住着无限个人的无限平面。</p>
+<p><strong>可信度</strong>：中。综合量级靠的是叙述者对世界规则的交代，不是一场写出经过的事件；好在书里对巨型智慧的限度写得同样直白，上下都有原话可依。</p>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">维度</th><th style="text-align:left">记录</th></tr></thead><tbody><tr><td style="text-align:left">控（整体掌控）</td><td style="text-align:left">宇○<span class="ev-badge ev-lower">〔下〕</span>：维持一个宇宙的形态，即该宇宙的自然法则（依据设定陈述）。改变过去是日常操作；算出过没有人类的宇宙</td></tr><tr><td style="text-align:left">破（破坏）</td><td style="text-align:left">宇○<span class="ev-badge ev-inferred">〔推〕</span>：由整体掌控推出。已写出的事故：时空再统合计划失败，北美中西部一带消失（范围未写）</td></tr><tr><td style="text-align:left">域（影响范围）</td><td style="text-align:left">把时空间弹道导弹造成的损害预先运算成没有发生过；溯行到人类诞生以前的过去；派个体前往比邻星系</td></tr><tr><td style="text-align:left">御（防御）</td><td style="text-align:left"><span class="ev-badge ev-missing">〔缺〕</span>。首次接触超越智慧体时，至少 81 个巨型智慧受损后修复</td></tr><tr><td style="text-align:left">算（计算层级）</td><td style="text-align:left">有限（原文自陈）</td></tr><tr><td style="text-align:left">性（特性）</td><td style="text-align:left">与自然现象同一；备份完备，不能遗忘；能投影出与人交流的形象；改写过去（已写出，见「控」）。「造出搬不动的石头再搬动」是自述，记在设定宣称</td></tr></tbody></table></div>
+<h2 id="sec-用语说明">用语说明<a class="heading-anchor" href="#sec-用语说明" data-target-id="sec-用语说明" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">代字或标签</th><th style="text-align:left">全称与含义</th></tr></thead><tbody><tr><td style="text-align:left">⊙</td><td style="text-align:left">综合量级标记</td></tr><tr><td style="text-align:left">宇○</td><td style="text-align:left">标准宇宙级：一次覆盖或整体掌控整个可观测宇宙，8.0×10⁷⁷ J</td></tr><tr><td style="text-align:left">团○</td><td style="text-align:left">星团级的第二档：覆盖直径 50～100 光年，2.3×10⁵⁹～9.2×10⁵⁹ J</td></tr><tr><td style="text-align:left">掌控式</td><td style="text-align:left">对一片范围连同其中的物质整体接管；可以推出能毁掉它，破坏一栏因此记<span class="ev-badge ev-inferred">〔推〕</span></td></tr><tr><td style="text-align:left">设定陈述</td><td style="text-align:left">叙述者对世界规则的平实交代，不是一次具体的事件，也不是人物的赞语</td></tr><tr><td style="text-align:left">论外门槛</td><td style="text-align:left">可数无限（ℵ₀）：无限个完整的宇宙，或与之相当的规模。本条目的对象没有到这里</td></tr><tr><td style="text-align:left">计算层级</td><td style="text-align:left">能算什么：有限算力之上依次是能判定停机问题、再往上的各次跃迁</td></tr><tr><td style="text-align:left">位格、设定宣称</td><td style="text-align:left">位格记存在规模、层级、计算层级中证据过关的部分；设定宣称记只有属性或关系、没有规模的说法</td></tr><tr><td style="text-align:left"><span class="ev-badge ev-confirmed">〔实〕</span><span class="ev-badge ev-lower">〔下〕</span><span class="ev-badge ev-inferred">〔推〕</span><span class="ev-badge ev-missing">〔缺〕</span></td><td style="text-align:left">已确认；下限（至少如此）；推定；没有可用的数据</td></tr></tbody></table></div>
+<h2 id="sec-概述">概述<a class="heading-anchor" href="#sec-概述" data-target-id="sec-概述" title="复制本节锚点链接">#</a></h2>
+<ul><li><strong>巨型智慧是「一个宇宙的自然法则」。</strong> 这是全书对它们最明确的定位，也是综合量级的出处。</li><li><strong>书里把它们的限度写得很清楚。</strong> 它们算不动时空的修复，离全知很远，被更高的存在随手突破，最后还论证出自己已经灭绝。原话是："它们也不过是伫立在无限之前的有限之物"。</li><li><strong>「无限」多数时候带着保留。</strong> 无数的宇宙是巨型智慧的推测，书里说它难以令人信服；无限的平面和无限的人，书里说没人知道是不是真的。</li><li><strong>集合论只出现过一次，是在讲理论的名字。</strong> 第三章结尾设想终极理论会怎样一个个被推翻、改名，一路排到「ω 理论」。</li><li><strong>这本书的重心在自指和叙述。</strong> 讲述者说自己不存在，说故事讲不完。这些是关于「谁在讲、能不能讲」的话，不是关于世界有多大的话。</li></ul>
+<h2 id="sec-一-定级方法">一、定级方法<a class="heading-anchor" href="#sec-一-定级方法" data-target-id="sec-一-定级方法" title="复制本节锚点链接">#</a></h2>
+<p><strong>只用这一本书。</strong> 同一位作者的其他小说是另外的作品，不并入。检索确认，本书译本里没有出现公理、独立性、强制（力迫）、实数、可数、阿列夫这些词。</p>
+<p><strong>设定陈述进主档，属性不进。</strong> 「宇宙靠它的运算维持」交代了对象对整个宇宙做什么，可以定档；「什么都可以做」「接近全能」没有指出做成了哪件事，只列出。</p>
+<p><strong>带保留的话照保留读。</strong> 原文自己加了「推测」「难以令人信服」「没人知道是不是真的」「也许」的地方，不当作确定的设定。</p>
+<p><strong>引文。</strong> 双引号内是中译本原文，章名按该译本。</p>
+<h2 id="sec-二-世界">二、世界<a class="heading-anchor" href="#sec-二-世界" data-target-id="sec-二-世界" title="复制本节锚点链接">#</a></h2>
+<p><strong>事件。</strong> 巨型智慧群把计算改成直接以自然现象进行："巨型智慧的网络，放弃了逻辑电路的堆积，与自然现象本身化为一体"。代价是 "彻底粉碎了时空构造"。是事故还是必然，"巨型智慧自身坦言自己并无头绪"。</p>
+<p><strong>事件之后的世界不稳定。</strong> 序章写那段时期："石头转眼变成了青蛙，转眼变成了牛虻"，原本是青蛙的牛虻又 "忽然想到自己是石头"。事物的身份和来历会变，过去可以改。这是世界的性状，记作特性，不带规模。</p>
+<p><strong>宇宙的个数。</strong> 第五章："根据巨型智慧的推测，在事件发生的刹那，瞬间生成了无数的宇宙"，"换言之，无限量的信息在那一刹那生成。这是难以令人信服的见解"。随后一个巨型智慧解释 "要新造无数宇宙，不需要无限的信息量"，用的是有限种瓷砖也能铺出无穷多种图案的例子。第十章的说法是 "在通常认为存在无数个的宇宙中"。</p>
+<p>能确定的是宇宙不止一个，而且彼此交战："宇宙彻底分裂，因而在某种意义上演变成邻接各宇宙间的运算战"。有多少个，书里给的是推测和通行看法，没有给数。数量记「多个」。</p>
+<p><strong>宇宙的大小。</strong> 只有第十七章给过一处。丽塔所在的宇宙："人们认为现今的宇宙是平面的，无限延伸的平面，其上生活着数量无限的人。虽然没人知道这是不是真的，但至少已经观测到了半径30光年的地表，姑且认为它是正确的"。无限是「人们认为」，三十光年是观测到的。保底用后者。</p>
+<p>这一章接下来的推理是：把每个人看成高维空间里的一个点，反复对半分，无限个点必然在某处越挤越密，所以 "无限相似的人是几乎可以确定存在的"。这是「无限个点必有聚集处」的论证，用到的只是「无限个人」，不涉及更大的无限。</p>
+<h2 id="sec-三-巨型智慧能做什么">三、巨型智慧能做什么<a class="heading-anchor" href="#sec-三-巨型智慧能做什么" data-target-id="sec-三-巨型智慧能做什么" title="复制本节锚点链接">#</a></h2>
+<p><strong>维持一个宇宙。</strong> "保持某种事物本身就是自然法则的工作，所以被迫从事这一工作的巨型智慧并没有不满"。书里把它和人的关系比作作者和文字："作者是化作宇宙自然法则的巨型智慧，而人类不如说更接近于被书写的文字"。詹姆所在的宇宙被称作 "这个由世界树运算的宇宙"。</p>
+<p><strong>改写宇宙里的事。</strong> 把摔成肉泥的人重构出来，"对巨型智慧而言也是轻而易举的"（这一句是说能，没有做）。实际写出来的有：</p>
+<ul><li>世界树应对来袭的导弹："将时空间间弹道导弹带来的损害预先运算成不复存在的情况，以此将之无效化"。</li><li>改变过去是 "巨型智慧日常执行的事情"。</li><li>为了赶走闯入的老人，"也有巨型智慧尝试生成没有自称比邻星人来访的宇宙，或者尝试改变到没有这一来访的过去"；书里顺带提到 "不存在人类的运算宇宙中没有出现那样的图像"，可见另算一个宇宙是做得出来的。</li></ul>
+<p><strong>群体。</strong> "巨型智慧群可以自由计算无数的存在宇宙。那是当今宇宙的姿态"。这是全体合起来的状态，一个巨型智慧对应一个宇宙；它们之间是你死我活的关系："不摧毁他人，自己就会被摧毁"。</p>
+<p><strong>记法。</strong> 一个巨型智慧对它的宇宙是整体接管，连宇宙的形态本身都靠它维持，记控：宇○<span class="ev-badge ev-lower">〔下〕</span>（掌控式，依据设定陈述）。</p>
+<h2 id="sec-四-原文写明的限度">四、原文写明的限度<a class="heading-anchor" href="#sec-四-原文写明的限度" data-target-id="sec-四-原文写明的限度" title="复制本节锚点链接">#</a></h2>
+<ul><li><strong>有限。</strong> "它们也不过是伫立在无限之前的有限之物"。</li><li><strong>算不动时空的修复。</strong> 世界树自己说："修正时空构造这样的作业，远远超越了巨型智慧的运算能力"；"大脑自身也不可能无限量增产"。时空再统合计划的胜算，巨型智慧给的是 "零"，后果是 "把北美西部中域一起拖下水"；后文交代北美中西部确实消失了。</li><li><strong>计算有上限。</strong> "超越自然现象的计算速度是不存在的"。</li><li><strong>不全知。</strong> "巨型智慧虽然无限接近于全能，但距离全知还很远很远"；彼此也难以知道对方在想什么。</li><li><strong>有做不到的事。</strong> "巨型智慧事实上什么都可以做，但实际上什么都没有做"，书里说其中 "便可能存在着某种制约"。伸手去取沉在恒星内核里的遗物，"还是被恒星的热量阻挡了"；围绕那颗恒星的 "一切维度操作都以失败告终"。</li><li><strong>挡不住更高的存在。</strong> 老人 "毫无征兆地闯进了多宇宙广播网"，生成新宇宙、改变过去都赶不走；希尔德加德被当成辞典使用。</li><li><strong>上面还有够不到的一层。</strong> 世界树谈拉普拉斯妖："虽然妖精破碎了，又上了一层楼梯，逃去了我们无法企及的地方"；它们的打算是 "抓住踏上逻辑阶层的妖精，把它拽下来"。基歇尔想象的是 "在逻辑阶层的尽头，广袤的沙漠在无限维度上伸展"，这一句前面写明是「在基歇尔的想象中」。</li><li><strong>推出了自己的灭绝。</strong> 第十八章，巨型智慧们得出结论 "我们似乎已经灭绝了"，并且判定无法靠改变时空来回避，因为 "预备定理第6666号证明了那种改变的不可能性"。书里的评语是："能够自由改变过去、操控时空的前所未有的存在，在这个问题上做出了极其遵循常识的判断"。</li><li><strong>关于全能的那句话。</strong> 第十八章，巨型智慧群说自己 "可以创造出自己无法移动的石头，然后又移动它"；同一句的后半是："而以那种程度的智慧规模，也只不过是可以理解自己已经灭绝的事实是无法回避的而已"。</li></ul>
+<h2 id="sec-五-同书其他对象-供对照">五、同书其他对象（供对照）<a class="heading-anchor" href="#sec-五-同书其他对象-供对照" data-target-id="sec-五-同书其他对象-供对照" title="复制本节锚点链接">#</a></h2>
+<div class="md-table-wrap"><table><thead><tr><th style="text-align:left">对象</th><th style="text-align:left">做了什么</th><th style="text-align:left">记法</th></tr></thead><tbody><tr><td style="text-align:left">自称比邻星人（超越智慧体）</td><td style="text-align:left">突破全部防火墙闯入多宇宙广播网；巨型智慧生成新宇宙、改变过去都无法把他去掉；首次接触中至少 81 个巨型智慧受损；留下一个 "直径约为两千千米的超维度构造物"，沉在恒星内核</td><td style="text-align:left">层级在巨型智慧之上，能压过宇宙级的掌控者；自身的规模没有写，未定级。「三十层」是他自己的话，书里说 "意见也有分歧"</td></tr><tr><td style="text-align:left">巴丰特</td><td style="text-align:left">名字只在结尾出现一次，讲述者说 "我不记得听过后面那个名字"；第十四章有一尊被称作「超超超超越智慧体」的石像与少女对话，那一章是预告片式的片段</td><td style="text-align:left">没有可定级的表现，未定级</td></tr><tr><td style="text-align:left">机械之无（讲述者）</td><td style="text-align:left">自称 "完全机械地、完全决定论地运作的完全不存在"；工作是 "像这样讲述故事，然后选择停止讲述"；把巨型智慧和超越智慧体都称为敌人，说它们 "一旦找到就会把我撕碎"</td><td style="text-align:left">无表现，未定级。它在躲避巨型智慧，这是书里写明的位次</td></tr><tr><td style="text-align:left">詹姆、丽塔、医生等人类</td><td style="text-align:left">个别人有奇异的时空构造，能让巨型智慧烦恼；书末暗示巨型智慧推出灭绝的契机在他们身上</td><td style="text-align:left">特性，未定级</td></tr></tbody></table></div>
+<p><strong>讲述者单独说明。</strong> 跋里讲述者报出名字："我的名字是：Self-Reference Engine"，又称 "机械之无"。书名指的就是它。原文对它的交代：</p>
+<ul><li>来历："是作为一个时空构造创造出来的"；"我是一个太过复杂、无法存在的东西，因而不存在"。</li><li>工作：讲故事，然后停下。它讲不完："要讲述无限的故事，需要花费无限的时间"；丽塔和詹姆的故事，"我没有办法讲述它"。</li><li>处境："眼下我一直在逃避它们的探索"，它们指巨型智慧和超越智慧体。</li><li>特性："不存在的我的非存在，在原理上是完全不可知的"。</li></ul>
+<p>它是书里被造出来、又被书里的存在追捕的东西，原文没有把它写成站在故事外面的作者。可记的是特性（不存在、不可知、讲述），没有一件带规模的事，所以不定级；位次上它在躲巨型智慧，不记在巨型智慧之上。</p>
+<h2 id="sec-六-综合定级">六、综合定级<a class="heading-anchor" href="#sec-六-综合定级" data-target-id="sec-六-综合定级" title="复制本节锚点链接">#</a></h2>
+<p><strong>为什么是宇宙级。</strong> 两步都有原话：世界是一个个宇宙；一个巨型智慧维持一个宇宙的形态，是它的自然法则。</p>
+<p><strong>为什么不更高。</strong></p>
+<ul><li><strong>书里自己说它们是有限之物</strong>，算力有上限，修不好时空。</li><li><strong>宇宙的个数没有给。</strong> 「无数」是推测，并被同一章的另一种解释冲淡；一个巨型智慧也只对应一个宇宙。</li><li><strong>「无限的平面、无限的人」带着保留</strong>，而且只是其中一个宇宙的通行看法；即使当真，也只是可数的无限，那一章的论证用不到更多。</li><li><strong>「攀登巨大基数的阶梯」说的是理论的名字。</strong> 原话是设想终极理论一路改名，"φ理论大约会逐渐朝向超穷序数ω理论发展"，前面是 "这是个很有趣的想象"，后面是 "阶梯之上，也许是我们无法企及的、唯有巨型智慧才能触摸到的理论世界"，再后面是 "真理即42"。这里没有写世界的结构，也没有写巨型智慧掌握了什么。</li><li><strong>「故事不是良序集」说的是讲述。</strong> 讲述者说故事之间还填着无数故事，没法按顺序讲完，所以 "让我把无限拉过来讲述它的影子还容易一些"。这是在解释为什么讲不完，没有交代有多少个宇宙。</li><li><strong>书里说的是「可能的只是可能」。</strong> 跋的原话："在这个宇宙，可能发生的事情仅仅是可能发生"。它没有说一切可能的事都已经成真。同一本书里写着不少确实做不到的事：时空修不好，围绕那颗恒星的维度操作全部失败，灭绝无法回避并且有定理证明。这不是一个「什么都成立」的世界。</li><li><strong>「什么都可以做」是属性</strong>，同一句话里就接着说它们什么都没做、可能存在制约。</li><li><strong>超越智慧体更高，不等于巨型智慧更高。</strong> 比它强的存在的规模，不能倒过来记在它名下。</li></ul>
+<p><strong>为什么不更低。</strong></p>
+<ul><li>「宇宙靠它的运算保持形态」是叙述者交代的规则，不是人物的赞语；</li><li>改变过去、抹掉导弹损害、另算一个没有人类的宇宙，都是写出来的事，与这条规则相符；</li><li>保底取的是书里唯一的尺寸，没有再往下压。</li></ul>
+<p><strong>对战判定。</strong></p>
+<ul><li>按「一个宇宙的自然法则」计：在它的宇宙里可以改写事件、改变过去；对它的宇宙之外，书里只写了与别的巨型智慧的运算战。</li><li>它的计算是有限的，会被更高层次的对手无视防御，也会被某些「时空构造奇异」的人拖慢。</li><li>「全能」一类的话不作为依据，书里自己对这个词很谨慎。</li></ul>
+<h2 id="sec-存疑">存疑<a class="heading-anchor" href="#sec-存疑" data-target-id="sec-存疑" title="复制本节锚点链接">#</a></h2>
+<ol><li><strong>「维持宇宙的形态」算不算整体掌控。</strong> 综合量级系于此。若只认写出经过的事件，巨型智慧能确认的是局部的时空改写（一栋楼、一次接触），规模没有数字，综合量级无从定档。</li><li><strong>宇宙的大小。</strong> 综合量级用了通例的可观测宇宙；保底用的三十光年出自丽塔那个宇宙，它与世界树等所在的宇宙是不是同一个、由谁维持，书里没有说。</li><li><strong>无限平面若当真。</strong> 那个宇宙就有可数无限的人和无限的面积，维持它的巨型智慧可以记到论外门槛。原文说「没人知道这是不是真的」，没有采用。</li><li><strong>无数宇宙若当真。</strong> 群体合计可以到可数无限个宇宙；单个巨型智慧仍是一个宇宙。</li><li><strong>译本与原文。</strong> 所据为中译本，没有对照日文原文。「巨大基数」一词译本如此，按大基数理解；原文若另有措辞，以原文为准。</li><li><strong>没有细读的章。</strong> 见页首。若其中写有巨型智慧针对多个宇宙的一次性作为，综合量级要相应上调。</li></ol>
+<h2 id="sec-参考资料">参考资料<a class="heading-anchor" href="#sec-参考资料" data-target-id="sec-参考资料" title="复制本节锚点链接">#</a></h2>
+<ul><li>《自指引擎》，圆城塔著，丁丁虫译（全文电子文本，用于检索与核对引文）</li><li><a href="https://scrapbox.io/allreferenceengine/%E3%80%8ESelf-Reference_ENGINE%E3%80%8F" target="_blank" rel="noopener">圆城塔作品资料（scrapbox：Self-Reference ENGINE）</a></li></ul>
+              </div>
+            </article>
+
+            <aside class="reader-rail" role="group" aria-label="阅读显示设置">
+              <span class="reader-rail-label mono" aria-hidden="true">字号</span>
+              <div class="reader-rail-btns">
+                <button type="button" class="tool-btn" id="doc-font-dec" aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+                <button type="button" class="tool-btn" id="doc-font-inc" aria-label="放大正文字号" title="放大正文字号">A+</button>
+                <button type="button" class="tool-btn" id="doc-wide-toggle" aria-label="切换宽屏表格阅读模式" aria-pressed="false" title="切换宽屏表格阅读模式">宽屏</button>
+              </div>
+              <span class="reader-rail-readout mono" id="doc-font-readout">15.5px</span>
+            </aside>
+          </div>
+
+
+          <div class="pager-grid">
+            <a class="pager-card" href="shiva.html">
+                  <span class="pager-dir">← 上一位角色（更低量级）</span>
+                  <span class="pager-title">湿婆</span>
+                  <span class="pager-sub mono">⊙ 系△ · 首字母 S</span>
+                </a>
+            <a class="pager-card next" href="shangdi.html">
+                  <span class="pager-dir">下一位角色（更高量级） →</span>
+                  <span class="pager-title">上帝</span>
+                  <span class="pager-sub mono">⊙ 宇○ · 首字母 S</span>
+                </a>
+          </div>
+        </div>
+
+  </main>
+
+  <div class="floating-dock" aria-label="快捷工具">
+    <button type="button" class="dock-btn dock-toc-trigger" id="dock-toc-btn" title="展开章节目录" aria-label="展开章节目录"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg></button>
+    <button type="button" class="dock-btn is-hidden" id="dock-top-btn" title="回到页面顶部" aria-label="回到页面顶部">
+      <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-backdrop" id="search-modal" role="dialog" aria-modal="true" aria-label="全站搜索">
+    <div class="modal-panel">
+      <div class="search-modal-head">
+        <span class="search-modal-icon"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" class="search-modal-input" id="search-modal-input" placeholder="输入量级代字（如 宇◆、恒○）、标注图、材质或规则关键词…" autocomplete="off">
+        <button type="button" class="btn btn-ghost btn-sm" id="search-modal-close">ESC</button>
+      </div>
+      <div class="search-modal-tabs">
+        <button type="button" class="chip-btn active" data-search-tab="all">全部结果</button>
+        <button type="button" class="chip-btn" data-search-tab="tier">量级分类 (98)</button>
+        <button type="button" class="chip-btn" data-search-tab="char">角色档案</button>
+        <button type="button" class="chip-btn" data-search-tab="rules">衡天第六版全文</button>
+        <button type="button" class="chip-btn" data-search-tab="materials">材质能量库全文</button>
+      </div>
+      <div class="search-modal-body" id="search-modal-results"></div>
+      <div class="search-modal-foot">
+        <span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> 选择 · <kbd class="kbd-hint">Enter</kbd> 打开</span>
+        <a href="../search.html">进入独立搜索页 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-mark">⊙</span>
+        <span>衡天 PowerWiki · 第六版基准</span>
+      </div>
+      <div class="footer-links">
+        <a href="../tiers.html">量级天梯</a>
+        <a href="../characters.html">角色档案</a>
+        <a href="../rules.html">衡天体系全文</a>
+        <a href="../materials.html">材质能量库</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>window.__PW_INDEX_SRC__ = "../static/js/search-index.js";</script>
+  <script src="../static/js/theme.js"></script>
+  <script src="../static/js/app.js"></script>
+  <script src="../static/js/pwa.js"></script>
+
+  <script src="../static/js/chrome.js"></script>
+  <script src="../static/js/editions.js"></script>
+</body>
+</html>
