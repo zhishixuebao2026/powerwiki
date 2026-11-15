@@ -1466,7 +1466,7 @@ def build_home_page(
           <img class="hero-backdrop-img hero-art-light" src="static/img/cosmic-atlas-hero-light.jpg" width="1584" height="672" alt="">
         </div>
         <div class="hero-body">
-          <div class="eyebrow"><span class="eyebrow-dot"></span>第六版 · 2026.11.13 修订（1.3 第 2 条推定链 · 1.4 境界推定 · 1.7.1 保底量级 · 8.5 门槛之上结构证据）</div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span>第六版 · 2026.11.15 修订（8.4 超越者按所超越结构定档 · 8.5 门槛之上结构证据 · 1.3 第 2 条推定链）</div>
           <h1 class="hero-heading" id="home-title">从昆虫到无限，<br><span>查清每一个量级。</span></h1>
           <p class="hero-desc">从物理能量到无限基数，用同一套标尺查阅量级、角色证据与规则原文。</p>
           <div class="hero-cta-row">
@@ -2291,7 +2291,7 @@ def build_fulltext_doc_page(
 
     rules_tab_cls = "codex-tab active" if active_nav == "rules" else "codex-tab"
     mat_tab_cls = "codex-tab active" if active_nav == "materials" else "codex-tab"
-    version_label = "第六版 · 2026.11.13 修订（1.3 推定链 · 1.4 境界推定 · 1.7.1 保底量级 · 8.5 结构证据）" if active_nav == "rules" else "第二版 · 物理参考"
+    version_label = "第六版 · 2026.11.15 修订（8.4 超越者定档 · 1.3 推定链 · 1.4 境界推定 · 1.7.1 保底量级）" if active_nav == "rules" else "第二版 · 物理参考"
 
     body = f"""
     <div class="container">
