@@ -383,6 +383,18 @@ def build_skin_editions() -> int:
     # 保证文字可读。不注入任何让位脚本、不加遮挡层、不硬编码高度、不重绘顶栏颜色。
     # 详见 CHANGELOG 2026-11-12 的 pw-v41 条目。
     built = 0
+    # 少数皮肤页内嵌「下载原始 Markdown」按钮，源页硬编码 href="./original.md"。
+    # 构建时把对应角色的定级档案复制过去，避免中键/右键另存为时 404（左键已被 JS 拦成复制全文）。
+    _char_doc_cache: dict | None = None
+
+    def _char_docs() -> dict:
+        nonlocal _char_doc_cache
+        if _char_doc_cache is None:
+            payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
+            chars = payload.get("characters", payload) if isinstance(payload, dict) else payload
+            _char_doc_cache = {c.get("slug"): c.get("doc_path") for c in chars if c.get("slug")}
+        return _char_doc_cache
+
     for ed in editions_manifest()["editions"]:
         source = ed.get("source")
         if not source:
@@ -507,6 +519,12 @@ def build_skin_editions() -> int:
         head, sep, tail = doc.rpartition("</body>")
         doc = head + inject + sep + tail if sep else doc + inject
         (out_dir / f"{section}.html").write_text(doc, encoding="utf-8")
+        # 补上 ./original.md 的下载目标（仅源页确实引用了它、且是角色页时）
+        if "./original.md" in doc and section.startswith("character-"):
+            doc_rel = _char_docs().get(section[len("character-"):])
+            src_doc = ROOT / doc_rel if doc_rel else None
+            if src_doc and src_doc.exists():
+                (out_dir / "original.md").write_bytes(src_doc.read_bytes())
         built += 1
     return built
 
