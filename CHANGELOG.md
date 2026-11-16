@@ -4,6 +4,22 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-16（新增皮肤）· 无限宝石、雪之少女各 2 套；修复上传包破图与缺图
+
+用户提供 `111.zip`，含 4 套整页皮肤（claudehaiku5.5 无限宝石、OPUS5.5HIGH 无限宝石、DS4.1FLASH 雪之少女、mimo-v2.6-pro 雪之少女），全部接入为独立角色栏目皮肤。这两个角色此前已是 28 角色之一、有定级与默认角色页，但没登记进皮肤切换器，默认页不显示「⊙皮肤」入口；本次一并补上 default 登记，默认页现在可在三套版式间切换。
+
+- **接入**：`skins/_source/` 增 4 份成品 HTML（整页应用，`inject: minimal`），`data/editions.json` 增 4 条 + `default.pages` 补 `character-wuxianbaoshi` / `character-xuezhishaonv`；新增 4 张 640×400 缩略图；`SKIN_STATUS_BAR_MODE` 按首屏明暗定 3 黑 1 浅。皮肤总数 36→**40**。
+  - `wuxianbaoshi-xingyao` 星曜（claudehaiku5.5，深蓝紫六宝石双主题）
+  - `wuxianbaoshi-heiyuan` 玄渊（OPUS5.5HIGH，深空黑洞金线）
+  - `xuezhishaonv-yueshi` 月蚀（DS4.1FLASH，暗夜月蚀写实分栏）
+  - `xuezhishaonv-sujian` 素笺（mimo-v2.6-pro，米纸线描）
+- **修破图（mimo 素笺）**：上传包 `dist/images/` 里图片实际是 `.jpg`，但打包 HTML 的 `<link rel=preload>` 与 6 个 `<picture><source srcSet>` 写成 `.webp`，导致 6 张封面/插图全部 404。源 HTML 内 8 处 `.webp` 后缀改为 `.jpg`，并把 `images/` 一起带进皮肤目录；渲染复判 6→0 破图。
+- **补缺图（OPUS 玄渊）**：上传包正文 8 张证据图位置是 SVG 占位（`fig1-8.webp` 缺失，页面 `Ra()` 走 `./img/figN.webp` fallback）。按用户指示从默认角色页 `static/img/characters/wuxianbaoshi/无限宝石_图N_*.webp` 复制并重命名为 `fig1-8.webp` 放到该皮肤 `img/`，图1-8 一一对应（永恒现身/对折宇宙/官方资料/宇宙蛋对话/灵魂宝石多元宇宙/各宝石内部世界/计时大厅/精神景观）。`dist/art/` 概念图虽为内嵌 base64，仍一并保留。
+- **安全区**：星曜、素笺源页未自带 `env(safe-area-inset-top)`，在源 HTML `</head>` 前补标准 `<style data-pw-safearea>.topbar{padding-top:env(safe-area-inset-top,0px)!important}</style>`，与其余皮肤一致，不改几何与配色。
+- **未改（如实记录）**：两套装订用自定义子集字体（mimo 的 `NotoSansSC-sub/NotoSerifSC-sub.woff2`、OPUS 的 `IG Serif/Sans/Kai/Cinzel/Cormorant/Mono`）在上传包里没有成品文件（源码只给了从 Google Fonts 现做的脚本），缺失时回退系统字体，不破图、不影响定级全文，站内也无同名字体可补，保持原样。
+- **定级边界**：4 套皮肤的定级正文经关键词核对与站里档案一致（无限宝石宇○ 8.0×10⁷⁷ J；雪之少女 外·门 ℵ₀ + 宇△ 1.6×10⁷⁸ J）。`data/characters.json`、`data/tiers.json`、`data/docs/characters/`、角色页/档位页定级正文、98 档数值全部零改动。
+- **验证**：`tools/audit_site.py` 全过（40 套产物、切换器 160 卡片+160 缩略图目标缺失 0、登记表不一致 0、状态栏 21 default/19 black、配图 28/28、定级基线 28 角色零改动）；浏览器实测默认页×2 + 皮肤页×4 共 6 页，切换器均 3 项且当前项正确、0 JS 报错、0 请求失败（字体除外）。默认无限宝石页 1 张 `src` 为空的 `<img>` 是通用灯箱占位，非真实破图。SW `pw-v49`→`pw-v50`。
+
 ## 2026-11-16（新增角色）· 苏昼、白光·绝对、星神；全站完整体检并修掉皮肤原文下载死链
 
 用户提供三份 11.16 定级文档，归档到 `data/docs/characters/`（去掉日期前缀）。`characters.json` 25→28 条，**档位直接落现成 98 档、不新增字段或渲染器**：三个都为 `beyond-line3`（外·三 #91，连续统 2^ℵ₀），这是该档第一次有角色，`tier/beyond-line3.html` 从「0 角色」变为「3 角色」。`data/tiers.json` 的 98 档量级数值零改动。

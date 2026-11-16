@@ -39,7 +39,9 @@
         "character-shangdi": "character/shangdi.html",
         "character-suzhou": "character/suzhou.html",
         "character-baiguang": "character/baiguang.html",
-        "character-xingshen": "character/xingshen.html"
+        "character-xingshen": "character/xingshen.html",
+        "character-wuxianbaoshi": "character/wuxianbaoshi.html",
+        "character-xuezhishaonv": "character/xuezhishaonv.html"
       }
     },
     {
@@ -510,6 +512,58 @@
       "thumb": "static/img/editions/zhigaowangzuo-zhanchang.jpg",
       "pages": {
         "character-zhigaowangzuo": "skins/zhigaowangzuo-zhanchang/character-zhigaowangzuo.html"
+      }
+    },
+    {
+      "id": "wuxianbaoshi-xingyao",
+      "name": "星曜",
+      "tag": "",
+      "note": "深蓝紫宇宙，六色宝石沿光轨排布，双主题切换。",
+      "source": "skins/_source/wuxianbaoshi-xingyao.html",
+      "section": "character-wuxianbaoshi",
+      "inject": "minimal",
+      "thumb": "static/img/editions/wuxianbaoshi-xingyao.jpg",
+      "pages": {
+        "character-wuxianbaoshi": "skins/wuxianbaoshi-xingyao/character-wuxianbaoshi.html"
+      }
+    },
+    {
+      "id": "wuxianbaoshi-heiyuan",
+      "name": "玄渊",
+      "tag": "",
+      "note": "深空黑洞与六宝石金线环，衬线典章式版式，证据图已补齐。",
+      "source": "skins/_source/wuxianbaoshi-heiyuan.html",
+      "section": "character-wuxianbaoshi",
+      "inject": "minimal",
+      "thumb": "static/img/editions/wuxianbaoshi-heiyuan.jpg",
+      "pages": {
+        "character-wuxianbaoshi": "skins/wuxianbaoshi-heiyuan/character-wuxianbaoshi.html"
+      }
+    },
+    {
+      "id": "xuezhishaonv-yueshi",
+      "name": "月蚀",
+      "tag": "",
+      "note": "暗夜月蚀与写实人物分栏，衬线巨字，定级框完整。",
+      "source": "skins/_source/xuezhishaonv-yueshi.html",
+      "section": "character-xuezhishaonv",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xuezhishaonv-yueshi.jpg",
+      "pages": {
+        "character-xuezhishaonv": "skins/xuezhishaonv-yueshi/character-xuezhishaonv.html"
+      }
+    },
+    {
+      "id": "xuezhishaonv-sujian",
+      "name": "素笺",
+      "tag": "",
+      "note": "米纸线描，淡墨雪姬，封面图后缀已修正为 jpg。",
+      "source": "skins/_source/xuezhishaonv-sujian.html",
+      "section": "character-xuezhishaonv",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xuezhishaonv-sujian.jpg",
+      "pages": {
+        "character-xuezhishaonv": "skins/xuezhishaonv-sujian/character-xuezhishaonv.html"
       }
     }
   ]
