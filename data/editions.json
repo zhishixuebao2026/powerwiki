@@ -566,6 +566,58 @@
       "pages": {
         "character-xuezhishaonv": "skins/xuezhishaonv-sujian/character-xuezhishaonv.html"
       }
+    },
+    {
+      "id": "luofeng-xinggui",
+      "name": "星轨",
+      "tag": "",
+      "note": "深空金色星轨浑天仪与人物剪影，典章式排版。",
+      "source": "skins/_source/luofeng-xinggui.html",
+      "section": "character-luofeng",
+      "inject": "minimal",
+      "thumb": "static/img/editions/luofeng-xinggui.jpg",
+      "pages": {
+        "character-luofeng": "skins/luofeng-xinggui/character-luofeng.html"
+      }
+    },
+    {
+      "id": "nvwa-xuanqiong",
+      "name": "玄穹",
+      "tag": "",
+      "note": "玄穹与竹帛双卷，女娲补天插画与信息卡片。",
+      "source": "skins/_source/nvwa-xuanqiong.html",
+      "section": "character-nvwa",
+      "inject": "minimal",
+      "thumb": "static/img/editions/nvwa-xuanqiong.jpg",
+      "pages": {
+        "character-nvwa": "skins/nvwa-xuanqiong/character-nvwa.html"
+      }
+    },
+    {
+      "id": "nvwa-boshan",
+      "name": "补山",
+      "tag": "",
+      "note": "深蓝星空女娲补天主视觉，居中标题双主题。",
+      "source": "skins/_source/nvwa-boshan.html",
+      "section": "character-nvwa",
+      "inject": "minimal",
+      "thumb": "static/img/editions/nvwa-boshan.jpg",
+      "pages": {
+        "character-nvwa": "skins/nvwa-boshan/character-nvwa.html"
+      }
+    },
+    {
+      "id": "nvwa-heijin",
+      "name": "黑金",
+      "tag": "",
+      "note": "黑金配色女娲补天，矢量浑天仪，轻量单页。",
+      "source": "skins/_source/nvwa-heijin.html",
+      "section": "character-nvwa",
+      "inject": "minimal",
+      "thumb": "static/img/editions/nvwa-heijin.jpg",
+      "pages": {
+        "character-nvwa": "skins/nvwa-heijin/character-nvwa.html"
+      }
     }
   ]
 }
