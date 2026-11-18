@@ -4,6 +4,23 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-19（皮肤改名）· 8 套二字名改为贴切长短名
+
+用户指出最近新增的皮肤显示名又全是「两字八股」（星曜/玄渊/月蚀/素笺/星轨/玄穹/补山/黑金），与之前「怎么全是两个字，别重复了」的要求冲突。按每套实际视觉改为贴切、长短错落的名字，仅改 `editions.json` 的 `name` 字段（皮肤内部主题词与 id/目录不动）。
+
+| id | 旧名 | 新名 |
+|---|---|---|
+| wuxianbaoshi-xingyao | 星曜 | 六曜光轨 |
+| wuxianbaoshi-heiyuan | 玄渊 | 渊环典章 |
+| xuezhishaonv-yueshi | 月蚀 | 蚀月夜录 |
+| xuezhishaonv-sujian | 素笺 | 淡墨雪姬 |
+| luofeng-xinggui | 星轨 | 金轨浑天 |
+| nvwa-xuanqiong | 玄穹 | 玄穹竹帛双卷 |
+| nvwa-boshan | 补山 | 深蓝补天 |
+| nvwa-heijin | 黑金 | 黑金浑天仪 |
+
+- **验证**：`build_site.py` 44 套全建；`audit_site.py` 全过（切换器 174 卡片＋缩略图 0 缺、定级基线 29 角色零改动）；SW `pw-v53`→`pw-v54`。
+
 ## 2026-11-19（新增皮肤）· 罗峰 1 套、女娲 3 套
 
 用户上传 `gemini-4-carbon＆gpt-6.2-sol-max罗峰定级页面.zip`（61MB），内含 5 套成品页。逐套核验后接入 4 套，跳过 1 套重复项。皮肤数 40→44。
