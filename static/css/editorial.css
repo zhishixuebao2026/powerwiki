@@ -7,23 +7,23 @@
 [data-theme="dark"] {
   --header-h: 74px;
   --font-editorial: "Noto Serif SC Variable", "Noto Serif SC", "Songti SC", serif;
-  --bg-canvas: #1c2026;
-  --bg-subtle: #242930;
-  --bg-surface: #2b3138;
-  --bg-elevated: #343b44;
-  --bg-header: rgba(28, 32, 38, 0.88);
-  --text-primary: #e6e9ed;
-  --text-secondary: #b0b8c2;
-  --text-muted: #87919c;
+  --bg-canvas: #101620;
+  --bg-subtle: #171e29;
+  --bg-surface: #1e2632;
+  --bg-elevated: #27313f;
+  --bg-header: rgba(16, 22, 32, 0.9);
+  --text-primary: #e9edf3;
+  --text-secondary: #a9b4c2;
+  --text-muted: #7e8a99;
   --accent: #d0b476;
   --accent-strong: #e5cb94;
   --accent-soft: rgba(208, 180, 118, 0.11);
-  --border-subtle: rgba(226, 232, 238, 0.09);
-  --border-default: rgba(226, 232, 238, 0.15);
+  --border-subtle: rgba(205, 218, 235, 0.09);
+  --border-default: rgba(205, 218, 235, 0.15);
   --border-accent: rgba(208, 180, 118, 0.32);
-  --panel-glass: rgba(43, 49, 56, 0.8);
-  --site-grid: rgba(220, 228, 236, 0.025);
-  --shell-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  --panel-glass: rgba(30, 38, 50, 0.82);
+  --site-grid: rgba(190, 208, 232, 0.022);
+  --shell-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
 [data-theme="light"] {
@@ -839,8 +839,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .hero-banner:hover .hero-backdrop-img { transform: scale(1.05); }
 .hero-backdrop::after {
   background:
-    linear-gradient(90deg, rgba(4,17,19,.99) 0%, rgba(4,17,19,.94) 38%, rgba(4,17,19,.52) 62%, rgba(4,17,19,.08) 84%),
-    linear-gradient(180deg, rgba(4,17,19,.06) 0%, rgba(4,17,19,.32) 100%);
+    linear-gradient(90deg, rgba(10,15,23,.98) 0%, rgba(10,15,23,.93) 37%, rgba(10,15,23,.5) 61%, rgba(10,15,23,.06) 84%),
+    linear-gradient(180deg, rgba(10,15,23,.04) 0%, rgba(10,15,23,.3) 100%);
 }
 .hero-body { position:relative; z-index:1; max-width: 640px; }
 .eyebrow {
@@ -2043,8 +2043,8 @@ body.pw-figure-open { overflow: hidden; }
 .hero-banner .hero-art-light { opacity: 0; }
 html[data-theme="dark"]  .hero-banner .hero-art-dark  { opacity: 0.98; }
 html[data-theme="dark"]  .hero-banner .hero-art-light { opacity: 0; }
-/* 暗色首屏背景去绿提亮：降饱和 + 微提亮，配护眼中性外壳 */
-html[data-theme="dark"] .hero-banner .hero-art-dark { filter: saturate(0.45) contrast(1.02) brightness(1.45); }
+/* 暗色首屏背景：保留墨青星体与金色轨道线质感，压暗而非洗白，配深石墨蓝外壳 */
+html[data-theme="dark"] .hero-banner .hero-art-dark { filter: saturate(0.82) contrast(1.1) brightness(0.92); }
 html[data-theme="light"] .hero-banner .hero-art-dark  { opacity: 0; }
 html[data-theme="light"] .hero-banner .hero-art-light { opacity: 0.92; }
 

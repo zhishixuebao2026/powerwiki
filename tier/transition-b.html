@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="tier-transition-b" data-boot-bg-light="#f1f2ed" data-boot-bg-dark="#1c2026">
+<html lang="zh-CN" data-theme="light" data-root="../" data-page-id="tier-transition-b" data-boot-bg-light="#f1f2ed" data-boot-bg-dark="#101620">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -23,7 +23,7 @@
        属性选择器自动换色，JS 不再写 inline 底色。 -->
   <style>
     :where(html), :where(html) > :where(body) { background-color: #f1f2ed; }
-    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #1c2026; }
+    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #101620; }
   </style>
   <script>
     (function() {
@@ -43,7 +43,7 @@
          不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
          data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
       var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
-        || (t === 'dark' ? '#1c2026' : '#f1f2ed');
+        || (t === 'dark' ? '#101620' : '#f1f2ed');
       var mc = document.getElementById('theme-color-meta');
       if (mc) mc.setAttribute('content', canvas);
     })();

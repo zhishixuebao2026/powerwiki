@@ -56,7 +56,7 @@
 
   function canvasFor(theme) {
     return root.getAttribute(theme === "dark" ? "data-boot-bg-dark" : "data-boot-bg-light")
-      || (theme === "dark" ? "#1c2026" : "#f1f2ed");
+      || (theme === "dark" ? "#101620" : "#f1f2ed");
   }
 
   function apply(theme, persist) {
