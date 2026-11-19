@@ -84,6 +84,10 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "nvwa-xuanqiong": "black",
     "nvwa-boshan": "black",
     "nvwa-heijin": "black",
+    "zhangyan-zifu": "default",
+    "zhangyan-xuanshu": "black",
+    "xuqing-qingchuan": "default",
+    "sunwukong-lingxiao": "default",
 }
 
 

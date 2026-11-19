@@ -618,6 +618,58 @@
       "pages": {
         "character-nvwa": "skins/nvwa-heijin/character-nvwa.html"
       }
+    },
+    {
+      "id": "zhangyan-zifu",
+      "name": "紫府云篆",
+      "tag": "",
+      "note": "紫府仙境云篆天书，紫霞山水人物立绘，米纸亮色卷首。",
+      "source": "skins/_source/zhangyan-zifu.html",
+      "section": "character-zhangyan",
+      "inject": "minimal",
+      "thumb": "static/img/editions/zhangyan-zifu.jpg",
+      "pages": {
+        "character-zhangyan": "skins/zhangyan-zifu/character-zhangyan.html"
+      }
+    },
+    {
+      "id": "zhangyan-xuanshu",
+      "name": "玄枢照夜",
+      "tag": "",
+      "note": "玄机枢轴日蚀群山，暗金水墨，衬线典章式暗色版。",
+      "source": "skins/_source/zhangyan-xuanshu.html",
+      "section": "character-zhangyan",
+      "inject": "minimal",
+      "thumb": "static/img/editions/zhangyan-xuanshu.jpg",
+      "pages": {
+        "character-zhangyan": "skins/zhangyan-xuanshu/character-zhangyan.html"
+      }
+    },
+    {
+      "id": "xuqing-qingchuan",
+      "name": "青川卷帙",
+      "tag": "",
+      "note": "青绿山水卷帙，米纸竖排，昼夜双卷静心阅读。",
+      "source": "skins/_source/xuqing-qingchuan.html",
+      "section": "character-xuqing",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xuqing-qingchuan.jpg",
+      "pages": {
+        "character-xuqing": "skins/xuqing-qingchuan/character-xuqing.html"
+      }
+    },
+    {
+      "id": "sunwukong-lingxiao",
+      "name": "大圣凌霄",
+      "tag": "",
+      "note": "齐天大圣山巅红日、金箍棒与仙鹤，宣纸水墨亮色版。",
+      "source": "skins/_source/sunwukong-lingxiao.html",
+      "section": "character-sunwukong",
+      "inject": "minimal",
+      "thumb": "static/img/editions/sunwukong-lingxiao.jpg",
+      "pages": {
+        "character-sunwukong": "skins/sunwukong-lingxiao/character-sunwukong.html"
+      }
     }
   ]
 }
