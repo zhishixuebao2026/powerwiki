@@ -354,15 +354,16 @@ body.character-site::before {
   mask-image: linear-gradient(to bottom, #000, transparent 82%);
 }
 
-/* 首屏图片（页头大气图 + 角色立绘）：预加载 + 占位底色 + 极轻淡入。
-   不加 html.js 时（无 JS）图片以最终透明度直接显示，不会损坏；加上 js 类后
-   先 opacity:0，图片就绪再淡入，避免图片晚到时整块「啪」地亮起来 —— 即用户
-   反馈的「左手光团背景 / 右手月亮附近」局部闪。淡入只有 0.2s，是平滑出现而非闪烁；
-   无 js 类或 JS 失效时此段规则不生效，图片照常立即显示。 */
-.js .fade-on-load { opacity: 0; transition: opacity .2s ease; }
+/* 首屏图片（页头大气图 + 角色立绘）：预加载 + 占位底色，加载即显示、无淡入过渡。
+   历史上这里用 opacity:0 → is-loaded 后 0.2s 淡入，本想避免图片晚到「啪」地亮起；
+   但页头图与大气背景都带 preload、几乎首帧就位，实测 is-loaded 在 ~80ms 加上后，
+   opacity 仍从 0 爬到 0.36 用了 300+ms —— 这段可视的渐变被用户感知为「频闪」。
+   现去掉 transition：图片就绪瞬间到位，配合首帧内联底色与 preload，既无白屏也无闪。
+   无 js 类或 JS 失效时这些规则不生效，图片照常立即显示。 */
+.js .fade-on-load { opacity: 0; }
 .js .page-header-img.fade-on-load.is-loaded { opacity: var(--banner-art-opacity); }
 .js .char-portrait-img.fade-on-load.is-loaded { opacity: 1; }
-.js body.character-site::before { opacity: 0; transition: opacity .28s ease; }
+.js body.character-site::before { opacity: 0; }
 .js body.character-site.atmosphere-ready::before { opacity: var(--char-art-opacity); }
 /* 页头图容器占位：与图片最终偏蓝的色调接近，残差换色也轻微 */
 .character-dossier .page-header-art {
