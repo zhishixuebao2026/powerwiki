@@ -6,9 +6,13 @@
 ## 站点与在线
 
 - 项目根目录：`/workspace/powerwiki`。静态站，`python3 build_site.py` 构建。
-- **在线入口是 WorkBuddy 固定链接**：`https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX`。
-  子路径直接拼在域名后（如 `/skins/<id>/character-<x>.html?sharecode=ATAMOUH2UX`）。
-  **不要用 `github.io` 验收在线**——那不是当前在线入口，会 404，别被误导。
+- **两个在线入口都可用**（实测均 200）：
+  - GitHub Pages（公开、免 sharecode，推荐）：`https://zhishixuebao2026.github.io/powerwiki/`，
+    子路径直接拼域名后（如 `/skins/<id>/character-<x>.html`）。Pages 由 `main` 分支 `/` 自动构建，
+    状态可在 GitHub API `GET /repos/zhishixuebao2026/powerwiki/pages` 查（`status: built`）。
+  - WorkBuddy 固定链接：`https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX`，
+    子路径拼在域名后并带 `?sharecode=ATAMOUH2UX`。
+  早期 Pages 未部署完曾 404，现已正常；验收时两个都测，别再当成"非当前入口"。
 - 推送：`TOKEN=$(curl -s "http://github.agent-gateway.auth-proxy.local/_internal/accesstoken?refresh=1" | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['access_token'])")`
   然后 `git push "https://x-access-token:${TOKEN}@github.com/zhishixuebao2026/powerwiki.git" main`。
   **网关发的 token 会轮换**：普通 `accesstoken`（不带 `?refresh=1`）常返回已失效的旧值，导致
