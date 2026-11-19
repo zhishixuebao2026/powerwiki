@@ -583,7 +583,7 @@ SVGS = {
 # 首帧底色必须与页面最终生效的 --bg-canvas 完全一致，否则样式表到达时
 # 会整屏换一次颜色（表现为闪屏）。加载顺序：style.css → editorial.css →
 # experience.css（角色页在最后覆盖）。改这些 CSS 的 canvas 时同步这里。
-BOOT_BG_DEFAULT = ("#f1f2ed", "#080d11")
+BOOT_BG_DEFAULT = ("#f1f2ed", "#1c2026")
 BOOT_BG_CHARACTERS = {
     "character-yutu": ("#edf3f6", "#071320"),
     "character-futan": ("#eceee7", "#05100f"),
@@ -1246,7 +1246,7 @@ def render_shell(
          不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
          data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
       var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
-        || (t === 'dark' ? '#080d11' : '#f1f2ed');
+        || (t === 'dark' ? '#1c2026' : '#f1f2ed');
       var mc = document.getElementById('theme-color-meta');
       if (mc) mc.setAttribute('content', canvas);
     }})();
@@ -1495,7 +1495,15 @@ def build_home_page(
     tier_by_slug = {t["slug"]: t for t in tiers}
     featured_section = ""
     if all_chars:
-        featured_cards = [render_char_card_html(c, tier_by_slug, "") for c in all_chars[:4]]
+        # 首页精选按主档量级从小到大排列（低→高），取前 6 位填满 3×2 网格
+        featured_ordered = sorted(
+            all_chars,
+            key=lambda c: (
+                tier_by_slug.get(c.get("tier_slug", ""), {}).get("order", 999),
+                c.get("pinyin") or c.get("name") or "",
+            ),
+        )[:6]
+        featured_cards = [render_char_card_html(c, tier_by_slug, "") for c in featured_ordered]
         featured_section = f"""
       <section class="section-block home-dossiers">
         <div class="section-header">

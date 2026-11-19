@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-root="./" data-page-id="home" data-boot-bg-light="#f1f2ed" data-boot-bg-dark="#080d11">
+<html lang="zh-CN" data-theme="light" data-root="./" data-page-id="home" data-boot-bg-light="#f1f2ed" data-boot-bg-dark="#1c2026">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -23,7 +23,7 @@
        属性选择器自动换色，JS 不再写 inline 底色。 -->
   <style>
     :where(html), :where(html) > :where(body) { background-color: #f1f2ed; }
-    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #080d11; }
+    :where(html[data-theme="dark"]), :where(html[data-theme="dark"]) > :where(body) { background-color: #1c2026; }
   </style>
   <script>
     (function() {
@@ -43,7 +43,7 @@
          不再写 root.style.backgroundColor —— 底色统一由 CSS 属性选择器随
          data-theme 变化，避免 JS 与 CSS 两处颜色不同步造成的整屏换色。 */
       var canvas = root.getAttribute(t === 'dark' ? 'data-boot-bg-dark' : 'data-boot-bg-light')
-        || (t === 'dark' ? '#080d11' : '#f1f2ed');
+        || (t === 'dark' ? '#1c2026' : '#f1f2ed');
       var mc = document.getElementById('theme-color-meta');
       if (mc) mc.setAttribute('content', canvas);
     })();
@@ -236,6 +236,32 @@
           <a class="text-link" href="characters.html">查看全部 29 位 →</a>
         </div>
         <div class="char-grid">
+    <a class="char-card has-media media-top char-card-sunwukong" data-character="sunwukong" href="character/sunwukong.html">
+      <div class="char-card-media is-landscape" data-art-label="SUNWUKONG">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/sunwukong/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/sunwukong/character-card.jpg" alt="孙悟空" width="1536" height="864" loading="lazy">
+      </div>
+      <div class="char-card-body">
+        <div class="char-head">
+          <div class="char-meta"><h3 class="char-name">孙悟空</h3><div class="char-origin">西游记·百回本</div></div>
+          <span class="tier-badge gold mono">⊙ 城▽-</span>
+        </div>
+        <div class="char-tier-line"><span>弱化弱爆城</span><span class="mono">#27</span></div><p class="char-summary">百回本逐回定级。综合取挑两座大山赶路的做功，⊙弱化弱爆城〔推〕（做功）；保底为一棒碎墙的 ⊙屋级上下〔实〕。</p><div class="char-foot"><span>2026-11-12 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+      </div>
+    </a>
+    <a class="char-card has-media media-top char-card-zhigaowangzuo" data-character="zhigaowangzuo" href="character/zhigaowangzuo.html">
+      <div class="char-card-media is-landscape" data-art-label="ZHIGAOWANGZUO">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/zhigaowangzuo/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/zhigaowangzuo/character-card.jpg" alt="至高王座" width="1536" height="865" loading="lazy">
+      </div>
+      <div class="char-card-body">
+        <div class="char-head">
+          <div class="char-meta"><h3 class="char-name">至高王座</h3><div class="char-origin">《斩！赤红之瞳》（アカメが斬る!，タカヒロ原作 · 田代哲也作画）</div></div>
+          <span class="tier-badge gold mono">⊙ 城▽</span>
+        </div>
+        <div class="char-tier-line"><span>弱爆城</span><span class="mono">#28</span></div><p class="char-summary">《斩！赤红之瞳》漫画版帝都决战的护国机神。胸前巨炮在城区打出约一公里宽、看不到坑底的弹坑，按房屋比例尺与岩石粉碎计中值 6.6×10¹⁵ J，定弱爆城级 ⊙城▽〔实〕；去掉「坑内为粉碎」后的保底为 ⊙弱化弱爆城〔实〕。附 8 张证据标注图。</p><div class="char-foot"><span>2026-11-06 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+      </div>
+    </a>
     <a class="char-card has-media media-top char-card-yutu" data-character="yutu" href="character/yutu.html">
       <div class="char-card-media is-portrait" data-art-label="YUTU">
         <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/yutu/official-portrait.png')"></span>
@@ -249,43 +275,43 @@
         <div class="char-tier-line"><span>强爆国</span><span class="mono">#34</span></div><p class="char-summary">终局轨道火球覆盖面积确立强爆国级主档（⊙国△）；一拳将虎力打上月球的动能为强爆城级保底。</p><div class="char-foot"><span>2026-10-26 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
     </a>
-    <a class="char-card has-media media-top char-card-futan" data-character="futan" href="character/futan.html">
-      <div class="char-card-media is-landscape" data-art-label="FUTAN">
-        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/futan/cthulhu-wallpaper.jpg')"></span>
-        <img class="char-card-img" src="static/img/characters/futan/cthulhu-wallpaper.jpg" alt="弗坦" width="1408" height="768" loading="lazy">
+    <a class="char-card has-media media-top char-card-pangu" data-character="pangu" href="character/pangu.html">
+      <div class="char-card-media is-landscape" data-art-label="PANGU">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/pangu/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/pangu/character-card.jpg" alt="盘古" width="1536" height="864" loading="lazy">
       </div>
       <div class="char-card-body">
         <div class="char-head">
-          <div class="char-meta"><h3 class="char-name">弗坦</h3><div class="char-origin">《诡秘地海》</div></div>
-          <span class="tier-badge gold mono">⊙ 宇△</span>
+          <div class="char-meta"><h3 class="char-name">盘古</h3><div class="char-origin">中国神话·合集</div></div>
+          <span class="tier-badge gold mono">⊙ 星△</span>
         </div>
-        <div class="char-tier-line"><span>强宇宙</span><span class="mono">#80</span></div><p class="char-summary">Ehod 级神明，全书始终沉睡；以苏醒未来的星辰清空与跨位面同步定级，位面数目未定故只记下限，保底标准宇宙级。</p><div class="char-foot"><span>2026-10-30 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+        <div class="char-tier-line"><span>强爆行星</span><span class="mono">#46</span></div><p class="char-summary">合集分版本定级。综合取《开辟演义》：被分开的天地约 9.7～13.4 万公里，⊙星△（范围对照）· 需时，能量〔缺〕；保底为开辟整个天地〔实〕、不落档。</p><div class="char-foot"><span>2026-11-12 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
     </a>
-    <a class="char-card has-media media-top char-card-tongguan" data-character="tongguan" href="character/tongguan.html">
-      <div class="char-card-media is-landscape" data-art-label="TONGGUAN">
-        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/tongguan/character-card.jpg')"></span>
-        <img class="char-card-img" src="static/img/characters/tongguan/character-card.jpg" alt="三世铜棺之主" width="1536" height="865" loading="lazy">
+    <a class="char-card has-media media-top char-card-starkiller" data-character="starkiller" href="character/starkiller.html">
+      <div class="char-card-media is-landscape" data-art-label="SHIXINGZHEJIDI">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/starkiller/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/starkiller/character-card.jpg" alt="弑星者基地" width="1920" height="1080" loading="lazy">
       </div>
       <div class="char-card-body">
         <div class="char-head">
-          <div class="char-meta"><h3 class="char-name">三世铜棺之主</h3><div class="char-origin">《遮天三部曲》（《完美世界》《遮天》《圣墟》）</div></div>
-          <span class="tier-badge gold mono">⊙ 宇◆</span>
+          <div class="char-meta"><h3 class="char-name">弑星者基地</h3><div class="char-origin">星球大战·《原力觉醒》（2015）</div></div>
+          <span class="tier-badge gold mono">⊙ 恒▽</span>
         </div>
-        <div class="char-tier-line"><span>极宇宙</span><span class="mono">#81</span></div><p class="char-summary">祭道之上、自我抹除的「病人」；点眉心一刹那亿万宇宙成灰又复原，以可确认的 1 亿个宇宙定极宇宙级下限，无限描写不过 8.1 门槛。</p><div class="char-foot"><span>2026-10-28 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+        <div class="char-tier-line"><span>弱爆恒星</span><span class="mono">#52</span></div><p class="char-summary">量级来自「吸」不来自「打」。吸干整颗恒星记 ⊙恒▽〔下〕（需时），至少 2.4×10⁴⁰ J；保底为一发毁灭五颗行星的爆星〔实〕，尺寸未写、不落档。</p><div class="char-foot"><span>2026-11-12 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
     </a>
-    <a class="char-card has-media media-top char-card-yog" data-character="yog" href="character/yog.html">
-      <div class="char-card-media is-landscape" data-art-label="YOUGESUOTUOSI">
-        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/yog/character-card.jpg')"></span>
-        <img class="char-card-img" src="static/img/characters/yog/character-card.jpg" alt="犹格·索托斯" width="1536" height="1024" loading="lazy">
+    <a class="char-card has-media media-top char-card-nvwa" data-character="nvwa" href="character/nvwa.html">
+      <div class="char-card-media is-landscape" data-art-label="NVWA">
+        <span class="char-card-ambience" aria-hidden="true" style="background-image:url('static/img/characters/nvwa/character-card.jpg')"></span>
+        <img class="char-card-img" src="static/img/characters/nvwa/character-card.jpg" alt="女娲" width="1536" height="864" loading="lazy">
       </div>
       <div class="char-card-body">
         <div class="char-head">
-          <div class="char-meta"><h3 class="char-name">犹格·索托斯</h3><div class="char-origin">克苏鲁神话（H. P. 洛夫克拉夫特原作及合著、代笔）</div></div>
-          <span class="tier-badge gold mono">⊙ 外·门</span>
+          <div class="char-meta"><h3 class="char-name">女娲</h3><div class="char-origin">中国神话·合集</div></div>
+          <span class="tier-badge gold mono">⊙ 系▽</span>
         </div>
-        <div class="char-tier-line"><span>论外门槛</span><span class="mono">#90</span></div><p class="char-summary">《死灵之书》中&quot;门、钥匙与守门者&quot;，与全部时间共存、与全部空间同界；却几乎从不亲自行动。综合主档未定级，存在规模记论外门槛（可数无限 ℵ₀），域跨 ω 层维度。这是原作写法所致，非判断其弱。</p><div class="char-foot"><span>2026-10-28 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+        <div class="char-tier-line"><span>弱恒星系</span><span class="mono">#57</span></div><p class="char-summary">合集分版本定级。综合取《列子·汤问》：天地至少约 2.8 AU，⊙弱化弱恒星系（范围对照）〔下〕，能量〔缺〕；保底为补天立极〔实〕。</p><div class="char-foot"><span>2026-11-12 更新</span><span class="card-link-hint">阅读档案 <svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
       </div>
     </a></div>
       </section>
