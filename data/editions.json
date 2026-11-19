@@ -686,7 +686,7 @@
     },
     {
       "id": "shiva-hengsha",
-      "name": "三目恒沙",
+      "name": "三目",
       "tag": "",
       "note": "暗蓝金环、湿婆三目与三叉戟、雪山，暗色史诗版。",
       "source": "skins/_source/shiva-hengsha.html",
@@ -699,7 +699,7 @@
     },
     {
       "id": "pangu-hunyuan",
-      "name": "混元开辟",
+      "name": "开天",
       "tag": "",
       "note": "混沌巨人持斧开天、金色流光山峦，暗色史诗版。",
       "source": "skins/_source/pangu-hunyuan.html",
@@ -725,7 +725,7 @@
     },
     {
       "id": "guchensha-yunzhan",
-      "name": "云栈日观",
+      "name": "日观峰",
       "tag": "",
       "note": "米纸水墨群山红日、云海栈道孤人，古典亮色版。",
       "source": "skins/_source/guchensha-yunzhan.html",
@@ -738,7 +738,7 @@
     },
     {
       "id": "juxingzhihui-lingchun",
-      "name": "自指灵椿",
+      "name": "灵椿",
       "tag": "",
       "note": "深青宇宙巨树、青绿荧光数据流，科幻暗色版。",
       "source": "skins/_source/juxingzhihui-lingchun.html",
