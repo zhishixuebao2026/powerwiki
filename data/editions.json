@@ -517,7 +517,7 @@
     },
     {
       "id": "wuxianbaoshi-xingyao",
-      "name": "六曜光轨",
+      "name": "六曜联珠",
       "tag": "",
       "note": "深蓝紫宇宙，六色宝石沿光轨排布，双主题切换。",
       "source": "skins/_source/wuxianbaoshi-xingyao.html",
@@ -530,7 +530,7 @@
     },
     {
       "id": "wuxianbaoshi-heiyuan",
-      "name": "渊环典章",
+      "name": "璇渊",
       "tag": "",
       "note": "深空黑洞与六宝石金线环，衬线典章式版式，证据图已补齐。",
       "source": "skins/_source/wuxianbaoshi-heiyuan.html",
@@ -543,7 +543,7 @@
     },
     {
       "id": "xuezhishaonv-yueshi",
-      "name": "蚀月夜录",
+      "name": "寒蟾蚀影",
       "tag": "",
       "note": "暗夜月蚀与写实人物分栏，衬线巨字，定级框完整。",
       "source": "skins/_source/xuezhishaonv-yueshi.html",
@@ -556,7 +556,7 @@
     },
     {
       "id": "xuezhishaonv-sujian",
-      "name": "淡墨雪姬",
+      "name": "素笺留霜",
       "tag": "",
       "note": "米纸线描，淡墨雪姬，封面图后缀已修正为 jpg。",
       "source": "skins/_source/xuezhishaonv-sujian.html",
@@ -569,7 +569,7 @@
     },
     {
       "id": "luofeng-xinggui",
-      "name": "金轨浑天",
+      "name": "星枢",
       "tag": "",
       "note": "深空金色星轨浑天仪与人物剪影，典章式排版。",
       "source": "skins/_source/luofeng-xinggui.html",
@@ -582,7 +582,7 @@
     },
     {
       "id": "nvwa-xuanqiong",
-      "name": "玄穹竹帛双卷",
+      "name": "竹帛苍穹",
       "tag": "",
       "note": "玄穹与竹帛双卷，女娲补天插画与信息卡片。",
       "source": "skins/_source/nvwa-xuanqiong.html",
@@ -595,7 +595,7 @@
     },
     {
       "id": "nvwa-boshan",
-      "name": "深蓝补天",
+      "name": "炼石擎天",
       "tag": "",
       "note": "深蓝星空女娲补天主视觉，居中标题双主题。",
       "source": "skins/_source/nvwa-boshan.html",
@@ -608,7 +608,7 @@
     },
     {
       "id": "nvwa-heijin",
-      "name": "黑金浑天仪",
+      "name": "玄金",
       "tag": "",
       "note": "黑金配色女娲补天，矢量浑天仪，轻量单页。",
       "source": "skins/_source/nvwa-heijin.html",
