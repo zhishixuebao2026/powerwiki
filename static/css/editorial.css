@@ -318,11 +318,11 @@ body.character-site .pager-card { background: var(--panel-glass); }
   --char-art-opacity: .26;
 }
 [data-theme="dark"] body.character-yutu {
-  --bg-canvas: #08111c;
+  --bg-canvas: #071320;
   --bg-subtle: #0f1c28;
   --bg-surface: #12222f;
   --bg-elevated: #182b39;
-  --bg-header: rgba(8, 17, 28, 0.88);
+  --bg-header: rgba(7, 19, 32, 0.88);
   --text-primary: #e9f0f3;
   --text-secondary: #a2b5c0;
   --text-muted: #718b99;
@@ -1365,11 +1365,11 @@ body.character-site .markdown-body h2 { border-bottom:1px solid var(--border-sub
   --char-art-opacity:.24;
 }
 [data-theme="dark"] body.character-yutu {
-  --bg-canvas:#08111c;
+  --bg-canvas:#071320;
   --bg-subtle:#0f1f2f;
   --bg-surface:#122636;
   --bg-elevated:#183146;
-  --bg-header: rgba(8,17,28,.88);
+  --bg-header: rgba(7,19,32,.88);
   --text-primary:#e6eef4;
   --text-secondary:#a6b8c7;
   --text-muted:#7d94a6;
