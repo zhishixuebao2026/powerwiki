@@ -140,8 +140,13 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
     manifest = editions_manifest()
     current = current_id or manifest["default"]
 
+    # 已升格为角色默认页的皮肤不再作为"可切换皮肤"列出（如「月牍」→ 御兔默认页），
+    # 否则默认页与切换器里的皮肤重复、且会把用户带回那个带淡入的旧皮肤页。
+    promoted_defaults = {"moonfile"}
     applicable = []
     for ed in manifest["editions"]:
+        if ed.get("id") in promoted_defaults:
+            continue
         pages = ed.get("pages") or {}
         target = pages.get(section)
         if not target:
@@ -2611,6 +2616,114 @@ def enrich_character_media_dimensions(all_chars: List[Dict[str, Any]]) -> None:
                 c["portrait_shape"] = classify_image_shape(p_dims[0], p_dims[1])
 
 
+def build_yutu_default_from_moonfile() -> None:
+    """御兔默认页 = 「月牍」整页设计（用户 2026-11-19 决定）。
+
+    背景：默认页的字符立绘淡入（.fade-on-load）反复被反馈"频闪"，逐帧定位到
+    opacity 0→0.36 的 300ms 爬升；而「月牍」是 React 整页、无此淡入，且自带
+    明暗开关（读写 localStorage 的 yt-theme）。用户要求把月牍直接设为默认页、
+    切换器里不再列皮肤、补一条主站导航、明暗与主站双向桥接。
+
+    做法（不侵入 React 渲染树、不改定级数据）：
+      - 读 skins/_source/moonfile.html 作为底（源自身资源全内联，无 ../../ 路径）。
+      - head 注入：PWA 基础标签（manifest / 图标，用 ../ 相对）+ 明暗桥接脚本：
+          * 首帧：yt-theme 未设时沿用主站 pw_theme_v2，保证跨页主题一致；
+          * 月牍内切换（data-theme 变化）→ 写回 pw_theme_v2；
+          * 其他页切主题（storage 事件）→ 同步进月牍 data-theme。
+      - body 注入：自包含导航浮层（5 个主站栏目 + 检索入口），用月牍自身色变量
+        （--bg/--ink/--line 等），明暗自动跟随；固定顶栏、不遮挡卷宗正文。
+      - 不注入 edition dock（切页器）：默认页即最终形态，切换器里没有皮肤。
+    写入 character/yutu.html，覆盖标准页；skins/moonfile/ 作为皮肤仍保留。
+    """
+    src = ROOT / "skins/_source/moonfile.html"
+    if not src.exists():
+        print("[WARN] moonfile source missing, yutu default page unchanged")
+        return
+    doc = src.read_text(encoding="utf-8", errors="replace")
+
+    # —— head：PWA 标签 + 明暗桥接 ——
+    pwa_and_bridge = '''  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <script>
+  (function () {
+    var YT = 'yt-theme', PW = 'pw_theme_v2';
+    function valid(t) { return t === 'light' || t === 'dark'; }
+    // 首帧：月牍未单独设过主题时，沿用主站主题，跨页一致。
+    try {
+      if (!valid(localStorage.getItem(YT)) && valid(localStorage.getItem(PW))) {
+        localStorage.setItem(YT, localStorage.getItem(PW));
+      }
+    } catch (e) {}
+    // 月牍内切换主题（React 改 data-theme）→ 写回主站，其他页跟随。
+    var root = document.documentElement;
+    new MutationObserver(function () {
+      var t = root.getAttribute('data-theme');
+      if (valid(t)) { try { localStorage.setItem(PW, t); localStorage.setItem(YT, t); } catch (e) {} }
+    }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    // 其他标签页切主题 → 同步进月牍（storage 事件不含本页）。
+    window.addEventListener('storage', function (e) {
+      if (e.key === PW && valid(e.newValue)) {
+        try { localStorage.setItem(YT, e.newValue); } catch (err) {}
+        root.setAttribute('data-theme', e.newValue);
+      }
+    });
+  })();
+  </script>
+'''
+    # 桥接的"首帧同步 yt-theme"必须早于月牍自己的主题脚本（它在 head 前部读
+    # yt-theme 并按系统偏好兜底），否则月牍先按系统写好 yt 再被我们跳过同步。
+    # 故注入到 <head> 紧后面，而非 </head> 前。
+    hm = re.search(r"<head[^>]*>", doc, re.I)
+    if hm:
+        doc = doc[: hm.end()] + "\n" + pwa_and_bridge + doc[hm.end() :]
+    else:
+        doc = pwa_and_bridge + doc
+
+    # —— body：自包含导航浮层（固定顶栏，用月牍色变量，明暗自动跟随）——
+    nav = '''  <nav class="pw-moon-nav" aria-label="主导航">
+    <a class="pw-moon-brand" href="../index.html" title="衡天 PowerWiki 首页">
+      <span class="pw-moon-mark">&#x2299;</span><span>衡天 PowerWiki</span>
+    </a>
+    <span class="pw-moon-links">
+      <a href="../index.html">首页</a>
+      <a href="../tiers.html">量级</a>
+      <a href="../characters.html" aria-current="page">角色</a>
+      <a href="../rules.html">规则</a>
+      <a href="../materials.html">材质</a>
+      <a href="../search.html">检索</a>
+    </span>
+  </nav>
+  <style>
+    .pw-moon-nav{position:fixed;inset:0 0 auto 0;z-index:9999;display:flex;align-items:center;gap:18px;
+      padding:9px clamp(14px,4vw,40px);box-sizing:border-box;
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+      -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--line2);font-family:inherit;}
+    .pw-moon-brand{display:inline-flex;align-items:center;gap:8px;color:var(--ink);
+      font-weight:700;font-size:14px;letter-spacing:.02em;text-decoration:none;white-space:nowrap;}
+    .pw-moon-mark{color:var(--moon);font-size:18px;line-height:1;}
+    .pw-moon-links{display:flex;align-items:center;gap:4px;margin-left:auto;flex-wrap:wrap;}
+    .pw-moon-links a{color:var(--ink2);text-decoration:none;font-size:13px;
+      padding:5px 11px;border-radius:8px;transition:background .18s,color .18s;white-space:nowrap;}
+    .pw-moon-links a:hover{background:var(--panel2);color:var(--ink);}
+    .pw-moon-links a[aria-current="page"]{color:var(--ink);background:var(--panel2);font-weight:600;}
+    @media (max-width:640px){
+      .pw-moon-nav{gap:10px;padding:8px 12px;}
+      .pw-moon-links{gap:0;}
+      .pw-moon-links a{font-size:12px;padding:5px 7px;}
+      .pw-moon-brand span:last-child{display:none;}
+    }
+    @media print{.pw-moon-nav{display:none;}}
+  </style>
+'''
+    h2, sep2, t2 = doc.rpartition("</body>")
+    doc = h2 + "\n" + nav + sep2 + t2 if sep2 else doc + nav
+
+    (CHAR_OUT_DIR / "yutu.html").write_text(doc, encoding="utf-8")
+    print("[yutu] default page replaced by 「月牍」整页 (nav + theme bridge, no edition dock)")
+
+
 def main() -> None:
     tiers_payload = json.loads((DATA_DIR / "tiers.json").read_text(encoding="utf-8"))
     chars_payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
@@ -2682,6 +2795,11 @@ def main() -> None:
     (JS_OUT_DIR / "search-index.js").write_text(bundle_js, encoding="utf-8")
 
     editions_built = build_skin_editions()
+
+    # 御兔默认页 = 「月牍」整页设计（用户 2026-11-19 决定）。
+    # 月牍是 React 整页、无 .fade-on-load 淡入，从根上没有频闪；
+    # 这里把它当默认页注入导航浮层 + 明暗桥接，写回 character/yutu.html。
+    build_yutu_default_from_moonfile()
 
     print(
         f"[OK] PowerWiki v9.1 built successfully:\n"

@@ -85,19 +85,6 @@
       "patch": "skins/patches/observatory.js"
     },
     {
-      "id": "moonfile",
-      "name": "月牍",
-      "tag": "",
-      "note": "米纸底，墨笔巨字，月面插图，压一枚朱红印章。",
-      "source": "skins/_source/moonfile.html",
-      "section": "character-yutu",
-      "thumb": "static/img/editions/moonfile.jpg",
-      "pages": {
-        "character-yutu": "skins/moonfile/character-yutu.html"
-      },
-      "patch": "skins/patches/moonfile.js"
-    },
-    {
       "id": "futan-abyss",
       "name": "沉墨长卷",
       "tag": "",
