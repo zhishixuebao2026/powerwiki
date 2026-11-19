@@ -852,6 +852,84 @@
       "pages": {
         "character-juxingzhihui": "skins/juxingzhihui-huntian/character-juxingzhihui.html"
       }
+    },
+    {
+      "id": "xingshen-heng",
+      "name": "星衡",
+      "tag": "",
+      "note": "深蓝星空、金色浑天星轨罗盘，暗色华美版。",
+      "source": "skins/_source/xingshen-heng.html",
+      "section": "character-xingshen",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xingshen-heng.jpg",
+      "pages": {
+        "character-xingshen": "skins/xingshen-heng/character-xingshen.html"
+      }
+    },
+    {
+      "id": "xingshen-zhixing",
+      "name": "织星",
+      "tag": "",
+      "note": "纯黑底、白色星丝神经网络与黑洞漩涡，极简冷峻暗色版。",
+      "source": "skins/_source/xingshen-zhixing.html",
+      "section": "character-xingshen",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xingshen-zhixing.jpg",
+      "pages": {
+        "character-xingshen": "skins/xingshen-zhixing/character-xingshen.html"
+      }
+    },
+    {
+      "id": "baiguang-gufeng",
+      "name": "孤峰照夜",
+      "tag": "",
+      "note": "黑底孤峰星夜、峰顶白光刺破天幕，冷蓝暗色版。",
+      "source": "skins/_source/baiguang-gufeng.html",
+      "section": "character-baiguang",
+      "inject": "minimal",
+      "thumb": "static/img/editions/baiguang-gufeng.jpg",
+      "pages": {
+        "character-baiguang": "skins/baiguang-gufeng/character-baiguang.html"
+      }
+    },
+    {
+      "id": "baiguang-huanji",
+      "name": "环极",
+      "tag": "",
+      "note": "深蓝黑、发光同心圆轨道仪与中心白核，精密冷光暗色版。",
+      "source": "skins/_source/baiguang-huanji.html",
+      "section": "character-baiguang",
+      "inject": "minimal",
+      "thumb": "static/img/editions/baiguang-huanji.jpg",
+      "pages": {
+        "character-baiguang": "skins/baiguang-huanji/character-baiguang.html"
+      }
+    },
+    {
+      "id": "suzhou-zhuzhou",
+      "name": "烛昼环",
+      "tag": "",
+      "note": "米纸赭红铜环装置、中心红核原初烛昼，古典装帧亮色版。",
+      "source": "skins/_source/suzhou-zhuzhou.html",
+      "section": "character-suzhou",
+      "inject": "minimal",
+      "thumb": "static/img/editions/suzhou-zhuzhou.jpg",
+      "pages": {
+        "character-suzhou": "skins/suzhou-zhuzhou/character-suzhou.html"
+      }
+    },
+    {
+      "id": "shiva-yeke",
+      "name": "三目夜刻",
+      "tag": "",
+      "note": "暗紫褐版画、湿婆三目侧颜、三叉戟与雪山曼陀罗，暗色史诗版。",
+      "source": "skins/_source/shiva-yeke.html",
+      "section": "character-shiva",
+      "inject": "minimal",
+      "thumb": "static/img/editions/shiva-yeke.jpg",
+      "pages": {
+        "character-shiva": "skins/shiva-yeke/character-shiva.html"
+      }
     }
   ]
 }

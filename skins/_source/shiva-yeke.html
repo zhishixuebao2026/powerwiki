@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1c1920" />
+    <meta name="description" content="衡天定级：湿婆（印度神话·合集）。按典籍版本分别阅读原文、证据与定级结论。" />
+    <link rel="icon" href="./mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./typography.css" />
+    <link rel="stylesheet" href="./assets/style.css" />
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('hengtian-theme') === 'light' ? 'light' : 'dark';
+        var size = Number(localStorage.getItem('hengtian-size'));
+        if ([14, 15, 16, 18, 20, 22].includes(size)) document.documentElement.style.setProperty('--reading-size', size + 'px');
+      } catch (error) { /* Reading remains available without browser storage. */ }
+    </script>
+    <title>湿婆（印度神话·合集） | 衡天定级</title>
+  <style data-pw-safearea>.topbar{padding-top:env(safe-area-inset-top,0px)!important}</style>
+</head>
+  <body>
+    <div id="root"></div>
+    <script defer src="./assets/reader.js"></script>
+  </body>
+</html>

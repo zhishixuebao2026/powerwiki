@@ -102,6 +102,12 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "starkiller-xingyun": "black",
     "starkiller-liexing": "black",
     "juxingzhihui-huntian": "default",
+    "xingshen-heng": "black",
+    "xingshen-zhixing": "black",
+    "baiguang-gufeng": "black",
+    "baiguang-huanji": "black",
+    "suzhou-zhuzhou": "default",
+    "shiva-yeke": "black",
 }
 
 
