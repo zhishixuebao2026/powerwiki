@@ -670,6 +670,97 @@
       "pages": {
         "character-sunwukong": "skins/sunwukong-lingxiao/character-sunwukong.html"
       }
+    },
+    {
+      "id": "shangdi-jinian",
+      "name": "创世纪年",
+      "tag": "",
+      "note": "米纸雕版星轨日轮、云海山川，典藏装帧亮色版。",
+      "source": "skins/_source/shangdi-jinian.html",
+      "section": "character-shangdi",
+      "inject": "minimal",
+      "thumb": "static/img/editions/shangdi-jinian.jpg",
+      "pages": {
+        "character-shangdi": "skins/shangdi-jinian/character-shangdi.html"
+      }
+    },
+    {
+      "id": "shiva-hengsha",
+      "name": "三目恒沙",
+      "tag": "",
+      "note": "暗蓝金环、湿婆三目与三叉戟、雪山，暗色史诗版。",
+      "source": "skins/_source/shiva-hengsha.html",
+      "section": "character-shiva",
+      "inject": "minimal",
+      "thumb": "static/img/editions/shiva-hengsha.jpg",
+      "pages": {
+        "character-shiva": "skins/shiva-hengsha/character-shiva.html"
+      }
+    },
+    {
+      "id": "pangu-hunyuan",
+      "name": "混元开辟",
+      "tag": "",
+      "note": "混沌巨人持斧开天、金色流光山峦，暗色史诗版。",
+      "source": "skins/_source/pangu-hunyuan.html",
+      "section": "character-pangu",
+      "inject": "minimal",
+      "thumb": "static/img/editions/pangu-hunyuan.jpg",
+      "pages": {
+        "character-pangu": "skins/pangu-hunyuan/character-pangu.html"
+      }
+    },
+    {
+      "id": "xuezhishaonv-xingyi",
+      "name": "星翼月墀",
+      "tag": "",
+      "note": "深紫金发带翼少女、月轮星屑，华美暗色版。",
+      "source": "skins/_source/xuezhishaonv-xingyi.html",
+      "section": "character-xuezhishaonv",
+      "inject": "minimal",
+      "thumb": "static/img/editions/xuezhishaonv-xingyi.jpg",
+      "pages": {
+        "character-xuezhishaonv": "skins/xuezhishaonv-xingyi/character-xuezhishaonv.html"
+      }
+    },
+    {
+      "id": "guchensha-yunzhan",
+      "name": "云栈日观",
+      "tag": "",
+      "note": "米纸水墨群山红日、云海栈道孤人，古典亮色版。",
+      "source": "skins/_source/guchensha-yunzhan.html",
+      "section": "character-guchensha",
+      "inject": "minimal",
+      "thumb": "static/img/editions/guchensha-yunzhan.jpg",
+      "pages": {
+        "character-guchensha": "skins/guchensha-yunzhan/character-guchensha.html"
+      }
+    },
+    {
+      "id": "juxingzhihui-lingchun",
+      "name": "自指灵椿",
+      "tag": "",
+      "note": "深青宇宙巨树、青绿荧光数据流，科幻暗色版。",
+      "source": "skins/_source/juxingzhihui-lingchun.html",
+      "section": "character-juxingzhihui",
+      "inject": "minimal",
+      "thumb": "static/img/editions/juxingzhihui-lingchun.jpg",
+      "pages": {
+        "character-juxingzhihui": "skins/juxingzhihui-lingchun/character-juxingzhihui.html"
+      }
+    },
+    {
+      "id": "sunwukong-lingtai",
+      "name": "灵台夜狩",
+      "tag": "",
+      "note": "金甲大圣月夜星图、云纹，暗色版。",
+      "source": "skins/_source/sunwukong-lingtai.html",
+      "section": "character-sunwukong",
+      "inject": "minimal",
+      "thumb": "static/img/editions/sunwukong-lingtai.jpg",
+      "pages": {
+        "character-sunwukong": "skins/sunwukong-lingtai/character-sunwukong.html"
+      }
     }
   ]
 }

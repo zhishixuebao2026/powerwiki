@@ -1,0 +1,62 @@
+{
+  "cover-night": {
+    "original": "./cover-night.jpg",
+    "display": "./cover-night.webp",
+    "jpgSha256": "de6fe7fc592abc17d3e7dfd2f3cc1ac4feffa43004c357cd463a25fded4aec5d",
+    "webpSha256": "7919e54bea2e80d89654838d9c8c9f9f273e48591ec375286e79fc7f7b9f3afa"
+  },
+  "cover-night-portrait": {
+    "original": "./cover-night-portrait.jpg",
+    "display": "./cover-night-portrait.webp",
+    "jpgSha256": "ae30e714fbb396a7b5fc09399f8573d293a5523d401aed98d75abd41b5ff8170",
+    "webpSha256": "296d4f5b123089c3686e757e8aa12cf2a00e3ee13841fa19a0df5e16fdc23a3a"
+  },
+  "cover-paper": {
+    "original": "./cover-paper.jpg",
+    "display": "./cover-paper.webp",
+    "jpgSha256": "814ad28cc687e373154fc30fd7ba36350990f2e2f19a6779bd02ad2dc3315024",
+    "webpSha256": "d3cad37b93137d11e73521bf78d8328687dc43f1db4272b5f3b9a7b754312740"
+  },
+  "cover-paper-portrait": {
+    "original": "./cover-paper-portrait.jpg",
+    "display": "./cover-paper-portrait.webp",
+    "jpgSha256": "d71d4cbbb8618336508cd81f387c7b78b3be695d8e53ccb033da9ba4792a702c",
+    "webpSha256": "f0ea1512338ff7fa7a49af883060f907769f8b654b730b94a48e055d78bc6ca7"
+  },
+  "classics-night": {
+    "original": "./classics-night.jpg",
+    "display": "./classics-night.webp",
+    "jpgSha256": "5de75d2ccb149c9104a8b6913902d513eddd05c2a6d891237360fe539590af67",
+    "webpSha256": "6e40192bd90bf539699b67e5c3b998762b0cb73e6ad82f046ab9dd4e605b042a"
+  },
+  "classics-paper": {
+    "original": "./classics-paper.jpg",
+    "display": "./classics-paper.webp",
+    "jpgSha256": "35006ef7790df24383a54d9bea018b43a624d7ec51e655799cd5aa717f3d5a71",
+    "webpSha256": "8e39dac9753fc579cdab4f30a2955c96b28db2074b1149b8afc858e96a09986d"
+  },
+  "dao-night": {
+    "original": "./dao-night.jpg",
+    "display": "./dao-night.webp",
+    "jpgSha256": "e47c07d3c10b034810a39203826cf1b87f20d53957b70970916e0320068a9a4b",
+    "webpSha256": "50bb3d17c8261415eea79345aa9cd08e9020cf1c9f645bd59861689783968124"
+  },
+  "dao-paper": {
+    "original": "./dao-paper.jpg",
+    "display": "./dao-paper.webp",
+    "jpgSha256": "26142e6c09a65a5fb68a1e559a28d10bfc892dc6f45334833b8c4a844e504bac",
+    "webpSha256": "c8cd47070fa4efb1144e963b7e8ef65ed4a09b00970c55f54eef17c6a141de88"
+  },
+  "oral-night": {
+    "original": "./oral-night.jpg",
+    "display": "./oral-night.webp",
+    "jpgSha256": "5f87d0384e4b4e2410a9b7533c53c884f870fae7cb9510813f3b2047af891ec2",
+    "webpSha256": "9be48201359d789fe29851a37655909e53cfb65168fc937cc3bb3bc5aae4d34d"
+  },
+  "oral-paper": {
+    "original": "./oral-paper.jpg",
+    "display": "./oral-paper.webp",
+    "jpgSha256": "b6a11b8ed6b06c74b7d95bcb0281e4f0e7222a9d29e1a0ca21e5e8cbd901f28f",
+    "webpSha256": "261de9220400b17bf0d693dbac465bd9b12669cd6b8b91f1782fb898cc10a5e2"
+  }
+}

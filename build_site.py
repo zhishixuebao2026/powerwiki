@@ -88,6 +88,13 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "zhangyan-xuanshu": "black",
     "xuqing-qingchuan": "default",
     "sunwukong-lingxiao": "default",
+    "shangdi-jinian": "default",
+    "shiva-hengsha": "black",
+    "pangu-hunyuan": "black",
+    "xuezhishaonv-xingyi": "black",
+    "guchensha-yunzhan": "default",
+    "juxingzhihui-lingchun": "black",
+    "sunwukong-lingtai": "black",
 }
 
 
