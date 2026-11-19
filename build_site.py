@@ -95,6 +95,13 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "guchensha-yunzhan": "default",
     "juxingzhihui-lingchun": "black",
     "sunwukong-lingtai": "black",
+    "mozhe-mijing": "default",
+    "mozhe-xingluo": "black",
+    "mozhe-qingke": "black",
+    "starkiller-chixiao": "black",
+    "starkiller-xingyun": "black",
+    "starkiller-liexing": "black",
+    "juxingzhihui-huntian": "default",
 }
 
 

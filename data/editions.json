@@ -761,6 +761,97 @@
       "pages": {
         "character-sunwukong": "skins/sunwukong-lingtai/character-sunwukong.html"
       }
+    },
+    {
+      "id": "mozhe-mijing",
+      "name": "花园迷径",
+      "tag": "",
+      "note": "米纸网格迷宫花园铜版画、赭红点缀，亮色古典卷首。",
+      "source": "skins/_source/mozhe-mijing.html",
+      "section": "character-mozhe",
+      "inject": "minimal",
+      "thumb": "static/img/editions/mozhe-mijing.jpg",
+      "pages": {
+        "character-mozhe": "skins/mozhe-mijing/character-mozhe.html"
+      }
+    },
+    {
+      "id": "mozhe-xingluo",
+      "name": "星络",
+      "tag": "",
+      "note": "暗蓝金线星系网络、星体旋臂，暗色典章阅读器。",
+      "source": "skins/_source/mozhe-xingluo.html",
+      "section": "character-mozhe",
+      "inject": "minimal",
+      "thumb": "static/img/editions/mozhe-xingluo.jpg",
+      "pages": {
+        "character-mozhe": "skins/mozhe-xingluo/character-mozhe.html"
+      }
+    },
+    {
+      "id": "mozhe-qingke",
+      "name": "青柯",
+      "tag": "",
+      "note": "墨绿深色、青绿荧光发光巨树盘根，暗色静心版。",
+      "source": "skins/_source/mozhe-qingke.html",
+      "section": "character-mozhe",
+      "inject": "minimal",
+      "thumb": "static/img/editions/mozhe-qingke.jpg",
+      "pages": {
+        "character-mozhe": "skins/mozhe-qingke/character-mozhe.html"
+      }
+    },
+    {
+      "id": "starkiller-chixiao",
+      "name": "赤霄贯星",
+      "tag": "",
+      "note": "深蓝黑、激光贯穿冰封行星、赤红光束，科幻档案暗色版。",
+      "source": "skins/_source/starkiller-chixiao.html",
+      "section": "character-starkiller",
+      "inject": "minimal",
+      "thumb": "static/img/editions/starkiller-chixiao.jpg",
+      "pages": {
+        "character-starkiller": "skins/starkiller-chixiao/character-starkiller.html"
+      }
+    },
+    {
+      "id": "starkiller-xingyun",
+      "name": "星殒",
+      "tag": "",
+      "note": "黑底死星析构、红色核心特写、冷硬科幻暗色版。",
+      "source": "skins/_source/starkiller-xingyun.html",
+      "section": "character-starkiller",
+      "inject": "minimal",
+      "thumb": "static/img/editions/starkiller-xingyun.jpg",
+      "pages": {
+        "character-starkiller": "skins/starkiller-xingyun/character-starkiller.html"
+      }
+    },
+    {
+      "id": "starkiller-liexing",
+      "name": "裂星痕",
+      "tag": "",
+      "note": "黑底行星劈裂、金色能量流、红核，暗色版。",
+      "source": "skins/_source/starkiller-liexing.html",
+      "section": "character-starkiller",
+      "inject": "minimal",
+      "thumb": "static/img/editions/starkiller-liexing.jpg",
+      "pages": {
+        "character-starkiller": "skins/starkiller-liexing/character-starkiller.html"
+      }
+    },
+    {
+      "id": "juxingzhihui-huntian",
+      "name": "浑天星晷",
+      "tag": "",
+      "note": "米纸赭红浑天仪、星球仪，古典装帧亮色版。",
+      "source": "skins/_source/juxingzhihui-huntian.html",
+      "section": "character-juxingzhihui",
+      "inject": "minimal",
+      "thumb": "static/img/editions/juxingzhihui-huntian.jpg",
+      "pages": {
+        "character-juxingzhihui": "skins/juxingzhihui-huntian/character-juxingzhihui.html"
+      }
     }
   ]
 }
