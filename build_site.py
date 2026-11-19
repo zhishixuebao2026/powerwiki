@@ -2680,42 +2680,96 @@ def build_yutu_default_from_moonfile() -> None:
     else:
         doc = pwa_and_bridge + doc
 
-    # —— body：自包含导航浮层（固定顶栏，用月牍色变量，明暗自动跟随）——
+    # —— body：与主站一致的主导航（图标+文字）+ 主题切换按钮 ——
+    # 用户反馈：旧版移动端只剩一个孤零零圆圈、纯文字无图标、且没有主题切换入口。
+    # 这里重做成与主站 .main-nav 同一套视觉语言（SVG 图标 + 文字），并在右侧
+    # 放一个真正的主题按钮：点击改 data-theme，同时双向写 pw_theme_v2/yt-theme。
     nav = '''  <nav class="pw-moon-nav" aria-label="主导航">
     <a class="pw-moon-brand" href="../index.html" title="衡天 PowerWiki 首页">
-      <span class="pw-moon-mark">&#x2299;</span><span>衡天 PowerWiki</span>
+      <svg class="pw-moon-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4"/><circle cx="12" cy="12" r="2.6"/></svg>
+      <span>衡天 PowerWiki</span>
     </a>
-    <span class="pw-moon-links">
-      <a href="../index.html">首页</a>
-      <a href="../tiers.html">量级</a>
-      <a href="../characters.html" aria-current="page">角色</a>
-      <a href="../rules.html">规则</a>
-      <a href="../materials.html">材质</a>
-      <a href="../search.html">检索</a>
-    </span>
+    <div class="pw-moon-links">
+      <a href="../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9"/></svg><span>首页</span></a>
+      <a href="../tiers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.8"/><ellipse cx="12" cy="12" rx="10" ry="4.6" transform="rotate(-32 12 12)"/></svg><span>量级</span></a>
+      <a href="../characters.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2"/></svg><span>角色</span></a>
+      <a href="../rules.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5a2.5 2.5 0 0 1 2.5 2.5Z"/></svg><span>规则</span></a>
+      <a href="../materials.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg><span>材质</span></a>
+      <a href="../search.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/></svg><span>检索</span></a>
+    </div>
+    <button type="button" class="pw-moon-theme" id="pw-moon-theme" aria-label="切换明暗主题" title="切换明暗主题">
+      <svg class="pmt-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
+      <svg class="pmt-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.3 8.3 0 0 1 9.5 4a8.4 8.4 0 1 0 10.5 10.5Z"/></svg>
+    </button>
   </nav>
   <style>
-    .pw-moon-nav{position:fixed;inset:0 0 auto 0;z-index:9999;display:flex;align-items:center;gap:18px;
-      padding:9px clamp(14px,4vw,40px);box-sizing:border-box;
-      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    .pw-moon-nav{position:fixed;inset:0 0 auto 0;z-index:9999;display:flex;align-items:center;gap:10px;
+      padding:8px clamp(12px,3vw,32px);box-sizing:border-box;
+      background:color-mix(in oklab,var(--bg) 86%,transparent);
       -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
       border-bottom:1px solid var(--line2);font-family:inherit;}
-    .pw-moon-brand{display:inline-flex;align-items:center;gap:8px;color:var(--ink);
-      font-weight:700;font-size:14px;letter-spacing:.02em;text-decoration:none;white-space:nowrap;}
-    .pw-moon-mark{color:var(--moon);font-size:18px;line-height:1;}
-    .pw-moon-links{display:flex;align-items:center;gap:4px;margin-left:auto;flex-wrap:wrap;}
-    .pw-moon-links a{color:var(--ink2);text-decoration:none;font-size:13px;
-      padding:5px 11px;border-radius:8px;transition:background .18s,color .18s;white-space:nowrap;}
+    .pw-moon-brand{display:inline-flex;align-items:center;gap:7px;color:var(--ink);text-decoration:none;white-space:nowrap;font-weight:700;font-size:14px;letter-spacing:.02em;}
+    .pw-moon-logo{width:20px;height:20px;color:var(--moon);flex:none;}
+    .pw-moon-links{display:flex;align-items:center;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none;}
+    .pw-moon-links::-webkit-scrollbar{display:none;}
+    .pw-moon-links a{display:inline-flex;align-items:center;gap:5px;color:var(--ink2);text-decoration:none;font-size:13px;padding:6px 9px;border-radius:8px;white-space:nowrap;transition:background .18s,color .18s;}
+    .pw-moon-links a svg{width:16px;height:16px;flex:none;}
     .pw-moon-links a:hover{background:var(--panel2);color:var(--ink);}
     .pw-moon-links a[aria-current="page"]{color:var(--ink);background:var(--panel2);font-weight:600;}
+    .pw-moon-theme{flex:none;display:inline-grid;place-items:center;width:34px;height:34px;padding:0;border-radius:9px;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);cursor:pointer;transition:background .18s;}
+    .pw-moon-theme:hover{background:var(--line2);}
+    .pw-moon-theme svg{width:18px;height:18px;}
+    html[data-theme="light"] .pw-moon-theme .pmt-moon,
+    html[data-theme="dark"] .pw-moon-theme .pmt-sun{display:none;}
+    /* 月牍自带 fixed top-0 的 HEADER（印章/标题/目录/主题按钮）与本导航重叠，
+       其半透明底会透出印章变成"半截方块"。主题切换已由本导航按钮转发给原生
+       toggle，故整条 HEADER 隐藏；抽屉遮罩一并隐藏，避免盖住正文。 */
+    body > div > .relative.min-h-screen > header.fixed,
+    header.fixed.inset-x-0.top-0{display:none !important;}
     @media (max-width:640px){
-      .pw-moon-nav{gap:10px;padding:8px 12px;}
-      .pw-moon-links{gap:0;}
-      .pw-moon-links a{font-size:12px;padding:5px 7px;}
-      .pw-moon-brand span:last-child{display:none;}
+      .pw-moon-nav{gap:6px;padding:6px 8px;}
+      .pw-moon-brand{display:none;}
+      .pw-moon-links{gap:0;min-width:0;}
+      .pw-moon-links a{padding:6px 5px;font-size:11.5px;gap:3px;}
+      .pw-moon-links a span{display:none;}
+      .pw-moon-links a[aria-current="page"] span{display:inline;}
+      .pw-moon-links a svg{width:18px;height:18px;}
+      .pw-moon-theme{width:30px;height:30px;margin-left:auto;}
+      .pw-moon-theme svg{width:17px;height:17px;}
     }
     @media print{.pw-moon-nav{display:none;}}
   </style>
+  <script>
+  (function () {
+    var btn = document.getElementById('pw-moon-theme');
+    if (!btn) return;
+    var root = document.documentElement;
+    function label() {
+      var t = root.getAttribute('data-theme');
+      var s = t === 'dark' ? '切换到亮色主题' : '切换到暗色主题';
+      btn.setAttribute('aria-label', s);
+      btn.setAttribute('title', s);
+    }
+    btn.addEventListener('click', function () {
+      // 月牍主题由 React state 受控（zO hook 的 toggle + useEffect），直接改
+      // data-theme 只动 DOM、不动 React state，正文不会跟着变且会被重渲染改回。
+      // 因此优先点击月牍自带的主题按钮，走它自己的 toggle 完整驱动 state→DOM→
+      // CSS 变量；head 桥接的 MutationObserver 再把 data-theme 写回 pw_theme_v2。
+      var native = document.querySelector('button[aria-label="切换到亮色"]')
+                || document.querySelector('button[aria-label="切换到暗色"]');
+      if (native) {
+        try { native.click(); return; } catch (e) {}
+      }
+      // 兜底：找不到原生按钮时直接改属性并写两个 key。
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('yt-theme', next); localStorage.setItem('pw_theme_v2', next); } catch (e) {}
+      label();
+    });
+    label();
+    new MutationObserver(label).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  })();
+  </script>
 '''
     h2, sep2, t2 = doc.rpartition("</body>")
     doc = h2 + "\n" + nav + sep2 + t2 if sep2 else doc + nav
