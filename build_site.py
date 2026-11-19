@@ -1495,14 +1495,14 @@ def build_home_page(
     tier_by_slug = {t["slug"]: t for t in tiers}
     featured_section = ""
     if all_chars:
-        # 首页精选按主档量级从小到大排列（低→高），取前 6 位填满 3×2 网格
+        # 首页精选按主档量级从小到大排列（低→高），取前 8 位填满 4×2 网格
         featured_ordered = sorted(
             all_chars,
             key=lambda c: (
                 tier_by_slug.get(c.get("tier_slug", ""), {}).get("order", 999),
                 c.get("pinyin") or c.get("name") or "",
             ),
-        )[:6]
+        )[:8]
         featured_cards = [render_char_card_html(c, tier_by_slug, "") for c in featured_ordered]
         featured_section = f"""
       <section class="section-block home-dossiers">

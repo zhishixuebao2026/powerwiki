@@ -3771,7 +3771,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 /* Character cards: portrait, name, tier and a short readable abstract */
 .char-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
-.home-dossiers .char-grid,
+/* 首页精选固定 4 列，配合取前 8 位填满 4×2，无空缺 */
+.home-dossiers .char-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .compact-roster-grid { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
 .char-card {
   overflow: hidden;
@@ -3932,6 +3933,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 @media (max-width: 1000px) {
   .portal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .portal-library { grid-column: 1 / -1; min-height: 0; }
+  .home-dossiers .char-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 860px) {
