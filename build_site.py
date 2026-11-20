@@ -2742,16 +2742,20 @@ def build_yutu_default_from_moonfile() -> None:
        toggle，故整条 HEADER 隐藏；抽屉遮罩一并隐藏，避免盖住正文。 */
     body > div > .relative.min-h-screen > header.fixed,
     header.fixed.inset-x-0.top-0{display:none !important;}
+    /* 手机端改为两行：第一行品牌 + 主题按钮，第二行 6 个栏目「图标 + 文字」
+       等分铺满。旧版为省宽度隐藏了除当前页外全部文字（只剩「角色」二字 +
+       5 个裸图标），用户反馈「导航栏显示不完整」，故不再隐藏任何 span。 */
     @media (max-width:640px){
-      .pw-moon-nav{gap:6px;padding:6px 8px;}
-      .pw-moon-brand{display:none;}
-      .pw-moon-links{gap:0;min-width:0;}
-      .pw-moon-links a{padding:6px 5px;font-size:11.5px;gap:3px;}
-      .pw-moon-links a span{display:none;}
-      .pw-moon-links a[aria-current="page"] span{display:inline;}
-      .pw-moon-links a svg{width:18px;height:18px;}
-      .pw-moon-theme{width:30px;height:30px;margin-left:auto;}
-      .pw-moon-theme svg{width:17px;height:17px;}
+      .pw-moon-nav{flex-wrap:wrap;align-content:center;row-gap:2px;gap:0 6px;
+        padding:4px 8px;min-height:66px;}
+      .pw-moon-brand{flex:1 1 auto;font-size:12px;}
+      .pw-moon-logo{width:16px;height:16px;}
+      .pw-moon-theme{order:2;width:28px;height:28px;margin-left:0;}
+      .pw-moon-theme svg{width:16px;height:16px;}
+      .pw-moon-links{order:3;flex:0 0 100%;margin-left:0;gap:0;overflow:visible;}
+      .pw-moon-links a{flex:1 1 0;justify-content:center;min-width:0;
+        padding:3px 0;font-size:11px;gap:2px;}
+      .pw-moon-links a svg{width:14px;height:14px;}
     }
     @media print{.pw-moon-nav{display:none;}}
   </style>
@@ -2903,7 +2907,9 @@ def build_xuqing_default_from_qingchuan() -> None:
   </nav>
   <style data-pw-skin-nav>
     :root{--pw-nav-h:44px}
-    @media(max-width:640px){:root{--pw-nav-h:40px}}
+    /* 手机端两行导航（品牌/返回 + 6 栏目），高度 66px；masthead 与移动端
+       目录条的 sticky top 都由本变量派生，无需逐条改。 */
+    @media(max-width:640px){:root{--pw-nav-h:66px}}
     body{padding-top:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px))!important}
     .masthead{top:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px))!important}
     .mobile-contents-bar{top:calc(var(--pw-nav-h) + var(--safe-header))!important}
@@ -2931,17 +2937,18 @@ def build_xuqing_default_from_qingchuan() -> None:
     html[data-theme="day"] .pw-skin-theme .pst-moon,
     html[data-theme="night"] .pw-skin-theme .pst-sun{display:none;}
     .skip-link{z-index:10000!important}
+    /* 与御兔同一套手机端两行导航：不再隐藏任何栏目文字。
+       第一行「← 角色档案」+ 主题按钮，第二行 6 个栏目等分铺满。 */
     @media(max-width:640px){
-      .pw-skin-nav{gap:6px;padding-inline:8px;}
+      .pw-skin-nav{flex-wrap:wrap;align-content:center;row-gap:2px;gap:0 6px;padding-inline:8px;}
       .pw-skin-brand{display:none;}
-      .pw-skin-back{padding:5px 7px;font-size:11.5px;gap:3px;}
+      .pw-skin-back{order:0;flex:0 0 auto;padding:5px 7px;font-size:11.5px;gap:3px;}
       .pw-skin-back svg{width:14px;height:14px;}
-      .pw-skin-links{gap:0;min-width:0;}
-      .pw-skin-links a{padding:6px 5px;font-size:11.5px;gap:3px;}
-      .pw-skin-links a span{display:none;}
-      .pw-skin-links a[aria-current="page"] span{display:inline;}
-      .pw-skin-links a svg{width:18px;height:18px;}
-      .pw-skin-theme{width:30px;height:30px;margin-left:auto;}
+      .pw-skin-theme{order:2;width:28px;height:28px;margin-left:auto;}
+      .pw-skin-links{order:3;flex:0 0 100%;margin-left:0;gap:0;min-width:0;overflow:visible;}
+      .pw-skin-links a{flex:1 1 0;justify-content:center;min-width:0;
+        padding:3px 0;font-size:11px;gap:2px;}
+      .pw-skin-links a svg{width:14px;height:14px;}
     }
     @media print{.pw-skin-nav{display:none;}body{padding-top:0!important}}
   </style>
