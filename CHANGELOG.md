@@ -4,6 +4,78 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-21（定稿 + 上线）· 许青「青川卷帙」彻底升格为默认页
+
+用户澄清：**许青原本只有 1 套皮肤，既然这套就是默认页，它就不再是可切换皮肤**；
+要像御兔「月牍」那样直接接入主站，不挂切换器，顶多给一个「返回角色档案」入口。
+同时指出线上仍是旧标准模板页 —— 首轮只做了本地构建、没有推送，属判断失误。
+
+按「月牍同款」改造（与 `build_yutu_default_from_moonfile()` 对称）：
+
+| 项 | 首轮试点 | 定稿 |
+|---|---|---|
+| 默认页底 | `skins/xuqing-qingchuan/character-xuqing.html` 产物 | `skins/_source/xuqing-qingchuan.html` 源文件 |
+| `editions.json` | 保留 `xuqing-qingchuan` 条目 | **删除条目**（皮肤 78 → 77 套） |
+| `skins/xuqing-qingchuan/` | 保留产物 | **整个移除**（资源全内联、页面 0 引用） |
+| 切换器 | 保留 dock（「默认 + 青川卷帙」视觉重复） | **不挂 dock / editions.css / editions.js** |
+| 返回入口 | 无 | 导航左端「← 角色档案」→ `characters.html` |
+| 许青皮肤数 | 1 | **0** |
+
+保留：主站导航（6 图标 + 明暗按钮）、`pw_theme_v2` ↔ `hengtian-reader-v1`
+明暗桥接、PWA 标签与状态栏 meta、安全区让位（导航 40/44px，masthead 与
+mobile-contents-bar 的 sticky top 一并下移）、皮肤自带的品牌栏 / 目录 / 昼夜 / 字号。
+`skins/_source/xuqing-qingchuan.html` 保留为默认页源，缩略图文件保留但已无引用。
+
+验证：320/390/768/1440 四宽度 0 横溢、0 破图、0 JS 错；导航与 masthead 零重叠；
+主题 day↔night 及跨页桥接通过；页面无 `pw-edition-dock`、无 `fade-on-load`；
+`python3 tools/audit_site.py` 全部通过（77 套产物、登记表 78 条一致、定级基线异常 0 项）；
+定级正文仍为主站 md 完整副本，一字未动。SW `pw-v71 → pw-v72`。
+
+**已推送线上**（GitHub Pages + WorkBuddy 在线），线上许青页不再是 67,787 字节的标准模板。
+
+## 2026-11-21（首轮试点，已由上条取代）· 许青默认角色页 = 「青川卷帙」
+
+用户提出"默认角色页滥竽充数，想用皮肤彻底替换"，先挑只有 1 套皮肤的许青做单点验证。
+**只改构建脚本与产物，不动登记表**：`editions.json` 零改动，皮肤总数仍 78 套。
+
+做法（`build_site.py: build_xuqing_default_from_skin()`，在 main 末尾、御兔月牍之后执行）：
+
+- 以 `skins/xuqing-qingchuan/character-xuqing.html` 产物为底，剥离原 dock 三件套，
+  资源基准 `../../` → `../`，重新按 `character/` 目录生成切换器。
+- 保留 `html[data-pw-edition]`：主站 `theme.js` / `chrome.js` 靠它跳过，否则会按
+  light/dark 改写 `data-theme`，与皮肤自身的 day/night 打架。
+- head 最前注入明暗桥接 `pw_theme_v2` ↔ `hengtian-reader-v1`；页内切换写回主站，
+  其他标签页切换转发给原生「昼卷/夜卷」按钮（React 受控，直接改属性会被改回）。
+- body 注入主站导航（6 图标 + 明暗按钮）与 dock；导航为固定浮层，`body` 顶部让位、
+  `masthead` / `mobile-contents-bar` 的 sticky top 一并下移，皮肤自带的品牌栏、
+  目录、昼夜、字号功能一个不丢；安全区按站内标准写法 `env(...)` + `calc(原高 + env(...))`。
+
+验证（Playwright / Chromium，本地 HTTP）：
+
+- 320 / 390 / 768 / 1440 四宽度：0 横溢、0 破图、0 JS 错；nav 与 masthead 精确衔接
+  （40/44px 让位，零重叠）；dock 可见；亮暗两套配色无白底残留。
+- 导航主题按钮 day→night→day 生效并写回 `pw_theme_v2`；跨页桥接主站 dark → 许青 night、
+  许青 day → 主站 light 双向通过。
+- `python3 tools/audit_site.py` 全部通过：300 卡片/缩略图 0 缺、登记表 79 条一致、
+  定级基线 29 角色 / 29 归档 / `tiers.json` 异常 0 项。
+- 定级正文核对：皮肤内联 md 全文 9630 字符，与主站 9628 字符副本一致（仅 `\u3000`
+  等 JS 转义差异），关键词计数全同，**正文一字未动**。
+- SW `pw-v70 → pw-v71`。
+
+首轮试点发现（第 1 条已在定稿中处理，其余为推广前需知）：
+
+- 许青只有 1 套皮肤，升格后切换器剩「默认(当前) + 青川卷帙」两项且视觉相同；
+  独立皮肤页仍可访问，但从默认页点过去是同版式。要么补一套「标准档案」做对比/回退，
+  要么把升格皮肤加入 `promoted_defaults`（则切换器整体隐藏）。
+- 标准模板生成的三个结构化组件（「证据链核验摘要」「正式完整书写摘要」、
+  「保底量级」KPI 卡）不在皮肤页里；其信息都在 md 正文中，但不是醒目卡片。
+- 320 窄屏下 dock 停在封面中部（原皮肤页 y=308、新页 y=348），是 `editions.js`
+  对 `mobile-contents-bar` 的既有 sticky 避让逻辑，非本次回归；未动全局脚本。
+- 默认页体积由 68 KB 增至 4.4 MB（React 整页内联资源）。
+
+**首轮仅本地构建、未推线上**，所以线上看到的仍是旧标准模板页。用户 03:00 指出
+"许青只有 1 套皮肤，默认就是它，那他就应该没有皮肤了"，遂按上一条彻底改造并上线。
+
 ## 2026-11-21（新增皮肤）· 苏昼 2 + 三世铜棺 1 / 皮肤 75→78
 
 用户上传 `gemini-4-carbon-high苏昼定级页面.zip`（39.1MB，附件已落地沙箱）。文件名只写苏昼，

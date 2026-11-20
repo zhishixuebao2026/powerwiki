@@ -153,9 +153,10 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
     manifest = editions_manifest()
     current = current_id or manifest["default"]
 
-    # 已升格为角色默认页的皮肤不再作为"可切换皮肤"列出（如「月牍」→ 御兔默认页），
-    # 否则默认页与切换器里的皮肤重复、且会把用户带回那个带淡入的旧皮肤页。
-    promoted_defaults = {"moonfile"}
+    # 已升格为角色默认页的皮肤不再作为"可切换皮肤"列出（「月牍」→ 御兔默认页、
+    # 「青川卷帙」→ 许青默认页）。两者都已从 editions.json 移除，这里留作防御，
+    # 避免以后手工回填登记表时又把默认页自己列成一张皮肤卡片。
+    promoted_defaults = {"moonfile", "xuqing-qingchuan"}
     applicable = []
     for ed in manifest["editions"]:
         if ed.get("id") in promoted_defaults:
@@ -2803,6 +2804,183 @@ def build_yutu_default_from_moonfile() -> None:
     print("[yutu] default page = 「月牍」整页 (nav + theme bridge + edition dock)")
 
 
+def build_xuqing_default_from_qingchuan() -> None:
+    """许青默认角色页 = 「青川卷帙」整页（2026-11-21 定，仿御兔「月牍」）。
+
+    许青原本只有 1 套皮肤。既然这套就是默认页，它就不再是可切换皮肤：
+      - editions.json 已移除 xuqing-qingchuan 条目（与 moonfile 同）；
+      - 不再生成 skins/xuqing-qingchuan/ 产物，只留 skins/_source/ 源文件
+        作为默认页底；页面也不挂 edition dock / 切换器；
+      - 只补主站接入层：主站导航 + 一个「← 角色档案」返回入口 + 明暗桥接。
+
+    源文件是 React 整页、资源全内联、自带 viewport-fit=cover 与 day/night
+    主题，无 .fade-on-load（从根上没有频闪）；定级正文是主站 md 的完整副本。
+    定级正文、98 档数值、tiers.json、grading_baseline.json 全不动。
+    """
+    src = ROOT / "skins/_source/xuqing-qingchuan.html"
+    if not src.exists():
+        print("[WARN] qingchuan source missing, xuqing default page unchanged")
+        return
+    doc = src.read_text(encoding="utf-8", errors="replace")
+
+    # 标记成非主站皮肤页：万一以后误注入 theme.js / chrome.js，它们会按
+    # light/dark 改写 data-theme，与皮肤自身的 day/night 打架。
+    doc = doc.replace("<html", '<html data-pw-edition="xuqing-qingchuan"', 1)
+
+    # —— head 最前：PWA + 状态栏 + 明暗桥接 ——
+    # 必须早于皮肤自己的首帧脚本（它读 hengtian-reader-v1 决定 data-theme）。
+    head_inject = '''  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <script>
+  (function () {
+    var PW = 'pw_theme_v2', HT = 'hengtian-reader-v1';
+    function valid(t) { return t === 'light' || t === 'dark'; }
+    function toHT(t) { return t === 'dark' ? 'night' : 'day'; }
+    function toPW(t) { return t === 'night' ? 'dark' : 'light'; }
+    function pref() { try { return JSON.parse(localStorage.getItem(HT) || '{}') || {}; } catch (e) { return {}; } }
+    function setHT(t) { var p = pref(); p.theme = t; try { localStorage.setItem(HT, JSON.stringify(p)); } catch (e) {} }
+    // 首帧：读者偏好没设过主题时，沿用主站明暗，保证跨页一致。
+    try {
+      var p = pref(), pw = localStorage.getItem(PW);
+      if (!p.theme && valid(pw)) setHT(toHT(pw));
+    } catch (e) {}
+    var root = document.documentElement;
+    // 页内切换（React 改 data-theme）→ 写回主站；顺手同步导航按钮的 aria-label。
+    new MutationObserver(function () {
+      var t = root.getAttribute('data-theme');
+      if (t !== 'day' && t !== 'night') return;
+      try { localStorage.setItem(PW, toPW(t)); } catch (e) {}
+      var btn = document.getElementById('pw-skin-theme');
+      if (btn) {
+        var s = t === 'night' ? '切换到亮色主题' : '切换到暗色主题';
+        btn.setAttribute('aria-label', s); btn.setAttribute('title', s);
+      }
+    }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    // 其他标签页切主题 → 转发给原生昼/夜卷按钮（React 受控，不能直接改属性）。
+    window.addEventListener('storage', function (e) {
+      if (e.key !== PW || !valid(e.newValue)) return;
+      var want = toHT(e.newValue);
+      if (root.getAttribute('data-theme') === want) return;
+      var label = want === 'night' ? '切换至夜卷暗色主题' : '切换至昼卷亮色主题';
+      var b = document.querySelector('button[aria-label="' + label + '"]');
+      if (b) { b.click(); }
+      else { setHT(want); root.setAttribute('data-theme', want); }
+    });
+  })();
+  </script>
+'''
+    hm = re.search(r"<head[^>]*>", doc, re.I)
+    if hm:
+        doc = doc[: hm.end()] + "\n" + head_inject + doc[hm.end():]
+    else:
+        doc = head_inject + doc
+
+    # —— body：主站导航（含「← 角色档案」返回入口）+ 主题按钮 ——
+    # 保留皮肤自带的 masthead（品牌 / 目录 / 昼夜 / 字号），浮层在它上方。
+    nav = '''  <nav class="pw-skin-nav" aria-label="主导航">
+    <a class="pw-skin-back" href="../characters.html" title="返回角色档案" aria-label="返回角色档案">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+      <span>角色档案</span>
+    </a>
+    <a class="pw-skin-brand" href="../index.html" title="衡天 PowerWiki 首页">
+      <svg class="pw-skin-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4"/><circle cx="12" cy="12" r="2.6"/></svg>
+      <span>衡天 PowerWiki</span>
+    </a>
+    <div class="pw-skin-links">
+      <a href="../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9"/></svg><span>首页</span></a>
+      <a href="../tiers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.8"/><ellipse cx="12" cy="12" rx="10" ry="4.6" transform="rotate(-32 12 12)"/></svg><span>量级</span></a>
+      <a href="../characters.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2"/></svg><span>角色</span></a>
+      <a href="../rules.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5a2.5 2.5 0 0 1 2.5 2.5Z"/></svg><span>规则</span></a>
+      <a href="../materials.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg><span>材质</span></a>
+      <a href="../search.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/></svg><span>检索</span></a>
+    </div>
+    <button type="button" class="pw-skin-theme" id="pw-skin-theme" aria-label="切换明暗主题" title="切换明暗主题">
+      <svg class="pst-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
+      <svg class="pst-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.3 8.3 0 0 1 9.5 4a8.4 8.4 0 1 0 10.5 10.5Z"/></svg>
+    </button>
+  </nav>
+  <style data-pw-skin-nav>
+    :root{--pw-nav-h:44px}
+    @media(max-width:640px){:root{--pw-nav-h:40px}}
+    body{padding-top:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px))!important}
+    .masthead{top:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px))!important}
+    .mobile-contents-bar{top:calc(var(--pw-nav-h) + var(--safe-header))!important}
+    .pw-skin-nav{position:fixed;inset:0 0 auto 0;z-index:9999;display:flex;align-items:center;gap:10px;
+      height:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px));
+      padding:0 clamp(10px,3vw,28px);padding-top:env(safe-area-inset-top,0px);box-sizing:border-box;
+      background:var(--header);border-bottom:1px solid var(--line);
+      color:var(--ink);font-family:var(--sans);}
+    .pw-skin-back{display:inline-flex;align-items:center;gap:5px;color:var(--ink);text-decoration:none;
+      white-space:nowrap;font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;
+      border:1px solid var(--line);background:var(--wash);}
+    .pw-skin-back svg{width:15px;height:15px;flex:none;}
+    .pw-skin-back:hover{background:var(--active);}
+    .pw-skin-brand{display:inline-flex;align-items:center;gap:7px;color:var(--ink);text-decoration:none;white-space:nowrap;font-weight:700;font-size:14px;letter-spacing:.02em;}
+    .pw-skin-logo{width:20px;height:20px;color:var(--gold);flex:none;}
+    .pw-skin-links{display:flex;align-items:center;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none;}
+    .pw-skin-links::-webkit-scrollbar{display:none;}
+    .pw-skin-links a{display:inline-flex;align-items:center;gap:5px;color:var(--muted);text-decoration:none;font-size:13px;padding:6px 9px;border-radius:8px;white-space:nowrap;transition:background .18s,color .18s;}
+    .pw-skin-links a svg{width:16px;height:16px;flex:none;}
+    .pw-skin-links a:hover{background:var(--active);color:var(--ink);}
+    .pw-skin-links a[aria-current="page"]{color:var(--ink);background:var(--active);font-weight:600;}
+    .pw-skin-theme{flex:none;display:inline-grid;place-items:center;width:32px;height:32px;padding:0;border-radius:8px;border:1px solid var(--line);background:var(--wash);color:var(--ink);cursor:pointer;transition:background .18s;}
+    .pw-skin-theme:hover{background:var(--active);}
+    .pw-skin-theme svg{width:17px;height:17px;}
+    html[data-theme="day"] .pw-skin-theme .pst-moon,
+    html[data-theme="night"] .pw-skin-theme .pst-sun{display:none;}
+    .skip-link{z-index:10000!important}
+    @media(max-width:640px){
+      .pw-skin-nav{gap:6px;padding-inline:8px;}
+      .pw-skin-brand{display:none;}
+      .pw-skin-back{padding:5px 7px;font-size:11.5px;gap:3px;}
+      .pw-skin-back svg{width:14px;height:14px;}
+      .pw-skin-links{gap:0;min-width:0;}
+      .pw-skin-links a{padding:6px 5px;font-size:11.5px;gap:3px;}
+      .pw-skin-links a span{display:none;}
+      .pw-skin-links a[aria-current="page"] span{display:inline;}
+      .pw-skin-links a svg{width:18px;height:18px;}
+      .pw-skin-theme{width:30px;height:30px;margin-left:auto;}
+    }
+    @media print{.pw-skin-nav{display:none;}body{padding-top:0!important}}
+  </style>
+  <script>
+  (function () {
+    var btn = document.getElementById('pw-skin-theme');
+    if (!btn) return;
+    var root = document.documentElement;
+    function label() {
+      var s = root.getAttribute('data-theme') === 'night' ? '切换到亮色主题' : '切换到暗色主题';
+      btn.setAttribute('aria-label', s); btn.setAttribute('title', s);
+    }
+    btn.addEventListener('click', function () {
+      // 主题由 React state 受控，直接改 data-theme 会被 useLayoutEffect 改回；
+      // 转发点击给皮肤原生的昼卷/夜卷按钮，走它自己的 setTheme。
+      var want = root.getAttribute('data-theme') === 'night' ? 'day' : 'night';
+      var lbl = want === 'night' ? '切换至夜卷暗色主题' : '切换至昼卷亮色主题';
+      var b = document.querySelector('button[aria-label="' + lbl + '"]');
+      if (b) { b.click(); return; }
+      try {
+        var HT = 'hengtian-reader-v1', p = JSON.parse(localStorage.getItem(HT) || '{}') || {};
+        p.theme = want; localStorage.setItem(HT, JSON.stringify(p));
+        localStorage.setItem('pw_theme_v2', want === 'night' ? 'dark' : 'light');
+      } catch (e) {}
+      root.setAttribute('data-theme', want); label();
+    });
+    label();
+    new MutationObserver(label).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  })();
+  </script>
+'''
+    # 不挂 edition dock：许青已无可切换皮肤，切换器不该出现（用户 2026-11-21）。
+    h2, sep2, t2 = doc.rpartition("</body>")
+    doc = h2 + "\n" + nav + sep2 + t2 if sep2 else doc + nav
+
+    (CHAR_OUT_DIR / "xuqing.html").write_text(doc, encoding="utf-8")
+    print("[xuqing] default page = 「青川卷帙」整页 (nav + 返回角色档案 + theme bridge, 无切换器)")
+
+
 def main() -> None:
     tiers_payload = json.loads((DATA_DIR / "tiers.json").read_text(encoding="utf-8"))
     chars_payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
@@ -2879,6 +3057,8 @@ def main() -> None:
     # 月牍是 React 整页、无 .fade-on-load 淡入，从根上没有频闪；
     # 这里把它当默认页注入导航浮层 + 明暗桥接，写回 character/yutu.html。
     build_yutu_default_from_moonfile()
+    # 试点：许青默认角色页 = 「青川卷帙」整页（用户 2026-11-21 要求先拿单皮肤角色验证）。
+    build_xuqing_default_from_qingchuan()
 
     print(
         f"[OK] PowerWiki v9.1 built successfully:\n"

@@ -776,19 +776,6 @@
       }
     },
     {
-      "id": "xuqing-qingchuan",
-      "name": "青川卷帙",
-      "tag": "",
-      "note": "青绿山水卷帙，米纸竖排，昼夜双卷静心阅读。",
-      "source": "skins/_source/xuqing-qingchuan.html",
-      "section": "character-xuqing",
-      "inject": "minimal",
-      "thumb": "static/img/editions/xuqing-qingchuan.jpg",
-      "pages": {
-        "character-xuqing": "skins/xuqing-qingchuan/character-xuqing.html"
-      }
-    },
-    {
       "id": "sunwukong-lingxiao",
       "name": "大圣凌霄",
       "tag": "",
