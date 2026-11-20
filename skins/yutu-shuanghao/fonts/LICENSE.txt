@@ -1,0 +1,17 @@
+本目录中的字体文件均为按页面用字做的子集（由 scripts/build-fonts.py 生成），
+原字体全部以 SIL Open Font License 1.1 发布：https://openfontlicense.org
+
+ht-song-var.woff2 / ht-fang-latin.woff2
+  源自 Noto Serif SC（思源宋体），(c) 2017-2024 Adobe (http://www.adobe.com/)
+  https://github.com/google/fonts/tree/main/ofl/notoserifsc
+
+ht-hei-var.woff2
+  源自 Noto Sans SC（思源黑体），(c) 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'
+  https://github.com/google/fonts/tree/main/ofl/notosanssc
+
+ht-fang.woff2
+  源自 朱雀仿宋 Zhuque Fangsong v0.212，Copyright 2023 JadeFoci
+  https://github.com/TrionesType/zhuque
+
+子集属于修改版：字体内部名称已改为 "HT Song / HT Hei / HT Fang / HT FangLatin"，
+版权与许可信息保留在各字体文件的 name 表中。页面实际使用的是 src/styles/fonts.css 里的 base64 副本。

@@ -108,6 +108,15 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "baiguang-huanji": "black",
     "suzhou-zhuzhou": "default",
     "shiva-yeke": "black",
+    # 2026-11-20 新增 8 套（三世铜棺/盘古/御兔/罗峰/魔术王），首屏均亮色米纸顶栏
+    "tongguan-kushu": "default",
+    "tongguan-danshu": "default",
+    "yutu-shuanghao": "default",
+    "pangu-tianguang": "default",
+    "luofeng-xingcha": "default",
+    "aladiya-shique": "default",
+    "aladiya-moying": "default",
+    "pangu-honglu": "default",
 }
 
 
@@ -2631,8 +2640,11 @@ def build_yutu_default_from_moonfile() -> None:
           * 其他页切主题（storage 事件）→ 同步进月牍 data-theme。
       - body 注入：自包含导航浮层（5 个主站栏目 + 检索入口），用月牍自身色变量
         （--bg/--ink/--line 等），明暗自动跟随；固定顶栏、不遮挡卷宗正文。
-      - 不注入 edition dock（切页器）：默认页即最终形态，切换器里没有皮肤。
-    写入 character/yutu.html，覆盖标准页；skins/moonfile/ 作为皮肤仍保留。
+      - 切换器（edition dock）：2026-11-20 接入「霜毫擘窠」后，御兔 section 已有
+        「默认(月牍) + 霜毫擘窠」两套，默认页必须能切到真皮肤，否则成单向门
+        （违反 SOP #7/#13）。dock 由 edition_launcher_html 数据驱动生成，右下角
+        圆点印章，不侵入 React 树、不遮挡正文、与顶部 nav 不冲突。
+    写入 character/yutu.html，覆盖标准页；skins/_source/moonfile.html 作为默认页源保留。
     """
     src = ROOT / "skins/_source/moonfile.html"
     if not src.exists():
@@ -2770,11 +2782,21 @@ def build_yutu_default_from_moonfile() -> None:
   })();
   </script>
 '''
+    # —— body：切换器（edition dock）——
+    # 御兔 section 现有「默认(月牍) + 霜毫擘窠」两套，注入 dock 让默认页能切到
+    # 真皮肤。current_id="default" 把月牍标为当前；page_dir="character" 让链接
+    # 相对正确（../static/...、../skins/...）。仅 dock 三件套，不注入 app.css/
+    # chrome.js/pwa.js，避免污染 React 整页应用。
+    dock = (
+        f'<link rel="stylesheet" href="{_rel_from("character", "static/css/editions.css")}">\n'
+        + edition_launcher_html("character", "character-yutu", "default")
+        + f'\n<script src="{_rel_from("character", "static/js/editions.js")}" defer></script>\n'
+    )
     h2, sep2, t2 = doc.rpartition("</body>")
-    doc = h2 + "\n" + nav + sep2 + t2 if sep2 else doc + nav
+    doc = h2 + "\n" + nav + dock + sep2 + t2 if sep2 else doc + nav + dock
 
     (CHAR_OUT_DIR / "yutu.html").write_text(doc, encoding="utf-8")
-    print("[yutu] default page replaced by 「月牍」整页 (nav + theme bridge, no edition dock)")
+    print("[yutu] default page = 「月牍」整页 (nav + theme bridge + edition dock)")
 
 
 def main() -> None:

@@ -46,6 +46,110 @@
       }
     },
     {
+      "id": "tongguan-kushu",
+      "name": "枯树赋",
+      "tag": "",
+      "note": "枯枝水墨、枯树赋典故，宣纸留白长卷",
+      "source": "skins/_source/tongguan-kushu.html",
+      "section": "character-tongguan",
+      "inject": "minimal",
+      "thumb": "static/img/editions/tongguan-kushu.jpg",
+      "pages": {
+        "character-tongguan": "skins/tongguan-kushu/character-tongguan.html"
+      }
+    },
+    {
+      "id": "tongguan-danshu",
+      "name": "云椁丹书",
+      "tag": "",
+      "note": "竖排榜书朱印，云气浮铜椁，金石气",
+      "source": "skins/_source/tongguan-danshu.html",
+      "section": "character-tongguan",
+      "inject": "minimal",
+      "thumb": "static/img/editions/tongguan-danshu.jpg",
+      "pages": {
+        "character-tongguan": "skins/tongguan-danshu/character-tongguan.html"
+      }
+    },
+    {
+      "id": "yutu-shuanghao",
+      "name": "霜毫擘窠",
+      "tag": "",
+      "note": "御兔巨字榜书，朱红筋肉兔线稿",
+      "source": "skins/_source/yutu-shuanghao.html",
+      "section": "character-yutu",
+      "inject": "minimal",
+      "thumb": "static/img/editions/yutu-shuanghao.jpg",
+      "pages": {
+        "character-yutu": "skins/yutu-shuanghao/character-yutu.html"
+      }
+    },
+    {
+      "id": "pangu-tianguang",
+      "name": "天光既辟",
+      "tag": "",
+      "note": "金色天光初开，庙宇剪影，暖米纸",
+      "source": "skins/_source/pangu-tianguang.html",
+      "section": "character-pangu",
+      "inject": "minimal",
+      "thumb": "static/img/editions/pangu-tianguang.jpg",
+      "pages": {
+        "character-pangu": "skins/pangu-tianguang/character-pangu.html"
+      }
+    },
+    {
+      "id": "luofeng-xingcha",
+      "name": "星槎录",
+      "tag": "",
+      "note": "旧刊分栏、金色星轨漩涡，报刊档案气",
+      "source": "skins/_source/luofeng-xingcha.html",
+      "section": "character-luofeng",
+      "inject": "minimal",
+      "thumb": "static/img/editions/luofeng-xingcha.jpg",
+      "pages": {
+        "character-luofeng": "skins/luofeng-xingcha/character-luofeng.html"
+      }
+    },
+    {
+      "id": "aladiya-shique",
+      "name": "孤灯石阙",
+      "tag": "",
+      "note": "枯林石拱门、黑袍提灯，灰白版画",
+      "source": "skins/_source/aladiya-shique.html",
+      "section": "character-aladiya",
+      "inject": "minimal",
+      "thumb": "static/img/editions/aladiya-shique.jpg",
+      "pages": {
+        "character-aladiya": "skins/aladiya-shique/character-aladiya.html"
+      }
+    },
+    {
+      "id": "aladiya-moying",
+      "name": "墨影离披",
+      "tag": "",
+      "note": "水墨黑袍人像、飞散墨点，素笺",
+      "source": "skins/_source/aladiya-moying.html",
+      "section": "character-aladiya",
+      "inject": "minimal",
+      "thumb": "static/img/editions/aladiya-moying.jpg",
+      "pages": {
+        "character-aladiya": "skins/aladiya-moying/character-aladiya.html"
+      }
+    },
+    {
+      "id": "pangu-honglu",
+      "name": "洪炉裂素",
+      "tag": "",
+      "note": "开天裂焰彩绘、朱印叠字",
+      "source": "skins/_source/pangu-honglu.html",
+      "section": "character-pangu",
+      "inject": "minimal",
+      "thumb": "static/img/editions/pangu-honglu.jpg",
+      "pages": {
+        "character-pangu": "skins/pangu-honglu/character-pangu.html"
+      }
+    },
+    {
       "id": "archive",
       "name": "检字",
       "tag": "",

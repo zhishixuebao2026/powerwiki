@@ -4,6 +4,28 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-20（新增皮肤）· 8 套整页接入 / 皮肤 67→75 / 29 角色全部破零
+
+用户上传 `claude-fable-5.2-high＆grok4.7xhigh三世铜棺定级页面.zip`（54.8MB，COS 签名链接手动拉取、SSRF 拦截不影响下载）。ZIP 名虽叫「三世铜棺」，实际内含 **8 套**不同 AI 生成的成品整页，分属 5 个角色：三世铜棺 2、盘古 2、魔术王 2、御兔 1、罗峰 1。逐套核验综合量级与站内基线一致（三世铜棺 ⊙宇◆、盘古 ⊙星△、御兔 ⊙国△、罗峰 ⊙宇◆〔下〕、魔术王 ⊙外·三〔推〕），定级正文一律不动。
+
+| 角色 | 显示名 | id | 来源 / 风格 |
+|---|---|---|---|
+| 三世铜棺 | 枯树赋 | `tongguan-kushu` | fable5.1+DS 版，枯枝水墨长卷、庾信《枯树赋》典，米宣留白 |
+| 三世铜棺 | 云椁丹书 | `tongguan-danshu` | fable5.2+grok 版，竖排榜书朱印、云气浮铜椁，金石气 |
+| 御兔 | 霜毫擘窠 | `yutu-shuanghao` | fable5.2+DS 版，「御兔」巨字榜书、朱红筋肉兔线稿 |
+| 盘古 | 天光既辟 | `pangu-tianguang` | sonnet5.5 版，金色天光初开、庙宇剪影，暖米纸 |
+| 罗峰 | 星槎录 | `luofeng-xingcha` | gemini4carbon 版，旧刊分栏、金色星轨漩涡，报刊档案气 |
+| 魔术王 | 孤灯石阙 | `aladiya-shique` | gpt6.1 版，枯林石拱门、黑袍提灯，灰白版画 |
+| 魔术王 | 墨影离披 | `aladiya-moying` | kimi+hy4+sol 版，水墨黑袍人像、飞散墨点，素笺 |
+| 盘古 | 洪炉裂素 | `pangu-honglu` | mistral+opus5.5 版，开天裂焰彩绘、朱印叠字 |
+
+- **构建**：7 套有现成 `dist/index.html`；魔术王 gpt6.1 那套只有 `src/main.tsx`，按 SOP 用 `pnpm install && pnpm run build`（`vite.offline.config.ts` + `vite-plugin-singlefile`）产出 1.66MB 单页 + fonts/images，md5 与源工程一致。
+- **安全区**：8 套源页均无 `env(safe-area-inset-top)`，按各自真实顶栏类（`topbar`/`bar`/`top-control-ribbon`/`controls`）补 `data-pw-safearea` 样式；`build_site.py` 仍自动补 `viewport-fit=cover` 与状态栏 meta（8 套首屏均亮色米纸 → `default`）。
+- **资源随附**：各 `dist/images`（fonts 若有）拷入 `skins/<id>/`，`./images/` 相对引用在产物层级实测 0 破图。罗峰 5 个 woff2、墨影离披 2 个 woff2 为源工程未落地的 `font-display:swap` 外链，回退系统字体，尊重原产物不擅改（同张衍两套判例）。
+- **御兔切换器补回**：月牍升格默认页时因「无真皮肤」去掉了 dock，本轮接入「霜毫擘窠」后默认页到不了它会成单向门（违反 SOP #7/#13）。改为在 `build_yutu_default_from_moonfile()` 注入数据驱动的 `edition_launcher_html("character","character-yutu","default")` + editions.css/js，切换器自然列出「默认(当前) / 霜毫擘窠」两套，右下角圆点印章不遮挡正文、与顶部 nav 零冲突。未改月牍 React 树、导航、明暗桥接。
+- **命名**：意象古雅、长短参差（2/3/4 字混排）、避开现有 67 名、无「颜色+名词」堆砌；魔术王·阿拉迪亚从 0 套破零到 2 套，**29 个角色至此全部有专属皮肤**。
+- **验证**：75 套构建；`audit_site.py` 全过（切换器 282 卡片/缩略图 0 缺、29 角色定级基线 0 异常）；浏览器实测 320/390/768/1440 四宽度 × 8 皮肤页 + 5 角色默认页，0 横向溢出 / 0 破图 / 0 JS 错误；御兔切换器双向互跳正常。SW `pw-v68`→`pw-v69`。
+
 ## 2026-11-19（方案变更）· 御兔默认页改用「月牍」整页 / 加导航 / 明暗桥接
 
 用户明确决策：不再在标准默认页上打补丁，直接把现成的「月牍」整页设计作为御兔默认页；切换器里不再列月牍；没导航就加一个；月牍自带明暗，与主站双向桥接。

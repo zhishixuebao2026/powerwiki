@@ -1,0 +1,13 @@
+Reader Sans: Noto Sans CJK SC Regular, Adobe and Google.
+Source: https://github.com/notofonts/noto-cjk/tree/main/Sans
+License: SIL Open Font License 1.1; see OFL-NotoSansCJK.txt.
+
+Reader Serif: Noto Serif CJK SC SemiBold, Adobe and Google.
+Source: https://github.com/notofonts/noto-cjk/tree/main/Serif
+License: SIL Open Font License 1.1; see OFL-NotoSerifCJK.txt.
+
+Editorial: Cormorant Garamond, Christian Thalmann / Catharsis Fonts.
+Source: https://github.com/google/fonts/tree/main/ofl/cormorantgaramond
+License: SIL Open Font License 1.1; see OFL-Cormorant.txt.
+
+All distributed fonts have been subset for the characters used in this publication.
