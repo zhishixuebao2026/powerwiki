@@ -158,10 +158,17 @@ html[data-pw-edition="xuanheng"] header.topbar {
     background-color: var(--bg) !important;
 }
 
+/* 仪轨自带明暗双主题（light --bg0 #ebe2ce / --bg1 #f4eee0，dark --bg0 #05060b）。
+   早期按暗色首屏实测把顶栏写死成近黑，导致 light 下「黑顶栏 + 米纸正文」、
+   品牌暗红字几乎不可读。改为跟随皮肤自身变量，两个主题都协调。 */
 html[data-pw-edition="xuanji"] div.topbar {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    background-color: rgb(9, 10, 14) !important;
+    background-color: var(--bg0) !important;
+}
+
+html[data-theme="light"][data-pw-edition="xuanji"] div.topbar {
+    background-color: var(--bg1) !important;
 }
 
 html[data-pw-edition="yog-bronze-glow"] header.fixed.inset-x-0 {
