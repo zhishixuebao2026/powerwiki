@@ -1,0 +1,11 @@
+本目录中的字体均为按页面用字裁剪的子集，原字体均以 SIL Open Font License 1.1 授权（许可全文见 openfontlicense.org）。
+
+ht-song.woff2          Noto Serif SC（思源宋体），可变字重 400–900   © Adobe / Google
+ht-hei.woff2           Noto Sans SC（思源黑体），可变字重 400–700    © Adobe / Google
+ht-fangsong.woff2      朱雀仿宋 Zhuque Fangsong v0.212               © 璇玑造字 TrionesType
+ht-kai.woff2           霞鹜文楷 LXGW WenKai Medium v1.530            © LXGW（基于 Klee One）
+ht-math.woff2          STIX Two Text Regular                         © STI Pub Companies
+ht-math-italic.woff2   STIX Two Text Italic                          © STI Pub Companies
+
+子集由 scripts/build-fonts.py 生成；页面实际使用的是 src/fonts.css 里同一批文件的 base64 内联版本。
+按 OFL 的保留名称条款，子集在页面内以 “HT Song / HT Hei / HT Fangsong / HT Kai / HT Math” 为族名引用。

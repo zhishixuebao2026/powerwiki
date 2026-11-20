@@ -46,6 +46,45 @@
       }
     },
     {
+      "id": "suzhou-hanke",
+      "name": "寒柯玉衡",
+      "tag": "",
+      "note": "米纸留白榜书、枯树水墨、底部量级刻度尺与朱红靶心。",
+      "source": "skins/_source/suzhou-hanke.html",
+      "section": "character-suzhou",
+      "inject": "minimal",
+      "thumb": "static/img/editions/suzhou-hanke.jpg",
+      "pages": {
+        "character-suzhou": "skins/suzhou-hanke/character-suzhou.html"
+      }
+    },
+    {
+      "id": "tongguan-yunchi",
+      "name": "云螭负椁",
+      "tag": "",
+      "note": "云龙山涛水墨长卷、青铜古棺浮于其上，量级标尺与评定档案。",
+      "source": "skins/_source/tongguan-yunchi.html",
+      "section": "character-tongguan",
+      "inject": "minimal",
+      "thumb": "static/img/editions/tongguan-yunchi.jpg",
+      "pages": {
+        "character-tongguan": "skins/tongguan-yunchi/character-tongguan.html"
+      }
+    },
+    {
+      "id": "suzhou-zhoutian",
+      "name": "烛照周天",
+      "tag": "",
+      "note": "双层细框档案卡、朱红定级签，浑天仪星盘环抱中心烛火，昼夜双态。",
+      "source": "skins/_source/suzhou-zhoutian.html",
+      "section": "character-suzhou",
+      "inject": "minimal",
+      "thumb": "static/img/editions/suzhou-zhoutian.jpg",
+      "pages": {
+        "character-suzhou": "skins/suzhou-zhoutian/character-suzhou.html"
+      }
+    },
+    {
       "id": "tongguan-kushu",
       "name": "枯树赋",
       "tag": "",

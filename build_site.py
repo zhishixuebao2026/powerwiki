@@ -117,6 +117,10 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "aladiya-shique": "default",
     "aladiya-moying": "default",
     "pangu-honglu": "default",
+    # 2026-11-21 新增 3 套（苏昼 2 / 三世铜棺 1），首屏均亮色米纸顶栏
+    "suzhou-hanke": "default",
+    "tongguan-yunchi": "default",
+    "suzhou-zhoutian": "default",
 }
 
 
