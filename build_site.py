@@ -157,7 +157,7 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
     # 「青川卷帙」→ 许青默认页、「创世纪年」→ 上帝默认页）。三者都已从
     # editions.json 移除，这里留作防御，避免以后手工回填登记表时又把默认页自己
     # 列成一张皮肤卡片。
-    promoted_defaults = {"moonfile", "xuqing-qingchuan", "shangdi-jinian"}
+    promoted_defaults = {"moonfile", "xuqing-qingchuan", "shangdi-jinian", "material-shatter"}
     applicable = []
     for ed in manifest["editions"]:
         if ed.get("id") in promoted_defaults:
@@ -3202,6 +3202,78 @@ def build_shangdi_default_from_jinian() -> None:
     print("[shangdi] default page = 「创世纪年」整页 (nav + 返回角色档案 + theme bridge, 无切换器)")
 
 
+def build_materials_default_from_shatter() -> None:
+    """默认材质页 = 「碎极」整页（用户 2026-11-22 决定）。
+
+    与御兔/许青/上帝默认页的关键差异：那三页在皮肤顶栏上方另注入一层
+    .pw-skin-nav 主站导航浮层（双层导航）。本次用户明确要求「导航栏别叠加，
+    直接在皮肤基础上修改」——所以本函数**不注入任何主站导航浮层**，
+    以碎极整页原样作为 materials.html，只补站内接入（字体表/切换器 dock/
+    PWA/状态栏），保留皮肤原生顶栏（品牌/字号/主题/目录）与目录侧栏。
+
+    碎极升为默认页后不再作为可切换皮肤：editions.json 已移除 material-shatter
+    条目并加入 promoted_defaults 防回填；不再生成 skins/material-shatter/ 产物，
+    只留 skins/_source/material-shatter.html 源文件作为默认页底。
+
+    定级正文、98 档数值、tiers.json、grading_baseline.json 全不动。
+    """
+    src = ROOT / "skins/_source/material-shatter.html"
+    if not src.exists():
+        print("[WARN] shatter source missing, materials default page unchanged")
+        return
+    doc = src.read_text(encoding="utf-8", errors="replace")
+
+    # 标记成皮肤页：clearbar.css 里已有的 material-shatter 顶栏避让规则借此命中；
+    # 同时避免 chrome.js/theme.js 误把它当标准页改写（本页不注入那两个脚本）。
+    doc = doc.replace("<html", '<html data-pw-edition="material-shatter"', 1)
+
+    # 状态栏 meta 统一：源页自带 color-scheme / theme-color（明暗双版），只补
+    # apple-mobile-web-app-status-bar-style。碎极首屏亮色 → default。
+    sbs = SKIN_STATUS_BAR_MODE.get("material-shatter", "default")
+    doc = re.sub(
+        r'<meta[^>]+name=["\']apple-mobile-web-app-status-bar-style["\'][^>]*>\s*',
+        "", doc, flags=re.I,
+    )
+    doc = re.sub(
+        r"(<head\b[^>]*>)",
+        lambda m: m.group(1) + '\n  <meta name="apple-mobile-web-app-status-bar-style" content="' + sbs + '">',
+        doc, count=1, flags=re.I,
+    )
+
+    # head：站内字体表（碎极用 Songti/PingFang + Noto Serif/Sans SC，源页无 @font-face）
+    # + PWA 清单/图标（静默离线）+ clearbar.css（顶栏避让）。page_dir="" 表示根目录。
+    head_inject = "".join(
+        f'<link rel="stylesheet" href="{_rel_from("", sheet)}">\n'
+        for sheet in [_SITE_FONT_SHEET, "static/fonts/noto-serif-sc/index.css"]
+    ) + (
+        '<link rel="stylesheet" href="static/fonts/space-grotesk/index.css">\n'
+        '<link rel="manifest" href="manifest.webmanifest">\n'
+        '<link rel="apple-touch-icon" sizes="180x180" href="static/img/icons/apple-touch-icon.png">\n'
+        '<link rel="icon" type="image/png" sizes="32x32" href="static/img/icons/favicon-32.png">\n'
+        '<link rel="stylesheet" href="static/css/clearbar.css">\n'
+    )
+    hm = re.search(r"<head[^>]*>", doc, re.I)
+    if hm:
+        doc = doc[: hm.end()] + "\n" + head_inject + doc[hm.end():]
+    else:
+        doc = head_inject + doc
+
+    # body 末尾：切换器 dock（ editions.css + launcher + editions.js）。
+    # current_id="default"：现在显示的是默认材质页，dock 里「默认」标为当前，
+    # 可切到「衡尺标本志」「轨观碎星」，并有返回主站首页的入口。
+    # 这里不注入 .pw-skin-nav，符合用户「导航栏别叠加」的要求。
+    dock = (
+        '<link rel="stylesheet" href="static/css/editions.css">\n'
+        + edition_launcher_html("", "materials", "default")
+        + '\n<script src="static/js/editions.js" defer></script>\n'
+    )
+    h2, sep2, t2 = doc.rpartition("</body>")
+    doc = h2 + "\n" + dock + sep2 + t2 if sep2 else doc + dock
+
+    (ROOT / "materials.html").write_text(doc, encoding="utf-8")
+    print("[materials] default page = 「碎极」整页 (皮肤原生顶栏 + dock, 无叠加导航)")
+
+
 def main() -> None:
     tiers_payload = json.loads((DATA_DIR / "tiers.json").read_text(encoding="utf-8"))
     chars_payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
@@ -3240,6 +3312,9 @@ def main() -> None:
         other_doc_link=("rules.html", "衡天量级体系（第六版）"),
     )
     (ROOT / "materials.html").write_text(materials_html, encoding="utf-8")
+    # 默认材质页 = 「碎极」整页（用户 2026-11-22 决定，覆盖上面的标准全文页）。
+    # materials_sections 仍取自标准页，供全站搜索索引使用，不受影响。
+    build_materials_default_from_shatter()
 
     tiers = tiers_payload["tiers"]
     groups = tiers_payload["groups"]

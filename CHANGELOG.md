@@ -4,6 +4,27 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-24（默认材质页）·「碎极」升为默认材质页 / 不叠加导航 / 皮肤 75→74 / SW pw-v85
+
+用户要求把 `skins/material-shatter/materials.html`（碎极）换成默认材质页，
+并明确「导航栏别叠加了，直接在皮肤基础上修改」。这与御兔/许青/上帝默认页
+（在皮肤顶栏上方另注入 `.pw-skin-nav` 主站导航浮层、形成双层导航）的做法不同。
+
+- `build_site.py` 新增 `build_materials_default_from_shatter()`：以
+  `skins/_source/material-shatter.html` 为底写回根目录 `materials.html`，
+  **不注入 pw-skin-nav 浮层**；只补字体表（源页无 @font-face，靠 Songti/PingFang
+  + Noto Serif/Sans SC）、PWA/图标/状态栏、clearbar.css（复用已有的 material-shatter
+  顶栏避让规则）。保留皮肤原生顶栏（品牌/字号/主题/目录）与目录侧栏。
+- 切换器 dock 用 `edition_launcher_html("", "materials", "default")` 注入（根目录相对），
+  当前卡为「默认」，可切「衡尺标本志」「轨观碎星」并回主站首页。
+- 碎极升默认后不再作为可切换皮肤：`editions.json` 移除 material-shatter，
+  `promoted_defaults` 加入防回填；删除 skins/material-shatter/ 产物目录（源保留）。
+  材质栏目可切换皮肤 3→2 套，全站 75→74 套。
+- 搜索索引不受影响：materials_sections 仍由标准全文页解析，供全站检索。
+- 自检全过（74 套产物、288 卡片/缩略图 0 缺、定级基线 0 异常）；
+  390px 模拟 47px 刘海实测：pw-skin-nav=0、顶栏内容 minTop=59（不被状态栏压）、
+  dock 3 卡当前=default、目录 33 节、0 破图 0 JS 错 0 失败请求。
+
 ## 2026-11-24（新增材质皮肤）·「衡尺标本志」「轨观碎星」2 套 / 皮肤 73→75 / SW pw-v84
 
 用户上传 `gemini-4-neon-high＆OPUS5.5衡天材质页面.zip`（9.4MB；文件名只标一组模型，

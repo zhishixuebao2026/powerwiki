@@ -335,19 +335,6 @@
       }
     },
     {
-      "id": "material-shatter",
-      "name": "碎极",
-      "tag": "",
-      "note": "赤陶与朱红，裂核、轨道环、漂浮碎石，讲的是破坏物理。",
-      "source": "skins/_source/material-shatter.html",
-      "section": "materials",
-      "inject": "minimal",
-      "thumb": "static/img/editions/material-shatter.jpg",
-      "pages": {
-        "materials": "skins/material-shatter/materials.html"
-      }
-    },
-    {
       "id": "material-specimen",
       "name": "衡尺标本志",
       "tag": "",
