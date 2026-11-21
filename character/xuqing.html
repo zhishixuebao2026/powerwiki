@@ -19,16 +19,11 @@
       if (!p.theme && valid(pw)) setHT(toHT(pw));
     } catch (e) {}
     var root = document.documentElement;
-    // 页内切换（React 改 data-theme）→ 写回主站；顺手同步导航按钮的 aria-label。
+    // 页内切换（React 改 data-theme）→ 写回主站，保证原生昼/夜卷切换跨页同步。
     new MutationObserver(function () {
       var t = root.getAttribute('data-theme');
       if (t !== 'day' && t !== 'night') return;
       try { localStorage.setItem(PW, toPW(t)); } catch (e) {}
-      var btn = document.getElementById('pw-skin-theme');
-      if (btn) {
-        var s = t === 'night' ? '切换到亮色主题' : '切换到暗色主题';
-        btn.setAttribute('aria-label', s); btn.setAttribute('title', s);
-      }
     }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
     // 其他标签页切主题 → 转发给原生昼/夜卷按钮（React 受控，不能直接改属性）。
     window.addEventListener('storage', function (e) {
@@ -230,10 +225,6 @@ Error generating stack: `+a.message+`
       <a href="../materials.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg><span>材质</span></a>
       <a href="../search.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/></svg><span>检索</span></a>
     </div>
-    <button type="button" class="pw-skin-theme" id="pw-skin-theme" aria-label="切换明暗主题" title="切换明暗主题">
-      <svg class="pst-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
-      <svg class="pst-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.3 8.3 0 0 1 9.5 4a8.4 8.4 0 1 0 10.5 10.5Z"/></svg>
-    </button>
   </nav>
   <style data-pw-skin-nav>
     :root{--pw-nav-h:44px}
@@ -241,8 +232,13 @@ Error generating stack: `+a.message+`
        目录条的 sticky top 都由本变量派生，无需逐条改。 */
     @media(max-width:640px){:root{--pw-nav-h:66px}}
     body{padding-top:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px))!important}
-    .masthead{top:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px))!important}
-    .mobile-contents-bar{top:calc(var(--pw-nav-h) + var(--safe-header))!important}
+    /* 本导航已占据顶部安全区；皮肤 masthead 自带的 padding-top:env(safe-area-inset-top)
+       会把「衡天文库」内容再往下推一个刘海高度，与导航之间留出大块空白。
+       注入导航后取消这段重复 padding，高度回到不含安全区的 --header-height，
+       使原生顶栏紧贴导航下方。top 用实测变量做首帧兜底，加载后由 align() 内联覆盖。 */
+    .masthead{top:var(--pw-nav-real,calc(var(--pw-nav-h) + env(safe-area-inset-top,0px)));
+      padding-top:0!important;height:var(--header-height,64px)!important;box-sizing:border-box!important}
+    .mobile-contents-bar{top:calc(var(--pw-nav-real,var(--pw-nav-h)) + var(--pw-mast-real,var(--header-height,64px)))}
     .pw-skin-nav{position:fixed;inset:0 0 auto 0;z-index:9999;display:flex;align-items:center;gap:10px;
       height:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px));
       padding:0 clamp(10px,3vw,28px);padding-top:env(safe-area-inset-top,0px);box-sizing:border-box;
@@ -261,20 +257,14 @@ Error generating stack: `+a.message+`
     .pw-skin-links a svg{width:16px;height:16px;flex:none;}
     .pw-skin-links a:hover{background:var(--active);color:var(--ink);}
     .pw-skin-links a[aria-current="page"]{color:var(--ink);background:var(--active);font-weight:600;}
-    .pw-skin-theme{flex:none;display:inline-grid;place-items:center;width:32px;height:32px;padding:0;border-radius:8px;border:1px solid var(--line);background:var(--wash);color:var(--ink);cursor:pointer;transition:background .18s;}
-    .pw-skin-theme:hover{background:var(--active);}
-    .pw-skin-theme svg{width:17px;height:17px;}
-    html[data-theme="day"] .pw-skin-theme .pst-moon,
-    html[data-theme="night"] .pw-skin-theme .pst-sun{display:none;}
     .skip-link{z-index:10000!important}
-    /* 与御兔同一套手机端两行导航：不再隐藏任何栏目文字。
-       第一行「← 角色档案」+ 主题按钮，第二行 6 个栏目等分铺满。 */
+    /* 手机端两行导航：第一行「← 角色档案」，第二行 6 个栏目等分铺满。
+       明暗切换只保留页面顶栏原生的「昼卷/夜卷」，不在导航里重复放按钮。 */
     @media(max-width:640px){
       .pw-skin-nav{flex-wrap:wrap;align-content:center;row-gap:2px;gap:0 6px;padding-inline:8px;}
       .pw-skin-brand{display:none;}
       .pw-skin-back{order:0;flex:0 0 auto;padding:5px 7px;font-size:11.5px;gap:3px;}
       .pw-skin-back svg{width:14px;height:14px;}
-      .pw-skin-theme{order:2;width:28px;height:28px;margin-left:auto;}
       .pw-skin-links{order:3;flex:0 0 100%;margin-left:0;gap:0;min-width:0;overflow:visible;}
       .pw-skin-links a{flex:1 1 0;justify-content:center;min-width:0;
         padding:3px 0;font-size:11px;gap:2px;}
@@ -313,32 +303,5 @@ Error generating stack: `+a.message+`
   <style>
     body{padding-top:var(--pw-nav-real,66px)!important}
   </style>
-  <script>
-  (function () {
-    var btn = document.getElementById('pw-skin-theme');
-    if (!btn) return;
-    var root = document.documentElement;
-    function label() {
-      var s = root.getAttribute('data-theme') === 'night' ? '切换到亮色主题' : '切换到暗色主题';
-      btn.setAttribute('aria-label', s); btn.setAttribute('title', s);
-    }
-    btn.addEventListener('click', function () {
-      // 主题由 React state 受控，直接改 data-theme 会被 useLayoutEffect 改回；
-      // 转发点击给皮肤原生的昼卷/夜卷按钮，走它自己的 setTheme。
-      var want = root.getAttribute('data-theme') === 'night' ? 'day' : 'night';
-      var lbl = want === 'night' ? '切换至夜卷暗色主题' : '切换至昼卷亮色主题';
-      var b = document.querySelector('button[aria-label="' + lbl + '"]');
-      if (b) { b.click(); return; }
-      try {
-        var HT = 'hengtian-reader-v1', p = JSON.parse(localStorage.getItem(HT) || '{}') || {};
-        p.theme = want; localStorage.setItem(HT, JSON.stringify(p));
-        localStorage.setItem('pw_theme_v2', want === 'night' ? 'dark' : 'light');
-      } catch (e) {}
-      root.setAttribute('data-theme', want); label();
-    });
-    label();
-    new MutationObserver(label).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-  })();
-  </script>
 </body>
 </html>
