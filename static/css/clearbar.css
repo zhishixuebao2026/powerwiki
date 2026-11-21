@@ -377,14 +377,6 @@ html[data-pw-edition="suzhou-zhuzhou"] header.masthead {
     box-sizing: border-box !important;
 }
 
-/* zhangyan-xuanshu — H0=62 pad0=0px sel=header.masthead hit=True nHeader=8 */
-html[data-pw-edition="zhangyan-xuanshu"] header.masthead {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(62px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
-
 /* guchensha-yunzhan — H0=61 pad0=0px sel=header hit=True nHeader=1 */
 html[data-pw-edition="guchensha-yunzhan"] header {
     padding-top: env(safe-area-inset-top, 0px) !important;

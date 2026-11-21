@@ -85,19 +85,6 @@
       }
     },
     {
-      "id": "tongguan-kushu",
-      "name": "枯树赋",
-      "tag": "",
-      "note": "枯枝水墨、枯树赋典故，宣纸留白长卷",
-      "source": "skins/_source/tongguan-kushu.html",
-      "section": "character-tongguan",
-      "inject": "minimal",
-      "thumb": "static/img/editions/tongguan-kushu.jpg",
-      "pages": {
-        "character-tongguan": "skins/tongguan-kushu/character-tongguan.html"
-      }
-    },
-    {
       "id": "tongguan-danshu",
       "name": "云椁丹书",
       "tag": "",
@@ -581,19 +568,6 @@
       }
     },
     {
-      "id": "luofeng-xinggui",
-      "name": "星枢",
-      "tag": "",
-      "note": "深空金色星轨浑天仪与人物剪影，典章式排版。",
-      "source": "skins/_source/luofeng-xinggui.html",
-      "section": "character-luofeng",
-      "inject": "minimal",
-      "thumb": "static/img/editions/luofeng-xinggui.jpg",
-      "pages": {
-        "character-luofeng": "skins/luofeng-xinggui/character-luofeng.html"
-      }
-    },
-    {
       "id": "nvwa-xuanqiong",
       "name": "竹帛苍穹",
       "tag": "",
@@ -630,19 +604,6 @@
       "thumb": "static/img/editions/zhangyan-zifu.jpg",
       "pages": {
         "character-zhangyan": "skins/zhangyan-zifu/character-zhangyan.html"
-      }
-    },
-    {
-      "id": "zhangyan-xuanshu",
-      "name": "玄枢照夜",
-      "tag": "",
-      "note": "玄机枢轴日蚀群山，暗金水墨，衬线典章式暗色版。",
-      "source": "skins/_source/zhangyan-xuanshu.html",
-      "section": "character-zhangyan",
-      "inject": "minimal",
-      "thumb": "static/img/editions/zhangyan-xuanshu.jpg",
-      "pages": {
-        "character-zhangyan": "skins/zhangyan-xuanshu/character-zhangyan.html"
       }
     },
     {
