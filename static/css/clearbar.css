@@ -132,23 +132,7 @@ html[data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 div.flex.h-14 {
     backdrop-filter: none !important;
 }
 
-/* 鎏夜七章明暗双主题：dark 顶栏深紫，light 顶栏跟随米色底。 */
-html[data-pw-edition="ruphas-gilded"] header.fixed.top-0 {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background-color: rgb(22, 19, 37) !important;
-}
-html[data-theme="light"][data-pw-edition="ruphas-gilded"] header.fixed.top-0 {
-    background-color: rgb(242, 236, 223) !important;
-}
-
 html[data-pw-edition="tianren-register"] header.site-header {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background-color: var(--bg) !important;
-}
-
-html[data-pw-edition="tianren-zhoutian"] header.site-header {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background-color: var(--bg) !important;
@@ -171,16 +155,6 @@ html[data-pw-edition="xuanji"] div.topbar {
 
 html[data-theme="light"][data-pw-edition="xuanji"] div.topbar {
     background-color: var(--bg1) !important;
-}
-
-/* 铜晕明暗双主题：light 顶栏浅灰，dark 顶栏跟随深夜底 #070a0f。 */
-html[data-pw-edition="yog-bronze-glow"] header.fixed.inset-x-0 {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background-color: rgb(236, 237, 231) !important;
-}
-html[data-theme="dark"][data-pw-edition="yog-bronze-glow"] header.fixed.inset-x-0 {
-    background-color: rgb(7, 10, 15) !important;
 }
 
 html[data-pw-edition="yog-bronze-key"] header.site-header {
@@ -278,21 +252,9 @@ html[data-pw-edition="shangdi-jinian"] header.masthead {
     box-sizing: border-box !important;
 }
 
-html[data-pw-edition="tianren-zhoutian"] header.site-header {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(68px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
 html[data-pw-edition="xuanheng"] header.topbar {
     padding-top: env(safe-area-inset-top, 0px) !important;
     height: calc(60px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
-html[data-pw-edition="yog-bronze-glow"] header.fixed.inset-x-0 {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(53px + env(safe-area-inset-top, 0px)) !important;
     box-sizing: border-box !important;
 }
 
@@ -435,14 +397,6 @@ html[data-pw-edition="shiva-yeke"] header {
 html[data-pw-edition="mozhe-xingluo"] header {
     padding-top: env(safe-area-inset-top, 0px) !important;
     height: calc(97px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
-
-/* xuezhishaonv-yueshi — H0=64 pad0=0px sel=header.site-header hit=True nHeader=12 */
-html[data-pw-edition="xuezhishaonv-yueshi"] header.site-header {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(64px + env(safe-area-inset-top, 0px)) !important;
     box-sizing: border-box !important;
 }
 

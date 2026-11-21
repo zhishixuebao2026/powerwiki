@@ -137,32 +137,6 @@
       }
     },
     {
-      "id": "aladiya-shique",
-      "name": "孤灯石阙",
-      "tag": "",
-      "note": "枯林石拱门、黑袍提灯，灰白版画",
-      "source": "skins/_source/aladiya-shique.html",
-      "section": "character-aladiya",
-      "inject": "minimal",
-      "thumb": "static/img/editions/aladiya-shique.jpg",
-      "pages": {
-        "character-aladiya": "skins/aladiya-shique/character-aladiya.html"
-      }
-    },
-    {
-      "id": "aladiya-moying",
-      "name": "墨影离披",
-      "tag": "",
-      "note": "水墨黑袍人像、飞散墨点，素笺",
-      "source": "skins/_source/aladiya-moying.html",
-      "section": "character-aladiya",
-      "inject": "minimal",
-      "thumb": "static/img/editions/aladiya-moying.jpg",
-      "pages": {
-        "character-aladiya": "skins/aladiya-moying/character-aladiya.html"
-      }
-    },
-    {
       "id": "pangu-honglu",
       "name": "洪炉裂素",
       "tag": "",
@@ -212,19 +186,6 @@
       "thumb": "static/img/editions/ruphas-crimson.jpg",
       "pages": {
         "character-lufasi": "skins/ruphas-crimson/character-lufasi.html"
-      }
-    },
-    {
-      "id": "ruphas-gilded",
-      "name": "鎏夜七章",
-      "tag": "",
-      "note": "暗夜鎏金，星轨绕着罗马数字七章，金色衬线巨字配黑翼金发立绘。",
-      "source": "skins/_source/ruphas-gilded.html",
-      "section": "character-lufasi",
-      "inject": "minimal",
-      "thumb": "static/img/editions/ruphas-gilded.jpg",
-      "pages": {
-        "character-lufasi": "skins/ruphas-gilded/character-lufasi.html"
       }
     },
     {
@@ -334,19 +295,6 @@
       }
     },
     {
-      "id": "tianren-zhoutian",
-      "name": "周天阶",
-      "tag": "",
-      "note": "米白与灰金，近黑底，周天运行成一道宇宙之阶。",
-      "source": "skins/_source/tianren-zhoutian.html",
-      "section": "character-tianren",
-      "inject": "minimal",
-      "thumb": "static/img/editions/tianren-zhoutian.jpg",
-      "pages": {
-        "character-tianren": "skins/tianren-zhoutian/character-tianren.html"
-      }
-    },
-    {
       "id": "divinity-gilt",
       "name": "金策",
       "tag": "",
@@ -383,19 +331,6 @@
       "thumb": "static/img/editions/yog-teal-vortex.jpg",
       "pages": {
         "character-yog": "skins/yog-teal-vortex/character-yog.html"
-      }
-    },
-    {
-      "id": "yog-bronze-glow",
-      "name": "铜晕",
-      "tag": "",
-      "note": "黄铜金与青绿辉光，近黑底，外神卷宗。",
-      "source": "skins/_source/yog-bronze-glow.html",
-      "section": "character-yog",
-      "inject": "minimal",
-      "thumb": "static/img/editions/yog-bronze-glow.jpg",
-      "pages": {
-        "character-yog": "skins/yog-bronze-glow/character-yog.html"
       }
     },
     {
@@ -539,19 +474,6 @@
       "thumb": "static/img/editions/zhigaowangzuo-yihuan.jpg",
       "pages": {
         "character-zhigaowangzuo": "skins/zhigaowangzuo-yihuan/character-zhigaowangzuo.html"
-      }
-    },
-    {
-      "id": "xuezhishaonv-yueshi",
-      "name": "寒蟾蚀影",
-      "tag": "",
-      "note": "暗夜月蚀与写实人物分栏，衬线巨字，定级框完整。",
-      "source": "skins/_source/xuezhishaonv-yueshi.html",
-      "section": "character-xuezhishaonv",
-      "inject": "minimal",
-      "thumb": "static/img/editions/xuezhishaonv-yueshi.jpg",
-      "pages": {
-        "character-xuezhishaonv": "skins/xuezhishaonv-yueshi/character-xuezhishaonv.html"
       }
     },
     {
