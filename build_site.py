@@ -166,28 +166,33 @@ def character_display_name(slug: str) -> str:
     return _CHAR_NAME_CACHE.get(slug, "")
 
 
-def dock_back_target(page_dir: str, section: str, current: str, default_id: str) -> tuple[str, str, str]:
-    """切换器左侧那颗按钮：回**这一页内容自己的正式页**，不再一律退回首页。
+def dock_back_target(page_dir: str, section: str, current: str, default_id: str) -> tuple[str, str, str, list]:
+    """切换器左侧那颗按钮：回**角色档案 / 本栏目正式页**，不再一律退回首页。
 
-    站在某角色的皮肤版式上时，要回的是该角色主页面 `character/<slug>.html`
-    （2026-11-25 用户指出：从皮肤页只想回角色页继续看，退回首页等于把
-    「角色档案 → 找到角色 → 再点开」重走一遍）；规则 / 材质皮肤同理回本栏目
-    正式页。`默认` 版式本身就是正式页，没有上一级，才退回首页。
+    角色栏目（含某一角色的各类皮肤版式，以及「大圣凌霄」这种升格成默认页的
+    整页）一律回 `characters.html`「角色档案」列表（2026-11-25 用户第二次纠正：
+    从皮肤退出来是想回档案列表接着挑下一个角色看，不是回这一个角色的详情页，
+    也不是回首页）。角色详情页降为面板底部的次级入口，想接着读同一个角色也
+    只多一次点击。规则 / 材质皮肤同理回本栏目正式页；`默认` 版式本身没有上一
+    级（首页、规则页、材质页那几张主站页），才退回首页。
 
-    返回 (href, 说明文案, 图标名)。
+    返回 (href, 说明文案, 图标名, 次级入口列表[(href, 文案)])。
     """
-    home = (_rel_from(page_dir, "index.html"), "返回主站首页", "home")
-    if current == default_id:
-        return home
+    home = (_rel_from(page_dir, "index.html"), "返回主站首页", "home", [])
     if section.startswith("character-"):
         slug = section[len("character-"):]
         name = character_display_name(slug)
-        label = f"返回{name}角色页" if name else "返回角色页"
-        return (_rel_from(page_dir, f"character/{slug}.html"), label, "back")
+        alt = []
+        if current != default_id:
+            alt.append((_rel_from(page_dir, f"character/{slug}.html"),
+                        f"回{name}页面" if name else "回角色页面"))
+        return (_rel_from(page_dir, "characters.html"), "返回角色档案", "back", alt)
+    if current == default_id:
+        return home
     if section == "rules":
-        return (_rel_from(page_dir, "rules.html"), "返回规则页", "back")
+        return (_rel_from(page_dir, "rules.html"), "返回规则页", "back", [])
     if section == "materials":
-        return (_rel_from(page_dir, "materials.html"), "返回材质页", "back")
+        return (_rel_from(page_dir, "materials.html"), "返回材质页", "back", [])
     return home
 
 
@@ -250,22 +255,32 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
             + "</span></a>"
         )
 
-    # 站在别的皮肤上时，永远留一条回主站的路；同时把「回本页正式页」摆在首位，
-    # 从皮肤版式退出去是回角色 / 规则 / 材质页，而不是绕回首页重新点进来。
+    # 站在皮肤版式（或升格默认页）上时，永远留一条回主站的路；「回角色档案 /
+    # 回规则页 / 回材质页」摆在首位，本角色详情页与主站首页降为次级小字。
     home_href = _rel_from(page_dir, "index.html")
-    back_href, back_label, back_icon = dock_back_target(page_dir, section, current, manifest["default"])
-    is_skin_view = current != manifest["default"]
-    if is_skin_view:
+    back_href, back_label, back_icon, back_alts = dock_back_target(page_dir, section, current, manifest["default"])
+    if back_href != home_href:
+        alts_html = "".join(
+            f'<a class="pw-edition-foot-home" href="{esc(h)}">{esc(t)}</a>' for h, t in back_alts
+        )
         back_home = (
             f'<a class="pw-edition-home" href="{esc(back_href)}" title="{esc(back_label)}">'
             f'<span aria-hidden="true">←</span> {esc(back_label)}</a>'
-            f'<a class="pw-edition-foot-home" href="{esc(home_href)}">返回主站首页</a>'
+            + alts_html
+            + f'<a class="pw-edition-foot-home" href="{esc(home_href)}">返回主站首页</a>'
         )
     else:
         back_home = (
             f'<a class="pw-edition-home" href="{esc(home_href)}">'
             '<span aria-hidden="true">←</span> 返回主站首页</a>'
         )
+
+    # 底部说明顺带指路：左箭头到底去哪，省得每次都要先点一下才知道。
+    foot_note = (
+        f"左箭头{back_label.replace('返回', '回')}；只列出与本页对应的皮肤。"
+        if back_href != home_href
+        else "只列出与本页对应的皮肤；换页后入口随页面走。"
+    )
 
     count = len(applicable)
     return (
@@ -279,7 +294,7 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
         f'<span class="pw-edition-sub">同一内容 · {count} 种版式</span></div>'
         f'<div class="pw-edition-list">{"".join(cards)}</div>'
         f'<div class="pw-edition-foot">{back_home}'
-        '<span class="pw-edition-foot-note">只列出与本页对应的皮肤；换页后入口随页面走。</span></div>'
+        f'<span class="pw-edition-foot-note">{esc(foot_note)}</span></div>'
         "</div></div>"
     )
 
