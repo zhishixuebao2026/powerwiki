@@ -4,6 +4,19 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-22（创世纪年顶栏压状态栏）· 补 masthead 安全区避让 / SW pw-v81
+
+用户真机（iPhone）反馈创世纪年（上帝）皮肤顶部「衡天定级 / A- A+ / 主题按钮」
+与系统状态栏（时间、信号、电池）重叠成一团。根因：构建脚本给所有皮肤加了
+`viewport-fit=cover`（内容延伸到状态栏底下），但这套皮肤的安全区补丁选择器
+写成不存在的 `.topbar`，真实顶栏是 React 动态生成的 `header.masthead`（61px），
+补丁落空 → 顶栏没有 `padding-top: env()`，从 y=0 开始画。沙箱 Chromium 的
+`env()` 恒为 0，故历次本地复现不出来。修复：在 clearbar.css 按
+`data-pw-edition="shangdi-jinian"` 给 `header.masthead` 补
+`padding-top: env(safe-area-inset-top)` + 高度 `calc(61px + env)` + border-box。
+验证：模拟 47px 刘海下顶栏 padding=47px、内容从 y=61px 开始（安全区下方）、
+背景仍从 y=0 铺满，重叠消失。
+
 ## 2026-11-22（许青默认页双导航问题）· 去重复主题按钮 + 消除安全区空白 / SW pw-v80
 
 用户真机反馈：注入的主站导航与页面原生「衡天文库」顶栏之间有一大块空白，

@@ -288,6 +288,14 @@ html[data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 {
     box-sizing: border-box !important;
 }
 
+/* 创世纪年（上帝）：源页安全区补丁写成 .topbar，但真实顶栏是 React 动态生成的
+   header.masthead（61px），补丁落空 → 真机状态栏压住「衡天定级 / A- A+ / 主题按钮」。 */
+html[data-pw-edition="shangdi-jinian"] header.masthead {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(61px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
 html[data-pw-edition="tianren-zhoutian"] header.site-header {
     padding-top: env(safe-area-inset-top, 0px) !important;
     height: calc(68px + env(safe-area-inset-top, 0px)) !important;
