@@ -189,20 +189,6 @@
       }
     },
     {
-      "id": "observatory",
-      "name": "候星",
-      "tag": "",
-      "note": "夜观与昼测两套底色，二十八宿衡天仪，全链对数天梯。",
-      "source": "skins/_source/observatory.html",
-      "section": "rules",
-      "thumb": "static/img/editions/observatory.jpg",
-      "font_rewrite": true,
-      "pages": {
-        "rules": "skins/observatory/rules.html"
-      },
-      "patch": "skins/patches/observatory.js"
-    },
-    {
       "id": "futan-abyss",
       "name": "沉墨长卷",
       "tag": "",

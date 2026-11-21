@@ -157,7 +157,7 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
     # 「青川卷帙」→ 许青默认页、「创世纪年」→ 上帝默认页）。三者都已从
     # editions.json 移除，这里留作防御，避免以后手工回填登记表时又把默认页自己
     # 列成一张皮肤卡片。
-    promoted_defaults = {"moonfile", "xuqing-qingchuan", "shangdi-jinian", "material-shatter"}
+    promoted_defaults = {"moonfile", "xuqing-qingchuan", "shangdi-jinian", "material-shatter", "observatory"}
     applicable = []
     for ed in manifest["editions"]:
         if ed.get("id") in promoted_defaults:
@@ -3274,6 +3274,93 @@ def build_materials_default_from_shatter() -> None:
     print("[materials] default page = 「碎极」整页 (皮肤原生顶栏 + dock, 无叠加导航)")
 
 
+def build_rules_default_from_observatory() -> None:
+    """默认规则页 = 「候星」整页（用户 2026-11-22 决定）。
+
+    与碎极材质页同一模式：皮肤整页原样作为 rules.html，**不注入**
+    .pw-skin-nav 主站导航浮层（避免双层导航），保留皮肤原生顶栏
+    （品牌 / 检索 / 字号 / 昼测·深空主题 / 目录）与目录抽屉。
+
+    与碎极的差异：候星是 font_rewrite 皮肤，源页 5 个 @font-face 指向
+    ./assets/fonts/ht-*.woff2（这些字体文件从未随页面上传，线上一直 404），
+    所以必须走 patch_skin_fonts 把族名改指站内 Noto，并 strip_dead_font_urls
+    清掉死链——否则作为默认页会每访 5 个 404 且字体随设备漂移。
+
+    候星升为默认页后不再作为可切换皮肤：editions.json 移除 observatory
+    条目并加入 promoted_defaults 防回填；不再生成 skins/observatory/ 产物，
+    只留 skins/_source/observatory.html 源文件作为默认页底。
+
+    正文与 data/docs 最新 md 一致（tools/sync_rules_md.py 同步，含
+    11-13 推定规则、11-15 超越类描述）；定级正文与档位数值零改动。
+    """
+    src = ROOT / "skins/_source/observatory.html"
+    if not src.exists():
+        print("[WARN] observatory source missing, rules default page unchanged")
+        return
+    doc = src.read_text(encoding="utf-8", errors="replace")
+    page_dir = ""
+
+    # 重复目录去重（与 build_skin_editions 同一结构指纹逻辑）
+    doc, n_dock, n_calls = strip_duplicate_dock(doc)
+    if n_dock:
+        print(f"[rules] 候星底部目录真删 {n_dock} 处、挂载点 {n_calls} 处")
+
+    # viewport-fit=cover（源页已有则不动）
+    def _ensure_cover(m: re.Match) -> str:
+        tag = m.group(0)
+        if re.search(r"viewport-fit\s*=\s*cover", tag, re.I):
+            return tag
+        return re.sub(r'(content=["\'][^"\']*)(["\'])', r"\1, viewport-fit=cover\2", tag, count=1)
+
+    doc, _ = re.subn(
+        r'<meta[^>]*name=["\']viewport["\'][^>]*>', _ensure_cover, doc, count=1, flags=re.I
+    )
+
+    # 状态栏 meta：候星首屏深空暗色 → black（与 SKIN_STATUS_BAR_MODE 一致）
+    sbs = SKIN_STATUS_BAR_MODE.get("observatory", "default")
+    doc = re.sub(
+        r'<meta[^>]+name=["\']apple-mobile-web-app-status-bar-style["\'][^>]*>\s*',
+        "", doc, flags=re.I,
+    )
+    doc = re.sub(
+        r"(<head\b[^>]*>)",
+        lambda m: m.group(1) + '\n  <meta name="apple-mobile-web-app-status-bar-style" content="' + sbs + '">',
+        doc, count=1, flags=re.I,
+    )
+
+    # 字体：候星自带 HT 系族名 + 缺失的 ht-*.woff2，改指站内字体并清死链
+    doc = patch_skin_fonts(doc)
+    doc = strip_dead_font_urls(doc, page_dir)
+
+    # 标记皮肤页：clearbar.css 的 html[data-pw-edition="observatory"] header.topbar 借此命中
+    doc = doc.replace("<html", '<html data-pw-edition="observatory"', 1)
+
+    # head：站点字体表（font_rewrite 皮肤三张）+ PWA 图标 + clearbar.css
+    font_tags = "".join(
+        f'<link rel="stylesheet" href="{_rel_from(page_dir, sheet)}">\n' for sheet in SKIN_FONT_SHEETS
+    )
+    head_inject = font_tags + (
+        '<link rel="manifest" href="manifest.webmanifest">\n'
+        '<link rel="apple-touch-icon" sizes="180x180" href="static/img/icons/apple-touch-icon.png">\n'
+        '<link rel="icon" type="image/png" sizes="32x32" href="static/img/icons/favicon-32.png">\n'
+        '<link rel="stylesheet" href="static/css/clearbar.css">\n'
+    )
+    h, sep, t = doc.rpartition("</head>")
+    doc = h + head_inject + sep + t if sep else doc + head_inject
+
+    # body：切换器 dock（current=default）。不注入 .pw-skin-nav。
+    dock = (
+        '<link rel="stylesheet" href="static/css/editions.css">\n'
+        + edition_launcher_html(page_dir, "rules", "default")
+        + '\n<script src="static/js/editions.js" defer></script>\n'
+    )
+    h2, sep2, t2 = doc.rpartition("</body>")
+    doc = h2 + "\n" + dock + sep2 + t2 if sep2 else doc + dock
+
+    (ROOT / "rules.html").write_text(doc, encoding="utf-8")
+    print("[rules] default page = 「候星」整页 (皮肤原生顶栏 + dock, 无叠加导航)")
+
+
 def main() -> None:
     tiers_payload = json.loads((DATA_DIR / "tiers.json").read_text(encoding="utf-8"))
     chars_payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
@@ -3300,6 +3387,9 @@ def main() -> None:
         other_doc_link=("materials.html", "材质与破坏能量数据库"),
     )
     (ROOT / "rules.html").write_text(rules_html, encoding="utf-8")
+    # 默认规则页 = 「候星」整页（用户 2026-11-22 决定，覆盖上面的标准全文页）。
+    # rules_sections 仍取自标准页，供全站搜索索引使用，不受影响。
+    build_rules_default_from_observatory()
 
     materials_html, materials_sections, _ = build_fulltext_doc_page(
         page_id="materials",
