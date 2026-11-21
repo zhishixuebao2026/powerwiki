@@ -54,6 +54,9 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "linfei-crystal": "default",
     "linfei-inkseal": "default",
     "material-shatter": "default",
+    # 2026-11-22 新增 2 套材质页（衡尺标本志/轨观碎星），首屏均亮色
+    "material-specimen": "default",
+    "material-orbital": "default",
     "moonfile": "default",
     "observatory": "black",
     "ruphas-crimson": "black",

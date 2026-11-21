@@ -348,6 +348,32 @@
       }
     },
     {
+      "id": "material-specimen",
+      "name": "衡尺标本志",
+      "tag": "",
+      "note": "博物版画风：矿石晶体、黄铜卡尺与天体剖面，标度志式的材质破坏能量图谱。",
+      "source": "skins/_source/material-specimen.html",
+      "section": "materials",
+      "inject": "minimal",
+      "thumb": "static/img/editions/material-specimen.jpg",
+      "pages": {
+        "materials": "skins/material-specimen/materials.html"
+      }
+    },
+    {
+      "id": "material-orbital",
+      "name": "轨观碎星",
+      "tag": "",
+      "note": "冷蓝灰极简：断裂样本、轨道观测与云层观测的衡天档案式破坏能量数据库。",
+      "source": "skins/_source/material-orbital.html",
+      "section": "materials",
+      "inject": "minimal",
+      "thumb": "static/img/editions/material-orbital.jpg",
+      "pages": {
+        "materials": "skins/material-orbital/materials.html"
+      }
+    },
+    {
       "id": "yog-bronze-key",
       "name": "门之枢",
       "tag": "",
