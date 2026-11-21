@@ -368,6 +368,21 @@
   background: #fdf6e8;
 }
 
+/* 主站首页降为次要入口：从皮肤版式退出去，先给「回角色 / 规则 / 材质页」让位 */
+.pw-edition-foot-home {
+  align-self: flex-start;
+  padding: 2px 3px;
+  font-size: 10px;
+  color: #8a8a84;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.pw-edition-foot-home:hover {
+  color: #17181a;
+  border-bottom-color: #c9a25c;
+}
+
 .pw-edition-foot-note {
   font-size: 9px;
   color: #a3a39d;
@@ -481,4 +496,12 @@ html[data-pw-edition] .aurora {
 
 [data-theme="dark"] .pw-edition-home {
   color: #d9b877;
+}
+
+[data-theme="dark"] .pw-edition-foot-home {
+  color: #8f8c85;
+}
+
+[data-theme="dark"] .pw-edition-foot-home:hover {
+  color: #e6dcc4;
 }

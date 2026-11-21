@@ -4,6 +4,72 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-27（回退路径 / 阅读进度 / 删皮肤）· 切换器左侧改回角色页 / 新增阅读位置记忆 / 删除 10 套皮肤 / 皮肤 72→62 / SW pw-v89→v90
+
+用户提了两件事，外加一份删除清单。
+
+**一、「切换器左边返回首页不对，应该是返回角色页面」**
+
+原来那颗按钮无条件 `href="../index.html"`。站在某角色的皮肤版式上要回角色页继续看，
+退回首页等于把「角色档案 → 找到这个角色 → 点开」重走一遍。
+
+- 新增 `dock_back_target(page_dir, section, current, default_id)`：角色皮肤 →
+  `character/<slug>.html`（tooltip 用角色真名，如「返回弑星者基地角色页」）；
+  规则皮肤 → `rules.html`；材质皮肤 → `materials.html`；只有「默认」版式本身
+  没有上一级，才退回首页。
+- 图标从房子换成左箭头（`SVGS["back"]`，13px 下比 `arrow_left` 的细尖头清楚）。
+- 面板底部改为两级：`← 返回××角色页`（主，`.pw-edition-home` 胶囊）+
+  「返回主站首页」（次，`.pw-edition-foot-home` 小字），深色主题各有一条配色。
+
+**二、「要有浏览进度，不然要继续看还要重新点好几次」**
+
+新增 `static/js/browse-memory.js`（sessionStorage，作用域单标签页）：
+
+- 进度按**内容**存，不按网址：`char:<slug>` / `rules` / `materials`。同一个角色的
+  几套版式和它的正式页共用一把钥匙，所以换皮肤、退回角色页都接着刚才那一行读。
+- 同一网址回来用**精确像素**；换到另一种版式（尺寸不同）用**百分比**，落在相近段落。
+- 只在站内跳转时恢复（同源 `referrer`、URL 无 `#锚点`）；直接打开、外链进来、
+  带锚点的搜索结果一律不动。
+- 字体图片陆续到位会把文档撑高，按 120/300/700/1400/2400 ms 补几次；
+  用户一 `wheel` / `touchstart` / `keydown` / `mousedown` 立刻停手，绝不抢滚动条。
+- 恢复到位且距离 > 400 px 时，底部给一条 2.1 s 的「已接续上次读到的位置」提示，
+  `pointer-events: none`，不挡点击。
+
+挂载方式：新增 `inject_browse_memory()`，在构建末尾对全部产物 HTML（根页 / `character/` /
+`tier/` / `skins/*/`）统一插一行 `defer` 脚本，195 页全覆盖 —— 主站模板、皮肤整页、
+升格默认页、量级详情四条产出路径各不相同，逐条注入必漏。`service-worker.js` 壳层清单
+补上该文件。
+
+**三、按清单删掉 10 套皮肤**
+
+| 角色 | 删除的皮肤 | 剩 |
+|---|---|---|
+| 弑星者基地 | 星殒 `starkiller-xingyun` | 2 |
+| 至高王座 | 列阵图 `zhigaowangzuo-junzhen`、疾线 `zhigaowangzuo-zhanchang` | 2 |
+| 女娲 | 玄金 `nvwa-heijin` | 2 |
+| 湿婆 | 三目 `shiva-hengsha` | 1 |
+| 巨型智慧 | 浑天星晷 `juxingzhihui-huntian` | 1 |
+| 下游者 | 弧界 `xiayouzhe-qionghu` | 1 |
+| 弗坦 | 孤舟微炬 `futan-lamp` | 1 |
+| 无限宝石 | 六曜联珠 `wuxianbaoshi-xingyao`、璇渊 `wuxianbaoshi-heiyuan` | 0 |
+
+每套都是四件一起清：`data/editions.json` 登记、`skins/<id>/` 产物、`skins/_source/<id>.html`
+源、`static/img/editions/<id>.jpg` 缩略图。另外清掉三处会变成死配置的地方：
+`build_site.py` 的 `SKIN_STATUS_BAR_MODE` 10 条、`SKIN_FIX_FONT_IDS` 里的 junzhen（Inter 字体
+随之只被这一套引用，`skin-font-fix.css` 的 Inter 块与 `static/fonts/inter/` 一并删除）、
+`static/css/clearbar.css` 里这些 id 的顶栏补丁块（共 10 块，含 `data-theme` 组合选择器）。
+
+无限宝石由此变成第 3 个只有默认页的角色（另两个是上帝、许青），切换器在该页不出现。
+
+**结果**
+
+- 可切换皮肤 **72 → 62** = 57 套角色专属 + 2 材质 + 3 规则；29 个角色里 **26 个**有专属皮肤。
+- 自检全过：`editions.json` 63 条一致、切换器卡片 224 个目标 0 缺失、
+  29 角色 / 29 归档 / `tiers.json` 基线 0 异常。
+- 实测（1280×900 + 390×844，Chromium）：角色页滚到 3000 → 换皮肤（按比例落到对应段落，
+  提示条出现）→ 点左箭头退回 `/character/starkiller.html` 并回到 3000 附近；
+  规则页同理退回 `/rules.html`；手机端提示条在印章上方，无横向溢出、0 JS 错误、0 个 4xx。
+
 ## 2026-11-26（孙悟空默认页）·「大圣凌霄」升为孙悟空默认角色页 / 皮肤 73→72 / SW pw-v88→v89
 
 用户看完默认皮肤该不该换成更好看的讨论后，直接指定

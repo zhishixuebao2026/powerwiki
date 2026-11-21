@@ -215,19 +215,6 @@
       }
     },
     {
-      "id": "futan-lamp",
-      "name": "孤舟微炬",
-      "tag": "",
-      "note": "墨黑绿长卷，海蚀洞作巨幕，一叶孤舟点着一盏灯。",
-      "source": "skins/_source/futan-lamp.html",
-      "section": "character-futan",
-      "inject": "minimal",
-      "thumb": "static/img/editions/futan-lamp.jpg",
-      "pages": {
-        "character-futan": "skins/futan-lamp/character-futan.html"
-      }
-    },
-    {
       "id": "ruphas-crimson",
       "name": "绛翼",
       "tag": "",
@@ -529,19 +516,6 @@
       }
     },
     {
-      "id": "xiayouzhe-qionghu",
-      "name": "弧界",
-      "tag": "",
-      "note": "深空里一道巨大的星球弧面，极简冷白留白。",
-      "source": "skins/_source/xiayouzhe-qionghu.html",
-      "section": "character-xiayouzhe",
-      "inject": "minimal",
-      "thumb": "static/img/editions/xiayouzhe-qionghu.jpg",
-      "pages": {
-        "character-xiayouzhe": "skins/xiayouzhe-qionghu/character-xiayouzhe.html"
-      }
-    },
-    {
       "id": "xiayouzhe-sujuan",
       "name": "素卷",
       "tag": "",
@@ -568,19 +542,6 @@
       }
     },
     {
-      "id": "zhigaowangzuo-junzhen",
-      "name": "列阵图",
-      "tag": "",
-      "note": "铜版线描机神，军阵全景，珊瑚橙点缀。",
-      "source": "skins/_source/zhigaowangzuo-junzhen.html",
-      "section": "character-zhigaowangzuo",
-      "inject": "minimal",
-      "thumb": "static/img/editions/zhigaowangzuo-junzhen.jpg",
-      "pages": {
-        "character-zhigaowangzuo": "skins/zhigaowangzuo-junzhen/character-zhigaowangzuo.html"
-      }
-    },
-    {
       "id": "zhigaowangzuo-yihuan",
       "name": "浑天环",
       "tag": "",
@@ -591,45 +552,6 @@
       "thumb": "static/img/editions/zhigaowangzuo-yihuan.jpg",
       "pages": {
         "character-zhigaowangzuo": "skins/zhigaowangzuo-yihuan/character-zhigaowangzuo.html"
-      }
-    },
-    {
-      "id": "zhigaowangzuo-zhanchang",
-      "name": "疾线",
-      "tag": "",
-      "note": "全屏机神巨像，放射速度线，红白巨字。",
-      "source": "skins/_source/zhigaowangzuo-zhanchang.html",
-      "section": "character-zhigaowangzuo",
-      "inject": "minimal",
-      "thumb": "static/img/editions/zhigaowangzuo-zhanchang.jpg",
-      "pages": {
-        "character-zhigaowangzuo": "skins/zhigaowangzuo-zhanchang/character-zhigaowangzuo.html"
-      }
-    },
-    {
-      "id": "wuxianbaoshi-xingyao",
-      "name": "六曜联珠",
-      "tag": "",
-      "note": "深蓝紫宇宙，六色宝石沿光轨排布，双主题切换。",
-      "source": "skins/_source/wuxianbaoshi-xingyao.html",
-      "section": "character-wuxianbaoshi",
-      "inject": "minimal",
-      "thumb": "static/img/editions/wuxianbaoshi-xingyao.jpg",
-      "pages": {
-        "character-wuxianbaoshi": "skins/wuxianbaoshi-xingyao/character-wuxianbaoshi.html"
-      }
-    },
-    {
-      "id": "wuxianbaoshi-heiyuan",
-      "name": "璇渊",
-      "tag": "",
-      "note": "深空黑洞与六宝石金线环，衬线典章式版式，证据图已补齐。",
-      "source": "skins/_source/wuxianbaoshi-heiyuan.html",
-      "section": "character-wuxianbaoshi",
-      "inject": "minimal",
-      "thumb": "static/img/editions/wuxianbaoshi-heiyuan.jpg",
-      "pages": {
-        "character-wuxianbaoshi": "skins/wuxianbaoshi-heiyuan/character-wuxianbaoshi.html"
       }
     },
     {
@@ -698,19 +620,6 @@
       }
     },
     {
-      "id": "nvwa-heijin",
-      "name": "玄金",
-      "tag": "",
-      "note": "黑金配色女娲补天，矢量浑天仪，轻量单页。",
-      "source": "skins/_source/nvwa-heijin.html",
-      "section": "character-nvwa",
-      "inject": "minimal",
-      "thumb": "static/img/editions/nvwa-heijin.jpg",
-      "pages": {
-        "character-nvwa": "skins/nvwa-heijin/character-nvwa.html"
-      }
-    },
-    {
       "id": "zhangyan-zifu",
       "name": "紫府云篆",
       "tag": "",
@@ -734,19 +643,6 @@
       "thumb": "static/img/editions/zhangyan-xuanshu.jpg",
       "pages": {
         "character-zhangyan": "skins/zhangyan-xuanshu/character-zhangyan.html"
-      }
-    },
-    {
-      "id": "shiva-hengsha",
-      "name": "三目",
-      "tag": "",
-      "note": "暗蓝金环、湿婆三目与三叉戟、雪山，暗色史诗版。",
-      "source": "skins/_source/shiva-hengsha.html",
-      "section": "character-shiva",
-      "inject": "minimal",
-      "thumb": "static/img/editions/shiva-hengsha.jpg",
-      "pages": {
-        "character-shiva": "skins/shiva-hengsha/character-shiva.html"
       }
     },
     {
@@ -867,19 +763,6 @@
       }
     },
     {
-      "id": "starkiller-xingyun",
-      "name": "星殒",
-      "tag": "",
-      "note": "黑底死星析构、红色核心特写、冷硬科幻暗色版。",
-      "source": "skins/_source/starkiller-xingyun.html",
-      "section": "character-starkiller",
-      "inject": "minimal",
-      "thumb": "static/img/editions/starkiller-xingyun.jpg",
-      "pages": {
-        "character-starkiller": "skins/starkiller-xingyun/character-starkiller.html"
-      }
-    },
-    {
       "id": "starkiller-liexing",
       "name": "裂星痕",
       "tag": "",
@@ -890,19 +773,6 @@
       "thumb": "static/img/editions/starkiller-liexing.jpg",
       "pages": {
         "character-starkiller": "skins/starkiller-liexing/character-starkiller.html"
-      }
-    },
-    {
-      "id": "juxingzhihui-huntian",
-      "name": "浑天星晷",
-      "tag": "",
-      "note": "米纸赭红浑天仪、星球仪，古典装帧亮色版。",
-      "source": "skins/_source/juxingzhihui-huntian.html",
-      "section": "character-juxingzhihui",
-      "inject": "minimal",
-      "thumb": "static/img/editions/juxingzhihui-huntian.jpg",
-      "pages": {
-        "character-juxingzhihui": "skins/juxingzhihui-huntian/character-juxingzhihui.html"
       }
     },
     {

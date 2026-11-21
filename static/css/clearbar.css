@@ -69,14 +69,8 @@ html[data-pw-edition="futan-abyss"] header.fixed.inset-x-0 {
 
 /* 孤舟微炬有明暗双主题：dark 顶栏 #151d1a，light 顶栏跟随米纸底 #eeeae0。
    旧写法把顶栏写死成深色，切到亮色后出现「黑顶栏 + 米纸正文」。 */
-html[data-pw-edition="futan-lamp"] header.site-header {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background-color: rgb(21, 29, 26) !important;
-}
-html[data-theme="light"][data-pw-edition="futan-lamp"] header.site-header {
-    background-color: rgb(238, 234, 224) !important;
-}
+
+html[data-theme="light"]
 
 html[data-pw-edition="jiangwuye-starvortex"] header.bar {
     -webkit-backdrop-filter: none !important;
@@ -205,12 +199,6 @@ html[data-theme="dark"][data-pw-edition="yog-teal-vortex"] header.fixed.inset-x-
     background-color: rgb(7, 10, 15) !important;
 }
 
-html[data-pw-edition="zhigaowangzuo-junzhen"] header.topbar {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background-color: var(--bg) !important;
-}
-
 /* 日轮明暗双主题：dark 顶栏 #141615，light 顶栏跟随米纸底 #f5f1e8。 */
 html[data-pw-edition="zhigaowangzuo-rilun"] header.site-header {
     -webkit-backdrop-filter: none !important;
@@ -229,12 +217,6 @@ html[data-pw-edition="zhigaowangzuo-yihuan"] header.sticky.top-0 {
 }
 html[data-theme="light"][data-pw-edition="zhigaowangzuo-yihuan"] header.sticky.top-0 {
     background-color: rgb(242, 235, 221) !important;
-}
-
-html[data-pw-edition="zhigaowangzuo-zhanchang"] header.topbar {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background-color: var(--bg) !important;
 }
 
 html[data-pw-edition="zhuban"] header.topbar {
@@ -326,12 +308,6 @@ html[data-pw-edition="yog-teal-vortex"] header.fixed.inset-x-0 {
     box-sizing: border-box !important;
 }
 
-html[data-pw-edition="zhigaowangzuo-junzhen"] header.topbar {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(64px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
 html[data-pw-edition="zhigaowangzuo-rilun"] header.site-header {
     padding-top: env(safe-area-inset-top, 0px) !important;
     height: calc(66px + env(safe-area-inset-top, 0px)) !important;
@@ -401,15 +377,6 @@ html[data-pw-edition="suzhou-zhuzhou"] header.masthead {
     box-sizing: border-box !important;
 }
 
-
-/* juxingzhihui-huntian — H0=61 pad0=0px sel=header hit=True nHeader=1 */
-html[data-pw-edition="juxingzhihui-huntian"] header {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(61px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
-
 /* zhangyan-xuanshu — H0=62 pad0=0px sel=header.masthead hit=True nHeader=8 */
 html[data-pw-edition="zhangyan-xuanshu"] header.masthead {
     padding-top: env(safe-area-inset-top, 0px) !important;
@@ -441,15 +408,6 @@ html[data-pw-edition="nvwa-boshan"] header {
     box-sizing: border-box !important;
 }
 
-
-/* starkiller-xingyun — H0=61 pad0=0px sel=header hit=True nHeader=1 */
-html[data-pw-edition="starkiller-xingyun"] header {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(61px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
-
 /* xuezhishaonv-xingyi — H0=50 pad0=0px sel=header hit=True nHeader=1 */
 html[data-pw-edition="xuezhishaonv-xingyi"] header {
     padding-top: env(safe-area-inset-top, 0px) !important;
@@ -464,15 +422,6 @@ html[data-pw-edition="sunwukong-lingtai"] header.site-header {
     height: calc(59px + env(safe-area-inset-top, 0px)) !important;
     box-sizing: border-box !important;
 }
-
-
-/* nvwa-heijin — H0=57 pad0=0px sel=header hit=True nHeader=1 */
-html[data-pw-edition="nvwa-heijin"] header {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(57px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
 
 /* xingshen-zhixing — H0=56 pad0=0px sel=header hit=True nHeader=1 */
 html[data-pw-edition="xingshen-zhixing"] header {
@@ -520,15 +469,6 @@ html[data-pw-edition="xuezhishaonv-sujian"] header.fixed {
     height: calc(67px + env(safe-area-inset-top, 0px)) !important;
     box-sizing: border-box !important;
 }
-
-
-/* wuxianbaoshi-xingyao — H0=58 pad0=0px sel=header hit=True nHeader=1 */
-html[data-pw-edition="wuxianbaoshi-xingyao"] header {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(58px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
 
 /* juxingzhihui-lingchun — H0=54 pad0=0px sel=header.topbar hit=True nHeader=13 */
 html[data-pw-edition="juxingzhihui-lingchun"] header.topbar {

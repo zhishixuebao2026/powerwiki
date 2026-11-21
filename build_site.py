@@ -47,7 +47,6 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "divinity-starember": "default",
     "divinity-xuanjin": "default",
     "futan-abyss": "default",
-    "futan-lamp": "black",
     "guchensha-molong": "default",
     "jiangwuye-eclipsring": "black",
     "jiangwuye-starvortex": "black",
@@ -64,32 +63,25 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "ruphas-gilded": "black",
     "tianren-register": "black",
     "tianren-zhoutian": "black",
-    "xiayouzhe-qionghu": "black",
     "xiayouzhe-sujuan": "default",
     "xuanheng": "default",
     "xuanji": "black",
     "yog-bronze-glow": "default",
     "yog-bronze-key": "default",
     "yog-teal-vortex": "default",
-    "zhigaowangzuo-junzhen": "black",
     "zhigaowangzuo-rilun": "black",
     "zhigaowangzuo-yihuan": "black",
-    "zhigaowangzuo-zhanchang": "black",
     "zhuban": "black",
-    "wuxianbaoshi-xingyao": "black",
-    "wuxianbaoshi-heiyuan": "black",
     "xuezhishaonv-yueshi": "black",
     "xuezhishaonv-sujian": "default",
     "luofeng-xinggui": "black",
     "nvwa-xuanqiong": "black",
     "nvwa-boshan": "black",
-    "nvwa-heijin": "black",
     "zhangyan-zifu": "default",
     "zhangyan-xuanshu": "black",
     "xuqing-qingchuan": "default",
     "sunwukong-lingxiao": "default",
     "shangdi-jinian": "default",
-    "shiva-hengsha": "black",
     "pangu-hunyuan": "black",
     "xuezhishaonv-xingyi": "black",
     "guchensha-yunzhan": "default",
@@ -99,9 +91,7 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "mozhe-xingluo": "black",
     "mozhe-qingke": "black",
     "starkiller-chixiao": "black",
-    "starkiller-xingyun": "black",
     "starkiller-liexing": "black",
-    "juxingzhihui-huntian": "default",
     "xingshen-heng": "black",
     "xingshen-zhixing": "black",
     "baiguang-gufeng": "black",
@@ -157,6 +147,48 @@ DEFAULT_ALIAS = {
         "static/img/editions/sunwukong-lingxiao.jpg",
     ),
 }
+
+
+_CHAR_NAME_CACHE: dict[str, str] = {}
+
+
+def character_display_name(slug: str) -> str:
+    """角色显示名（切换器上「返回×××角色页」要用），只在首次调用时读一次 JSON。"""
+    if not _CHAR_NAME_CACHE:
+        try:
+            payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
+            chars = payload.get("characters", payload) if isinstance(payload, dict) else payload
+            for c in chars:
+                if c.get("slug"):
+                    _CHAR_NAME_CACHE[c["slug"]] = c.get("name") or c["slug"]
+        except Exception:
+            pass
+    return _CHAR_NAME_CACHE.get(slug, "")
+
+
+def dock_back_target(page_dir: str, section: str, current: str, default_id: str) -> tuple[str, str, str]:
+    """切换器左侧那颗按钮：回**这一页内容自己的正式页**，不再一律退回首页。
+
+    站在某角色的皮肤版式上时，要回的是该角色主页面 `character/<slug>.html`
+    （2026-11-25 用户指出：从皮肤页只想回角色页继续看，退回首页等于把
+    「角色档案 → 找到角色 → 再点开」重走一遍）；规则 / 材质皮肤同理回本栏目
+    正式页。`默认` 版式本身就是正式页，没有上一级，才退回首页。
+
+    返回 (href, 说明文案, 图标名)。
+    """
+    home = (_rel_from(page_dir, "index.html"), "返回主站首页", "home")
+    if current == default_id:
+        return home
+    if section.startswith("character-"):
+        slug = section[len("character-"):]
+        name = character_display_name(slug)
+        label = f"返回{name}角色页" if name else "返回角色页"
+        return (_rel_from(page_dir, f"character/{slug}.html"), label, "back")
+    if section == "rules":
+        return (_rel_from(page_dir, "rules.html"), "返回规则页", "back")
+    if section == "materials":
+        return (_rel_from(page_dir, "materials.html"), "返回材质页", "back")
+    return home
 
 
 def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str] = None,
@@ -218,10 +250,18 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
             + "</span></a>"
         )
 
-    # 站在别的皮肤上时，永远留一条回主站的路
+    # 站在别的皮肤上时，永远留一条回主站的路；同时把「回本页正式页」摆在首位，
+    # 从皮肤版式退出去是回角色 / 规则 / 材质页，而不是绕回首页重新点进来。
     home_href = _rel_from(page_dir, "index.html")
-    back_home = ""
-    if current != manifest["default"]:
+    back_href, back_label, back_icon = dock_back_target(page_dir, section, current, manifest["default"])
+    is_skin_view = current != manifest["default"]
+    if is_skin_view:
+        back_home = (
+            f'<a class="pw-edition-home" href="{esc(back_href)}" title="{esc(back_label)}">'
+            f'<span aria-hidden="true">←</span> {esc(back_label)}</a>'
+            f'<a class="pw-edition-foot-home" href="{esc(home_href)}">返回主站首页</a>'
+        )
+    else:
         back_home = (
             f'<a class="pw-edition-home" href="{esc(home_href)}">'
             '<span aria-hidden="true">←</span> 返回主站首页</a>'
@@ -230,7 +270,8 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
     count = len(applicable)
     return (
         '<div class="pw-edition-dock" id="pw-edition-dock">'
-        f'<a class="pw-edition-home-btn" href="{esc(home_href)}" title="返回主站首页" aria-label="返回主站首页">{SVGS["home"]}</a>'
+        f'<a class="pw-edition-home-btn" href="{esc(back_href)}" title="{esc(back_label)}" '
+        f'aria-label="{esc(back_label)}">{SVGS[back_icon]}</a>'
         '<button type="button" class="pw-edition-toggle" id="pw-edition-toggle" aria-expanded="false" aria-controls="pw-edition-panel" title="切换页面皮肤">'
         '<span class="pw-edition-glyph" aria-hidden="true">⊙</span><span class="pw-edition-label">皮肤</span></button>'
         f'<div class="pw-edition-panel" id="pw-edition-panel" data-current-edition="{esc(current)}" hidden>'
@@ -284,7 +325,6 @@ _SITE_FONT_SHEET_PAIR = [
 ]
 # 2) 页面已声明字体族但从未声明 @font-face 的皮肤，按需注入本地补齐表。
 SKIN_FIX_FONT_IDS = {
-    "zhigaowangzuo-junzhen",   # Inter
     "zhigaowangzuo-yihuan",    # JetBrains Mono
     "xiayouzhe-sujuan",        # Cormorant Garamond / LXGW WenKai
 }
@@ -676,6 +716,7 @@ SVGS = {
     "sun": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
     "moon": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
     "arrow_left": '<svg class="svg-icon sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    "back": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12h-15"/><path d="m11 18.5-6.5-6.5 6.5-6.5"/></svg>',
     "arrow_up": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
     "arrow_up_right": '<svg class="svg-icon sm card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
     "toc": '<svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>',
@@ -3571,6 +3612,47 @@ def build_rules_default_from_observatory() -> None:
     print("[rules] default page = 「候星」整页 (皮肤原生顶栏 + dock, 无叠加导航)")
 
 
+def inject_browse_memory() -> int:
+    """给每个产物页挂上阅读进度记忆脚本（换皮肤 / 退回角色页时接着往下读）。
+
+    放在构建末尾统一处理：主站模板、皮肤整页、升格默认页、量级详情四条产出
+    路径各不相同，逐条注入容易漏；这里只认"产物文件 + 真实的 </body>"，已经
+    挂过的不重复挂。
+    """
+    target = "static/js/browse-memory.js"
+    src = ROOT / target
+    if not src.exists():
+        print(f"[WARN] {target} 不存在，跳过阅读进度注入")
+        return 0
+    files: list[Path] = sorted(ROOT.glob("*.html"))
+    for sub in ("character", "tier"):
+        d = ROOT / sub
+        if d.is_dir():
+            files.extend(sorted(d.glob("*.html")))
+    skins = ROOT / "skins"
+    if skins.is_dir():
+        for d in sorted(skins.iterdir()):
+            if d.is_dir() and d.name != "_source":
+                files.extend(sorted(d.glob("*.html")))
+    done = 0
+    for p in files:
+        try:
+            doc = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        if "browse-memory.js" in doc:
+            continue
+        head, sep, tail = doc.rpartition("</body>")
+        if not sep:
+            continue
+        rel_dir = str(p.parent.relative_to(ROOT)).replace("\\", "/")
+        href = _rel_from("" if rel_dir == "." else rel_dir, target)
+        p.write_text(head + f'<script src="{href}" defer></script>\n' + sep + tail, encoding="utf-8")
+        done += 1
+    print(f"[browse] 阅读进度记忆注入 {done} 个页面")
+    return done
+
+
 def main() -> None:
     tiers_payload = json.loads((DATA_DIR / "tiers.json").read_text(encoding="utf-8"))
     chars_payload = json.loads((DATA_DIR / "characters.json").read_text(encoding="utf-8"))
@@ -3659,6 +3741,8 @@ def main() -> None:
     build_shangdi_default_from_jinian()
     # 孙悟空默认角色页 = 「大圣凌霄」整页（用户 2026-11-25 指出该页更适合当默认）。
     build_sunwukong_default_from_lingxiao()
+
+    inject_browse_memory()
 
     print(
         f"[OK] PowerWiki v9.1 built successfully:\n"
