@@ -189,31 +189,6 @@
       }
     },
     {
-      "id": "archive",
-      "name": "检字",
-      "tag": "",
-      "note": "米纸档案，左栏索引，细线分隔，标题用衬线大字。",
-      "source": "skins/_source/archive.html",
-      "section": "materials",
-      "thumb": "static/img/editions/archive.jpg",
-      "patch": "skins/patches/archive.js",
-      "pages": {
-        "materials": "skins/archive/materials.html"
-      }
-    },
-    {
-      "id": "atlas",
-      "name": "裂宿图",
-      "tag": "",
-      "note": "大留白，描边巨字，裂星主视觉，卡片浮在版心之外。",
-      "source": "skins/_source/atlas.html",
-      "section": "materials",
-      "thumb": "static/img/editions/atlas.jpg",
-      "pages": {
-        "materials": "skins/atlas/materials.html"
-      }
-    },
-    {
       "id": "observatory",
       "name": "候星",
       "tag": "",

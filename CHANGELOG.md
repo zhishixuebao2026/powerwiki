@@ -4,6 +4,32 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
 
+## 2026-11-21（白光修复 + 删重复皮肤）· reveal 死锁 / 皮肤 77→75
+
+用户两点：①白光·孤峰 `baiguang-gufeng` 页出现大块灰色留白、分不清是不是没文本；
+②`atlas`（裂宿图）与 `material-shatter`（碎极）点进去完全一样，确认重复，要求删一个，
+另外删 `archive`（检字）；材质皮肤用户这两天重做。
+
+**白光 reveal 死锁（真 bug，非缺图、非设计）**：那块灰色是 `.position-list` 位格文本
+容器的背景色，里面 3 条 `article` 本应有字，却永久停在 `opacity:0`。根因是源页的
+`gv()` 观察器用 `IntersectionObserver{threshold:.08}`，而每个 `[data-reveal]` 初始
+`clip-path:inset(0 0 100%)` 把元素完全裁剪——IO 判定可见面积恒为 0，永不交叉、
+永不触发 `.is-visible`，形成死锁。实测全页 87 个 reveal 元素有 **41 个（47%）永久隐藏**，
+覆盖标题/正文/量级链/位格/术语/问答，即用户所说的"留白严重"。与 Win11「动画效果」
+开关的关系：开关关着时 `prefers-reduced-motion:reduce` 为真，代码走"全部直接显示"分支，
+侥幸绕过；开关打开后走正常 IO 流程才暴露——所以用户开启动画后问题反而显现。
+
+- 修复：把 `gv()` 判定从 IO 交叉比例改为 `getBoundingClientRect().top < innerHeight*.93`
+  的文档位置判断（`rAF` 节流 scroll/resize，全显现后自动摘监听；reduce 分支保留全显示）。
+  仅改 `skins/_source/baiguang-gufeng.html` 一处，其他皮肤无同款模式、不受影响。
+- 验证：明暗两主题滚动全页后 reveal **87/87 全显现、隐藏 0、JS 错误 0**，位格 3 条
+  `is-visible/opacity=1`；确认那块本来就无图片位，不需要补图。
+- 删皮肤：`data/editions.json` 77→75 条（含 default 为 76），删 `atlas`/`archive` 的
+  源文件、产物目录、缩略图，`build_site.py` 状态栏映射去掉两行，README 清单/示例同步。
+  `material-shatter` 保留待用户重做。首页 portal 的 `SVGS["atlas"]` 是图标名、非皮肤，未动。
+- 体检：`audit_site.py` 全过（75 套产物、288 卡片/缩略图 0 缺、登记表 76 条一致、
+  29 角色定级基线 0 异常）；定级正文/98 档数值零改动。SW `pw-v75 → pw-v76`。
+
 ## 2026-11-21（性能优化）· 标准角色页滚动掉帧（30fps → 60fps）
 
 用户反馈切换主题 / 滚动时部分页面卡顿掉帧，要求「不删东西改东西」地优化。

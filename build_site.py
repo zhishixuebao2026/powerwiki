@@ -40,8 +40,6 @@ _EDITIONS_CACHE: Optional[Dict[str, Any]] = None
 # 因此本表保证的是默认（系统浅色）模式下的正确性。复判脚本见 tools/audit_site.py。
 # 本表固化在源码中，重建不依赖任何 /tmp 临时文件。
 SKIN_STATUS_BAR_MODE: Dict[str, str] = {
-    "archive": "default",
-    "atlas": "default",
     "bronze-coffin": "default",
     "divinity-gilt": "default",
     "divinity-radiance": "default",

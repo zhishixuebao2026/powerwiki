@@ -33,7 +33,7 @@
 
 ## 当前内容（2026-11-20）
 
-- **规模**：29 个角色、98 个量级档位；77 套页面皮肤（70 套角色专属 + 7 套通用规则/材质皮肤，**28 个角色有专属皮肤**）。御兔的「月牍」、许青的「青川卷帙」都已升格为各自的角色默认页并从登记表移除，不另计入可切换皮肤（这两页只留主站导航与「← 角色档案」返回入口，不挂切换器）；御兔另有「霜毫擘窠」、魔术王·阿拉迪亚另有「孤灯石阙」「墨影离披」等专属皮肤，切换器里可切。每套皮肤的显示名、来源与风格见 `CHANGELOG.md`。
+- **规模**：29 个角色、98 个量级档位；75 套页面皮肤（70 套角色专属 + 5 套通用规则/材质皮肤，**28 个角色有专属皮肤**）。御兔的「月牍」、许青的「青川卷帙」都已升格为各自的角色默认页并从登记表移除，不另计入可切换皮肤（这两页只留主站导航与「← 角色档案」返回入口，不挂切换器）；御兔另有「霜毫擘窠」、魔术王·阿拉迪亚另有「孤灯石阙」「墨影离披」等专属皮肤，切换器里可切。每套皮肤的显示名、来源与风格见 `CHANGELOG.md`。
 - **规则**：`data/docs/衡天量级体系【第六版·最新】.md`（第六版全文，含目录 / 页内查找）。规则栏目另有「观象台」整页皮肤同步全文。
 - **材质**：`data/docs/材质与破坏能量数据库（新）.md`（「卷宗」「星图」两套整页皮肤）。
 - **角色定级原文**：`data/docs/characters/*.md`，29 份逐字归档；各角色配图在 `static/img/characters/<slug>/`。
@@ -104,13 +104,11 @@ python3 build_site.py
 | id | 名称 | 来源 | 覆盖页面 | 说明 |
 | --- | --- | --- | --- | --- |
 | `default` | 默认 | 本仓库生成器（`build_site.py`） | 全站：首页 / 98 档量级 / 角色 / 规则 / 材质 | 建筑感栅格 |
-| `archive` | 卷宗 | `skins/_source/archive.html`（整页自包含产物） | 材质页 | 米纸底、左侧索引栏的档案排版 |
-| `atlas` | 星图 | `skins/_source/atlas.html`（整页自包含产物） | 材质页 | 大留白、描边巨字、裂星主视觉 |
 | `observatory` | 观象台 | `skins/_source/observatory.html`（原 `KALMIA衡天量级体系.zip`） | 规则页 | 夜观 / 昼测双主题、二十八宿衡天仪、全链对数天梯 |
 | `moonfile` | 月面 | `skins/_source/moonfile.html`（原 `opus-5.5-high御兔量级页面.zip`） | 御兔角色页 | 米纸底、墨笔巨字、月面插图与红色印章的卷宗排版 |
 
 规则：**切换器只列出"当前这一页真有对应页面"的皮肤**。首页只有 `default` 有页面，所以首页不出现切换器；
-材质页三套都有（默认 / 卷宗 / 星图），规则页两套（默认 / 观象台），御兔角色页两套（默认 / 月面）。
+材质页目前只有默认（碎极 `material-shatter` 待重做），规则页两套（默认 / 观象台），御兔角色页两套（默认 / 月面）。
 站在别的皮肤上时，左下角常驻一个回主站首页的按钮。
 
 明暗仍由右上角的太阳 / 月亮控制（`static/js/theme.js`），与皮肤是两个独立的轴；皮肤内部若自带明暗，以皮肤为准。首帧底色按页面写在 `html` 的 `data-boot-bg-light/dark` 上，由 `<head>` 里一段 `:where()` 内联 CSS 直接画到 html/body（优先级 0，外链样式表到达后自动接管）；切主题只改 `data-theme`，属性选择器随之换色，JS 不再写 inline 底色，三层底色始终一致。
@@ -156,15 +154,15 @@ React 侧的壳在 `DOMContentLoaded` 之后才挂载，所以挂载用定时重
 
 ```json
 {
-  "id": "archive",
-  "name": "卷宗",
-  "tag": "ARCHIVE",
-  "note": "米纸底、左侧索引栏、细线分隔与衬线巨标题的档案排版",
-  "source": "skins/_source/archive.html",
+  "id": "my-skin",
+  "name": "我的皮肤",
+  "tag": "MY",
+  "note": "一句话描述这套整页设计",
+  "source": "skins/_source/my-skin.html",
   "section": "materials",
-  "thumb": "static/img/editions/archive.jpg",
-  "patch": "skins/patches/archive.js",
-  "pages": { "materials": "skins/archive/materials.html" }
+  "thumb": "static/img/editions/my-skin.jpg",
+  "patch": "skins/patches/my-skin.js",
+  "pages": { "materials": "skins/my-skin/materials.html" }
 }
 ```
 
