@@ -252,6 +252,12 @@ SKIN_FONT_SHEETS = [
 # 1) 所有皮肤页都需要的站点变量字体表（editions.css 的字体栈第一位用它，
 #    过去只有 font_rewrite 皮肤注入，其余皮肤每页约 34 个元素悄悄回退）。
 _SITE_FONT_SHEET = "static/fonts/noto-sans-sc/index.css"
+# 皮肤页至少要这两张变量字体表（黑体 + 宋体）。分片按 unicode-range 按需下载，
+# 未被页面用到的分片不会请求，所以整表引入的代价只有几十 KB 的 CSS 文本。
+_SITE_FONT_SHEET_PAIR = [
+    "static/fonts/noto-sans-sc/index.css",
+    "static/fonts/noto-serif-sc/index.css",
+]
 # 2) 页面已声明字体族但从未声明 @font-face 的皮肤，按需注入本地补齐表。
 SKIN_FIX_FONT_IDS = {
     "zhigaowangzuo-junzhen",   # Inter
@@ -504,8 +510,10 @@ def build_skin_editions() -> int:
         extra_sheets = list(SKIN_EXTRA_STYLE_SHEETS.get(ed["id"], []))
         if ed["id"] in SKIN_FIX_FONT_IDS:
             extra_sheets.append("static/css/skin-font-fix.css")
-        # font_rewrite 皮肤原本就注入三张站内字体表；其余皮肤至少补变量字体表。
-        sheets = SKIN_FONT_SHEETS if ed.get("font_rewrite") else [_SITE_FONT_SHEET]
+        # font_rewrite 皮肤原本就注入三张站内字体表；其余皮肤至少补黑体+宋体两张变量表。
+        # 宋体表必须一起给：多套皮肤的字体栈里写着 "Noto Serif SC Variable"，
+        # 但过去只注入了黑体表，该族名没有 @font-face，缺字照样回退到系统宋体。
+        sheets = SKIN_FONT_SHEETS if ed.get("font_rewrite") else _SITE_FONT_SHEET_PAIR
         font_tags = "".join(
             f'<link rel="stylesheet" href="{_rel_from(page_dir, sheet)}">\n'
             for sheet in sheets + extra_sheets
@@ -568,6 +576,16 @@ def build_skin_editions() -> int:
         icon_tag = "" if has_icon else (
             f'<link rel="icon" type="image/png" sizes="32x32" href="{_rel_from(page_dir, "static/img/icons/favicon-32.png")}">\n'
         )
+        # 字体表去重：源页面已自带同一张表的 <link>（观象台等整页产物会写死），
+        # 再注入一份就是重复标签。按 href 精确比对，只跳过真正存在的那些行。
+        if font_tags:
+            kept = []
+            for line in font_tags.splitlines(keepends=True):
+                m = re.search(r'href="([^"]+)"', line)
+                if m and f'href="{m.group(1)}"' in doc:
+                    continue
+                kept.append(line)
+            font_tags = "".join(kept)
         if ed.get("inject") == "minimal":
             # React / 第三方整页应用皮肤：只注入切换器浮层（editions.css + editions.js + launcher），
             # 不注入主站 app.css / chrome.js / pwa.js / manifest，否则会污染应用自身的内联样式与 DOM。

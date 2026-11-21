@@ -127,6 +127,17 @@ python3 build_site.py
 缺字时不是画方框而是直接留白。所以凡是我们自己往这页加的文字（站内导航、
 皮肤切换器）都必须显式换成站内自托管字体，不能跟着 `--font-*` 变量走。
 
+**子集字体缺字的通用解法（2026-11-22）。** 好几套皮肤自带的 `woff2` 是按某个
+页面裁的子集，字形本身没问题，缺的只是字表：`星云` 的 `Archive Sans/Serif` 只覆盖
+站内用字的 28%，`绯红` 38%，`朱版` 的 `HengSerif` 68%。缺的字会一路回退到
+`SimSun` / 系统衬线，同一段正文里两种字形混排。修法不是换字体，而是**在字体栈的
+第二顺位插站内 Noto 变量字体**：`"Archive Serif","Noto Serif SC Variable",…`。
+Noto 分片按 `unicode-range` 按需下载（没命中的分片根本不请求），所以整表引入的
+代价只有几十 KB 的 CSS 文本，缺字则由同源字形无缝补上。
+配套修了构建期的一个欠账：非 `font_rewrite` 皮肤此前只注入黑体表，宋体表没注入 ——
+字体栈里写着 `"Noto Serif SC Variable"` 的皮肤其实是空头支票。现在两张表都注入
+（`_SITE_FONT_SHEET_PAIR`），并按页面已自带的 `href` 去重。
+
 整页产物原本是「单向门」：进去以后没有任何回主站的入口。
 `skins/patches/observatory.js` 因此往侧栏（`aside.rail` 的 `.rail-sticky`，插在
 「目录 · CONTENTS」标题之前）和移动端抽屉（`.drawer-scroll` 顶部）各挂一组

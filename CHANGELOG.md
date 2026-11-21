@@ -4,6 +4,39 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-25（字体全站体检）· 子集字体缺字补齐 / 宋体表注入 / SW pw-v87→v88
+
+用户要求「全站检查一下，没的字体直接下」。按三层查：文件是否存在、字体族是否
+注册、字表是否覆盖站点用字。
+
+**文件层：0 条死链。** 208 个产物页的全部 281 条本地字体 `url()` 都指向真实文件；
+浏览器实测 208 页，字体请求 404 为 0、`@font-face` 状态 error 为 0。此前两套皮肤
+的 `fonts.css` 里留着 11 条指向不存在文件的备用 `url()`（页面从未 `<link>` 它们，
+所以线上不报错，但排查时会误判）：`灵春` 5 个、`灵台` 6 个，已全部补齐 ——
+`IBM Plex Mono` latin 400/500/600 三个字重从 Google Fonts 下载，
+`Noto Serif SC` 上标下标分片同样从官方分片取，`Archive` 系列用站内已有同源字体，
+`Inscription`（全站唯一没有对应字形的）改指 `archive-brush`。
+
+**字表层：3 套皮肤真缺字。** 这些 `woff2` 是按某个页面裁的子集，字形没问题、字表不全。
+按站内真实用字（1858 个汉字）算覆盖：`星云` 的 `Archive Sans/Serif` 28%，`绯红` 38%，
+`朱版` 的 `HengSerif` 68%；缺的字一路回退到 `SimSun`，同一段正文两种字形混排。
+修法是在字体栈第二顺位插站内 Noto 变量字体（Noto 本身就是这些皮肤的原始字源，
+字形完全同源），分片按 `unicode-range` 按需下载：
+
+- 星云：`"Archive Serif","Noto Serif SC Variable",…` / `"Archive Sans","Noto Sans SC Variable",…`
+- 绯红：同上，并把原本写着的 `"Noto Serif SC"`（站内没有这个族名，等于空头支票）改为 `"Noto Serif SC Variable"`
+- 朱版：`HengSerif,"Noto Serif SC Variable",serif`（4 处）
+
+**构建层：宋体表一直没注入。** `build_site.py` 对非 `font_rewrite` 皮肤只注入黑体表
+（`_SITE_FONT_SHEET`），但好多皮肤的字体栈里写着 `"Noto Serif SC Variable"` ——
+族名有、`@font-face` 没有，缺字照样回退系统宋体。现在改为同时注入黑体表 + 宋体表
+（`_SITE_FONT_SHEET_PAIR`），并按页面已自带的 `href` 去重，避免重复 `<link>`。
+
+实测（1280×900，Chromium）：三套皮肤强加载缺字样本后，`Noto Serif SC Variable`
+分片 loaded 数 0→7、`document.fonts.check` 命中「魂魔龙温园宇宙构控材质格」，
+0 个 4xx；73 套皮肤页逐一检查，字体栈里出现的每个族名都有对应 `@font-face`，0 套空头。
+自检全过（73 套、基线 0 异常），产物字体死链 0。
+
 ## 2026-11-24（默认规则页）·「候星」升为默认规则页 / 四套规则皮肤正文同步到 11-15 / 皮肤 74→73 / SW pw-v86→v87
 
 用户要求分析规则栏目四套皮肤（候星 / 宣衡典章 / 仪轨 / 朱版）哪套适合当默认，最终选「候星」。
