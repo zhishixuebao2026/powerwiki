@@ -4,6 +4,23 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-22（顶栏重叠修复）· 实测对齐 + 容器查询兜底 / SW pw-v79
+
+用户真机（iPhone）反馈两处顶部重叠：许青默认页滚动后正文被顶栏压住、创世纪年
+皮肤顶栏「衡天定级 + 字号 + 亮/暗按钮」挤成一团。Chromium 各宽度复现不出来，
+根因是 iOS Safari 对 `env(safe-area-inset-top)` 与 `@container` 容器查询的支持差异：
+
+- **默认页三层顶栏实测对齐**：`character/xuqing.html`、`character/yutu.html` 的站点
+  导航由构建期注入，静态 `calc(nav-h + env(safe))` 在 Safari 下与皮肤 masthead 的
+  `padding-top:env(safe)` 重复计入，导致第二/三层顶栏错位压正文。改为加载后用
+  `getBoundingClientRect` 实测三层高度写入 `--pw-nav-real` 等变量，动态设置
+  masthead / 目录条的 `top` 与正文 `scroll-margin-top`，任何引擎都按真实像素对齐。
+- **顶栏防挤压兜底**：`clearbar.css` 追加视图宽度（`@media`）规则，不依赖容器查询，
+  强制 masthead 内部单行不换行、可收缩；≤430px 隐藏明暗按钮文字标签与品牌英文、
+  ≤360px 再缩字号间距。这样即使 iOS Safari 不执行 `@container toolbar` 断点，
+  按钮组也不会互相覆盖。未改颜色、几何结构或任何定级正文。
+- 全站复扫：顶栏内文字/按钮两两重叠 0 项，体检全过，定级基线异常 0。
+
 ## 2026-11-22（缺字体补齐）· 声明缺失 / 文件缺失 / 死链清理 / SW pw-v78
 
 上一轮只清了「请求了但文件不存在」的 404，本轮把 404 扫描永远扫不到的另一类问题补齐：

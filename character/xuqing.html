@@ -280,7 +280,38 @@ Error generating stack: `+a.message+`
         padding:3px 0;font-size:11px;gap:2px;}
       .pw-skin-links a svg{width:14px;height:14px;}
     }
+    /* pw-v79: iOS Safari 的 env(safe-area-inset-top) + sticky 计算与 Chromium
+       不一致，静态 calc 会让第二/第三层顶栏压住正文。加载后实测三层高度，
+       写入 --pw-nav-real，供 masthead / 目录条 / 正文锚点统一对齐。 */
     @media print{.pw-skin-nav{display:none;}body{padding-top:0!important}}
+  </style>
+  <script>
+  (function(){
+    function align(){
+      var nav=document.querySelector('.pw-skin-nav');
+      if(!nav) return;
+      var navH=Math.round(nav.getBoundingClientRect().height);
+      var mast=document.querySelector('header.masthead');
+      var mastH=mast?Math.round(mast.getBoundingClientRect().height):0;
+      var bar=document.querySelector('.mobile-contents-bar');
+      var barH=bar?Math.round(bar.getBoundingClientRect().height):0;
+      var root=document.documentElement;
+      root.style.setProperty('--pw-nav-real',navH+'px');
+      root.style.setProperty('--pw-mast-real',mastH+'px');
+      root.style.setProperty('--pw-bar-real',barH+'px');
+      if(mast) mast.style.top=navH+'px';
+      if(bar) bar.style.top=(navH+mastH)+'px';
+      document.querySelectorAll('.reading-section,.chapter,.section-heading,[id]').forEach(function(e){
+        try{ e.style.scrollMarginTop=(navH+mastH+barH+14)+'px'; }catch(_){}
+      });
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',align);
+    else align();
+    addEventListener('load',align); addEventListener('resize',align);
+  })();
+  </script>
+  <style>
+    body{padding-top:var(--pw-nav-real,66px)!important}
   </style>
   <script>
   (function () {
