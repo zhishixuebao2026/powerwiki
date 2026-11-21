@@ -3041,7 +3041,7 @@ def build_xuqing_default_from_qingchuan() -> None:
        注入导航后取消这段重复 padding，高度回到不含安全区的 --header-height，
        使原生顶栏紧贴导航下方。top 用实测变量做首帧兜底，加载后由 align() 内联覆盖。 */
     .masthead{top:var(--pw-nav-real,calc(var(--pw-nav-h) + env(safe-area-inset-top,0px)));
-      padding-top:0!important;height:var(--header-height,64px)!important;box-sizing:border-box!important}
+      padding-top:0!important;height:auto!important;min-height:var(--header-height,64px)!important;box-sizing:border-box!important}
     .mobile-contents-bar{top:calc(var(--pw-nav-real,var(--pw-nav-h)) + var(--pw-mast-real,var(--header-height,64px)))}
     .pw-skin-nav{position:fixed;inset:0 0 auto 0;z-index:9999;display:flex;align-items:center;gap:10px;
       height:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px));
@@ -3394,7 +3394,7 @@ def build_shangdi_default_from_jinian() -> None:
     /* 本导航占据顶部安全区；皮肤 masthead 从 y=0 起画，用 top 下移到
        导航之下，高度回到不含安全区的 --header-h，避免与导航之间留大块空白。 */
     .masthead{top:var(--pw-nav-real,calc(var(--pw-nav-h) + env(safe-area-inset-top,0px)));
-      padding-top:0!important;height:var(--header-h,4.5rem)!important;box-sizing:border-box!important}
+      padding-top:0!important;height:auto!important;min-height:var(--header-h,4.5rem)!important;box-sizing:border-box!important}
     .pw-skin-nav{position:fixed;inset:0 0 auto 0;z-index:9999;display:flex;align-items:center;gap:10px;
       height:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px));
       padding:0 clamp(10px,3vw,28px);padding-top:env(safe-area-inset-top,0px);box-sizing:border-box;
