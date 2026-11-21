@@ -20,6 +20,7 @@
   "use strict";
 
   var KEY = "pw-progress:v1";
+  var HAS_APP = !!document.querySelector('script[src*="app.js"]');
   var MIN_RESTORE = 240;   // 小于这个距离不值得"接续"，当新页面看
   var MIN_SAVE = 300;      // 页面本身不够高就不记
 
@@ -144,6 +145,11 @@
   function restore() {
     var k = contentKey();
     if (!k) return;
+    // 主站页面（index / 角色页 / 规则页…）自带 app.js 的「静默浏览缓存」，它按
+    // data-page-id 记住本页 scrollY 并在回来时精确复位，比这里更准。两边都动手
+    // 会互相盖（一个用像素、一个用比例，差几百像素会抖）。这类页面本脚本只负责
+    // "存"，不负责"恢复"；皮肤整页与升格默认页没有 app.js，由本脚本接管。
+    if (HAS_APP) return;
     if (location.hash) return;              // 带锚点的链接，锚点优先
     if (!fromSite()) return;                // 直接打开的新标签页不猜
     var rec = readAll()[k];
@@ -179,7 +185,11 @@
       var target = Math.min(y, m);
       if (target <= 0) return;
       if (Math.abs(getY(el) - target) < 4) return;
-      if (el === docScroller()) window.scrollTo(0, target);
+      // 必须显式 behavior:"instant"：不少皮肤在 html 上开了 scroll-behavior:smooth，
+      // 用 window.scrollTo(0,y) 会变成一段动画，补位重试再把动画重新拉一遍，
+      // 用户会看到"慢慢滑过去"。这里要的是落位。
+      if (el === docScroller()) window.scrollTo({ top: target, behavior: "instant" });
+      else if (el.scrollTo) el.scrollTo({ top: target, behavior: "instant" });
       else el.scrollTop = target;
     }
 
