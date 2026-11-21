@@ -4,6 +4,31 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-23（全站顶栏压状态栏全面排查）· 补齐 21 套避让 / SW pw-v82
+
+用户反馈「很多皮肤都在手机上和顶部重叠」。此前只修了 16 套沉浸式避让 + 创世纪年，
+本次用 Playwright 把全部 74 套产物页在 390px 视口下逐一加载，将 `env(safe-area-inset-top)`
+文本替换为 47px 模拟 iOS 刘海，量取每套顶栏内文字/按钮的最小 top。结果 **21 套**顶栏内容
+（minTop 7–41px）落在状态栏区（<47px）内，确认重叠；另有创世纪年已修、5 套边界值 48–54px
+属正常。
+
+根因统一：这 21 套源页面的安全区补丁全写成 `.topbar{padding-top:env(safe-area-inset-top)}`，
+但真实顶栏类名是 `header.masthead` / `header.site-header` / `header.nw-topbar` /
+`header.exh-topbar` / `header.toolbar` / `header.fixed` 等，`.topbar` 命中不到 → 补丁落空，
+顶栏从 y=0 起画、内容被状态栏压住。少数命中 `.topbar` 的（六曜联珠、灵椿、星衡等）只改
+padding 不改 height，border-box 下同样把内容挤出。
+
+修复：在 `clearbar.css` 按 `data-pw-edition` 精确作用域，为每套补
+`padding-top: env()` + `height: calc(H0 + env())` + `box-sizing:border-box`，H0 为 390px 视口
+env=0 实测顶栏高度，保证内容区恒为原高、背景仍从 y=0 铺满。选择器用「最短唯一」策略
+经浏览器 `querySelector` 命中校验（部分皮肤有 8–16 个 header，不能裸写 `header`）。
+星衡（xingshen-heng）品牌按钮在 flex 内容区上偏 6px，单独把 padding/height 同步 +7px。
+`divinity-radiance` 原 16 套规则已覆盖，未重复新增。
+
+验证：模拟 47px 刘海下 21 套顶栏内容 minTop 全部提升到 48–64px（安全线 47px 之下），
+红纹遮罩截图复核通过；74 套无一残留重叠。仅改 `static/css/clearbar.css` 与 SW 版本，
+定级正文 / 98 档数值 / `tiers.json` / `grading_baseline.json` 一律未动。
+
 ## 2026-11-22（创世纪年顶栏压状态栏）· 补 masthead 安全区避让 / SW pw-v81
 
 用户真机（iPhone）反馈创世纪年（上帝）皮肤顶部「衡天定级 / A- A+ / 主题按钮」

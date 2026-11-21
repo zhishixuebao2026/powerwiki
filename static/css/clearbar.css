@@ -385,3 +385,172 @@ html[data-pw-edition] .font-tools button { flex: none !important; }
     html[data-pw-edition] .masthead-inner { column-gap: 4px !important; }
     html[data-pw-edition] .wordmark { gap: 6px !important; font-size: .9rem !important; }
 }
+
+/* ==========================================================================
+   pw-v82 全站顶栏安全区避让补齐 —— 源页面补丁写成 .topbar{padding-top:env()}
+   但 21 套真实顶栏是 header.masthead/.site-header/.nw-topbar 等，补丁落空 →
+   状态栏压住顶栏文字。按 data-pw-edition 精确作用域，用实测最短唯一选择器，
+   padding-top 与 height 同步 +env()，box-sizing:border-box 保证内容区恒为 H0。
+   H0=390px 视口 env=0 实测顶栏高度；pad0=顶栏原始 padding-top。
+   ========================================================================== */
+
+/* suzhou-zhuzhou — H0=58 pad0=0px sel=header.masthead hit=True nHeader=11 */
+html[data-pw-edition="suzhou-zhuzhou"] header.masthead {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(58px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* juxingzhihui-huntian — H0=61 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="juxingzhihui-huntian"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(61px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* zhangyan-xuanshu — H0=62 pad0=0px sel=header.masthead hit=True nHeader=8 */
+html[data-pw-edition="zhangyan-xuanshu"] header.masthead {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(62px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* guchensha-yunzhan — H0=61 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="guchensha-yunzhan"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(61px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* nvwa-xuanqiong — H0=58 pad0=0px sel=header.sticky hit=True nHeader=16 */
+html[data-pw-edition="nvwa-xuanqiong"] header.sticky {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(58px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* nvwa-boshan — H0=56 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="nvwa-boshan"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* starkiller-xingyun — H0=61 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="starkiller-xingyun"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(61px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* xuezhishaonv-xingyi — H0=50 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="xuezhishaonv-xingyi"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(50px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* sunwukong-lingtai — H0=59 pad0=0px sel=header.site-header hit=True nHeader=15 */
+html[data-pw-edition="sunwukong-lingtai"] header.site-header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(59px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* nvwa-heijin — H0=57 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="nvwa-heijin"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(57px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* xingshen-zhixing — H0=56 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="xingshen-zhixing"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* shiva-yeke — H0=61 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="shiva-yeke"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(61px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* mozhe-xingluo — H0=97 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="mozhe-xingluo"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(97px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* xuezhishaonv-yueshi — H0=64 pad0=0px sel=header.site-header hit=True nHeader=12 */
+html[data-pw-edition="xuezhishaonv-yueshi"] header.site-header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(64px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* zhangyan-zifu — H0=62 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="zhangyan-zifu"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(62px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* xuezhishaonv-sujian — H0=67 pad0=0px sel=header.fixed hit=True nHeader=12 */
+html[data-pw-edition="xuezhishaonv-sujian"] header.fixed {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(67px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* wuxianbaoshi-xingyao — H0=58 pad0=0px sel=header hit=True nHeader=1 */
+html[data-pw-edition="wuxianbaoshi-xingyao"] header {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(58px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* juxingzhihui-lingchun — H0=54 pad0=0px sel=header.topbar hit=True nHeader=13 */
+html[data-pw-edition="juxingzhihui-lingchun"] header.topbar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(54px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* mozhe-mijing — H0=65 pad0=10px sel=header hit=True nHeader=1 */
+html[data-pw-edition="mozhe-mijing"] header {
+    padding-top: calc(10px + env(safe-area-inset-top, 0px)) !important;
+    height: calc(65px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
+
+
+/* xingshen-heng — H0=49 pad0=0px sel=header hit=True nHeader=1
+   pw-v82b: 品牌按钮在 flex 内容区里相对 padding 上偏 6px（top=41），
+   padding-top/height 同步 +7px 把内容整体下移，内容区高度不变。 */
+html[data-pw-edition="xingshen-heng"] header {
+    padding-top: calc(7px + env(safe-area-inset-top, 0px)) !important;
+    height: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    box-sizing: border-box !important;
+}
