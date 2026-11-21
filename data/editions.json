@@ -348,19 +348,6 @@
       }
     },
     {
-      "id": "futan-biyuan",
-      "name": "潮信",
-      "tag": "",
-      "note": "青绿回响压在暖米底上，卷心是近黑的深渊。",
-      "source": "skins/_source/futan-biyuan.html",
-      "section": "character-futan",
-      "inject": "minimal",
-      "thumb": "static/img/editions/futan-biyuan.jpg",
-      "pages": {
-        "character-futan": "skins/futan-biyuan/character-futan.html"
-      }
-    },
-    {
       "id": "yog-bronze-key",
       "name": "门之枢",
       "tag": "",

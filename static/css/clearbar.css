@@ -67,15 +67,15 @@ html[data-pw-edition="futan-abyss"] header.fixed.inset-x-0 {
     backdrop-filter: none !important;
 }
 
-html[data-pw-edition="futan-biyuan"] header.fixed.inset-x-0 {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-}
-
+/* 孤舟微炬有明暗双主题：dark 顶栏 #151d1a，light 顶栏跟随米纸底 #eeeae0。
+   旧写法把顶栏写死成深色，切到亮色后出现「黑顶栏 + 米纸正文」。 */
 html[data-pw-edition="futan-lamp"] header.site-header {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background-color: rgb(21, 29, 26) !important;
+}
+html[data-theme="light"][data-pw-edition="futan-lamp"] header.site-header {
+    background-color: rgb(238, 234, 224) !important;
 }
 
 html[data-pw-edition="jiangwuye-starvortex"] header.bar {
@@ -120,10 +120,14 @@ html[data-pw-edition="ruphas-crimson"] header.site-header {
     background-color: var(--bg) !important;
 }
 
+/* 霜阈明暗双主题：dark 顶栏近黑，light 顶栏跟随浅灰底。 */
 html[data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background-color: rgb(6, 7, 14) !important;
+}
+html[data-theme="light"][data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 {
+    background-color: rgb(233, 235, 239) !important;
 }
 
 /* 内层顶栏内容行另带 blur(14px)。它底下就是上面的实色 header，模糊一层纯色
@@ -134,10 +138,14 @@ html[data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 div.flex.h-14 {
     backdrop-filter: none !important;
 }
 
+/* 鎏夜七章明暗双主题：dark 顶栏深紫，light 顶栏跟随米色底。 */
 html[data-pw-edition="ruphas-gilded"] header.fixed.top-0 {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background-color: rgb(22, 19, 37) !important;
+}
+html[data-theme="light"][data-pw-edition="ruphas-gilded"] header.fixed.top-0 {
+    background-color: rgb(242, 236, 223) !important;
 }
 
 html[data-pw-edition="tianren-register"] header.site-header {
@@ -171,10 +179,14 @@ html[data-theme="light"][data-pw-edition="xuanji"] div.topbar {
     background-color: var(--bg1) !important;
 }
 
+/* 铜晕明暗双主题：light 顶栏浅灰，dark 顶栏跟随深夜底 #070a0f。 */
 html[data-pw-edition="yog-bronze-glow"] header.fixed.inset-x-0 {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background-color: rgb(236, 237, 231) !important;
+}
+html[data-theme="dark"][data-pw-edition="yog-bronze-glow"] header.fixed.inset-x-0 {
+    background-color: rgb(7, 10, 15) !important;
 }
 
 html[data-pw-edition="yog-bronze-key"] header.site-header {
@@ -183,10 +195,14 @@ html[data-pw-edition="yog-bronze-key"] header.site-header {
     background-color: var(--bg) !important;
 }
 
+/* 涡相录明暗双主题：light 顶栏米色，dark 顶栏跟随深夜底 #070a0f。 */
 html[data-pw-edition="yog-teal-vortex"] header.fixed.inset-x-0 {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background-color: rgb(238, 235, 227) !important;
+}
+html[data-theme="dark"][data-pw-edition="yog-teal-vortex"] header.fixed.inset-x-0 {
+    background-color: rgb(7, 10, 15) !important;
 }
 
 html[data-pw-edition="zhigaowangzuo-junzhen"] header.topbar {
@@ -195,16 +211,24 @@ html[data-pw-edition="zhigaowangzuo-junzhen"] header.topbar {
     background-color: var(--bg) !important;
 }
 
+/* 日轮明暗双主题：dark 顶栏 #141615，light 顶栏跟随米纸底 #f5f1e8。 */
 html[data-pw-edition="zhigaowangzuo-rilun"] header.site-header {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background-color: rgb(20, 22, 21) !important;
 }
+html[data-theme="light"][data-pw-edition="zhigaowangzuo-rilun"] header.site-header {
+    background-color: rgb(245, 241, 232) !important;
+}
 
+/* 浑天环明暗双主题：dark 顶栏近黑，light 顶栏跟随米纸底 #f2ebdd。 */
 html[data-pw-edition="zhigaowangzuo-yihuan"] header.sticky.top-0 {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background-color: rgb(12, 10, 13) !important;
+}
+html[data-theme="light"][data-pw-edition="zhigaowangzuo-yihuan"] header.sticky.top-0 {
+    background-color: rgb(242, 235, 221) !important;
 }
 
 html[data-pw-edition="zhigaowangzuo-zhanchang"] header.topbar {
@@ -243,12 +267,6 @@ html[data-pw-edition="divinity-starember"] div.topbar {
 html[data-pw-edition="divinity-xuanjin"] div.topbar {
     padding-top: env(safe-area-inset-top, 0px) !important;
     height: calc(60px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-}
-
-html[data-pw-edition="futan-biyuan"] header.fixed.inset-x-0 {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    height: calc(57px + env(safe-area-inset-top, 0px)) !important;
     box-sizing: border-box !important;
 }
 

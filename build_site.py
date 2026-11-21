@@ -47,7 +47,6 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "divinity-starember": "default",
     "divinity-xuanjin": "default",
     "futan-abyss": "default",
-    "futan-biyuan": "default",
     "futan-lamp": "black",
     "guchensha-molong": "default",
     "jiangwuye-eclipsring": "black",
