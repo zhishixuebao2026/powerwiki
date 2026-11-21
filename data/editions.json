@@ -751,19 +751,6 @@
       }
     },
     {
-      "id": "shangdi-jinian",
-      "name": "创世纪年",
-      "tag": "",
-      "note": "米纸雕版星轨日轮、云海山川，典藏装帧亮色版。",
-      "source": "skins/_source/shangdi-jinian.html",
-      "section": "character-shangdi",
-      "inject": "minimal",
-      "thumb": "static/img/editions/shangdi-jinian.jpg",
-      "pages": {
-        "character-shangdi": "skins/shangdi-jinian/character-shangdi.html"
-      }
-    },
-    {
       "id": "shiva-hengsha",
       "name": "三目",
       "tag": "",

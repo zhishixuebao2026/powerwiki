@@ -4,6 +4,24 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-23（上帝默认页）·「创世纪年」升格角色默认页 / SW pw-v83
+
+用户要求把上帝唯一的一套皮肤「创世纪年」设为角色默认页，仿御兔「月牍」、许青
+「青川卷帙」的做法。改动：
+
+- `build_site.py` 新增 `build_shangdi_default_from_jinian()`：以 `skins/_source/shangdi-jinian.html`
+  为底，注入主站导航（含「← 角色档案」返回入口）+ 明暗桥接，写回 `character/shangdi.html`；
+  不挂切换器。`promoted_defaults` 加入 `shangdi-jinian` 防回填。
+- **主题桥接按创世纪年实际机制适配**（不能照抄许青模板）：存储键是 `hengtian-edition`
+  （值 dark/light），DOM 标记是 `html[data-edition]`（不是 data-theme），原生按钮 aria-label
+  是「亮色版」「暗色版」，CSS 变量是 `--background-header/--ink/--rule/--accent/--hover/--header-h`。
+  首帧把主站 `pw_theme_v2` 同步进创世纪年；页内切换经 MutationObserver 写回主站 + 同步
+  状态栏配色；其他页切主题经 storage 事件转发给原生按钮（React 受控）。
+- 导航浮层与 masthead 两层用实测高度对齐（align），消除手机端顶部空白/重叠。
+- `data/editions.json` 移除 `shangdi-jinian` 条目：可切换皮肤 74 → 73 套。
+
+定级正文、98 档数值、tiers.json、grading_baseline.json 全未动。
+
 ## 2026-11-23（全站顶栏压状态栏全面排查）· 补齐 21 套避让 / SW pw-v82
 
 用户反馈「很多皮肤都在手机上和顶部重叠」。此前只修了 16 套沉浸式避让 + 创世纪年，
