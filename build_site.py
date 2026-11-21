@@ -244,6 +244,44 @@ SKIN_FONT_SHEETS = [
     "static/fonts/space-grotesk/index.css",
 ]
 
+# 皮肤页补齐字体：
+# 1) 所有皮肤页都需要的站点变量字体表（editions.css 的字体栈第一位用它，
+#    过去只有 font_rewrite 皮肤注入，其余皮肤每页约 34 个元素悄悄回退）。
+_SITE_FONT_SHEET = "static/fonts/noto-sans-sc/index.css"
+# 2) 页面已声明字体族但从未声明 @font-face 的皮肤，按需注入本地补齐表。
+SKIN_FIX_FONT_IDS = {
+    "zhigaowangzuo-junzhen",   # Inter
+    "zhigaowangzuo-yihuan",    # JetBrains Mono
+    "xiayouzhe-sujuan",        # Cormorant Garamond / LXGW WenKai
+}
+SKIN_EXTRA_STYLE_SHEETS = {
+    # 衡天三层字体：本次补齐了 fonts.css 声明的 5 个 woff2 并补 ← ⇒ 等符号字形，
+    # 但源页没有 <link> 这张表，构建期补上（不改动原定级正文与规则内容）。
+    "zhuban": ["skins/zhuban/fonts/fonts.css"],
+}
+
+
+def strip_dead_font_urls(doc: str, page_dir: str) -> str:
+    """删掉 src 里指向不存在字体文件的备用 url（如内联 base64 后的死链）。
+
+    这些 url 排在真实字体之后，浏览器永远不会请求，视觉零影响，
+    但会在 HTML 里留下无效路径，排查 404 时造成干扰。
+    """
+    def repl(m: re.Match) -> str:
+        u = next((g for g in m.groups() if g), "").split("?", 1)[0].split("#", 1)[0]
+        if not u or u.startswith("data:") or u.startswith("http"):
+            return m.group(0)
+        p = ROOT / u.lstrip("/") if u.startswith("/") else ROOT / page_dir / u
+        return "" if not p.exists() else m.group(0)
+    # url('x.woff2') / url("x.woff2") / url(x.woff2) 三种写法都要覆盖
+    return re.sub(
+        r",\s*url\(\s*(?:'([^'\n]+?\.woff2)'|\"([^\"\n]+?\.woff2)\"|([^)'\"\n]+?\.woff2))\s*\)"
+        r"(?:\s*format\(\s*['\"][^)'\"]+['\"]\s*\))?",
+        repl,
+        doc,
+        flags=re.I,
+    )
+
 
 def patch_skin_fonts(doc: str) -> str:
     """Rewrite a skin's font families to the site's self-hosted fonts."""
@@ -459,11 +497,15 @@ def build_skin_editions() -> int:
         patch_tag = (
             f'<script src="{_rel_from(page_dir, patch)}" defer></script>\n' if patch else ""
         )
-        font_tags = ""
-        if ed.get("font_rewrite"):
-            font_tags = "".join(
-                f'<link rel="stylesheet" href="{_rel_from(page_dir, sheet)}">\n' for sheet in SKIN_FONT_SHEETS
-            )
+        extra_sheets = list(SKIN_EXTRA_STYLE_SHEETS.get(ed["id"], []))
+        if ed["id"] in SKIN_FIX_FONT_IDS:
+            extra_sheets.append("static/css/skin-font-fix.css")
+        # font_rewrite 皮肤原本就注入三张站内字体表；其余皮肤至少补变量字体表。
+        sheets = SKIN_FONT_SHEETS if ed.get("font_rewrite") else [_SITE_FONT_SHEET]
+        font_tags = "".join(
+            f'<link rel="stylesheet" href="{_rel_from(page_dir, sheet)}">\n'
+            for sheet in sheets + extra_sheets
+        )
         thumb_img = ed.get("thumb")
         # 静默离线：皮肤页也是站内页面，manifest / 图标 / 安全区样式一样要带上
         app_tags = (
@@ -547,6 +589,8 @@ def build_skin_editions() -> int:
             )
         if ed.get("font_rewrite"):
             doc = patch_skin_fonts(doc)
+        # 清掉内联字体之后的无效备用 url（51 条，零视觉影响，纯噪音）
+        doc = strip_dead_font_urls(doc, page_dir)
         # 标记这是皮肤页面，editions.css 用它做合成层校正（不改外观）
         doc = doc.replace("<html", '<html data-pw-edition="' + esc(ed["id"]) + '"', 1)
         # 顶栏清晰化：关掉皮肤自带的 backdrop-filter 毛玻璃，用皮肤自身色把底色变实。

@@ -2,7 +2,29 @@
 
 按天记录做了什么、为什么做。条目对应分支 `arena/7ea6b694-powerwiki` 上的提交，
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
-皮肤的设计取舍写在 `README.md`，用户的硬性要求与验收方式写在 `docs/需求与约定.md`。
+皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
+
+## 2026-11-22（缺字体补齐）· 声明缺失 / 文件缺失 / 死链清理 / SW pw-v78
+
+上一轮只清了「请求了但文件不存在」的 404，本轮把 404 扫描永远扫不到的另一类问题补齐：
+页面确实在用某个字体族，但从未声明 `@font-face`，或声明了却没有加载表 / 文件。
+
+- **衡天规则页三层字体全缺**：`skins/zhuban/fonts/fonts.css` 声明 HengMath / HengSerif /
+  HengBrush，但 `rules.html` 没有 `<link>` 这张表，且 `fonts/` 里 5 个 woff2 一个都没有。
+  4531 个元素实际回退宋体。按页面字符子集化 Noto Serif SC（400/700/900，各 231KB）、
+  STIX Two Math 数学层（34KB）、马善政毛笔「衡天」二字（2KB）落地；`archive-math`
+  未收的 34 个数学符号用 DejaVu Sans 精确补字形（7KB），避免 ← ⇒ ∞ 等出豆腐块。
+  构建期按 id 注入 `fonts.css`，不改动定级正文与规则内容。
+- **另外三套皮肤缺声明**：junzhen 缺 Inter（504 元素）、yihuan 缺 JetBrains Mono（240）、
+  sujian 缺 Cormorant Garamond（87）与 LXGW WenKai（105）。全部本地化到 `static/fonts/`，
+  统一由新表 `static/css/skin-font-fix.css` 声明；文楷用繁体子集打底 + 11 个简体缺字子集覆盖。
+- **全站变量字体表**：`editions.css` 字体栈第一位是 `Noto Sans SC Variable`，但声明它的
+  `noto-sans-sc/index.css` 过去只注入 `font_rewrite` 皮肤，其余 70 页每页 34 个元素静默回退。
+  现在所有皮肤页都注入该表。
+- **清理 51 条无效备用字体 URL**：内联 base64 之后的 `url(...woff2)` 死链全部移除
+  （清理时同步删掉尾随的 `format()`，否则会让整条 `src` 失效反而真的丢字体）。
+- 74 页浏览器实测：字体 404 = 0、加载状态 error = 0、真正缺失的字体族 = 0、
+  JS 错误 = 0；仅剩系统兜底字体（PingFang / Songti 等，属设计预期）。
 
 ## 2026-11-22（全面自检续修）· 顶栏颜色 / 字体 404 / 白光溢出 / 弗坦去重
 
