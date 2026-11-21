@@ -4,6 +4,30 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-26（孙悟空默认页）·「大圣凌霄」升为孙悟空默认角色页 / 皮肤 73→72 / SW pw-v88→v89
+
+用户看完默认皮肤该不该换成更好看的讨论后，直接指定
+`/skins/sunwukong-lingxiao/character-sunwukong.html`（「大圣凌霄」）作为孙悟空的默认页。
+
+做法沿用「青川卷帙」「创世纪年」的升格模式，差别是**孙悟空还剩「灵台夜狩」可切**：
+
+- `editions.json` 移除 `sunwukong-lingxiao`，`promoted_defaults` 加一项（防回填），
+  `skins/sunwukong-lingxiao/` 产物目录删除（6.8 MB），源保留在 `skins/_source/`；
+- 新增 `build_sunwukong_default_from_lingxiao()`：源整页 + 主站导航（含「← 角色档案」）
+  + 明暗桥接（`wk-theme` ↔ `pw_theme_v2`，两侧同为 light/dark）+ **edition dock**。
+  挂 dock 是硬要求：该角色还有另一套皮肤，默认页若不挂切换器就是单向门（SOP #7/#13）。
+- 源的 `.topbar` 是 `fixed top:0`、高 62，注入 44 px 导航后会叠成两层。首轮 `align()`
+  扑空（React 整页在解析后才挂 `.topbar`），改为「首轮 + 150 ms 定时重试 + body 子树
+  MutationObserver」，看到顶栏就下移并停手；实测桌面 topbar top=44、移动 top=66，零重叠。
+- `edition_launcher_html` 新增 `current_label` 与 `DEFAULT_ALIAS`：该栏目里的「默认」
+  卡片改显示「大圣凌霄」，不再出现"默认／建筑感栅格"点进去却是大圣凌霄的名不副实。
+
+验证（1280×900 与 390×844，Chromium）：两档 nav 与 topbar 不重叠、无横向溢出、
+0 个 JS 错误、0 个 4xx；点「暗」→ `data-theme=dark` 且 `pw_theme_v2=dark`、顶栏位置不变；
+dock 两张卡为「大圣凌霄（当前）／灵台夜狩」，灵台夜狩页的 dock 反向指回默认页并同样
+显示两个真名；`← 角色档案` 指向 `characters.html`（200）。`audit_site.py` 全过：
+72 套产物、切换器 272 卡 0 缺失、29 角色基线 0 异常。
+
 ## 2026-11-25（字体全站体检）· 子集字体缺字补齐 / 宋体表注入 / SW pw-v87→v88
 
 用户要求「全站检查一下，没的字体直接下」。按三层查：文件是否存在、字体族是否

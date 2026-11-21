@@ -737,19 +737,6 @@
       }
     },
     {
-      "id": "sunwukong-lingxiao",
-      "name": "大圣凌霄",
-      "tag": "",
-      "note": "齐天大圣山巅红日、金箍棒与仙鹤，宣纸水墨亮色版。",
-      "source": "skins/_source/sunwukong-lingxiao.html",
-      "section": "character-sunwukong",
-      "inject": "minimal",
-      "thumb": "static/img/editions/sunwukong-lingxiao.jpg",
-      "pages": {
-        "character-sunwukong": "skins/sunwukong-lingxiao/character-sunwukong.html"
-      }
-    },
-    {
       "id": "shiva-hengsha",
       "name": "三目",
       "tag": "",
