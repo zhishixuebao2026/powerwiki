@@ -525,6 +525,8 @@ def main():
             stale_issues.append(f"{_rel} 含旧标准页特征 fade-on-load（会闪屏）")
         if not any(m in _html for m in _markers):
             stale_issues.append(f"{_rel} 缺升格皮肤标记 {_markers}")
+        if re.search(r'data-edition-id="default"[^>]*>.*?pw-edition-name">默认<', _html, re.S):
+            stale_issues.append(f"{_rel} 切换器里仍有旧「默认 / 建筑感栅格」卡未清除")
     print(f"  检查 {len(_guards)} 页；异常 {len(stale_issues)} 项")
     all_issues += stale_issues
 

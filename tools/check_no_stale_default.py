@@ -54,6 +54,9 @@ def check() -> int:
             fails.append(f"{rel}: 含旧标准页特征 '{STALE_MARK}'（会闪屏）")
         if not any(m in html for m in markers):
             fails.append(f"{rel}: 缺升格皮肤标记 {markers}")
+        # 旧默认卡守卫：切换器里不得再有显示名「默认」的旧卡（2026-11-29）。
+        if re.search(r'data-edition-id="default"[^>]*>.*?pw-edition-name">默认<', html, re.S):
+            fails.append(f"{rel}: 切换器里仍有旧「默认 / 建筑感栅格」卡未清除")
     if fails:
         print("[RED] 检测到旧默认/闪屏标准页：")
         for f in fails: print("  -", f)

@@ -145,6 +145,18 @@ DEFAULT_ALIAS = {
         "金线浑天仪环，猩红核心，观测台刻度。",
         "static/img/editions/zhigaowangzuo-yihuan.jpg",
     ),
+    # 材质/规则升格页：升格皮肤已从登记表移除、切换器里没有它自己的卡，
+    # 所以 default 卡不能删（删了就没「当前」标识），而是改名成升格皮肤真名。
+    "materials": (
+        "碎极",
+        "材质碎极整页，粒子碎裂质感（默认材质页）。",
+        "static/img/editions/material-shatter.jpg",
+    ),
+    "rules": (
+        "候星",
+        "候星观测台整页，刻度星图（默认规则页）。",
+        "static/img/editions/observatory.jpg",
+    ),
 }
 
 # 升格为整页默认的角色：character/<slug>.html 由 build_*_default_from_* 直接从
@@ -345,6 +357,58 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
         f'<span class="pw-edition-foot-note">{esc(foot_note)}</span></div>'
         "</div></div>"
     )
+
+
+def strip_default_card_from_dock(doc: str) -> str:
+    """升格默认页后处理：删掉切换器里冗余的「默认」卡（data-edition-id="default"）。
+
+    为什么第二批/第三批会有这张卡：这两批的升格皮肤**仍留在 editions.json**，切换器里
+    已经有它自己的 is-current 卡（如 pangu-hunyuan）。而基底产物页是站在"皮肤页"视角
+    生成的，切换器里额外带了一张指向默认页自己的「默认 / 建筑感栅格」卡——升格成默认
+    页后，这张卡点了还是回到当前页，纯属旧默认残留（用户 2026-11-29："默认你压根没删"）。
+    第一批（御兔/大圣凌霄/浑天环）因升格皮肤已从登记移除、切换器里没有自己的卡，用
+    DEFAULT_ALIAS 把这张卡改名顶上；这批有独立卡，所以直接删除，避免两张同内容卡。
+
+    处理：删卡 + 把「同一内容 · N 种版式」计数减 1；若删后只剩 1 张卡（该角色仅此一套
+    皮肤、无其它可切），把 toggle 与 panel 一并移除，只留 home-btn（返回角色档案入口），
+    避免出现"点开只有一张卡"的空切换器。editions.js 对 btn/panel 缺失有容错（boot 早退）。
+    """
+    # 1) 删掉 default 卡整段（class 可能带 is-current，用 [^"]* 兜住）
+    doc, n = re.subn(
+        r'<a class="pw-edition-card[^"]*"\s+data-edition-id="default"[^>]*>.*?</a>',
+        "", doc, count=1, flags=re.S,
+    )
+    if not n:
+        return doc  # 幂等：已删过 / 本就没有
+
+    # 2) 版式计数减 1
+    def _dec(m):
+        return f'同一内容 · {max(1, int(m.group(1)) - 1)} 种版式'
+    doc = re.sub(r'同一内容 · (\d+) 种版式', _dec, doc, count=1)
+
+    # 3) 若只剩 1 张卡，移除切换开关与面板（保留 home-btn 返回入口）
+    remain = len(re.findall(r'<a class="pw-edition-card', doc))
+    if remain <= 1:
+        doc = re.sub(
+            r'<button type="button" class="pw-edition-toggle".*?</button>',
+            "", doc, count=1, flags=re.S,
+        )
+        # panel 是 dock 内最后一个子块：从 <div class="pw-edition-panel" 到其闭合。
+        # 用集中于 id 的锚点做平衡扫描，避免非贪婪正则误截。
+        start = doc.find('<div class="pw-edition-panel"')
+        if start != -1:
+            depth = 0
+            i = start
+            while i < len(doc):
+                if doc.startswith('<div', i):
+                    depth += 1
+                elif doc.startswith('</div>', i):
+                    depth -= 1
+                    if depth == 0:
+                        doc = doc[:start] + doc[i + 6:]
+                        break
+                i += 1
+    return doc
 
 
 SKIN_FONT_STACKS = {
@@ -3580,8 +3644,12 @@ def build_product_defaults() -> None:
             h2, sep2, t2 = doc.rpartition("</body>")
             doc = h2 + "\n" + bm_tag + sep2 + t2 if sep2 else doc + bm_tag
 
+        # 删掉基底切换器里冗余的「默认 / 建筑感栅格」卡：升格皮肤已有自己的
+        # is-current 卡，这张卡点了还是回当前页，是旧默认残留（用户 2026-11-29）。
+        doc = strip_default_card_from_dock(doc)
+
         (CHAR_OUT_DIR / f"{slug}.html").write_text(doc, encoding="utf-8")
-        print(f"[{slug}] default page = 「{ed_id}」整页 (产物基底 + base 资源重定向, 无频闪)")
+        print(f"[{slug}] default page = 「{ed_id}」整页 (产物基底 + base 资源重定向, 去旧默认卡, 无频闪)")
 
 
 def build_shangdi_default_from_jinian() -> None:
@@ -4092,6 +4160,13 @@ def main() -> None:
         if "fade-on-load" in html:
             raise RuntimeError(
                 f"[FATAL] {rel} 仍是会闪屏的旧标准页（含 fade-on-load），升格覆盖失败"
+            )
+        # 旧默认卡守卫（2026-11-29「默认你压根没删」）：升格页切换器里绝不能再出现
+        # 显示名为「默认」+ default.jpg 建筑栅格的那张卡。角色页应已删除 default 卡；
+        # 材质/规则若无其它皮肤可切则整个切换器收起，有则用 DEFAULT_ALIAS 改名。
+        if re.search(r'data-edition-id="default"[^>]*>.*?pw-edition-name">默认<', html, re.S):
+            raise RuntimeError(
+                f"[FATAL] {rel} 切换器里仍有旧「默认 / 建筑感栅格」卡未删未改名（用户明确要求清除）"
             )
 
     print(
