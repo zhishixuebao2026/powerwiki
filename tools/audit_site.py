@@ -484,6 +484,30 @@ def main():
     print(f"  {base_msg}；异常 {len(base_issues)} 项")
     all_issues += base_issues
 
+    print("=== 7b) 升格默认页不得退回旧标准页（闪屏/旧默认回归）===")
+    stale_issues = []
+    _guards = {
+        "character/yutu.html": ["pw-moon-nav"],
+        "character/xuqing.html": ['data-pw-edition="xuqing-qingchuan"'],
+        "character/shangdi.html": ['data-pw-edition="shangdi-jinian"'],
+        "character/sunwukong.html": ['data-pw-edition="sunwukong-lingxiao"'],
+        "character/zhigaowangzuo.html": ['data-pw-edition="zhigaowangzuo-yihuan"'],
+        "materials.html": ['data-pw-edition="material-shatter"'],
+        "rules.html": ['data-pw-edition="observatory"'],
+    }
+    for _rel, _markers in _guards.items():
+        _f = Path(__file__).resolve().parent.parent / _rel
+        if not _f.exists():
+            stale_issues.append(f"{_rel} 缺失")
+            continue
+        _html = _f.read_text(encoding="utf-8")
+        if "fade-on-load" in _html:
+            stale_issues.append(f"{_rel} 含旧标准页特征 fade-on-load（会闪屏）")
+        if not any(m in _html for m in _markers):
+            stale_issues.append(f"{_rel} 缺升格皮肤标记 {_markers}")
+    print(f"  检查 {len(_guards)} 页；异常 {len(stale_issues)} 项")
+    all_issues += stale_issues
+
     if args.render:
         print("=== 8) 状态栏明暗渲染复判 ===")
         result, mism = render_statusbar(args.url.rstrip("/"))

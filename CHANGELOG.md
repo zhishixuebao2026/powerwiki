@@ -4,6 +4,17 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-27（第八批·补）· 升格默认页加 audit 7b 反馈回路 / 装 mattpocock skills-for-real-engineers
+
+用户质疑「替换之后直接删旧默认不就行了」。解释清楚：当前实现本质上就是"删旧默认"——
+`character/*.html` 是构建产物且被 git 跟踪，旧标准页不是残留文件、而是每次构建由
+`build_character_detail_pages()` 生成的；5 个升格角色通过 `PROMOTED_CHARACTER_SLUGS` 在源头跳过标准页、
+由 `build_*_default_from_*` 直接写整页，所以构建链路里根本没有旧默认可"触发"（材质/规则同理不写标准页）。
+为把这条防线锁死（diagnosing-bugs 的 correct seam），新增：
+- `tools/check_no_stale_default.py`：红/绿反馈回路，断言 7 个升格页无 `fade-on-load`、升格标记在；
+- `tools/audit_site.py` 第 7b 项挂同一检查，全站自检每次都守；负向测试注入 `fade-on-load` 回路退出 1（正确报警），恢复后绿。
+- 约定第 30 条补④；安装 `skills-for-real-engineers` 到 `~/.codebuddy/skills/`（37 子技能，用户上传的包）。
+
 ## 2026-11-27（第八批·部署）· 推送上线 de53d64+8e4b1c6 / 查明网关 token 缓存陷阱 / 汇报固定给 WB 链接
 
 前两批（第六、七批）只在本地，推送一直卡在 `Invalid username or token`。本次查明根因并推送上线。
