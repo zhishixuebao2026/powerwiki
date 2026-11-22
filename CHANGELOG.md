@@ -4,6 +4,30 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-27（第八批·部署）· 推送上线 de53d64+8e4b1c6 / 查明网关 token 缓存陷阱 / 汇报固定给 WB 链接
+
+前两批（第六、七批）只在本地，推送一直卡在 `Invalid username or token`。本次查明根因并推送上线。
+
+**推送失败根因：网关 token 被中间层缓存**。凭证助手 `/root/.codebuddy/bin/gh-cred-fresh.sh` 请求的是
+不带参数的 `/_internal/accesstoken`，被缓存后一直返回同一枚**已失效**的 `ghu_rZTX`——`gh api`
+探测是 `Bad credentials`(401)，push 报 `Invalid username or token`。AGENTS.md 原写"`?refresh=1`
+会换新 token"，但实测带不带 `?refresh=1` 返回的仍是同一个缓存值，refresh 没生效（两个端点返回完全相同的 token）。
+**解法**：请求 URL 加随机参数 `?refresh=1&r=<纳秒时间戳>` 并带 `Cache-Control: no-cache` /
+`Pragma: no-cache` 头，绕过中间层缓存，拿到有效的新 token `ghu_Q252Xj`（权限探测 `.permissions.push=true`），
+同一进程内 refresh+push 一步到位，推送成功 `9f62311..8e4b1c6 main -> main`。
+- 修复凭证助手脚本 `gh-cred-fresh.sh`：加 `refresh=1` + 随机参数 + no-cache 头，杜绝复用缓存旧 token。
+- AGENTS.md 推送章节同步改写，记录这个缓存陷阱与可用推送方式（下次别再踩）。
+
+**线上验收**：远程 HEAD = 本地 HEAD = `8e4b1c6`，fetch 后领先远程 0；SW `pw-v96`；
+7 个升格默认页线上逐一核对 `fade-on-load`=0、皮肤标记正确（月牍用 `pw-moon-nav`）。
+GitHub Pages 构建有延迟——抓御兔页时大小从 1.6MB→3MB→5.5MB→6MB 逐步增长，
+构建中途抓到的是半成品（moon=0），完成后与本地字节数完全一致（6,066,273）。
+WorkBuddy 分享链接同样已同步。
+
+**汇报约定强化**：每次交付的回复末尾必须附 WorkBuddy 链接
+`https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX`；严格只给这一条，
+不再并列给 GitHub Pages / raw.githack 地址（用户自己有 GB）。
+
 ## 2026-11-27（第七批）· 回查全部升格默认页，材质/规则同类隐患一并根治 / 7 页统一守卫 / SW pw-v95→v96
 
 接第六批。用户要求「以后和之前皮肤转化默认的情况也回查一下，把这种问题修了」。回查 7 个升格默认页

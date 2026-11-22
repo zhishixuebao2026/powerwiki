@@ -13,10 +13,21 @@
   - WorkBuddy 固定链接：`https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX`，
     子路径拼在域名后并带 `?sharecode=ATAMOUH2UX`。
   早期 Pages 未部署完曾 404，现已正常；验收时两个都测，别再当成"非当前入口"。
-- 推送：`TOKEN=$(curl -s "http://github.agent-gateway.auth-proxy.local/_internal/accesstoken?refresh=1" | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['access_token'])")`
+- **汇报只给 WorkBuddy 一条链接**（用户硬性要求，约定第 2 条）：每次交付的回复末尾附
+  `https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX`（子路径拼域名后带 sharecode）。
+  不要并列给 GitHub Pages / raw.githack 地址——用户自己有 GB，给了是噪音。
+  注意 `present_files` 里也只放这一条 WB 链接，别夹 Pages 链接。
+- 推送（2026-11-27 修正，**token 会被中间层缓存**）：
+  ```
+  curl -s -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' \
+    "http://github.agent-gateway.auth-proxy.local/_internal/accesstoken?refresh=1&r=$(date +%s%N)" \
+    | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['access_token'])"
+  ```
   然后 `git push "https://x-access-token:${TOKEN}@github.com/zhishixuebao2026/powerwiki.git" main`。
-  **网关发的 token 会轮换**：普通 `accesstoken`（不带 `?refresh=1`）常返回已失效的旧值，导致
-  `Invalid username or token`。推送失败先加 `?refresh=1` 换新 token，不要怀疑连接器没连、也不要让用户去重连。
+  **坑**：不带随机参数的端点（哪怕带 `?refresh=1`）会被缓存，一直返回同一枚已失效的 token（现象：
+  `gh api` 探测 `Bad credentials` 401、push 报 `Invalid username or token`，而公开仓库匿名 `ls-remote`
+  仍成功、会误导你以为 token 有效）。**必须加随机参数 `r=<纳秒>` + no-cache 头**才能真正换到有效 token。
+  凭证助手 `/root/.codebuddy/bin/gh-cred-fresh.sh` 已按此修好。别再让用户去重连连接器（GitHub 连接器本就不在会话里）。
 
 ## 皮肤接入 SOP（整页整页接，不是换色）
 
