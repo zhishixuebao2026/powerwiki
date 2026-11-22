@@ -156,7 +156,25 @@ DEFAULT_ALIAS = {
 # 从源头不生成标准页 + build 末尾硬断言，双保险根治。
 PROMOTED_CHARACTER_SLUGS = {
     "yutu", "xuqing", "shangdi", "sunwukong", "zhigaowangzuo",
+    # 2026-11-28 用户指定：以下 5 套皮肤整页升格为对应角色默认页。
+    "pangu", "starkiller", "nvwa", "shiva", "juxingzhihui",
 }
+
+# 第二批升格（5 个）的「皮肤 id → 角色 slug → 产物基底」映射。
+# 与第一批（React 整页全内联）不同：这些皮肤的图片 / 字体 / assets 仍留在
+# skins/<id>/ 产物目录里（尤其 shiva 的 assets/reader.js、art/*.jpg 是外链）。
+# 所以默认页不重新实现整页，而是**以 build_skin_editions 已生成的产物页为
+# 基底**，只注入一个 <base href="../skins/<id>/"> 让所有相对路径（../../static
+# 站内资源、./assets / ./art 皮肤资源、../<其它皮肤> 切换器链接）仍按产物目录
+# 解析——画面、交互、切换器零改动，杜绝「升格把顶栏/图片改坏」。
+PROMOTED_PRODUCT_DEFAULTS = [
+    # (slug, edition id)
+    ("pangu", "pangu-hunyuan"),
+    ("starkiller", "starkiller-chixiao"),
+    ("nvwa", "nvwa-boshan"),
+    ("shiva", "shiva-yeke"),
+    ("juxingzhihui", "juxingzhihui-lingchun"),
+]
 
 
 _CHAR_NAME_CACHE: dict[str, str] = {}
@@ -3483,6 +3501,69 @@ def build_zhigaowangzuo_default_from_yihuan() -> None:
     print("[zhigaowangzuo] default page = 「浑天环」整页 (nav + 返回角色档案 + theme bridge + edition dock)")
 
 
+def build_product_defaults() -> None:
+    """第二批升格（5 个角色）：以 skins 产物页为基底生成整页默认页。
+
+    用户 2026-11-28 指定 pangu / starkiller / nvwa / shiva / juxingzhihui
+    的指定皮肤作为对应角色默认页。与第一批 React 全内联整页不同，这批皮肤的
+    图片 / 字体 / assets 仍放 skins/<id>/ 产物目录（尤其 shiva 依赖外链
+    assets/reader.js、art/*.jpg），所以不重写整页，而是直接复用
+    build_skin_editions() 已生成的产物页，只做两件事：
+      1. 在 <head> 最前注入 <base href="../skins/<id>/">。产物页所有相对路径
+         都是按 skins/<id>/ 目录写的（../../static 站内资源、./assets / ./art
+         皮肤资源、../<其它皮肤>/ 切换器链接），加了 base 后在 character/ 下
+         仍解析到同一批文件，画面 / 交互 / 切换器零改动。
+      2. 产物页本身已带 data-pw-edition="<id>" 标记（build_skin_editions 注入），
+         这里只校验，不重复写。
+
+    标准页（带 .fade-on-load 频闪立绘）从源头不落盘（见 build_character_detail_pages），
+    构建末尾 promoted_guards 硬断言保证这 5 页永远是整页皮肤。
+    """
+    for slug, ed_id in PROMOTED_PRODUCT_DEFAULTS:
+        product = ROOT / f"skins/{ed_id}/character-{slug}.html"
+        if not product.exists():
+            raise RuntimeError(
+                f"[FATAL] {ed_id} 产物页缺失：{slug} 默认页无法升格，构建中止"
+            )
+        doc = product.read_text(encoding="utf-8", errors="replace")
+
+        # 硬前置校验：基底必须是「已注入标记的整页皮肤」，不是任何中间态。
+        marker = f'data-pw-edition="{ed_id}"'
+        if marker not in doc:
+            raise RuntimeError(
+                f"[FATAL] {product.relative_to(ROOT)} 缺 {marker}，不能作为升格基底"
+            )
+        if "fade-on-load" in doc:
+            raise RuntimeError(
+                f"[FATAL] {product.relative_to(ROOT)} 含 fade-on-load，拒绝用旧标准页升格"
+            )
+
+        # 已经注入过 base 就跳过（构建幂等：重复跑不叠加）。
+        if not re.search(r"<base\b", doc, re.I):
+            # base 必须落在任何相对 URL 之前——<head> 开标签后第一行最稳。
+            hm = re.search(r"<head[^>]*>", doc, re.I)
+            base_tag = f'  <base href="../skins/{ed_id}/">\n'
+            if hm:
+                doc = doc[: hm.end()] + "\n" + base_tag + doc[hm.end():]
+            else:
+                raise RuntimeError(f"[FATAL] {slug} 产物页无 <head>，无法注入 base")
+
+        # inject_browse_memory() 在构建最末尾按 character/ 目录写 ../static/...，
+        # 会被本页 base 重定向到 skins/static/...（404）。这里按「产物目录基准」
+        # 提前挂上 ../../static/js/browse-memory.js（与基底其它站内资源同基准，
+        # 经 base 解析正好落到根 /static/...），末尾步骤见 browse-memory.js 已存在
+        # 即跳过，避免重复。构建幂等：重跑时产物基底由 build_skin_editions 重写，
+        # 这里再挂一次，始终恰好一条。
+        bm_src = ROOT / "static/js/browse-memory.js"
+        if bm_src.exists() and "browse-memory.js" not in doc:
+            bm_tag = '<script src="../../static/js/browse-memory.js" defer></script>\n'
+            h2, sep2, t2 = doc.rpartition("</body>")
+            doc = h2 + "\n" + bm_tag + sep2 + t2 if sep2 else doc + bm_tag
+
+        (CHAR_OUT_DIR / f"{slug}.html").write_text(doc, encoding="utf-8")
+        print(f"[{slug}] default page = 「{ed_id}」整页 (产物基底 + base 资源重定向, 无频闪)")
+
+
 def build_shangdi_default_from_jinian() -> None:
     """上帝默认角色页 = 「创世纪年」整页（2026-11-23 定，仿许青「青川卷帙」）。
 
@@ -3949,6 +4030,9 @@ def main() -> None:
     build_sunwukong_default_from_lingxiao()
     # 至高王座默认角色页 = 「浑天环」整页（2026-11-27 用户指定）。
     build_zhigaowangzuo_default_from_yihuan()
+    # 第二批升格（2026-11-28 用户指定 5 个角色）：以 skins 产物页为基底，
+    # 注入 <base> 指向产物目录，画面/资源/切换器零改动。
+    build_product_defaults()
 
     inject_browse_memory()
 
@@ -3964,6 +4048,12 @@ def main() -> None:
         ("character/zhigaowangzuo.html", 'data-pw-edition="zhigaowangzuo-yihuan"'),
         ("materials.html", 'data-pw-edition="material-shatter"'),
         ("rules.html", 'data-pw-edition="observatory"'),
+        # 第二批 5 个（产物基底 + base）：
+        ("character/pangu.html", 'data-pw-edition="pangu-hunyuan"'),
+        ("character/starkiller.html", 'data-pw-edition="starkiller-chixiao"'),
+        ("character/nvwa.html", 'data-pw-edition="nvwa-boshan"'),
+        ("character/shiva.html", 'data-pw-edition="shiva-yeke"'),
+        ("character/juxingzhihui.html", 'data-pw-edition="juxingzhihui-lingchun"'),
     ]
     for rel, marker in promoted_guards:
         page = ROOT / rel

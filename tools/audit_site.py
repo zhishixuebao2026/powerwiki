@@ -494,6 +494,12 @@ def main():
         "character/zhigaowangzuo.html": ['data-pw-edition="zhigaowangzuo-yihuan"'],
         "materials.html": ['data-pw-edition="material-shatter"'],
         "rules.html": ['data-pw-edition="observatory"'],
+        # 第二批 5 个（2026-11-28，产物基底 + base）：
+        "character/pangu.html": ['data-pw-edition="pangu-hunyuan"'],
+        "character/starkiller.html": ['data-pw-edition="starkiller-chixiao"'],
+        "character/nvwa.html": ['data-pw-edition="nvwa-boshan"'],
+        "character/shiva.html": ['data-pw-edition="shiva-yeke"'],
+        "character/juxingzhihui.html": ['data-pw-edition="juxingzhihui-lingchun"'],
     }
     for _rel, _markers in _guards.items():
         _f = Path(__file__).resolve().parent.parent / _rel

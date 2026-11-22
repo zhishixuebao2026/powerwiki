@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""反馈回路：断言 7 个升格默认页永远是整页皮肤，绝不会退回会闪屏的旧标准页。
+"""反馈回路：断言 12 个升格默认页永远是整页皮肤，绝不会退回会闪屏的旧标准页。
 
 这是 diagnosing-bugs 的 tight red-capable loop：
-  - 绿 = 全站重建后 7 页均为整页（无 fade-on-load、升格标记在）
+  - 绿 = 全站重建后 12 页均为整页（无 fade-on-load、升格标记在）
   - 红 = 任何一页退回标准页（用户症状：进旧默认 / 闪屏）
 跑法：python3 tools/check_no_stale_default.py
 """
@@ -20,6 +20,12 @@ GUARDS = {
     "character/zhigaowangzuo.html": ['data-pw-edition="zhigaowangzuo-yihuan"'],
     "materials.html":               ['data-pw-edition="material-shatter"'],
     "rules.html":                   ['data-pw-edition="observatory"'],
+    # 第二批 5 个（2026-11-28，产物基底 + base）：
+    "character/pangu.html":         ['data-pw-edition="pangu-hunyuan"'],
+    "character/starkiller.html":    ['data-pw-edition="starkiller-chixiao"'],
+    "character/nvwa.html":          ['data-pw-edition="nvwa-boshan"'],
+    "character/shiva.html":         ['data-pw-edition="shiva-yeke"'],
+    "character/juxingzhihui.html":  ['data-pw-edition="juxingzhihui-lingchun"'],
 }
 STALE_MARK = "fade-on-load"  # 旧标准页（会闪屏）的特征
 

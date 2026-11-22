@@ -4,6 +4,37 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-28（第十批）· 5 角色升格默认页（产物基底 + base）/ SW pw-v97→v98
+
+用户指定 5 条皮肤页作为对应角色的默认页面：
+`pangu-hunyuan`→盘古、`starkiller-chixiao`→弑星者基地、`nvwa-boshan`→女娲、
+`shiva-yeke`→湿婆、`juxingzhihui-lingchun`→巨型智慧。
+
+**新增第二类升格模式（产物基底 + base），与第一批改法不同**：第一批（月牍/青川/纪年/大圣凌霄/浑天环）
+是 React 全内联整页，直接从 `skins/_source/` 读源重写默认页、升格皮肤从登记表移除；这批 5 套的资源
+（尤其 shiva 的 `assets/reader.js`、`art/*.jpg` 是外链，其余图片多为内联但字体/切换器仍引用产物目录）
+仍留在 `skins/<id>/`，所以改为**以 `build_skin_editions()` 已生成的产物页为基底**，只做两件事：
+1. `<head>` 最前注入 `<base href="../skins/<id>/">`——产物页所有相对路径本就按 `skins/<id>/` 写
+   （`../../static` 站内资源、`./assets`/`./art` 皮肤资源、`../<其它皮肤>/` 切换器链接），加 base 后
+   在 `character/` 下解析到同一批文件，画面/交互/切换器零改动，杜绝"升格把顶栏/图片改坏"。
+2. 按产物目录基准提前挂 `../../static/js/browse-memory.js`（否则末尾 `inject_browse_memory()` 按
+   `character/` 写的 `../static/...` 会被 base 重定向到 `skins/static/...` 404；已存在则不重复挂）。
+
+**根治框架沿用**：`PROMOTED_CHARACTER_SLUGS` 加 5 slug，`build_character_detail_pages()` 从源头不写这 5 个
+标准页（`fade-on-load` 频闪立绘）；新增 `build_product_defaults()` + `PROMOTED_PRODUCT_DEFAULTS` 映射统一升格；
+`main()` 末尾 `promoted_guards` 硬断言 + `tools/audit_site.py` 7b + `tools/check_no_stale_default.py` 三处守卫
+同步加 5 项，升格失败/源缺失直接抛错。
+
+**与第一批的关键差别（登记/切换器）**：这 5 套**不从 `editions.json` 移除、不删产物目录**——它们仍作为
+可切换皮肤保留（pangu 3 套 / starkiller 2 套 / nvwa 2 套，shiva 与巨型智慧各 1 套），默认页切换器里
+"当前"落在升格皮肤卡（指向 `skins/<id>/...`）、"默认"卡指向默认页自身，两者内容相同；README 皮肤数
+不变（52）。所以约定第 7/9/30 条的"升格即移出登记表"仅适用于第一批，本批见 `docs/需求与约定.md` 第 31 条。
+
+**验证**：`build_site.py` 全过、连跑两次 5 默认页字节一致（幂等）；`check_no_stale_default.py` 12 页全绿、
+`audit_site.py` 全过（7b 检查 12 页异常 0）；专校脚本 5 页相对路径 0 断链、browse-memory 各恰好 1 条；
+Playwright 实测 5 页 × 桌面/手机：baseURI 正确、0 破图、0 个 4xx、0 JS 错误、切换器与"返回角色档案"
+入口正常、0 横向溢出；4 张截图视觉确认顶栏/hero/目录/正文/明暗全部正常。
+
 ## 2026-11-27（第九批）· 四技能全面自查（逻辑+界面）/ 修手机端御兔 SCROLL 半截字 / SW pw-v96→v97
 
 用户要求用 `/dev-god` `/dev-expert` `/web-design-layout` `/web-design-engineer` 全面自查优化。
