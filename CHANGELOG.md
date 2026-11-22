@@ -17,6 +17,8 @@
 
 **验证**：`build_site.py` 幂等、`audit_site.py` 全过（7b 检查 29 页异常 0）、`check_no_stale_default.py` 29 页全绿；全量扫描 24 页「默认」卡残留 0；Playwright 桌面/手机抽查：盘古 3 卡（天光/洪炉/开天·当前）、湿婆/露法斯 0 卡收起切换器、材质碎极/规则候星改名卡、返回入口均在，0 JS 错误 0 溢出；截图确认面板无「默认」卡。
 
+**部署**：提交 `ac4b356` 已推送 GitHub main（5d3a57d..ac4b356）。WB 线上验收：pangu/divinity/材质/规则等页面 `data-edition-id="default"`+「默认」组合 0 命中，shiva 为小 React 壳页（正常 2067B）。验收链接：https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
+
 ## 2026-11-29（第十一批）· 17 角色升格默认页 / 删 2 套皮肤 / 修 divinity-radiance 深色导航撞色 / SW pw-v98→v99
 
 一、**17 套皮肤升格为对应角色默认页**（用户点名）：盘古=混元、弑星者=赤霄、女娲=博山、湿婆=夜刻、
