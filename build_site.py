@@ -59,7 +59,6 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "moonfile": "default",
     "observatory": "black",
     "ruphas-crimson": "black",
-    "ruphas-frostgate": "black",
     "tianren-register": "black",
     "xiayouzhe-sujuan": "default",
     "xuanheng": "default",
@@ -90,7 +89,6 @@ SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "xingshen-zhixing": "black",
     "baiguang-gufeng": "black",
     "baiguang-huanji": "black",
-    "suzhou-zhuzhou": "default",
     "shiva-yeke": "black",
     # 2026-11-20 新增 8 套（三世铜棺/盘古/御兔/罗峰/魔术王），首屏均亮色米纸顶栏
     "tongguan-danshu": "default",
@@ -158,6 +156,10 @@ PROMOTED_CHARACTER_SLUGS = {
     "yutu", "xuqing", "shangdi", "sunwukong", "zhigaowangzuo",
     # 2026-11-28 用户指定：以下 5 套皮肤整页升格为对应角色默认页。
     "pangu", "starkiller", "nvwa", "shiva", "juxingzhihui",
+    # 2026-11-29 用户指定第二批 17 套升格默认页。
+    "xiayouzhe", "futan", "guchensha", "luofeng", "tongguan", "zhangyan",
+    "jiangwuye", "linfei", "lufasi", "xuezhishaonv", "yog", "baiguang",
+    "suzhou", "xingshen", "mozhe", "tianren", "divinity",
 }
 
 # 第二批升格（5 个）的「皮肤 id → 角色 slug → 产物基底」映射。
@@ -168,12 +170,30 @@ PROMOTED_CHARACTER_SLUGS = {
 # 站内资源、./assets / ./art 皮肤资源、../<其它皮肤> 切换器链接）仍按产物目录
 # 解析——画面、交互、切换器零改动，杜绝「升格把顶栏/图片改坏」。
 PROMOTED_PRODUCT_DEFAULTS = [
-    # (slug, edition id)
+    # (slug, edition id) —— 第一批（2026-11-28）
     ("pangu", "pangu-hunyuan"),
     ("starkiller", "starkiller-chixiao"),
     ("nvwa", "nvwa-boshan"),
     ("shiva", "shiva-yeke"),
     ("juxingzhihui", "juxingzhihui-lingchun"),
+    # 第二批（2026-11-29）：用户点名 17 套
+    ("xiayouzhe", "xiayouzhe-sujuan"),
+    ("futan", "futan-abyss"),
+    ("guchensha", "guchensha-molong"),
+    ("luofeng", "luofeng-xingcha"),
+    ("tongguan", "tongguan-yunchi"),
+    ("zhangyan", "zhangyan-zifu"),
+    ("jiangwuye", "jiangwuye-starvortex"),
+    ("linfei", "linfei-crystal"),
+    ("lufasi", "ruphas-crimson"),
+    ("xuezhishaonv", "xuezhishaonv-sujian"),
+    ("yog", "yog-teal-vortex"),
+    ("baiguang", "baiguang-gufeng"),
+    ("suzhou", "suzhou-zhoutian"),
+    ("xingshen", "xingshen-heng"),
+    ("mozhe", "mozhe-mijing"),
+    ("tianren", "tianren-register"),
+    ("divinity", "divinity-seal"),
 ]
 
 
@@ -4054,6 +4074,11 @@ def main() -> None:
         ("character/nvwa.html", 'data-pw-edition="nvwa-boshan"'),
         ("character/shiva.html", 'data-pw-edition="shiva-yeke"'),
         ("character/juxingzhihui.html", 'data-pw-edition="juxingzhihui-lingchun"'),
+        # 第三批 17 个（2026-11-29，产物基底 + base）：由映射自动生成，避免手写漏项
+    ] + [
+        (f"character/{slug}.html", f'data-pw-edition="{ed}"')
+        for slug, ed in PROMOTED_PRODUCT_DEFAULTS
+        if slug not in {"pangu", "starkiller", "nvwa", "shiva", "juxingzhihui"}
     ]
     for rel, marker in promoted_guards:
         page = ROOT / rel

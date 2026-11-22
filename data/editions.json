@@ -347,19 +347,6 @@
       }
     },
     {
-      "id": "ruphas-frostgate",
-      "name": "霜阈",
-      "tag": "",
-      "note": "近黑与金、米，一道淡蓝的门。",
-      "source": "skins/_source/ruphas-frostgate.html",
-      "section": "character-lufasi",
-      "inject": "minimal",
-      "thumb": "static/img/editions/ruphas-frostgate.jpg",
-      "pages": {
-        "character-lufasi": "skins/ruphas-frostgate/character-lufasi.html"
-      }
-    },
-    {
       "id": "xuanheng",
       "name": "宣衡典章",
       "tag": "",
@@ -695,19 +682,6 @@
       "thumb": "static/img/editions/baiguang-huanji.jpg",
       "pages": {
         "character-baiguang": "skins/baiguang-huanji/character-baiguang.html"
-      }
-    },
-    {
-      "id": "suzhou-zhuzhou",
-      "name": "烛昼环",
-      "tag": "",
-      "note": "米纸赭红铜环装置、中心红核原初烛昼，古典装帧亮色版。",
-      "source": "skins/_source/suzhou-zhuzhou.html",
-      "section": "character-suzhou",
-      "inject": "minimal",
-      "thumb": "static/img/editions/suzhou-zhuzhou.jpg",
-      "pages": {
-        "character-suzhou": "skins/suzhou-zhuzhou/character-suzhou.html"
       }
     },
     {

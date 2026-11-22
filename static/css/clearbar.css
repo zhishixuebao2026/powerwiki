@@ -38,10 +38,18 @@ html[data-pw-edition="divinity-gilt"] header.site-header {
     background-color: var(--bg) !important;
 }
 
+/* divinity-radiance「圣辉」是虚空/万有双态：皮肤用 html.dark 切深/浅，
+   顶栏文字随 .dark 变米白、浅色变深字。此前这里把顶栏背景写死成米色，
+   导致深色（虚空）态下米底配米白字、整条导航文字不可见。改为跟随 .dark：
+   万有=米纸 rgb(243,236,220)，虚空=近黑 rgb(5,6,12)（与页面底同色）。 */
 html[data-pw-edition="divinity-radiance"] header.topbar {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     background-color: rgb(243, 236, 220) !important;
+}
+html[data-pw-edition="divinity-radiance"].dark header.topbar,
+html.dark[data-pw-edition="divinity-radiance"] header.topbar {
+    background-color: rgb(5, 6, 12) !important;
 }
 
 html[data-pw-edition="divinity-seal"] div.topbar {
@@ -112,23 +120,6 @@ html[data-pw-edition="ruphas-crimson"] header.site-header {
     background-color: var(--bg) !important;
 }
 
-/* 霜阈明暗双主题：dark 顶栏近黑，light 顶栏跟随浅灰底。 */
-html[data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background-color: rgb(6, 7, 14) !important;
-}
-html[data-theme="light"][data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 {
-    background-color: rgb(233, 235, 239) !important;
-}
-
-/* 内层顶栏内容行另带 blur(14px)。它底下就是上面的实色 header，模糊一层纯色
-   没有任何视觉收益，一并关掉。此处刻意不补 background-color：该皮肤有明暗主题
-   切换，硬编码任一颜色都会在另一主题下变成凭空色块条。 */
-html[data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 div.flex.h-14 {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-}
 
 html[data-pw-edition="tianren-register"] header.site-header {
     -webkit-backdrop-filter: none !important;
@@ -292,12 +283,6 @@ html[data-pw-edition] .font-tools button { flex: none !important; }
     box-sizing: border-box !important;
   }
 
-  html[data-pw-edition="ruphas-frostgate"] header.fixed.inset-x-0 {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    min-height: calc(58px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-  }
-
   html[data-pw-edition="shangdi-jinian"] header.masthead {
     padding-top: env(safe-area-inset-top, 0px) !important;
     min-height: calc(61px + env(safe-area-inset-top, 0px)) !important;
@@ -331,12 +316,6 @@ html[data-pw-edition] .font-tools button { flex: none !important; }
   html[data-pw-edition="zhigaowangzuo-yihuan"] header.sticky.top-0 {
     padding-top: env(safe-area-inset-top, 0px) !important;
     min-height: calc(86px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-  }
-
-  html[data-pw-edition="suzhou-zhuzhou"] header.masthead {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    min-height: calc(58px + env(safe-area-inset-top, 0px)) !important;
     box-sizing: border-box !important;
   }
 

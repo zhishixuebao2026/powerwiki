@@ -501,6 +501,20 @@ def main():
         "character/shiva.html": ['data-pw-edition="shiva-yeke"'],
         "character/juxingzhihui.html": ['data-pw-edition="juxingzhihui-lingchun"'],
     }
+    # 第三批 17 个（2026-11-29，与 build_site.py PROMOTED_PRODUCT_DEFAULTS 同源）
+    _third = [
+        ("xiayouzhe", "xiayouzhe-sujuan"), ("futan", "futan-abyss"),
+        ("guchensha", "guchensha-molong"), ("luofeng", "luofeng-xingcha"),
+        ("tongguan", "tongguan-yunchi"), ("zhangyan", "zhangyan-zifu"),
+        ("jiangwuye", "jiangwuye-starvortex"), ("linfei", "linfei-crystal"),
+        ("lufasi", "ruphas-crimson"), ("xuezhishaonv", "xuezhishaonv-sujian"),
+        ("yog", "yog-teal-vortex"), ("baiguang", "baiguang-gufeng"),
+        ("suzhou", "suzhou-zhoutian"), ("xingshen", "xingshen-heng"),
+        ("mozhe", "mozhe-mijing"), ("tianren", "tianren-register"),
+        ("divinity", "divinity-seal"),
+    ]
+    for _s, _e in _third:
+        _guards[f"character/{_s}.html"] = [f'data-pw-edition="{_e}"']
     for _rel, _markers in _guards.items():
         _f = Path(__file__).resolve().parent.parent / _rel
         if not _f.exists():

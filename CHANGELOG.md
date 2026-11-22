@@ -4,6 +4,41 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-29（第十一批）· 17 角色升格默认页 / 删 2 套皮肤 / 修 divinity-radiance 深色导航撞色 / SW pw-v98→v99
+
+一、**17 套皮肤升格为对应角色默认页**（用户点名）：盘古=混元、弑星者=赤霄、女娲=博山、湿婆=夜刻、
+巨型智慧=灵椿（第一批 5，上批已做）；本批新增 17 位：夏游者=素卷、弗坦=深渊、孤尘沙=魔龙、
+罗峰=星槎、三世铜棺=云池、张衍=紫府、江午夜=星涡、林飞=晶、露法斯=绛翼、雪之少女=素笺、
+犹格=青漩、白光=孤峰、苏州=周天、星神=恒、墨哲=秘境、天人=星册、至高神性=金印。
+全部沿用第二批「产物基底 + base」模式：`PROMOTED_PRODUCT_DEFAULTS` 加 17 项映射、
+`PROMOTED_CHARACTER_SLUGS` 加 17 slug，`build_character_detail_pages()` 从源头不写这 17 个标准页，
+`build_product_defaults()` 统一注入 `<base>` + 产物基准 browse-memory。三处守卫
+（`promoted_guards` 用映射自动生成 / audit 7b / `check_no_stale_default.py` 用 `THIRD_BATCH` 常量）
+全部扩到 **29 页**（7 第一类 + 5 第二批 + 17 第三批）。升格皮肤仍保留在登记表与切换器中，皮肤数不因升格变化。
+
+二、**删 2 套皮肤**（用户点名）：`ruphas-frostgate`「霜阈」（露法斯）、`suzhou-zhuzhou`「烛昼环」（苏州），
+按第 22 条四件清干净：`editions.json` 53→51 条、删 `skins/<id>/` 产物、删 `skins/_source/<id>.html`、
+删缩略图；清掉 `build_site.py` 的 `SKIN_STATUS_BAR_MODE` 2 行、`static/css/clearbar.css` 4 段
+（霜阈明暗背景 + 内层 blur + 手机避让、烛昼环手机避让）。产物 52→**50** 套，README 皮肤数 52→50、
+角色专属 47→45。重建后全仓 `.html/.json/.js/.css/.py` 对这两个 id **0 命中**（CHANGELOG 历史除外），
+切换器卡片：露法斯 `default/ruphas-crimson`、苏州 `default/suzhou-hanke/suzhou-zhoutian`（已无被删项）。
+
+三、**回查「魔术王的皮肤是不是都让删了」**：是。魔术王·阿拉迪亚的两套（`aladiya-shique` 石阙、
+`aladiya-moying` 墨影）在 2026-11-27 第四批「删 6 套」时就一起删了（见该批记录），
+当前 `editions.json` 无 aladiya 条目、`skins/_source/` 无对应源文件，该角色只剩默认页，
+与 README「魔术王只挂默认页、没有专属皮肤」一致。此次未改动。
+
+四、**修 divinity-radiance「圣辉」深色导航撞色**：该皮肤虚空/万有双态用 `html.dark` 切换，
+顶栏文字随 `.dark` 变米白（`rgb(239,233,220)`），但 `clearbar.css` 把顶栏背景写死米色
+`rgb(243,236,220)!important` —— 深色（虚空）态下米底配米白字，整条导航文字不可见。
+修复：给同选择器加 `.dark` 分支，深色态顶栏改近黑 `rgb(5,6,12)`（与页面底同色），浅色态保持米纸。
+实测浅色米底深字、深色黑底米字，对比度均正常。
+
+**验证**：构建幂等（连跑两次 17 默认页字节一致）、`audit_site.py` 全过（产物 50 套、卡片 166 个 0 缺失、
+7b 检查 29 页异常 0）、`check_no_stale_default.py` 29 页全绿；专校 17 页相对路径 0 断链、
+base 与 `data-pw-edition` 正确、browse-memory 各 1 条；Playwright 实测 17 页 × 桌面/手机
+（0 破图 / 0 个 4xx / 0 JS 错误 / 0 横向溢出）+ radiance 明暗态顶栏配色；5 张截图视觉走查全正常。
+
 ## 2026-11-28（第十批）· 5 角色升格默认页（产物基底 + base）/ SW pw-v97→v98
 
 用户指定 5 条皮肤页作为对应角色的默认页面：

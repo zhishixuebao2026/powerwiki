@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""反馈回路：断言 12 个升格默认页永远是整页皮肤，绝不会退回会闪屏的旧标准页。
+"""反馈回路：断言 29 个升格默认页永远是整页皮肤，绝不会退回会闪屏的旧标准页。
 
 这是 diagnosing-bugs 的 tight red-capable loop：
-  - 绿 = 全站重建后 12 页均为整页（无 fade-on-load、升格标记在）
+  - 绿 = 全站重建后 29 页均为整页（无 fade-on-load、升格标记在）
   - 红 = 任何一页退回标准页（用户症状：进旧默认 / 闪屏）
 跑法：python3 tools/check_no_stale_default.py
 """
@@ -11,7 +11,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# 7 个升格默认页 → 期望的"整页识别标记"（出现任一即认为是升格皮肤）
+# 第三批 17 个升格默认页（2026-11-29，与 build_site.py PROMOTED_PRODUCT_DEFAULTS 同源）
+THIRD_BATCH = [
+    ("xiayouzhe", "xiayouzhe-sujuan"), ("futan", "futan-abyss"),
+    ("guchensha", "guchensha-molong"), ("luofeng", "luofeng-xingcha"),
+    ("tongguan", "tongguan-yunchi"), ("zhangyan", "zhangyan-zifu"),
+    ("jiangwuye", "jiangwuye-starvortex"), ("linfei", "linfei-crystal"),
+    ("lufasi", "ruphas-crimson"), ("xuezhishaonv", "xuezhishaonv-sujian"),
+    ("yog", "yog-teal-vortex"), ("baiguang", "baiguang-gufeng"),
+    ("suzhou", "suzhou-zhoutian"), ("xingshen", "xingshen-heng"),
+    ("mozhe", "mozhe-mijing"), ("tianren", "tianren-register"),
+    ("divinity", "divinity-seal"),
+]
+# 升格默认页 → 期望的"整页识别标记"（出现任一即认为是升格皮肤）
 GUARDS = {
     "character/yutu.html":          ["pw-moon-nav"],
     "character/xuqing.html":        ['data-pw-edition="xuqing-qingchuan"'],
@@ -27,6 +39,8 @@ GUARDS = {
     "character/shiva.html":         ['data-pw-edition="shiva-yeke"'],
     "character/juxingzhihui.html":  ['data-pw-edition="juxingzhihui-lingchun"'],
 }
+for _s, _e in THIRD_BATCH:
+    GUARDS[f"character/{_s}.html"] = [f'data-pw-edition="{_e}"']
 STALE_MARK = "fade-on-load"  # 旧标准页（会闪屏）的特征
 
 def check() -> int:
