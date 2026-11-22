@@ -16,7 +16,7 @@
 
 **验证**：22 页全注入；浏览器实测 17 个有目录锚点的默认页点击后均停在 `/character/<slug>.html#锚点`、0 跳皮肤目录根、0 JS 错误、滚动到目标 section；6 个皮肤页抽查正常；构建幂等（连跑两次字节一致）、`audit_site.py` 全过（7b 29 页 + 62 切换器 0 异常）、`check_no_stale_default.py` 29 页全绿。
 
-**部署**：提交 `xxxxxxx` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
+**部署**：提交 `cd28e5b` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
 
 ## 2026-11-29（第十五批）· 删除至高神性「御言」皮肤（divinity-radiance）/ SW pw-v102→v103
 
