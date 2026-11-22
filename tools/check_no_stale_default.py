@@ -43,6 +43,23 @@ for _s, _e in THIRD_BATCH:
     GUARDS[f"character/{_s}.html"] = [f'data-pw-edition="{_e}"']
 STALE_MARK = "fade-on-load"  # 旧标准页（会闪屏）的特征
 
+# 2026-11-29 用户："切到别的皮肤，默认的又回到切换器了" + "当前的应该自动置顶"。
+# 第二批 5 + 第三批 17 的升格皮肤仍留在登记表，皮肤页会重新生成一张冗余「默认」卡。
+# 这些角色的【所有页面】（默认页 + 皮肤页）切换器都必须：无 default 卡、当前卡居首、
+# 返回角色档案入口在。第一批（御兔等）走 DEFAULT_ALIAS 改名，default 卡是有意保留的
+# 唯一回默认入口，不在此断言内。
+STRIP_SLUGS = ["pangu", "starkiller", "nvwa", "shiva", "juxingzhihui"] + [s for s, _ in THIRD_BATCH]
+
+def _check_dock(rel: str, html: str, fails: list) -> None:
+    """校验一个页面的切换器：无冗余 default 卡 + 当前卡置顶 + 返回入口在。"""
+    cards = re.findall(r'<a class="(pw-edition-card[^"]*)"\s+data-edition-id="([^"]+)"', html)
+    if any(cid == "default" for _cls, cid in cards):
+        fails.append(f"{rel}: 切换器仍有冗余「默认」卡（data-edition-id=default）")
+    if cards and "is-current" not in cards[0][0]:
+        fails.append(f"{rel}: 当前皮肤卡未置顶（首位={cards[0][1]}，未标 is-current）")
+    if "pw-edition-home-btn" not in html:
+        fails.append(f"{rel}: 切换器缺「返回角色档案」入口")
+
 def check() -> int:
     fails = []
     for rel, markers in GUARDS.items():
@@ -57,6 +74,16 @@ def check() -> int:
         # 旧默认卡守卫：切换器里不得再有显示名「默认」的旧卡（2026-11-29）。
         if re.search(r'data-edition-id="default"[^>]*>.*?pw-edition-name">默认<', html, re.S):
             fails.append(f"{rel}: 切换器里仍有旧「默认 / 建筑感栅格」卡未清除")
+    # 皮肤页切换器守卫：扫描所有升格角色的默认页 + 皮肤页，覆盖上次遗漏的生成路径。
+    dock_pages = [f"character/{s}.html" for s in STRIP_SLUGS]
+    for sp in sorted((ROOT / "skins").glob("*/character-*.html")):
+        slug = sp.stem[len("character-"):]
+        if slug in STRIP_SLUGS:
+            dock_pages.append(str(sp.relative_to(ROOT)))
+    for rel in dock_pages:
+        p = ROOT / rel
+        if p.exists():
+            _check_dock(rel, p.read_text(encoding="utf-8"), fails)
     if fails:
         print("[RED] 检测到旧默认/闪屏标准页：")
         for f in fails: print("  -", f)

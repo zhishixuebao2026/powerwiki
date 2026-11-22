@@ -143,6 +143,10 @@ def check_links():
         base = os.path.dirname(p)
         cards = CARD_RE.findall(h)
         if not cards:
+            # 单皮肤角色（升格后仅剩 1 套）：切换器按设计收起，只保留 home-btn 返回入口，
+            # 没有可切换卡片是合法的。但仍须有返回入口，否则才算真缺失。
+            if 'pw-edition-home-btn' in h:
+                continue
             missing.append(f"{p}: 找不到切换器卡片")
             continue
         for eid, href in cards:
@@ -527,7 +531,27 @@ def main():
             stale_issues.append(f"{_rel} 缺升格皮肤标记 {_markers}")
         if re.search(r'data-edition-id="default"[^>]*>.*?pw-edition-name">默认<', _html, re.S):
             stale_issues.append(f"{_rel} 切换器里仍有旧「默认 / 建筑感栅格」卡未清除")
-    print(f"  检查 {len(_guards)} 页；异常 {len(stale_issues)} 项")
+    # 皮肤页切换器一致性（2026-11-29）：覆盖上次遗漏的 skins/*/ 生成路径。
+    # 第二/三批升格角色的所有页面（默认页+皮肤页）切换器须：无 default 卡、当前卡置顶、
+    # 返回入口在。第一批走 DEFAULT_ALIAS 改名、default 卡是有意保留的唯一回默认入口，跳过。
+    _strip_slugs = ["pangu", "starkiller", "nvwa", "shiva", "juxingzhihui"] + [s for s, _ in _third]
+    _dock_pages = [f"character/{s}.html" for s in _strip_slugs]
+    for _sp in sorted((Path(__file__).resolve().parent.parent / "skins").glob("*/character-*.html")):
+        if _sp.stem[len("character-"):] in _strip_slugs:
+            _dock_pages.append(str(_sp.relative_to(Path(__file__).resolve().parent.parent)))
+    for _rel in _dock_pages:
+        _f = Path(__file__).resolve().parent.parent / _rel
+        if not _f.exists():
+            continue
+        _html = _f.read_text(encoding="utf-8")
+        _cards = re.findall(r'<a class="(pw-edition-card[^"]*)"\s+data-edition-id="([^"]+)"', _html)
+        if any(cid == "default" for _c, cid in _cards):
+            stale_issues.append(f"{_rel} 切换器仍有冗余「默认」卡")
+        if _cards and "is-current" not in _cards[0][0]:
+            stale_issues.append(f"{_rel} 当前皮肤卡未置顶（首位={_cards[0][1]}）")
+        if "pw-edition-home-btn" not in _html:
+            stale_issues.append(f"{_rel} 切换器缺「返回角色档案」入口")
+    print(f"  检查 {len(_guards)} 页 + {len(_dock_pages)} 切换器；异常 {len(stale_issues)} 项")
     all_issues += stale_issues
 
     if args.render:

@@ -270,6 +270,18 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
     # 默认页）。都已从 editions.json 移除，这里留作防御，避免以后手工回填登记表
     # 时又把默认页自己列成一张皮肤卡片。
     promoted_defaults = {"moonfile", "xuqing-qingchuan", "shangdi-jinian", "sunwukong-lingxiao", "zhigaowangzuo-yihuan", "material-shatter", "observatory"}
+    # 2026-11-29 用户："切到别的皮肤，默认的又回到切换器了" + "当前的应该自动置顶"。
+    # 第二/三批升格角色的升格皮肤仍留在登记表、切换器里已有它自己的卡；而 default 卡
+    # 指向的正是这同一套皮肤的默认页（character/<slug>.html），内容重复、是旧默认残留。
+    # 站在皮肤页视角这张卡会重新冒出来（上次只给默认页做了删卡后处理，皮肤页走另一条
+    # 生成路径没覆盖，才反复复发）。从源头不生成它，默认页/皮肤页一次覆盖。
+    # 第一批（DEFAULT_ALIAS 有条目）升格皮肤已从登记移除、default 卡改名顶上（月牍/
+    # 大圣凌霄/碎极/候星…）是唯一回默认入口，保留不删。
+    strip_default = (
+        section not in DEFAULT_ALIAS
+        and section.startswith("character-")
+        and section[len("character-"):] in PROMOTED_CHARACTER_SLUGS
+    )
     applicable = []
     for ed in manifest["editions"]:
         if ed.get("id") in promoted_defaults:
@@ -278,10 +290,29 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
         target = pages.get(section)
         if not target:
             continue  # 这套皮肤没有这一栏，不列出来，避免把用户带到别的页面
+        if strip_default and ed["id"] == manifest["default"]:
+            continue
         applicable.append((ed, target))
 
     if len(applicable) < 2:
+        if strip_default and applicable:
+            # 删掉 default 后只剩 1 套皮肤：不挂切换开关，但务必保留 home-btn
+            # 「← 返回角色档案」——它是皮肤页回主站的唯一路，不能随切换器一起消失。
+            back_href, back_label, back_icon, _ = dock_back_target(
+                page_dir, section, current, manifest["default"]
+            )
+            return (
+                '<div class="pw-edition-dock" id="pw-edition-dock">'
+                f'<a class="pw-edition-home-btn" href="{esc(back_href)}" title="{esc(back_label)}" '
+                f'aria-label="{esc(back_label)}">{SVGS[back_icon]}</a>'
+                '</div>'
+            )
         return ""
+
+    # 2026-11-29 用户："切换器里面目前用的不是应该自动置顶吗，怎么还有在下面的"。
+    # 稳定排序把当前卡挪到第一位，其余保持登记表顺序；对所有页面（默认页/皮肤页/
+    # 材质/规则）统一生效，避免当前项被 default 卡或其它卡挤到中间。
+    applicable.sort(key=lambda pair: 0 if pair[0]["id"] == current else 1)
 
     cards = []
     for ed, target in applicable:
