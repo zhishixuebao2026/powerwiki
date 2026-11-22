@@ -39,6 +39,12 @@
 base 与 `data-pw-edition` 正确、browse-memory 各 1 条；Playwright 实测 17 页 × 桌面/手机
 （0 破图 / 0 个 4xx / 0 JS 错误 / 0 横向溢出）+ radiance 明暗态顶栏配色；5 张截图视觉走查全正常。
 
+**部署日志**：提交 `d926ca0`，经网关刷新 token（随机参数 + no-cache）推送 `d99cb6a..d926ca0 main`
+（首次 GnuTLS -110 抖动，重试带 postBuffer/lowSpeed 参数成功）。交付链接（唯一）：
+`https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX`。线上验收：17 个默认页
+HTTP 200 且字节与本地一致、17/17 标记与 base 正确且无 `fade-on-load`；两个被删皮肤页返回 404；
+线上 `clearbar.css` 含 radiance 深色顶栏修复规则。GitHub Pages 构建有延迟，以 WB 链接为准。
+
 ## 2026-11-28（第十批）· 5 角色升格默认页（产物基底 + base）/ SW pw-v97→v98
 
 用户指定 5 条皮肤页作为对应角色的默认页面：
