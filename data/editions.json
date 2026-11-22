@@ -464,19 +464,6 @@
       }
     },
     {
-      "id": "zhigaowangzuo-yihuan",
-      "name": "浑天环",
-      "tag": "",
-      "note": "金线浑天仪环，猩红核心，观测台刻度。",
-      "source": "skins/_source/zhigaowangzuo-yihuan.html",
-      "section": "character-zhigaowangzuo",
-      "inject": "minimal",
-      "thumb": "static/img/editions/zhigaowangzuo-yihuan.jpg",
-      "pages": {
-        "character-zhigaowangzuo": "skins/zhigaowangzuo-yihuan/character-zhigaowangzuo.html"
-      }
-    },
-    {
       "id": "xuezhishaonv-sujian",
       "name": "素笺留霜",
       "tag": "",

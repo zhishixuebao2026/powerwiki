@@ -132,11 +132,30 @@ def _rel_from(page_dir: str, target: str) -> str:
 # 升格为某栏目默认页的皮肤：该栏目的切换器里，「默认」卡片用皮肤自己的名字，
 # 否则点进去是大圣凌霄、卡片却写"建筑感栅格"，名不副实。
 DEFAULT_ALIAS = {
+    "character-yutu": (
+        "月牍",
+        "月面卷宗，无淡入频闪的整页版式（御兔默认页）。",
+        "static/img/editions/moonfile.jpg",
+    ),
     "character-sunwukong": (
         "大圣凌霄",
         "齐天大圣山巅红日、金箍棒与仙鹤，宣纸水墨亮色版。",
         "static/img/editions/sunwukong-lingxiao.jpg",
     ),
+    "character-zhigaowangzuo": (
+        "浑天环",
+        "金线浑天仪环，猩红核心，观测台刻度。",
+        "static/img/editions/zhigaowangzuo-yihuan.jpg",
+    ),
+}
+
+# 升格为整页默认的角色：character/<slug>.html 由 build_*_default_from_* 直接从
+# 皮肤整页写出，标准角色页（带 .fade-on-load 频闪立绘）绝不落盘。
+# 2026-11-27 玉兔「有时进会闪屏的旧默认」根因就是构建走「先写标准页、再覆盖」
+# 两步链路；覆盖一旦没跑全（源缺失、构建中断、CDN/SW 命中旧产物），旧默认就暴露。
+# 从源头不生成标准页 + build 末尾硬断言，双保险根治。
+PROMOTED_CHARACTER_SLUGS = {
+    "yutu", "xuqing", "shangdi", "sunwukong", "zhigaowangzuo",
 }
 
 
@@ -201,7 +220,7 @@ def edition_launcher_html(page_dir: str, section: str, current_id: Optional[str]
     # 「青川卷帙」→ 许青默认页、「创世纪年」→ 上帝默认页、「大圣凌霄」→ 孙悟空
     # 默认页）。都已从 editions.json 移除，这里留作防御，避免以后手工回填登记表
     # 时又把默认页自己列成一张皮肤卡片。
-    promoted_defaults = {"moonfile", "xuqing-qingchuan", "shangdi-jinian", "sunwukong-lingxiao", "material-shatter", "observatory"}
+    promoted_defaults = {"moonfile", "xuqing-qingchuan", "shangdi-jinian", "sunwukong-lingxiao", "zhigaowangzuo-yihuan", "material-shatter", "observatory"}
     applicable = []
     for ed in manifest["editions"]:
         if ed.get("id") in promoted_defaults:
@@ -2465,7 +2484,11 @@ def build_character_detail_pages(
             body_class=f"character-site character-{c['slug']}",
             skin_section=f"character-{c['slug']}",
         )
-        (CHAR_OUT_DIR / f"{c['slug']}.html").write_text(page_html, encoding="utf-8")
+        # 根治「旧默认闪屏」：升格角色的标准页（带 .fade-on-load）不再落盘。
+        # 这些角色的 character/<slug>.html 由后面的 build_*_default_from_* 整页覆盖；
+        # 从源头不写标准页，构建中途失败也不会留下会闪屏的旧默认页。
+        if c['slug'] not in PROMOTED_CHARACTER_SLUGS:
+            (CHAR_OUT_DIR / f"{c['slug']}.html").write_text(page_html, encoding="utf-8")
 
     return char_doc_index_entries
 
@@ -2932,7 +2955,10 @@ def build_yutu_default_from_moonfile() -> None:
     # chrome.js/pwa.js，避免污染 React 整页应用。
     dock = (
         f'<link rel="stylesheet" href="{_rel_from("character", "static/css/editions.css")}">\n'
-        + edition_launcher_html("character", "character-yutu", "default")
+        + edition_launcher_html(
+            "character", "character-yutu", "default",
+            current_label=DEFAULT_ALIAS["character-yutu"],
+        )
         + f'\n<script src="{_rel_from("character", "static/js/editions.js")}" defer></script>\n'
     )
     h2, sep2, t2 = doc.rpartition("</body>")
@@ -3282,6 +3308,176 @@ def build_sunwukong_default_from_lingxiao() -> None:
 
     (CHAR_OUT_DIR / "sunwukong.html").write_text(doc, encoding="utf-8")
     print("[sunwukong] default page = 「大圣凌霄」整页 (nav + 返回角色档案 + theme bridge + edition dock)")
+
+
+def build_zhigaowangzuo_default_from_yihuan() -> None:
+    """至高王座默认角色页 = 「浑天环」整页（2026-11-27 用户指定）。
+
+    与孙悟空「大圣凌霄」同一模式：至高王座还剩「日轮」（zhigaowangzuo-rilun）
+    可切，所以默认页**必须保留 edition dock**，否则默认页成单向门（SOP #7 / #13）。
+
+    - editions.json 已移除 zhigaowangzuo-yihuan 条目、并加入 promoted_defaults；
+    - 不再生成 skins/zhigaowangzuo-yihuan/ 产物，只留 skins/_source/ 源文件；
+    - character/zhigaowangzuo.html = 源整页 + 主站导航 + 返回角色档案
+      + 明暗桥接（源用 localStorage 'ht-theme'）+ dock。
+
+    源是 React 整页（约 5 MB，图片与字体全部 base64 内联），顶栏
+    header.sticky.top-0 是 sticky、桌面 49px / 手机 86px（两行）。注入导航后
+    只把它的 top 下移一个导航高度，几何（height/padding）完全交给源样式 ——
+    约定第 29 条：绝不用 !important 的 height 去压源顶栏，否则分割线又会切字。
+    定级正文、tiers.json、grading_baseline.json 全不动。
+    """
+    src = ROOT / "skins/_source/zhigaowangzuo-yihuan.html"
+    if not src.exists():
+        print("[WARN] yihuan source missing, zhigaowangzuo default page unchanged")
+        return
+    doc = src.read_text(encoding="utf-8", errors="replace")
+
+    doc = doc.replace("<html", '<html data-pw-edition="zhigaowangzuo-yihuan"', 1)
+
+    # —— head 最前：PWA + 明暗桥接（ht-theme ↔ pw_theme_v2，两侧同为 light/dark）——
+    # 必须早于源页自己的首帧脚本（它读 ht-theme 决定 data-theme）。
+    head_inject = '''  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="../static/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../static/img/icons/favicon-32.png">
+  <link rel="stylesheet" href="../static/css/clearbar.css">
+  <script>
+  (function () {
+    var HT = 'ht-theme', PW = 'pw_theme_v2';
+    function valid(t) { return t === 'light' || t === 'dark'; }
+    // 首帧：浑天环没单独设过主题时，沿用主站明暗，跨页一致。
+    try {
+      if (!valid(localStorage.getItem(HT)) && valid(localStorage.getItem(PW))) {
+        localStorage.setItem(HT, localStorage.getItem(PW));
+      }
+    } catch (e) {}
+    var root = document.documentElement;
+    // 页内切换（React 改 data-theme）→ 写回主站。
+    new MutationObserver(function () {
+      var t = root.getAttribute('data-theme');
+      if (valid(t)) { try { localStorage.setItem(PW, t); localStorage.setItem(HT, t); } catch (e) {} }
+    }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    // 其他标签页切主题 → 同步进本页（storage 事件不含本页）。
+    window.addEventListener('storage', function (e) {
+      if (e.key !== PW || !valid(e.newValue)) return;
+      try { localStorage.setItem(HT, e.newValue); } catch (err) {}
+      if (root.getAttribute('data-theme') !== e.newValue) root.setAttribute('data-theme', e.newValue);
+    });
+  })();
+  </script>
+'''
+    hm = re.search(r"<head[^>]*>", doc, re.I)
+    if hm:
+        doc = doc[: hm.end()] + "\n" + head_inject + doc[hm.end():]
+    else:
+        doc = head_inject + doc
+
+    # —— body：主站导航 + 顶栏下移 + 切换器 ——
+    # 源页是 Tailwind 整页，没有 --bg/--ink 这套站内变量，导航色改由本段
+    # 自定义变量给出，并跟随 data-theme 明暗切换（默认 dark，light 覆盖）。
+    nav = '''  <nav class="pw-skin-nav" aria-label="主导航">
+    <a class="pw-skin-back" href="../characters.html" title="返回角色档案" aria-label="返回角色档案">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+      <span>角色档案</span>
+    </a>
+    <a class="pw-skin-brand" href="../index.html" title="衡天 PowerWiki 首页">
+      <svg class="pw-skin-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4"/><circle cx="12" cy="12" r="2.6"/></svg>
+      <span>衡天 PowerWiki</span>
+    </a>
+    <div class="pw-skin-links">
+      <a href="../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 11.5 8-7.5 8 7.5"/><path d="M6.5 10v9h11v-9"/></svg><span>首页</span></a>
+      <a href="../tiers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.8"/><ellipse cx="12" cy="12" rx="10" ry="4.6" transform="rotate(-32 12 12)"/></svg><span>量级</span></a>
+      <a href="../characters.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.7-4.1 3-6.2 6.5-6.2s5.8 2.1 6.5 6.2"/></svg><span>角色</span></a>
+      <a href="../rules.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5a2.5 2.5 0 0 1 2.5 2.5Z"/></svg><span>规则</span></a>
+      <a href="../materials.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5-8 4.5-8-4.5Z"/><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/></svg><span>材质</span></a>
+      <a href="../search.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/></svg><span>检索</span></a>
+    </div>
+  </nav>
+  <style data-pw-skin-nav>
+    :root{
+      --pw-nav-h:44px;
+      --pw-nav-bg:#0c0a0d;--pw-nav-ink:#efe6d4;--pw-nav-muted:#b9ad98;
+      --pw-nav-line:rgba(230,200,140,.22);--pw-nav-chip:rgba(230,200,140,.09);--pw-nav-gold:#d4a64f;
+    }
+    html[data-theme="light"]{
+      --pw-nav-bg:#f2ebdd;--pw-nav-ink:#2a2116;--pw-nav-muted:#5c5142;
+      --pw-nav-line:rgba(90,70,40,.24);--pw-nav-chip:rgba(90,70,40,.07);--pw-nav-gold:#a8792f;
+    }
+    @media(max-width:640px){:root{--pw-nav-h:66px}}
+    body{padding-top:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px))!important}
+    /* 只下移 sticky 顶栏的 top；height / padding 一概不碰（约定第 29 条）。
+       top 先用变量做首帧兜底，加载后由 align() 内联覆盖为实测值。 */
+    header.sticky.top-0{top:var(--pw-nav-real,calc(var(--pw-nav-h) + env(safe-area-inset-top,0px)))!important}
+    .pw-skin-nav{position:fixed;inset:0 0 auto 0;z-index:9999;display:flex;align-items:center;gap:10px;
+      height:calc(var(--pw-nav-h) + env(safe-area-inset-top,0px));
+      padding:0 clamp(10px,3vw,28px);padding-top:env(safe-area-inset-top,0px);box-sizing:border-box;
+      background:var(--pw-nav-bg);border-bottom:1px solid var(--pw-nav-line);
+      color:var(--pw-nav-ink);font-family:var(--font-sans,system-ui);}
+    .pw-skin-back{display:inline-flex;align-items:center;gap:5px;color:var(--pw-nav-ink);text-decoration:none;
+      white-space:nowrap;font-size:13px;font-weight:600;padding:6px 10px;border-radius:8px;
+      border:1px solid var(--pw-nav-line);background:var(--pw-nav-chip);}
+    .pw-skin-back svg{width:15px;height:15px;flex:none;}
+    .pw-skin-back:hover{background:var(--pw-nav-line);}
+    .pw-skin-brand{display:inline-flex;align-items:center;gap:7px;color:var(--pw-nav-ink);text-decoration:none;white-space:nowrap;font-weight:700;font-size:14px;letter-spacing:.02em;}
+    .pw-skin-logo{width:20px;height:20px;color:var(--pw-nav-gold);flex:none;}
+    .pw-skin-links{display:flex;align-items:center;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none;}
+    .pw-skin-links::-webkit-scrollbar{display:none;}
+    .pw-skin-links a{display:inline-flex;align-items:center;gap:5px;color:var(--pw-nav-muted);text-decoration:none;font-size:13px;padding:6px 9px;border-radius:8px;white-space:nowrap;transition:background .18s,color .18s;}
+    .pw-skin-links a svg{width:16px;height:16px;flex:none;}
+    .pw-skin-links a:hover{background:var(--pw-nav-chip);color:var(--pw-nav-ink);}
+    .pw-skin-links a[aria-current="page"]{color:var(--pw-nav-ink);background:var(--pw-nav-chip);font-weight:600;}
+    .skip-link{z-index:10000!important}
+    @media(max-width:640px){
+      .pw-skin-nav{flex-wrap:wrap;align-content:center;row-gap:2px;gap:0 6px;padding-inline:8px;}
+      .pw-skin-brand{display:none;}
+      .pw-skin-back{order:0;flex:0 0 auto;padding:5px 7px;font-size:11.5px;gap:3px;}
+      .pw-skin-back svg{width:14px;height:14px;}
+      .pw-skin-links{order:3;flex:0 0 100%;margin-left:0;gap:0;min-width:0;overflow:visible;}
+      .pw-skin-links a{flex:1 1 0;justify-content:center;min-width:0;padding:3px 0;font-size:11px;gap:2px;}
+      .pw-skin-links a svg{width:14px;height:14px;}
+    }
+    @media print{.pw-skin-nav{display:none;}body{padding-top:0!important}}
+  </style>
+  <script>
+  (function(){
+    function align(){
+      var nav=document.querySelector('.pw-skin-nav');
+      if(!nav) return;
+      var navH=Math.round(nav.getBoundingClientRect().height);
+      var mast=document.querySelector('header.sticky.top-0');
+      var mastH=mast?Math.round(mast.getBoundingClientRect().height):0;
+      var root=document.documentElement;
+      root.style.setProperty('--pw-nav-real',navH+'px');
+      root.style.setProperty('--pw-mast-real',mastH+'px');
+      if(mast) mast.style.top=navH+'px';
+      document.querySelectorAll('.reading-section,.chapter,.section-heading,[id]').forEach(function(e){
+        try{ e.style.scrollMarginTop=(navH+mastH+14)+'px'; }catch(_){}
+      });
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',align);
+    else align();
+    addEventListener('load',align); addEventListener('resize',align);
+  })();
+  </script>
+  <style>
+    body{padding-top:var(--pw-nav-real,66px)!important}
+  </style>
+'''
+    # 至高王座现有「默认(浑天环) + 日轮」两套，dock 让默认页能切过去。
+    dock = (
+        f'<link rel="stylesheet" href="{_rel_from("character", "static/css/editions.css")}">\n'
+        + edition_launcher_html(
+            "character", "character-zhigaowangzuo", "default",
+            current_label=DEFAULT_ALIAS["character-zhigaowangzuo"],
+        )
+        + f'\n<script src="{_rel_from("character", "static/js/editions.js")}" defer></script>\n'
+    )
+    h2, sep2, t2 = doc.rpartition("</body>")
+    doc = h2 + "\n" + nav + dock + sep2 + t2 if sep2 else doc + nav + dock
+
+    (CHAR_OUT_DIR / "zhigaowangzuo.html").write_text(doc, encoding="utf-8")
+    print("[zhigaowangzuo] default page = 「浑天环」整页 (nav + 返回角色档案 + theme bridge + edition dock)")
 
 
 def build_shangdi_default_from_jinian() -> None:
@@ -3747,8 +3943,22 @@ def main() -> None:
     build_shangdi_default_from_jinian()
     # 孙悟空默认角色页 = 「大圣凌霄」整页（用户 2026-11-25 指出该页更适合当默认）。
     build_sunwukong_default_from_lingxiao()
+    # 至高王座默认角色页 = 「浑天环」整页（2026-11-27 用户指定）。
+    build_zhigaowangzuo_default_from_yihuan()
 
     inject_browse_memory()
+
+    # 构建期硬断言：5 个升格默认页必须是整页皮肤，绝不能是会闪屏的标准页。
+    # 只要哪一步覆盖失败/源缺失，这里直接抛错，不让旧默认页悄悄进产物。
+    for slug in sorted(PROMOTED_CHARACTER_SLUGS):
+        page = CHAR_OUT_DIR / f"{slug}.html"
+        if not page.exists():
+            raise RuntimeError(f"[FATAL] 升格默认页缺失：{page}（标准页已不落盘，覆盖步骤没跑全）")
+        html = page.read_text(encoding="utf-8")
+        if "fade-on-load" in html:
+            raise RuntimeError(
+                f"[FATAL] {page} 仍是会闪屏的旧标准页（含 fade-on-load），升格覆盖失败"
+            )
 
     print(
         f"[OK] PowerWiki v9.1 built successfully:\n"
