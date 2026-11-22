@@ -2913,6 +2913,9 @@ def build_yutu_default_from_moonfile() -> None:
       .pw-moon-links a{flex:1 1 0;justify-content:center;min-width:0;
         padding:3px 0;font-size:11px;gap:2px;}
       .pw-moon-links a svg{width:14px;height:14px;}
+      /* 首屏滚动提示 absolute bottom-5 在窄屏会和两张量级卡片(bottom≈768)重叠 5px，
+         "Scroll" 上沿被卡片压成半截字；手机端卡片已占满首屏底部，提示多余，直接收起。 */
+      a[aria-label="向下阅读"]{display:none!important;}
     }
     @media print{.pw-moon-nav{display:none;}}
   </style>
