@@ -84,6 +84,16 @@ def check() -> int:
         p = ROOT / rel
         if p.exists():
             _check_dock(rel, p.read_text(encoding="utf-8"), fails)
+    # base 锚点守卫（2026-11-29「点左侧目录报错」）：凡注入了 <base> 的升格默认页，
+    # 必须同时带锚点修复脚本，否则页内 href="#s-xxx" 会被解析到皮肤目录根 →
+    # Directory listing / 404。防有人在 base 页新增锚点或改动注入逻辑时复发。
+    base_pages = 0
+    for p in sorted((ROOT / "character").glob("*.html")):
+        html = p.read_text(encoding="utf-8")
+        if re.search(r"<base\b", html, re.I):
+            base_pages += 1
+            if "data-pw-base-anchor-fix" not in html:
+                fails.append(f"{p.relative_to(ROOT)}: 含 <base> 但缺锚点修复脚本（点目录会跳皮肤目录根报错）")
     if fails:
         print("[RED] 检测到旧默认/闪屏标准页：")
         for f in fails: print("  -", f)

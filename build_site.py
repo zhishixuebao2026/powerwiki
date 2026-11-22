@@ -3614,6 +3614,26 @@ def build_zhigaowangzuo_default_from_yihuan() -> None:
     print("[zhigaowangzuo] default page = 「浑天环」整页 (nav + 返回角色档案 + theme bridge + edition dock)")
 
 
+# 升格默认页注入 <base> 后，页内纯 hash 锚点 href="#s-xxx" 会被浏览器按 base
+# 解析成「皮肤目录根/#s-xxx」（目录无 index.html → Directory listing / 404），
+# 于是点左侧目录就"报错"。这段脚本在捕获阶段把站内 hash 锚点的 href 改写回
+# 当前真实文档路径（location.pathname + search），保留原生平滑滚动与 hashchange。
+# 只挂在这些带 base 的升格默认页上；皮肤页自身无 base，不受影响。
+BASE_ANCHOR_FIX_JS = """<script data-pw-base-anchor-fix>
+(function(){
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var want = location.pathname + location.search + h;
+    if (a.getAttribute('href') !== want) a.setAttribute('href', want);
+  }, true);
+})();
+</script>
+"""
+
+
 def build_product_defaults() -> None:
     """第二批升格（5 个角色）：以 skins 产物页为基底生成整页默认页。
 
@@ -3660,6 +3680,15 @@ def build_product_defaults() -> None:
                 doc = doc[: hm.end()] + "\n" + base_tag + doc[hm.end():]
             else:
                 raise RuntimeError(f"[FATAL] {slug} 产物页无 <head>，无法注入 base")
+
+        # base 劫持了页内纯 hash 锚点（点左侧目录跳到皮肤目录根 = 报错），
+        # 注入捕获阶段脚本把锚点 href 改回当前真实路径。幂等：靠 data 标记跳过。
+        if "data-pw-base-anchor-fix" not in doc:
+            hm2 = re.search(r"<head[^>]*>", doc, re.I)
+            if hm2:
+                doc = doc[: hm2.end()] + "\n" + BASE_ANCHOR_FIX_JS + doc[hm2.end():]
+            else:
+                raise RuntimeError(f"[FATAL] {slug} 产物页无 <head>，无法注入锚点修复脚本")
 
         # inject_browse_memory() 在构建最末尾按 character/ 目录写 ../static/...，
         # 会被本页 base 重定向到 skins/static/...（404）。这里按「产物目录基准」

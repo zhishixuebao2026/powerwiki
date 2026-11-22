@@ -1,6 +1,19 @@
 <!doctype html>
 <html data-pw-edition="juxingzhihui-lingchun" lang="zh-CN" data-theme="dark" data-size="md">
   <head>
+<script data-pw-base-anchor-fix>
+(function(){
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var h = a.getAttribute('href');
+    if (!h || h.charAt(0) !== '#') return;
+    var want = location.pathname + location.search + h;
+    if (a.getAttribute('href') !== want) a.setAttribute('href', want);
+  }, true);
+})();
+</script>
+
   <base href="../skins/juxingzhihui-lingchun/">
 
   <meta name="apple-mobile-web-app-status-bar-style" content="black">

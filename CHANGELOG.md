@@ -4,6 +4,20 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-29（第十六批）· 修复升格默认页点左侧目录跳皮肤目录根报错（`<base>` 劫持 hash 锚点）/ SW pw-v103→v104
+
+**用户反馈**：「`skins/juxingzhihui-lingchun/#s-ability`、`character/juxingzhihui.html` 的左边目录点了会报错」，并要求用 diagnosing-bugs / dev-god / web-design-layout 全面检查。
+
+**根因（复现确认）**：第二类升格默认页由 `build_product_defaults()` 注入 `<base href="../skins/<id>/">` 修相对资源路径；副作用是页内所有纯 hash 锚点 `href="#s-ability"` 被浏览器按 base 解析成 `skins/<id>/#s-ability`（皮肤目录根），而目录无 index.html → Directory listing / 404。浏览器实测确认：点目录后 URL 从 `/character/juxingzhihui.html` 跳到 `/skins/juxingzhihui-lingchun/#s-ability`，桌面/手机一致、0 pageerror（所以是"跳错页看着像报错"，不是 JS 崩溃）。影响面为全部 **22 个 base 升格默认页**；皮肤页自身无 base、第一批内联页无 base，不受影响。
+
+**修复**：`build_site.py` 新增 `BASE_ANCHOR_FIX_JS`，`build_product_defaults()` 随 base 一起注入——捕获阶段事件委托，把站内 `a[href^="#"]` 的 href 在点击前改写成 `location.pathname + location.search + hash`（根相对路径，不受 base 劫持），保留原生平滑滚动与 hashchange，不触碰资源路径机制。幂等靠 `data-pw-base-anchor-fix` 标记。
+
+**守卫（防复发）**：`tools/check_no_stale_default.py` 新增断言——凡含 `<base>` 的默认页必须带锚点修复脚本；红/绿双向验证过（抹掉 `juxingzhihui.html` 的 marker 即报 `[RED]`，还原即绿）。
+
+**验证**：22 页全注入；浏览器实测 17 个有目录锚点的默认页点击后均停在 `/character/<slug>.html#锚点`、0 跳皮肤目录根、0 JS 错误、滚动到目标 section；6 个皮肤页抽查正常；构建幂等（连跑两次字节一致）、`audit_site.py` 全过（7b 29 页 + 62 切换器 0 异常）、`check_no_stale_default.py` 29 页全绿。
+
+**部署**：提交 `xxxxxxx` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
+
 ## 2026-11-29（第十五批）· 删除至高神性「御言」皮肤（divinity-radiance）/ SW pw-v102→v103
 
 **用户要求**：删除 `https://afecd13252576622f.app.workbuddy.host/skins/divinity-radiance/character-divinity.html`，即 `divinity-radiance`（御言 / 圣辉）这套皮肤。
