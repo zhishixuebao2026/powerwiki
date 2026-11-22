@@ -4,6 +4,29 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-27（第七批）· 回查全部升格默认页，材质/规则同类隐患一并根治 / 7 页统一守卫 / SW pw-v95→v96
+
+接第六批。用户要求「以后和之前皮肤转化默认的情况也回查一下，把这种问题修了」。回查 7 个升格默认页
+（御兔/许青/上帝/孙悟空/至高王座 + 材质碎极 + 规则候星），发现第六批只修了 5 个角色，**材质与规则
+仍是同类两步覆盖**：`main()` 先写标准 `rules.html`/`materials.html`，再用候星/碎极整页覆盖；两个升格
+函数同样是 `print WARN + return` 静默失败分支；断言也没覆盖这两页。
+
+根治（补齐第六批未覆盖部分 + 建立通用防回归）：
+- `main()` 去掉标准 `rules.html`/`materials.html` 落盘，`build_fulltext_doc_page()` 只取 sections
+  供搜索索引，默认页直接由 `build_rules_default_from_observatory()` / `build_materials_default_from_shatter()` 写出；
+- 7 个升格函数的 `if not src.exists()` 全从 `print WARN + return` 改为 `raise RuntimeError`——源一缺构建即红，
+  旧默认页进不了产物；
+- 断言从 5 角色扩为 **7 页统一守卫** `promoted_guards`（相对路径 + 识别标记），升格整页缺标记或含
+  `fade-on-load` 即抛错；月牍页用 `pw-moon-nav` 识别（它是 React 整页无 data-pw-edition）。
+- 约定文档新增「皮肤升格为默认页的固定流程」7 步：从源头不写标准页、整页函数、源缺失硬失败、
+  三处登记（promoted_defaults/DEFAULT_ALIAS/promoted_guards）、移除可切换条目、验证三件套、SW+1。
+- SW `pw-v95→v96`（第六批 v95 未推送成功，本地直接续到 v96）。
+
+验收：7 页 × 1440/390 全部 `fade-on-load`=0、识别标记在、0 横向溢出、0 JS 错误、0 个 4xx；
+负向测试——藏掉 moonfile 源后构建退出码 1（正确拦截），恢复后重建通过；`audit_site.py` 七项全过。
+说明：clearbar.css 里 `html[data-pw-edition=\"moonfile\"]` 那条规则选择器不命中月牍顶栏
+（`nav.pw-moon-nav` 而非 `header.fixed.inset-x-0`），是死规则但未激活，为避免视觉回归本次不动。
+
 ## 2026-11-27（第六批）· 根治玉兔"有时进会闪屏的旧默认" / 升格默认页不再两步覆盖 / SW pw-v94→v95
 
 用户指出「玉兔最早那会儿会闪屏的默认皮肤你是不是没删，有时候会触发进入旧默认」。查下来判断完全正确：会闪屏的是标准角色页（立绘 `.fade-on-load` opacity 0→0.36 淡入），它在构建链路里**根本没删**——`build_character_detail_pages()` 先给所有角色写标准页，5 个升格角色（御兔/许青/上帝/孙悟空/至高王座）再用皮肤整页覆盖。覆盖一旦没跑全（源读失败、构建中断、CDN/SW 命中旧产物），旧闪屏页就冒出来。且切换器"默认"卡片仍挂旧文案"建筑感栅格…"和 default.jpg，看着就像旧默认还在。

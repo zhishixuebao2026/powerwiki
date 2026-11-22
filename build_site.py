@@ -2810,7 +2810,7 @@ def build_yutu_default_from_moonfile() -> None:
     """
     src = ROOT / "skins/_source/moonfile.html"
     if not src.exists():
-        print("[WARN] moonfile source missing, yutu default page unchanged")
+        raise RuntimeError("[FATAL] moonfile 源缺失：御兔默认页已从源头不写标准页，无法升格，构建中止")
         return
     doc = src.read_text(encoding="utf-8", errors="replace")
 
@@ -2983,7 +2983,7 @@ def build_xuqing_default_from_qingchuan() -> None:
     """
     src = ROOT / "skins/_source/xuqing-qingchuan.html"
     if not src.exists():
-        print("[WARN] qingchuan source missing, xuqing default page unchanged")
+        raise RuntimeError("[FATAL] qingchuan 源缺失：许青默认页无法升格，构建中止")
         return
     doc = src.read_text(encoding="utf-8", errors="replace")
 
@@ -3160,7 +3160,7 @@ def build_sunwukong_default_from_lingxiao() -> None:
     """
     src = ROOT / "skins/_source/sunwukong-lingxiao.html"
     if not src.exists():
-        print("[WARN] lingxiao source missing, sunwukong default page unchanged")
+        raise RuntimeError("[FATAL] lingxiao 源缺失：孙悟空默认页无法升格，构建中止")
         return
     doc = src.read_text(encoding="utf-8", errors="replace")
 
@@ -3329,7 +3329,7 @@ def build_zhigaowangzuo_default_from_yihuan() -> None:
     """
     src = ROOT / "skins/_source/zhigaowangzuo-yihuan.html"
     if not src.exists():
-        print("[WARN] yihuan source missing, zhigaowangzuo default page unchanged")
+        raise RuntimeError("[FATAL] yihuan 源缺失：至高王座默认页无法升格，构建中止")
         return
     doc = src.read_text(encoding="utf-8", errors="replace")
 
@@ -3500,7 +3500,7 @@ def build_shangdi_default_from_jinian() -> None:
     """
     src = ROOT / "skins/_source/shangdi-jinian.html"
     if not src.exists():
-        print("[WARN] jinian source missing, shangdi default page unchanged")
+        raise RuntimeError("[FATAL] jinian 源缺失：上帝默认页无法升格，构建中止")
         return
     doc = src.read_text(encoding="utf-8", errors="replace")
 
@@ -3672,7 +3672,7 @@ def build_materials_default_from_shatter() -> None:
     """
     src = ROOT / "skins/_source/material-shatter.html"
     if not src.exists():
-        print("[WARN] shatter source missing, materials default page unchanged")
+        raise RuntimeError("[FATAL] shatter 源缺失：材质默认页无法升格，构建中止")
         return
     doc = src.read_text(encoding="utf-8", errors="replace")
 
@@ -3748,7 +3748,7 @@ def build_rules_default_from_observatory() -> None:
     """
     src = ROOT / "skins/_source/observatory.html"
     if not src.exists():
-        print("[WARN] observatory source missing, rules default page unchanged")
+        raise RuntimeError("[FATAL] observatory 源缺失：规则默认页无法升格，构建中止")
         return
     doc = src.read_text(encoding="utf-8", errors="replace")
     page_dir = ""
@@ -3880,9 +3880,10 @@ def main() -> None:
         md_text=rules_md,
         other_doc_link=("materials.html", "材质与破坏能量数据库"),
     )
-    (ROOT / "rules.html").write_text(rules_html, encoding="utf-8")
-    # 默认规则页 = 「候星」整页（用户 2026-11-22 决定，覆盖上面的标准全文页）。
-    # rules_sections 仍取自标准页，供全站搜索索引使用，不受影响。
+    # 根治「旧默认闪屏/残留」：默认规则页 = 「候星」整页，标准全文页不再落盘。
+    # 只保留 rules_sections/rules_title_to_id 供搜索索引与量级页锚点使用。
+    # 从源头不写标准页，构建中途失败也不会把旧默认页留在产物里。
+    # rules_html 仅用于取 sections，本身不写出。
     build_rules_default_from_observatory()
 
     materials_html, materials_sections, _ = build_fulltext_doc_page(
@@ -3895,9 +3896,9 @@ def main() -> None:
         md_text=materials_md,
         other_doc_link=("rules.html", "衡天量级体系（第六版）"),
     )
-    (ROOT / "materials.html").write_text(materials_html, encoding="utf-8")
-    # 默认材质页 = 「碎极」整页（用户 2026-11-22 决定，覆盖上面的标准全文页）。
-    # materials_sections 仍取自标准页，供全站搜索索引使用，不受影响。
+    # 根治「旧默认闪屏/残留」：默认材质页 = 「碎极」整页，标准全文页不再落盘。
+    # 只保留 materials_sections 供搜索索引使用。
+    # materials_html 仅用于取 sections，本身不写出。
     build_materials_default_from_shatter()
 
     tiers = tiers_payload["tiers"]
@@ -3948,16 +3949,31 @@ def main() -> None:
 
     inject_browse_memory()
 
-    # 构建期硬断言：5 个升格默认页必须是整页皮肤，绝不能是会闪屏的标准页。
-    # 只要哪一步覆盖失败/源缺失，这里直接抛错，不让旧默认页悄悄进产物。
-    for slug in sorted(PROMOTED_CHARACTER_SLUGS):
-        page = CHAR_OUT_DIR / f"{slug}.html"
+    # 构建期硬断言：7 个升格默认页必须是整页皮肤，绝不能是旧标准页。
+    # 这些页面已从源头不写标准页；只要哪一步升格失败/源缺失，文件就会缺失或
+    # 仍是旧标准页，这里直接抛错，不让旧默认悄悄进产物（玉兔「有时进旧默认」根治）。
+    # (相对路径, 升格整页必须出现的识别标记)
+    promoted_guards = [
+        ("character/yutu.html", "pw-moon-nav"),           # 月牍 React 整页，无 data-pw-edition
+        ("character/xuqing.html", 'data-pw-edition="xuqing-qingchuan"'),
+        ("character/shangdi.html", 'data-pw-edition="shangdi-jinian"'),
+        ("character/sunwukong.html", 'data-pw-edition="sunwukong-lingxiao"'),
+        ("character/zhigaowangzuo.html", 'data-pw-edition="zhigaowangzuo-yihuan"'),
+        ("materials.html", 'data-pw-edition="material-shatter"'),
+        ("rules.html", 'data-pw-edition="observatory"'),
+    ]
+    for rel, marker in promoted_guards:
+        page = ROOT / rel
         if not page.exists():
-            raise RuntimeError(f"[FATAL] 升格默认页缺失：{page}（标准页已不落盘，覆盖步骤没跑全）")
+            raise RuntimeError(f"[FATAL] 升格默认页缺失：{rel}（标准页已不落盘，升格步骤没跑全）")
         html = page.read_text(encoding="utf-8")
+        if marker not in html:
+            raise RuntimeError(
+                f"[FATAL] {rel} 不是升格整页（缺识别标记 {marker}），疑似旧标准页残留"
+            )
         if "fade-on-load" in html:
             raise RuntimeError(
-                f"[FATAL] {page} 仍是会闪屏的旧标准页（含 fade-on-load），升格覆盖失败"
+                f"[FATAL] {rel} 仍是会闪屏的旧标准页（含 fade-on-load），升格覆盖失败"
             )
 
     print(
