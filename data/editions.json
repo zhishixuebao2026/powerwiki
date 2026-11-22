@@ -243,19 +243,6 @@
       }
     },
     {
-      "id": "divinity-radiance",
-      "name": "御言",
-      "tag": "",
-      "note": "米白羊皮纸，中心一圈金色光晕，衬线巨字压着 I AM THAT I AM 御言。",
-      "source": "skins/_source/divinity-radiance.html",
-      "section": "character-divinity",
-      "inject": "minimal",
-      "thumb": "static/img/editions/divinity-radiance.jpg",
-      "pages": {
-        "character-divinity": "skins/divinity-radiance/character-divinity.html"
-      }
-    },
-    {
       "id": "material-specimen",
       "name": "衡尺标本志",
       "tag": "",

@@ -4,6 +4,18 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-29（第十五批）· 删除至高神性「御言」皮肤（divinity-radiance）/ SW pw-v102→v103
+
+**用户要求**：删除 `https://afecd13252576622f.app.workbuddy.host/skins/divinity-radiance/character-divinity.html`，即 `divinity-radiance`（御言 / 圣辉）这套皮肤。
+
+**按第 22 条四件一起清**：`data/editions.json` 登记条目删除（50→49 条）、`skins/divinity-radiance/` 产物目录（54MB 整页）、`skins/_source/divinity-radiance.html` 源、`static/img/editions/divinity-radiance.jpg` 缩略图全部删除；`build_site.py` 的 `SKIN_STATUS_BAR_MODE` 配置行、`static/css/clearbar.css` 两段（顶栏虚空/万有双态背景 + 手机避让）对应规则清除。README 皮肤数 49→48（角色专属 44→43）。至高神性仍剩 3 套（金印默认 / 鎏金 / 星烬），切换器自动刷新为 3 张卡。
+
+**保留项（新增第 35 条约定）**：`static/img/characters/divinity/divinity-radiance.jpg` 是 `characters.json` → `visual.art_url` 引用的角色档案主视觉立绘（1536×1024），与皮肤缩略图非同一文件，删除会导致角色档案/搜索索引破图，故保留。已删三件路径全仓 0 引用、0 死链。
+
+**验证**：构建产物 48 套、`editions.json` 49 条（含 default）一致；`audit_site.py` 全过（7b 检查 29 页 + 62 切换器异常 0，切换器数随删皮肤 63→62）、`check_no_stale_default.py` 29 页全绿；divinity 默认页切换器仅剩 gilt/seal/starember 三卡、无御言残留。
+
+**部署**：提交 `xxxxxxx` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
+
 ## 2026-11-29（第十四批）· 切换器根治：皮肤页去掉冗余「默认」卡 + 当前卡自动置顶 / SW pw-v101→v102
 
 **用户反馈**：「切换到其他皮肤之后默认的又回到切换器了……而且切换器里面目前默认的不是应该自动置顶吗，怎么还有在下面的」。

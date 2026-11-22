@@ -42,7 +42,6 @@ _EDITIONS_CACHE: Optional[Dict[str, Any]] = None
 SKIN_STATUS_BAR_MODE: Dict[str, str] = {
     "bronze-coffin": "default",
     "divinity-gilt": "default",
-    "divinity-radiance": "default",
     "divinity-seal": "default",
     "divinity-starember": "default",
     "futan-abyss": "default",

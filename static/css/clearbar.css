@@ -38,20 +38,6 @@ html[data-pw-edition="divinity-gilt"] header.site-header {
     background-color: var(--bg) !important;
 }
 
-/* divinity-radiance「圣辉」是虚空/万有双态：皮肤用 html.dark 切深/浅，
-   顶栏文字随 .dark 变米白、浅色变深字。此前这里把顶栏背景写死成米色，
-   导致深色（虚空）态下米底配米白字、整条导航文字不可见。改为跟随 .dark：
-   万有=米纸 rgb(243,236,220)，虚空=近黑 rgb(5,6,12)（与页面底同色）。 */
-html[data-pw-edition="divinity-radiance"] header.topbar {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background-color: rgb(243, 236, 220) !important;
-}
-html[data-pw-edition="divinity-radiance"].dark header.topbar,
-html.dark[data-pw-edition="divinity-radiance"] header.topbar {
-    background-color: rgb(5, 6, 12) !important;
-}
-
 html[data-pw-edition="divinity-seal"] div.topbar {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
@@ -244,12 +230,6 @@ html[data-pw-edition] .font-tools button { flex: none !important; }
   html[data-pw-edition="divinity-gilt"] header.site-header {
     padding-top: env(safe-area-inset-top, 0px) !important;
     min-height: calc(64px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-  }
-
-  html[data-pw-edition="divinity-radiance"] header.topbar {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    min-height: calc(59px + env(safe-area-inset-top, 0px)) !important;
     box-sizing: border-box !important;
   }
 
