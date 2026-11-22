@@ -14,7 +14,7 @@
 
 **验证**：构建产物 48 套、`editions.json` 49 条（含 default）一致；`audit_site.py` 全过（7b 检查 29 页 + 62 切换器异常 0，切换器数随删皮肤 63→62）、`check_no_stale_default.py` 29 页全绿；divinity 默认页切换器仅剩 gilt/seal/starember 三卡、无御言残留。
 
-**部署**：提交 `xxxxxxx` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
+**部署**：提交 `8e321ce` 推送 main（首次 token 缓存命中 401、换发新 token 后遇 TLS 抖动，重试成功）；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
 
 ## 2026-11-29（第十四批）· 切换器根治：皮肤页去掉冗余「默认」卡 + 当前卡自动置顶 / SW pw-v101→v102
 
