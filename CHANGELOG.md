@@ -35,6 +35,13 @@
 Playwright 实测 5 页 × 桌面/手机：baseURI 正确、0 破图、0 个 4xx、0 JS 错误、切换器与"返回角色档案"
 入口正常、0 横向溢出；4 张截图视觉确认顶栏/hero/目录/正文/明暗全部正常。
 
+**部署日志**：提交 `5761dc4`，经网关刷新 token（随机参数 + no-cache）推送 `e0c3aba..5761dc4 main`
+（首次 GnuTLS -110 抖动，重试带 postBuffer/lowSpeed 参数成功）。交付链接（唯一）：
+`https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX`。线上验收：5 个默认页
+`/character/{pangu,starkiller,nvwa,shiva,juxingzhihui}.html?sharecode=ATAMOUH2UX` 均 HTTP 200、
+`data-pw-edition` 标记与 `base` 在、`fade-on-load` 为 0、browse-memory 各 1 条，字节与本地一致。
+GitHub Pages 构建有延迟，以 WB 链接为准（不并列给 Pages 地址）。
+
 ## 2026-11-27（第九批）· 四技能全面自查（逻辑+界面）/ 修手机端御兔 SCROLL 半截字 / SW pw-v96→v97
 
 用户要求用 `/dev-god` `/dev-expert` `/web-design-layout` `/web-design-engineer` 全面自查优化。
