@@ -308,19 +308,6 @@
       }
     },
     {
-      "id": "divinity-xuanjin",
-      "name": "夜钤记",
-      "tag": "",
-      "note": "近黑底，暗金描边，暖金衬线巨字。",
-      "source": "skins/_source/divinity-xuanjin.html",
-      "section": "character-divinity",
-      "inject": "minimal",
-      "thumb": "static/img/editions/divinity-xuanjin.jpg",
-      "pages": {
-        "character-divinity": "skins/divinity-xuanjin/character-divinity.html"
-      }
-    },
-    {
       "id": "yog-teal-vortex",
       "name": "涡相录",
       "tag": "",

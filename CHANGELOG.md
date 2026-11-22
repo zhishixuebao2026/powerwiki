@@ -4,6 +4,16 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-29（第十三批）· 删除至高神性「玄锦」皮肤 / SW pw-v100→v101
+
+**用户要求**：删除 `divinity-xuanjin`（玄锦 / 夜钤记）这套皮肤。
+
+**按第 22 条四件一起清**：`editions.json` 登记条目删除（51→50 条）、`skins/divinity-xuanjin/` 产物目录（含 `original.md`）、`skins/_source/divinity-xuanjin.html` 源、`static/img/editions/divinity-xuanjin.jpg` 缩略图全部删除；`build_site.py` 的 `SKIN_STATUS_BAR_MODE` 配置行、`static/css/clearbar.css` 两段（顶栏背景 + 手机避让）对应规则清除；README 皮肤数 50→49（角色专属 45→44）。全仓检索 0 残留。至高神性仍剩 4 套（金印默认 / 圣辉 / 鎏金 / 星烬），切换器自动刷新为 4 张卡。
+
+**验证**：构建产物 49 套、卡片 156 个 0 缺失、`audit_site.py` 全过（7b 检查 29 页异常 0）、`check_no_stale_default.py` 29 页全绿、幂等 OK；Playwright 实测 divinity 默认页 + 圣辉/鎏金皮肤页 × 桌面/手机：玄锦卡 0 残留、0 JS 错误、0 个 4xx、0 破图、0 溢出。
+
+**部署**：提交 `xxxxxxx` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
+
 ## 2026-11-29（第十二批）· 清除 24 个升格默认页切换器里的旧「默认」卡 / SW pw-v99→v100
 
 **用户反馈**：「不对默认你压根没删？？？？？？？？？」——打开刚升格的默认页，皮肤切换器里仍挂着一张写着「默认」、配老建筑栅格缩略图 `default.jpg` 的卡，点了还是回当前页。

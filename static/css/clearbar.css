@@ -64,12 +64,6 @@ html[data-pw-edition="divinity-starember"] div.topbar {
     background-color: var(--bg) !important;
 }
 
-html[data-pw-edition="divinity-xuanjin"] div.topbar {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background-color: var(--bg) !important;
-}
-
 html[data-pw-edition="futan-abyss"] header.fixed.inset-x-0 {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
@@ -260,12 +254,6 @@ html[data-pw-edition] .font-tools button { flex: none !important; }
   }
 
   html[data-pw-edition="divinity-starember"] div.topbar {
-    padding-top: env(safe-area-inset-top, 0px) !important;
-    min-height: calc(56px + env(safe-area-inset-top, 0px)) !important;
-    box-sizing: border-box !important;
-  }
-
-  html[data-pw-edition="divinity-xuanjin"] div.topbar {
     padding-top: env(safe-area-inset-top, 0px) !important;
     min-height: calc(56px + env(safe-area-inset-top, 0px)) !important;
     box-sizing: border-box !important;
