@@ -4,6 +4,20 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-24（第十七批）· 键盘焦点环统一固定金铜色，消除紫主题页紫色边框 / SW pw-v104→v105
+
+**问题**：用户反馈「点页面的时候 UI 会紫色边框，上面的衡天wiki 之类的字和 UI 会紫色线条」。浏览器实测复现：这是 `:focus-visible` 焦点环，颜色用 `var(--accent)` 跟随主题——紫系角色页（张衍 `#705375`、露法斯、无限宝石）焦点落在顶部站名 wordmark / 按钮时围出紫色边框。Tab 或点目录按钮触发 JS 程序化 `.focus()` 时可见；鼠标点击本身不触发 `:focus-visible`。截图确认站名周围紫框。
+
+**修复**（保留焦点环无障碍功能，只改颜色）：
+- `static/css/style.css`、`editorial.css`、`experience.css`、`polish.css`：焦点环颜色 `var(--accent)` → 固定中性金铜 `#b8860b`（浅底深底均清晰）。
+- `static/css/clearbar.css`：末尾加 `:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:2px solid #b8860b !important;outline-offset:3px !important}`——该文件在所有皮肤产物页 / 升格默认页的内联 `<style>` 之后加载，一处覆盖 6 套产物内联紫环，无需改 1MB 产物。
+- `service-worker.js`：`pw-v104` → `pw-v105` 清旧缓存。
+- `tools/check_no_stale_default.py`：新增焦点环守卫（标准 CSS 无 `var(--accent)` 焦点环 + clearbar.css 含 `#b8860b`），红/绿双向验证过。
+
+**验证**：张衍（紫）/露法斯/金棕首页焦点环统一为金铜、站名紫框消失且键盘焦点仍清晰；构建幂等、audit 全过（29 页+62 切换器 0 异常）、check_no_stale_default 29 页全绿。
+
+**部署**：提交 `xxxxxxx` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
+
 ## 2026-11-29（第十六批）· 修复升格默认页点左侧目录跳皮肤目录根报错（`<base>` 劫持 hash 锚点）/ SW pw-v103→v104
 
 **用户反馈**：「`skins/juxingzhihui-lingchun/#s-ability`、`character/juxingzhihui.html` 的左边目录点了会报错」，并要求用 diagnosing-bugs / dev-god / web-design-layout 全面检查。

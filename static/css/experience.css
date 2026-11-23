@@ -32,7 +32,7 @@
   opacity: .72;
 }
 :where(.portal-card, .tier-card, .char-card, .spec-card, .neighbor-row, .pager-card, .search-hit):focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #b8860b;
   outline-offset: 3px;
 }
 .site-header::before,
@@ -1065,7 +1065,7 @@ html {
 .neighbor-row:focus-visible,
 .pager-card:focus-visible,
 .spec-card:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #b8860b;
   outline-offset: 3px;
 }
 

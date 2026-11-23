@@ -94,6 +94,16 @@ def check() -> int:
             base_pages += 1
             if "data-pw-base-anchor-fix" not in html:
                 fails.append(f"{p.relative_to(ROOT)}: 含 <base> 但缺锚点修复脚本（点目录会跳皮肤目录根报错）")
+    # 焦点环守卫（2026-11-24「点页面冒紫色边框」）：焦点环颜色必须固定为中性
+    # 金铜色，不能跟随 var(--accent)——紫主题页（张衍/露法斯/无限宝石）会把
+    # 焦点环染成突兀的紫色。防有人在标准 CSS 里改回 var(--accent) 时复发。
+    for css in ("style.css", "editorial.css", "experience.css", "polish.css"):
+        cp = ROOT / "static/css" / css
+        if cp.exists() and re.search(r"outline:\s*2px\s+solid\s+var\(--accent\)", cp.read_text(encoding="utf-8")):
+            fails.append(f"static/css/{css}: 焦点环用 var(--accent)（紫主题页会冒紫色边框，应为固定 #b8860b）")
+    cb = ROOT / "static/css/clearbar.css"
+    if cb.exists() and "#b8860b" not in cb.read_text(encoding="utf-8"):
+        fails.append("static/css/clearbar.css: 缺固定焦点环覆盖规则（皮肤产物内联样式会把焦点环染紫）")
     if fails:
         print("[RED] 检测到旧默认/闪屏标准页：")
         for f in fails: print("  -", f)

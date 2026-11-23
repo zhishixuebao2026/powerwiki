@@ -366,3 +366,15 @@ html[data-pw-edition] .font-tools button { flex: none !important; }
   }
 }
 
+/* ── 键盘焦点环全站统一（2026-11-24）─────────────────────────────────────
+   问题：焦点环原用 outline:2px solid var(--accent)，颜色随皮肤主题变；
+   紫系主题页（张衍 #705375 / 露法斯 / 无限宝石）焦点落在站名、按钮时冒出
+   突兀的紫色边框，用户误以为 UI 出错。
+   方案：焦点环是无障碍必需项，不能删；改为固定的中性金铜色，浅底深底都
+   清晰可见，且不再随主题变紫。本文件在所有皮肤产物页 / 升格默认页的内联
+   <style> 之后加载，用 !important 稳定覆盖产物内联的 focus-visible 规则。 */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid #b8860b !important;
+  outline-offset: 3px !important;
+}
+

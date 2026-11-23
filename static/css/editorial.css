@@ -743,7 +743,7 @@ body::after {
 /* Selection & focus */
 ::selection { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--text-primary); }
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #b8860b;
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -2019,7 +2019,7 @@ body.wide-doc-mode .md-table-wrap { max-width: 100%; }
 }
 .pw-figure-close:hover { border-color: var(--border-accent); }
 .pw-figure-close:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid #b8860b;
   outline-offset: 3px;
 }
 
