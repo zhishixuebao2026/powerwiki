@@ -16,7 +16,7 @@
 
 **验证**：张衍（紫）/露法斯/金棕首页焦点环统一为金铜、站名紫框消失且键盘焦点仍清晰；构建幂等、audit 全过（29 页+62 切换器 0 异常）、check_no_stale_default 29 页全绿。
 
-**部署**：提交 `xxxxxxx` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
+**部署**：提交 `409a4de` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
 
 ## 2026-11-29（第十六批）· 修复升格默认页点左侧目录跳皮肤目录根报错（`<base>` 劫持 hash 锚点）/ SW pw-v103→v104
 
