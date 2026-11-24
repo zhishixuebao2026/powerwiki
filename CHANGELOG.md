@@ -4,6 +4,22 @@
 `(abc1234)` 是提交短哈希，可以直接 `git show` 看细节。
 皮肤的设计取舍写在 `README.md`，用户的硬性要求与约定写在 `docs/需求与约定.md`。
 
+## 2026-11-25（第十九批）· 补齐莫哲 qingke 页全文覆盖（旧骨架→11-24 改版 15 章全文）/ SW pw-v106→v107
+
+**问题**：用户指出「全文更新覆盖」没做到位。核查确认：qingke 皮肤页的内嵌正文（`data:text/markdown;base64`）仍是旧版骨架（二级标题「对象与作品／概述／定级方法」），只混进了「中偏低／⊙外二待裁定」几个新词；正文结构、章节、证据链全是 11-15 旧版。另三套页（标准页／mijing／xingluo）经核查正文证据链已是新版，只是保留 11 节定制版式骨架，无需逐字替换。
+
+**根因**：qingke 渲染器把正文按 h2 分节，JS 里 `E1` 是硬编码 11 项目录映射，`for(const l of W1)` 遇到第 12 个 h2 时 `E1[11]` 为 `undefined`，解构即 `undefined is not iterable` 整页崩——这是上次不敢换全文、只塞词的原因。新版文档有 15 章。
+
+**修复**：
+- 用 `skins/mozhe-qingke/documents/mo-zhe.md`（新版全文 + 本站口径说明）重编码 base64，替换 qingke 源与产物页内嵌正文。
+- `E1` 从 11 项扩展为 15 项，保留 4 个语义 id（rating=量级栏、gardener=莫哲是谁、structure=花园里写到了哪一档、questions=存疑）以维持特殊渲染；新增 revision/profile/world/.method/deeds/verdict/limits/sources/references。目录由 `href:#${id}` 动态生成，改 id 不影响跳转。
+- 开头 blockquote 严格压成 2 段（条目版本 + 阅读方式/本条兼作/本站口径合并）——渲染器 `const [q4,M4]=C4.children` 只认 2 段，超过会让「本站口径」丢失；4 段合 2 段后关键声明正常显示。
+- `service-worker.js`：`pw-v106` → `pw-v107` 清旧缓存。
+
+**验证**：playwright 无头渲染 qingke 页——15 章全出、目录 15 项、structure 章 5 个 stages、存疑 7 条、0 JS 错误，本站口径/2026-11-24/档位声明全部显示；标准页/mijing/xingluo 三套 0 JS 错误、新版证据链（中偏低/⊙外二待裁定/我叫莫哲/幂集）全在。构建幂等，audit 7b 全过、check_no_stale_default 29 页全绿。
+
+**部署**：提交 `dba6bdb` 推送 main；线上 WB 验收链接 https://afecd13252576622f.app.workbuddy.host/?sharecode=ATAMOUH2UX
+
 ## 2026-11-24（第十八批）· 莫哲定级文档 11-15 暂定版→11-24 改版全站同步（证据链换新，档位按裁定不动）/ SW pw-v105→v106
 
 **来源**：用户给的 GitHub 文档（xoqnapgf-dot/test 仓库「临时/【11.24】莫哲（花园系列）衡天定级.md」），2026-11-24 改版明确取代 11-15 暂定版。改动：材料从「汇编摘录八本」换成「三本现存全文（《核冬元年》《分形图》《万众狂欢》）+ 五本已删据汇编」；综合 ⊙天·下 起〔下〕档位不变、依据从《银之网》换成《核冬元年》part.3 第 7 章 + 《分形图》超因果序章；保底新文档建议 ⊙外·三 → ⊙外·二；可信度 低 → 中偏低；序章「我」自报莫哲、园丁与二重身共享称号；新增世界结构/限度与位次/7 条存疑/原文链接。
